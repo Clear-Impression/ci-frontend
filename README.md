@@ -1,36 +1,29 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Clear Impression Services Frontend
 
-## Getting Started
+Public-facing website built with Next.js App Router, React, TypeScript, and Tailwind CSS.
 
-First, run the development server:
+## Local setup
+
+Install Node.js with npm, then run these commands from this repository:
 
 ```bash
+npm ci
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Commands
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `npm run dev`: start the development server.
+- `npm run lint`: run ESLint.
+- `npm run build`: create a production build.
+- `npm start`: serve an existing production build.
 
-## Learn More
+## Current state and scope
 
-To learn more about Next.js, take a look at the following resources:
+The framework is configured and the starter content has been removed. The homepage currently contains only the company heading; business pages and shared components still need implementation.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+This phase covers the public frontend only. Backend services, authentication, real form submission, AI features, and full Builder.io integration are deferred. Components will be designed for future content and backend integration.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Vercel is the planned deployment target. The existing Hostinger website remains live and unchanged.
