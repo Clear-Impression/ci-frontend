@@ -24,7 +24,7 @@ export const navigation: readonly NavigationItem[] = [
   { label: 'Locations', href: '/locations', available: false },
   { label: 'About', href: '/about', available: false },
   { label: 'Reviews', href: '/reviews', available: false },
-  { label: 'FAQ', href: '/faq', available: false },
+  { label: 'FAQ', href: '/faq', available: true },
 ];
 
 // These lists are display text for now, not links to unfinished pages.
