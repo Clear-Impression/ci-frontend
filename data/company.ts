@@ -22,7 +22,7 @@ export const navigation: readonly NavigationItem[] = [
   { label: 'Home', href: '/', available: true },
   { label: 'Services', href: '/services', available: false },
   { label: 'Locations', href: '/locations', available: false },
-  { label: 'About', href: '/about', available: false },
+  { label: 'About', href: '/about', available: true },
   { label: 'Reviews', href: '/reviews', available: false },
   { label: 'FAQ', href: '/faq', available: false },
 ];
