@@ -2,13 +2,16 @@
 
 import { useState } from "react";
 
+/* NOTES FOR TODO: ADD IMAGE TO TYPE */
+
 type FlipCardProps = {
+  /* image: string; */
   title: string;
-  description: string;
+  previewDescription: string;
   largeDescription: string;
 };
 
-export default function FlipCard({title, description, largeDescription}: FlipCardProps) {
+export default function FlipCard({title, previewDescription, largeDescription}: FlipCardProps) {
   const [isFlipped, setIsFlipped] = useState(false);
 
   return (
@@ -23,7 +26,7 @@ export default function FlipCard({title, description, largeDescription}: FlipCar
       >
         <span className="flip-card-face flip-card-front filter: drop-shadow(0 4px 3px rgb(0 0 0 / 0.07)) drop-shadow(0 2px 2px rgb(0 0 0 / 0.06));">
           <span className="text-xl font-semibold">{title}</span>
-          <span className="mt-2 text-sm">{description}</span>
+          <span className="mt-2 text-sm">{previewDescription}</span>
         </span>
         <span className="flip-card-face flip-card-back bg-[#200b38] text-white">
           <span className="text-xl font-semibold">{title}</span>
