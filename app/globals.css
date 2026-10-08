@@ -17,3 +17,45 @@ body {
   color: var(--foreground);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
+
+.flip-card {
+  perspective: 1000px;
+}
+
+.flip-card-inner {
+  position: relative;
+  display: block;
+  height: 100%;
+  width: 100%;
+  transform-style: preserve-3d;
+  transition: transform 600ms ease;
+}
+
+.flip-card:hover .flip-card-inner,
+.flip-card-inner.is-flipped {
+  transform: rotateY(180deg);
+}
+
+.flip-card-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid currentColor;
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  text-align: center;
+  backface-visibility: hidden;
+}
+
+.flip-card-back {
+  transform: rotateY(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flip-card-inner {
+    transition-duration: 0.01ms;
+  }
+}
