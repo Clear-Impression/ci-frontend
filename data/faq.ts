@@ -1,25 +1,30 @@
-// Import the shared FAQ data type.
-// "import type" is only used for checking types.
+// import faq data type.
 import type { FAQItem } from "@/types/faq";
 
 // export list for raq page (list of faq's)
-// Later, the page can get this same data shape from Builder.io.
+// later builder.io can grab this content
 export const faqItems: FAQItem[] = [
   {
-    // Give each faq a unque table it
+    // Give each faq a unique id
     id: "professional-window-cleaning",
 
     // text when faq is closed
     question: "will my window cleaning profession",
 
-    // Text revealed when faq is opened
+    // text when it is open
     answer: "yes",
+
+    bullets: [
+        "First bullet",
+        "Second bullet",
+        "Third bullet"
+    ],
   },
   {
-    // Use a different ID for each FAQ in the list.
+    // second faq
     id: "second-test-question",
 
-    // Temporary content to check how multiple FAQs display.
+    // temporary stuff
     question: "Can I open this second question?",
     answer: "Yes. Each question opens and closes independently.",
   },
