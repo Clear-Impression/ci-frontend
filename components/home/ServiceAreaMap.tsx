@@ -7,9 +7,13 @@ import 'leaflet/dist/leaflet.css';
 
 type ServiceAreaMapProps = {
   cities: readonly ServiceCity[];
+  large?: boolean;
 };
 
-export default function ServiceAreaMap({ cities }: ServiceAreaMapProps) {
+export default function ServiceAreaMap({
+  cities,
+  large = false,
+}: ServiceAreaMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<LeafletMap | null>(null);
   const markersRef = useRef(new Map<string, Marker>());
@@ -124,7 +128,11 @@ export default function ServiceAreaMap({ cities }: ServiceAreaMapProps) {
         </span>
       </div>
       {/* Keep a fixed map height so loading tiles does not move the page. */}
-      <div className='relative isolate h-80 bg-[#eeeaf4] sm:h-96'>
+      {/* Only the Locations page requests a larger map; other pages keep the original height. */}
+      <div
+        className={`relative isolate bg-[#eeeaf4] ${
+          large ? 'h-[360px] sm:h-[480px] lg:h-[560px]' : 'h-80 sm:h-96'
+        }`}>
         <div
           ref={containerRef}
           role='region'
