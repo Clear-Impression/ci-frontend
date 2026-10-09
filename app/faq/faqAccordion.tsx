@@ -21,6 +21,16 @@ export default function FAQAccordion({ items }: FAQAccordionProps) {
           <summary className="cursor-pointer font-semibold">
             {item.question}
           </summary>
+          {/* bullet box only when the faq response has bullets */}
+          {item.bullets && item.bullets.length > 0 && (
+            <div className="mt-4 rounded-xl border-l-4 border-blue-600 bg-blue-50 p-5">
+              <ul className="list-disc space-y-2 pl-5 text-gray-700">
+                {item.bullets.map((bullet, index) => (
+                  <li key={`${item.id}-bullet-${index}`}>{bullet}</li>
+                ))}
+              </ul>
+            </div>
+          )}
           {/* the answer. keep the line breaks from the original text */}
           <p className="mt-3 whitespace-pre-line leading-7 text-gray-600">
             {item.answer}
