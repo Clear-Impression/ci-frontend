@@ -21,7 +21,7 @@ export type NavigationItem = {
 export const navigation: readonly NavigationItem[] = [
   { label: 'Home', href: '/', available: true },
   { label: 'Services', href: '/services', available: true },
-  { label: 'Locations', href: '/locations', available: false },
+  { label: 'Locations', href: '/locations', available: true },
   { label: 'About', href: '/about', available: true },
   { label: 'Reviews', href: '/reviews', available: false },
   { label: 'FAQ', href: '/faq', available: true },
