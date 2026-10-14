@@ -2,16 +2,19 @@
 
 import { useState } from "react";
 
-/* NOTES FOR TODO: ADD IMAGE TO TYPE */
-
 type FlipCardProps = {
-  /* image: string; */
+  icon: string;
   title: string;
   previewDescription: string;
   largeDescription: string;
 };
 
-export default function FlipCard({title, previewDescription, largeDescription}: FlipCardProps) {
+export default function FlipCard({
+  icon,
+  title,
+  previewDescription,
+  largeDescription,
+}: FlipCardProps) {
   const [isFlipped, setIsFlipped] = useState(false);
 
   return (
@@ -19,16 +22,18 @@ export default function FlipCard({title, previewDescription, largeDescription}: 
       type="button"
       aria-pressed={isFlipped}
       onClick={() => setIsFlipped((flipped) => !flipped)}
-      className="flip-card group h-48 w-full text-left"
+      className="flip-card group min-h-48 w-full text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#200b38]"
     >
       <span
         className={`flip-card-inner ${isFlipped ? "is-flipped" : ""}`}
       >
-        <span className="flip-card-face flip-card-front filter: drop-shadow(0 4px 3px rgb(0 0 0 / 0.07)) drop-shadow(0 2px 2px rgb(0 0 0 / 0.06));">
+        <span className="flip-card-face flip-card-front">
+          <span className="text-4xl" aria-hidden="true">{icon}</span>
           <span className="text-xl font-semibold">{title}</span>
           <span className="mt-2 text-sm">{previewDescription}</span>
         </span>
         <span className="flip-card-face flip-card-back bg-[#200b38] text-white">
+          <span className="text-4xl" aria-hidden="true">{icon}</span>
           <span className="text-xl font-semibold">{title}</span>
           <span className="mt-2 text-sm">{largeDescription}</span>
         </span>
