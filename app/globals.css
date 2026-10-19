@@ -18,6 +18,17 @@ body {
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
 
+/* Scroll between terms sections without jumping straight to them. */
+html:has(#service-terms) {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:has(#service-terms) {
+    scroll-behavior: auto;
+  }
+}
+
 .flip-card {
   perspective: 1000px;
 }

@@ -83,11 +83,15 @@ export default function Footer() {
           <p>
             © {new Date().getFullYear()} {company.name}. All rights reserved.
           </p>
-          <Link
-            href='/'
-            className={linkStyle}>
-            Home
-          </Link>
+          {/* Keep the full service terms available from every page. */}
+          <nav aria-label='Footer links' className='flex flex-wrap items-center gap-x-5 gap-y-2'>
+            <Link href='/' className={`inline-flex min-h-11 items-center ${linkStyle}`}>
+              Home
+            </Link>
+            <Link href='/terms-and-conditions' className={`inline-flex min-h-11 items-center ${linkStyle}`}>
+              Service terms
+            </Link>
+          </nav>
         </div>
       </div>
     </footer>
