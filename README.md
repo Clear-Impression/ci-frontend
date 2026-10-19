@@ -13,6 +13,31 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+## Sanity content
+
+The FAQ page reads published content from Sanity project `vpeebhw5`, dataset
+`production`. These public identifiers are shared defaults in `sanity/client.ts`,
+so teammates do not need an environment file or API token to read the published
+FAQs. Internet access is required.
+
+To use a different project or dataset, optionally set
+`NEXT_PUBLIC_SANITY_PROJECT_ID` and `NEXT_PUBLIC_SANITY_DATASET` in `.env.local`.
+Keep private tokens out of Git and out of `NEXT_PUBLIC_` variables.
+
+The website fetches published FAQs without caching so updates appear on
+the next page request. Running Studio is optional for viewing the website.
+
+Sanity Studio lives in `studio/` in this repository. To run the editing
+interface, open a second terminal from the repository root:
+
+```bash
+cd studio
+npm ci
+npm run dev
+```
+
+Open the URL printed by Studio and sign in with a Sanity account that has
+access to the project. Keep the website running in its own terminal.
 ## Commands
 
 - `npm run dev`: start the development server.
@@ -22,8 +47,8 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Current state and scope
 
-The framework is configured and the starter content has been removed. The homepage currently contains only the company heading; business pages and shared components still need implementation.
-
-This phase covers the public frontend only. Backend services, authentication, real form submission, AI features, and full Builder.io integration are deferred. Components will be designed for future content and backend integration.
+The public frontend includes shared layout components and business pages. The
+FAQ page is connected to Sanity; other content may still use local data files.
+Google review API integration and real form submission are not implemented.
 
 Vercel is the planned deployment target. The existing Hostinger website remains live and unchanged.
