@@ -1,0 +1,272 @@
+/* These styles apply only to the Locations overview and city pages. */
+.directoryDescription {
+  margin-top: 12px;
+  color: #686170;
+  font-size: 16px;
+  line-height: 28px;
+}
+
+.cityGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0 32px;
+  margin-top: 20px;
+  padding: 0;
+  list-style: none;
+}
+
+.cityGrid > li {
+  border-bottom: 1px solid #ddd5e6;
+}
+
+.cityLink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 72px;
+  padding: 16px 0;
+  color: #200b38;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 28px;
+  text-decoration: none;
+}
+
+.cityLink:hover {
+  color: #6c3fb8;
+}
+
+.arrowLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #200b38;
+  font-size: 14px;
+  line-height: 20px;
+  text-decoration: none;
+}
+
+/* Underline the words on hover or keyboard focus, leaving arrows unlined. */
+.cityLink:hover .linkText,
+.cityLink:focus-visible .linkText,
+.arrowLink:hover .linkText,
+.arrowLink:focus-visible .linkText {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+}
+
+.arrow {
+  display: inline-block;
+  flex-shrink: 0;
+  font-weight: 400;
+  text-decoration: none;
+}
+
+.cityLink .arrow {
+  font-size: 22px;
+}
+
+.cityLink:focus-visible,
+.arrowLink:focus-visible {
+  outline: 2px solid #6c3fb8;
+  outline-offset: 4px;
+}
+
+.backLink {
+  min-height: 44px;
+  margin-bottom: 16px;
+  color: white;
+}
+
+.backLink:focus-visible {
+  outline-color: #efb52b;
+}
+
+.photoSection {
+  padding: 64px 0 72px;
+  background: white;
+}
+
+.photoGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr);
+  align-items: center;
+  gap: 64px;
+}
+
+.photoEyebrow {
+  margin-bottom: 16px;
+  color: #6c3fb8;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 20px;
+  letter-spacing: 1.3px;
+  text-transform: uppercase;
+}
+
+.photoHeading {
+  color: #200b38;
+  font-size: 36px;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.9px;
+  white-space: pre-line;
+}
+
+.cityDescription {
+  max-width: 460px;
+  margin-top: 20px;
+  color: #686170;
+  font-size: 16px;
+  line-height: 28px;
+}
+
+.quoteButton {
+  margin-top: 24px;
+}
+
+.servicePhoto {
+  display: block;
+  width: 100%;
+  height: 340px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.servicesSection {
+  padding: 64px 0 72px;
+  background: #faf8fd;
+}
+
+.servicesHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.servicesHeading {
+  color: #200b38;
+  font-size: 36px;
+  font-weight: 600;
+  line-height: 40px;
+  letter-spacing: -0.9px;
+}
+
+.servicesDescription {
+  max-width: 600px;
+  margin-top: 12px;
+  color: #686170;
+  font-size: 16px;
+  line-height: 28px;
+}
+
+.allServicesLink {
+  flex-shrink: 0;
+  min-height: 44px;
+  font-weight: 500;
+}
+
+.servicesGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px 32px;
+  margin-top: 32px;
+  padding: 0;
+  list-style: none;
+}
+
+.serviceItem {
+  min-width: 0;
+  padding: 24px 0 12px;
+  border-top: 1px solid #dcd5e5;
+}
+
+.serviceItem h3 {
+  color: #200b38;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 28px;
+}
+
+.serviceItem p {
+  max-width: 360px;
+  margin-top: 8px;
+  color: #686170;
+  font-size: 14px;
+  line-height: 24px;
+}
+
+/* Stack the photo and reduce columns as the screen gets narrower. */
+@media (max-width: 900px) {
+  .servicesGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .cityGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .photoGrid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .cityDescription {
+    max-width: 620px;
+  }
+
+  .photoHeading {
+    white-space: normal;
+  }
+
+  .servicePhoto {
+    height: 300px;
+  }
+}
+
+@media (max-width: 639px) {
+  .photoSection,
+  .servicesSection {
+    padding: 48px 0;
+  }
+
+  .photoHeading,
+  .servicesHeading {
+    font-size: 30px;
+    line-height: 36px;
+  }
+
+  .servicePhoto {
+    height: 260px;
+  }
+}
+
+@media (max-width: 560px) {
+  .servicesHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .servicesGrid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-top: 24px;
+  }
+
+  .serviceItem {
+    padding: 20px 0 16px;
+  }
+}
+
+@media (max-width: 400px) {
+  .cityGrid {
+    grid-template-columns: 1fr;
+  }
+}

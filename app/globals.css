@@ -18,14 +18,24 @@ body {
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
 
+/* Scroll between terms sections without jumping straight to them. */
+html:has(#service-terms) {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:has(#service-terms) {
+    scroll-behavior: auto;
+  }
+}
+
 .flip-card {
   perspective: 1000px;
 }
 
 .flip-card-inner {
   position: relative;
-  display: block;
-  height: 100%;
+  display: grid;
   width: 100%;
   transform-style: preserve-3d;
   transition: transform 600ms ease;
@@ -37,8 +47,8 @@ body {
 }
 
 .flip-card-face {
-  position: absolute;
-  inset: 0;
+  position: relative;
+  grid-area: 1 / 1;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -48,6 +58,7 @@ body {
   padding: 1.25rem;
   text-align: center;
   backface-visibility: hidden;
+  filter: drop-shadow(0 4px 3px rgb(0 0 0 / 0.07)) drop-shadow(0 2px 2px rgb(0 0 0 / 0.06));
 }
 
 .flip-card-back {
