@@ -1,7 +1,9 @@
 //"use client";
 
 import FlipCard from "./flip";
-import type { Metadata } from 'next';
+import type {Metadata} from 'next';
+import {company} from '@/data/company';
+import {aboutClosing} from '@/data/about';
 
 type Service = {
   icon: string;
@@ -103,6 +105,22 @@ export default function Services() {
         description="Tap or click any card to explore additional cleaning and maintenance solutions."
         services={specializedServices}
       />
+
+
+
+      <section className='mx-auto max-w-7xl px-6 py-16 sm:px-8 sm:py-20'>
+        <div className='rounded-2xl bg-[#200b38] px-8 py-12 text-white sm:px-12'>
+          <h2 className='text-2xl font-semibold sm:text-3xl'>
+            {aboutClosing.heading}
+          </h2>
+          <p className='mt-4 max-w-2xl text-white/80'>{aboutClosing.text}</p>
+          <a
+            href={company.phoneHref}
+            className='mt-8 inline-flex min-h-11 items-center rounded-lg bg-[#efb52b] px-5 py-3 text-sm font-semibold text-[#200b38] hover:bg-[#f6c95b] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white'>
+            Call {company.phone} for a quote
+          </a>
+        </div>
+      </section>
     </main>
   );
 }
