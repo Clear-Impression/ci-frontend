@@ -88,6 +88,9 @@ export default function Footer() {
             className={linkStyle}>
             Home
           </Link>
+          <Link href='/owner' className={linkStyle}>
+            Owner dashboard
+          </Link>
         </div>
       </div>
     </footer>
