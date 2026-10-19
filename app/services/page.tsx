@@ -1,12 +1,20 @@
-"use client";
+//"use client";
 
 import FlipCard from "./flip";
+import type { Metadata } from 'next';
 
 type Service = {
   icon: string;
   title: string;
   previewDescription: string;
   largeDescription: string;
+};
+
+//For SEO and seach engines
+export const metadata: Metadata = {
+  title: 'Services | Clear Impression Services',
+  description:
+    'Explore our services at Clear Impresions',
 };
 
 const coreServices: Service[] = [
@@ -74,8 +82,13 @@ export default function Services() {
     <main className="flex-1">
       <section className="bg-[#200b38] px-8 pb-20 pt-16 text-white">
         <div className="mx-auto max-w-7xl">
-          <h1 className="text-3xl font-semibold sm:text-5xl">Services</h1>
-          <p className="mt-3 max-w-2xl">
+          <p className='text-sm font-semibold uppercase tracking-widest text-[#efb52b]'>
+            What we do
+          </p>
+          <h1 className='mt-3 max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl'>
+            Services
+          </h1>
+          <p className='mt-6 max-w-2xl text-lg text-white/80'>
             Professional exterior cleaning solutions serving the Phoenix metro.
           </p>
         </div>
