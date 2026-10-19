@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import ServiceAreaMap from '@/components/home/ServiceAreaMap';
 import HomeContact from '@/components/home/HomeContact';
 import { serviceCities } from '@/data/home';
-import { locationDetails, locationsPageContent } from '@/data/locations';
+import { locationPages, locationsPageContent } from '@/data/locations';
+import styles from './locations.module.css';
 
 // Give the Locations page its own title and search description.
 export const metadata: Metadata = {
@@ -44,24 +46,20 @@ export default function LocationsPage() {
             <h2 className='text-3xl font-semibold tracking-tight text-[#000000] sm:text-4xl'>
               {locationsPageContent.citiesHeading}
             </h2>
-            {/* Match the FAQ: white boxes and native black arrow markers. */}
-            <div className='mt-6 space-y-4'>
-              {serviceCities.map((city) => (
-                <details
-                  key={city.name}
-                  className='rounded-lg border border-[#e5e7eb] bg-[#ffffff]'>
-                  <summary className='min-h-16 cursor-pointer rounded-lg px-5 py-5 text-lg font-semibold text-[#171717] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6c3fb8]'>
-                    {city.name}
-                  </summary>
-                  {/* City names are placeholders. Add details in data/locations.ts. */}
-                  {locationDetails[city.name] && (
-                    <p className='px-5 pb-5 whitespace-pre-line leading-7 text-[#686170]'>
-                      {locationDetails[city.name]}
-                    </p>
-                  )}
-                </details>
+            <p className={styles.directoryDescription}>
+              {locationsPageContent.citiesDescription}
+            </p>
+            {/* Each city name opens its own page instead of a dropdown. */}
+            <ul className={styles.cityGrid}>
+              {locationPages.map((location) => (
+                <li key={location.slug}>
+                  <Link href={location.href} className={styles.cityLink}>
+                    <span className={styles.linkText}>{location.name}</span>
+                    <span className={styles.arrow} aria-hidden='true'>↗</span>
+                  </Link>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         </div>
       </section>

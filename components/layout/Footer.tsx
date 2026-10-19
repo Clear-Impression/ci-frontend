@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { company, serviceAreas, services } from '@/data/company';
+import { getLocationBySlug } from '@/data/locations';
 
 // Keep hover and keyboard focus styles the same for footer links.
 const linkStyle =
@@ -30,7 +31,7 @@ export default function Footer() {
             {company.description}
           </p>
         </div>
-        {/* Show services and areas as text until their pages are ready. */}
+        {/* Keep service names as text until individual service pages are ready. */}
         <div>
           <h2 className='text-base font-semibold'>Our services</h2>
           <ul className='mt-3 space-y-1 text-sm leading-6 text-white/80'>
@@ -42,9 +43,21 @@ export default function Footer() {
         <div>
           <h2 className='text-base font-semibold'>Service areas</h2>
           <ul className='mt-3 space-y-1 text-sm leading-6 text-white/80'>
-            {serviceAreas.map((area) => (
-              <li key={area}>{area}</li>
-            ))}
+            {serviceAreas.map((area) => {
+              // Keep the original order; Phoenix now has its own city page.
+              const slug = area === 'Phoenix metro' ? 'phoenix' : area.toLowerCase();
+              const location = getLocationBySlug(slug);
+
+              return (
+                <li key={area}>
+                  {location ? (
+                    <Link href={location.href} className={linkStyle}>
+                      {location.name}
+                    </Link>
+                  ) : area}
+                </li>
+              );
+            })}
           </ul>
         </div>
         {/* Phone and email links open the visitor's calling or email app. */}
