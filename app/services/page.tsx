@@ -40,8 +40,8 @@ function ServiceSection({
 export default function Services() {
   return (
     <main className="flex-1">
-      <section className="bg-[#200b38] px-8 pb-20 pt-16 text-white">
-        <div className="mx-auto max-w-7xl">
+      <section className="bg-[#200b38] text-white">
+        <div className="mx-auto flex min-h-88 max-w-7xl flex-col justify-center px-6 py-10 sm:min-h-80 sm:px-8 sm:py-12">
           <p className='text-sm font-semibold uppercase tracking-widest text-[#efb52b]'>
             What we do
           </p>

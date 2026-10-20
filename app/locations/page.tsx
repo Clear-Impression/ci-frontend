@@ -20,7 +20,7 @@ export default function LocationsPage() {
       <section
         aria-labelledby='locations-heading'
         className='bg-[#200b38] text-white'>
-        <div className='mx-auto max-w-7xl px-6 py-14 sm:px-8 sm:py-20'>
+        <div className='mx-auto flex min-h-88 max-w-7xl flex-col justify-center px-6 py-10 sm:min-h-80 sm:px-8 sm:py-12'>
           <p className='text-sm font-semibold uppercase tracking-widest text-[#efb52b]'>
             {locationsPageContent.eyebrow}
           </p>
