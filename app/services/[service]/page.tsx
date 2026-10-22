@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { aboutClosing } from '@/data/about';
 import { company } from '@/data/company';
 import { getServiceBySlug, services } from '@/data/services';
+import ServiceIcon from '@/components/services/ServiceIcon';
 
 type ServicePageProps = {
   params: Promise<{ service: string }>;
@@ -43,7 +44,11 @@ export default async function ServicePage({ params }: ServicePageProps) {
             <span aria-hidden='true'>←</span>
             <span>Back to services</span>
           </Link>
-          <p className='mt-10 text-5xl' aria-hidden='true'>{service.icon}</p>
+          <ServiceIcon
+            slug={service.slug}
+            draw='auto'
+            className='mt-10 size-14 text-[#d9b65f]'
+          />
           <p className='mt-6 text-sm font-semibold uppercase tracking-widest text-[#efb52b]'>
             Clear Impression Services
           </p>
