@@ -546,3 +546,300 @@ html:has(#service-terms) {
     stroke-dashoffset: 0 !important;
   }
 }
+/* ------------------------------------------------------------------
+   About page
+   Its own motion, built around coming into focus: blur to sharp,
+   slides from both sides, flipping tags, a quote that darkens as you
+   read, and value cards that drop in and tilt toward the cursor.
+   ------------------------------------------------------------------ */
+
+/* Header: a warm light rises while the words sharpen into focus. */
+.about-glow {
+  pointer-events: none;
+  background:
+    radial-gradient(60% 90% at 82% 125%, rgb(239 181 43 / 0.22), transparent 60%),
+    radial-gradient(50% 80% at 12% -25%, rgb(108 63 184 / 0.45), transparent 60%);
+  animation: about-glow 2.4s ease-out both;
+}
+
+@keyframes about-glow {
+  from {
+    opacity: 0;
+    transform: translateY(14%);
+  }
+}
+
+.focus-in {
+  animation: focus-in 1s var(--ease-rise) both;
+}
+
+.focus-in-late {
+  animation-delay: 950ms;
+}
+
+.focus-word {
+  display: inline-block;
+  animation: focus-in 0.9s var(--ease-rise) both;
+  animation-delay: calc(150ms + var(--w, 0) * 70ms);
+}
+
+@keyframes focus-in {
+  from {
+    opacity: 0;
+    filter: blur(14px);
+    transform: translateY(6px) scale(1.04);
+  }
+  to {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+}
+
+/* As you scroll away, the header softly drifts out of focus. */
+@supports (animation-timeline: scroll()) {
+  .focus-out {
+    animation: focus-out linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 60svh;
+  }
+}
+
+@keyframes focus-out {
+  to {
+    filter: blur(6px);
+    opacity: 0.35;
+    transform: scale(0.97);
+  }
+}
+
+/* Story: the two columns slide in from opposite sides, out of a blur. */
+[data-reveal].story-col {
+  opacity: 0;
+  filter: blur(10px);
+  transition:
+    opacity 0.9s ease,
+    filter 0.9s ease,
+    transform 1s var(--ease-rise);
+}
+
+[data-reveal].from-left {
+  transform: translateX(-48px);
+}
+
+[data-reveal].from-right {
+  transform: translateX(48px);
+}
+
+[data-reveal][data-shown].story-col {
+  opacity: 1;
+  filter: none;
+  transform: none;
+}
+
+/* Paragraphs sharpen one after another. */
+[data-reveal] .blur-in {
+  opacity: 0;
+  filter: blur(8px);
+  transition:
+    opacity 0.8s ease,
+    filter 0.8s ease;
+  transition-delay: calc(var(--d, 0ms) + var(--i, 0) * 180ms);
+}
+
+[data-reveal][data-shown] .blur-in {
+  opacity: 1;
+  filter: none;
+}
+
+/* Tags flip down into place like cards on a rail. */
+.tag-box ul {
+  perspective: 600px;
+}
+
+[data-reveal] .tag-flip {
+  opacity: 0;
+  transform: rotateX(-90deg);
+  transform-origin: 50% 0;
+  transition:
+    transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity 0.3s ease;
+  transition-delay: calc(var(--d, 0ms) + 120ms + var(--i, 0) * 80ms);
+}
+
+[data-reveal][data-shown] .tag-flip {
+  opacity: 1;
+  transform: none;
+}
+
+/* Quote: each word darkens in turn as the quote moves up the screen. */
+.ink-word {
+  color: rgb(32 11 56 / 0.18);
+}
+
+@supports (animation-timeline: view()) {
+  .ink-word {
+    animation: ink linear both;
+    animation-timeline: view();
+    animation-range: cover calc(15% + var(--w, 0) * 3%) cover calc(24% + var(--w, 0) * 3%);
+  }
+}
+
+@supports not (animation-timeline: view()) {
+  [data-reveal] .ink-word {
+    transition: color 0.5s ease;
+    transition-delay: calc(200ms + var(--w, 0) * 90ms);
+  }
+
+  [data-reveal][data-shown] .ink-word {
+    color: #200b38;
+  }
+}
+
+@keyframes ink {
+  to {
+    color: #200b38;
+  }
+}
+
+/* Value cards: dealt in at an angle, then they tilt toward the cursor. */
+.tilt-stage {
+  perspective: 1000px;
+}
+
+.deal-card {
+  --deal: calc(var(--d, 0ms) + var(--i, 0) * 140ms);
+  position: relative;
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition:
+    transform 0.4s var(--ease-rise),
+    box-shadow 0.3s ease,
+    opacity 0.6s ease var(--deal),
+    translate 0.9s cubic-bezier(0.34, 1.4, 0.64, 1) var(--deal),
+    rotate 0.9s cubic-bezier(0.34, 1.4, 0.64, 1) var(--deal),
+    scale 0.9s cubic-bezier(0.34, 1.4, 0.64, 1) var(--deal),
+    filter 0.6s ease var(--deal);
+}
+
+[data-reveal] .deal-card {
+  opacity: 0;
+  translate: 0 60px;
+  rotate: calc((var(--i, 0) - 1) * 6deg);
+  scale: 0.9;
+  filter: blur(4px);
+}
+
+[data-reveal][data-shown] .deal-card {
+  opacity: 1;
+  translate: 0 0;
+  rotate: 0deg;
+  scale: 1;
+  filter: none;
+}
+
+.deal-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(280px circle at var(--gx, 50%) var(--gy, 50%), rgb(239 181 43 / 0.14), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.deal-card:hover {
+  box-shadow: 0 22px 40px -20px rgb(32 11 56 / 0.35);
+}
+
+.deal-card:hover::after {
+  opacity: 1;
+}
+
+/* The icon springs in after its card lands. */
+[data-reveal] .icon-pop {
+  scale: 0;
+  rotate: -25deg;
+  transition:
+    scale 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
+    rotate 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition-delay: calc(var(--d, 0ms) + var(--i, 0) * 140ms + 550ms);
+}
+
+[data-reveal][data-shown] .icon-pop {
+  scale: 1;
+  rotate: 0deg;
+}
+
+/* Closing box comes into focus, then a band of light passes over once. */
+[data-reveal].cta-shine {
+  opacity: 0;
+  scale: 0.96;
+  filter: blur(6px);
+  transition:
+    opacity 0.8s ease,
+    scale 0.9s var(--ease-rise),
+    filter 0.8s ease;
+}
+
+[data-reveal][data-shown].cta-shine {
+  opacity: 1;
+  scale: 1;
+  filter: none;
+}
+
+.cta-shine::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / 0.1) 45%, rgb(239 181 43 / 0.18) 50%, rgb(255 255 255 / 0.1) 55%, transparent 65%);
+  translate: -100% 0;
+}
+
+[data-shown].cta-shine::after {
+  animation: shine 1.6s ease 0.7s forwards;
+}
+
+@keyframes shine {
+  to {
+    translate: 100% 0;
+  }
+}
+
+/* Everything appears in place for people who turn motion off. */
+@media (prefers-reduced-motion: reduce) {
+  .about-glow,
+  .focus-in,
+  .focus-word,
+  .focus-out,
+  .ink-word,
+  .cta-shine::after {
+    animation: none !important;
+  }
+
+  .focus-in,
+  .focus-word,
+  [data-reveal].story-col,
+  [data-reveal] .blur-in,
+  [data-reveal] .tag-flip,
+  [data-reveal] .deal-card,
+  [data-reveal] .icon-pop,
+  [data-reveal].cta-shine {
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+    translate: none !important;
+    rotate: none !important;
+    scale: none !important;
+    transition: none !important;
+  }
+
+  .ink-word {
+    color: #200b38 !important;
+  }
+
+  .cta-shine::after {
+    display: none;
+  }
+}

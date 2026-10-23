@@ -1,4 +1,4 @@
-// Thin line icons for each service, drawn with the current text color.
+// Thin line icons for services and the About page, drawn with the current text color.
 // Each stroke is its own path so the icon can draw itself line by line.
 const icons: Record<string, string[]> = {
   'window-washing-traditional-tools': [
@@ -81,6 +81,23 @@ const icons: Record<string, string[]> = {
     'M5 9.5V20h14V9.5',
     'M10 20v-5h4v5',
   ],
+  // Icons for the About page value cards.
+  'value-honesty': [
+    'M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z',
+    'M9 12l2 2 4-4',
+  ],
+  'value-satisfaction': [
+    'M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0',
+    'M8.5 14c.9 1.2 2.1 1.8 3.5 1.8s2.6-.6 3.5-1.8',
+    'M9 9.5v.5',
+    'M15 9.5v.5',
+  ],
+  'value-detail': [
+    'M4 10.5a6.5 6.5 0 1 0 13 0a6.5 6.5 0 1 0-13 0',
+    'M15.5 15.5L20 20',
+    'M10.5 8v5',
+    'M8 10.5h5',
+  ],
 };
 
 const fallback = ['M4 4h16v16H4z', 'M12 4v16', 'M4 12h16'];
@@ -88,8 +105,8 @@ const fallback = ['M4 4h16v16H4z', 'M12 4v16', 'M4 12h16'];
 type ServiceIconProps = {
   slug: string;
   className?: string;
-  // Draw on mount, or wait for a parent marked as shown.
-  draw?: 'auto' | 'reveal';
+  // Draw on mount, wait for a parent marked as shown, or appear without drawing.
+  draw?: 'auto' | 'reveal' | 'none';
 };
 
 export default function ServiceIcon({
@@ -108,7 +125,7 @@ export default function ServiceIcon({
       strokeLinecap='round'
       strokeLinejoin='round'
       data-auto={draw === 'auto' ? '' : undefined}
-      className={`icon-draw ${className}`}>
+      className={`${draw === 'none' ? '' : 'icon-draw'} ${className}`}>
       {paths.map((d, index) => (
         <path
           key={d}

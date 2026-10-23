@@ -34,14 +34,17 @@ export const aboutPromise = {
 // Short points pulled from the promise so visitors can scan them.
 export const aboutValues = [
   {
+    icon: 'value-honesty',
     title: 'Honesty first',
     description: 'Clear communication and fair pricing, with no surprises.',
   },
   {
+    icon: 'value-satisfaction',
     title: '100% satisfaction',
     description: 'We are not done until you are happy with the result.',
   },
   {
+    icon: 'value-detail',
     title: 'Attention to detail',
     description: 'Proven techniques for a streak-free shine and a spotless finish.',
   },
