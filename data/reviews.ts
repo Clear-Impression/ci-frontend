@@ -30,3 +30,71 @@ export const reviews: readonly Review[] = [
     quote: 'My windows are very clear. Professional service.',
   },
 ];
+
+// Overall Google rating shown on the Reviews page.
+// Checked on Google on October 22, 2026. Update the count when it changes.
+export const googleRating = {
+  score: 5.0,
+  count: 110,
+} as const;
+
+// Full Google reviews for the Reviews page, copied word for word on
+// October 22, 2026. Text marked with … was shortened, not reworded.
+// The homepage keeps using the short `reviews` excerpts above.
+export const googleReviews: readonly Review[] = [
+  {
+    id: 'robin-haney',
+    name: 'Robin Haney',
+    rating: 5,
+    quote:
+      'Niels was friendly, professional, and did an excellent job washing our windows. The windows look spotless, and his attention to detail really showed. On top of the great service, his prices were very reasonable and offered excellent value. I highly recommend Niels to anyone looking for a reliable window washer!',
+  },
+  {
+    id: 'shannon-horton-full',
+    name: 'Shannon Horton PhD',
+    rating: 5,
+    quote:
+      'Wonderful experience! My windows are very clear. Professional service. Clear/clean windows are symbolic for seeing clearly in life. Excited to use them again and lighten my task load.',
+  },
+  {
+    id: 'bryce',
+    name: 'Bryce',
+    rating: 5,
+    quote:
+      'Can’t say enough good things windows look awesome. Great communication and quality work all round. Recommending to everyone if your windows need some love!',
+  },
+  {
+    id: 'mary-blake',
+    name: 'Mary Blake',
+    rating: 5,
+    quote:
+      'They did a great job! Fulfilled all my requests, and the windows look nice and shiny. Our house looks much better.',
+  },
+  {
+    id: 'ali-pano-full',
+    name: 'Ali Pano',
+    rating: 5,
+    quote:
+      'What an amazing job this lovely young man did! Our office really needed our windows cleaned so he came in at the perfect time! Great customer service, great price and I have him booked to do my home this week as well! Thank you so much for your excellent service!',
+  },
+  {
+    id: 'appliances-4-less-tempe',
+    name: 'Appliances 4 Less Tempe',
+    rating: 5,
+    quote:
+      'Niels stopped by and offered windows cleaning for a great price. Did the job on the spot, quickly and efficiently. Great work. … I respect the hustle, Hire this guy if you get a chance.',
+  },
+  {
+    id: 'kate-willenborg-full',
+    name: 'Kate Willenborg',
+    rating: 5,
+    quote: 'They were prompt, efficient, friendly, professional, and so kind.',
+  },
+  {
+    id: 'ali-nia',
+    name: 'Ali Nia',
+    rating: 5,
+    quote:
+      'Had Clear Impression Window Cleaning come by today and they did our front door windows for us and they are responsible for doing some of our neighboring businesses window cleaning for them. Great guy and great company, if we ever switch we will give them a try for sure!',
+  },
+];
