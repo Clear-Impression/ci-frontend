@@ -1,18 +1,17 @@
-// faq block
 import FAQAccordion from "./faqAccordion";
-// Read FAQ content from Sanity.
-import { client } from "@/sanity/client";
-import { FAQ_QUERY } from "@/sanity/queries";
+import { getFAQs } from "@/lib/api";
 import type { FAQItem } from "@/types/faq";
 
-// main faq page. use already made hader and footer
 export default async function FAQPage() {
-  // Fetch published FAQs with a 30-second cache revalidation interval.
-  const faqItems = await client.fetch<FAQItem[]>(
-    FAQ_QUERY,
-    {},
-    { cache: "no-store" }
-  );
+  let faqItems: FAQItem[] = [];
+  let unavailable = false;
+
+  try {
+    faqItems = await getFAQs();
+  } catch {
+    unavailable = true;
+  }
+
   return (
     <main className="flex-1 px-6 py-16">
       {/* title */}
@@ -22,8 +21,15 @@ export default async function FAQPage() {
 
       {/* title spacing */}
       <div className="mt-8">
-        {/* Pass the FAQ data into the reusable accordion. */}
-        <FAQAccordion items={faqItems} />
+        {unavailable ? (
+          <p role="status" className="text-gray-600">
+            FAQs are temporarily unavailable. Please try again shortly.
+          </p>
+        ) : faqItems.length === 0 ? (
+          <p className="text-gray-600">There are no published FAQs yet.</p>
+        ) : (
+          <FAQAccordion items={faqItems} />
+        )}
       </div>
     </main>
   );
