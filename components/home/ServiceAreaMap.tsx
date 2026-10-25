@@ -1,25 +1,35 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import type { Map as LeafletMap, Marker } from 'leaflet';
+import type {
+  LayerGroup,
+  Map as LeafletMap,
+  Marker,
+} from 'leaflet';
 import type { ServiceCity } from '@/data/home';
 import 'leaflet/dist/leaflet.css';
 
 type ServiceAreaMapProps = {
   cities: readonly ServiceCity[];
   large?: boolean;
+  showBoundaries?: boolean;
 };
 
 export default function ServiceAreaMap({
   cities,
   large = false,
+  showBoundaries = false,
 }: ServiceAreaMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<LeafletMap | null>(null);
   const markersRef = useRef(new Map<string, Marker>());
+  const boundariesRef = useRef<LayerGroup | null>(null);
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>(
     'loading',
   );
+  const [boundaryStatus, setBoundaryStatus] = useState<
+    'idle' | 'loading' | 'ready' | 'error'
+  >('idle');
   const [tileError, setTileError] = useState(false);
 
   useEffect(() => {
@@ -27,6 +37,72 @@ export default function ServiceAreaMap({
     let map: LeafletMap | undefined;
     let resizeObserver: ResizeObserver | undefined;
     const markers = markersRef.current;
+
+    async function loadBoundaries(
+      L: typeof import('leaflet'),
+      targetMap: LeafletMap,
+    ) {
+      if (!showBoundaries) return;
+
+      setBoundaryStatus('loading');
+      const boundaryLayer = L.layerGroup().addTo(targetMap);
+      boundariesRef.current = boundaryLayer;
+
+      try {
+        for (const [index, city] of cities.entries()) {
+          if (cancelled) return;
+
+          if (index > 0) {
+            await new Promise((resolve) => setTimeout(resolve, 1100));
+          }
+
+          const params = new URLSearchParams({
+            q: `${city.name}, Arizona, USA`,
+            format: 'jsonv2',
+            limit: '1',
+            polygon_geojson: '1',
+          });
+          console.log(`${params.toString()}`);
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/search?${params.toString()}`,
+            { headers: { Accept: 'application/json' } },
+          );
+          if (!response.ok) {
+            throw new Error(
+              `Nominatim returned ${response.status} for ${city.name}.`,
+            );
+          }
+
+          const results: unknown = await response.json();
+          if (
+            !Array.isArray(results) ||
+            !results[0] ||
+            typeof results[0] !== 'object' ||
+            !('geojson' in results[0]) ||
+            !isGeoJsonObject(results[0].geojson)
+          ) {
+            throw new Error(`No polygon boundary was returned for ${city.name}!`);
+          }
+
+          L.geoJSON(results[0].geojson, {
+            style: {
+              color: '#6c3fb8',
+              fillColor: '#8f63d0',
+              fillOpacity: 0.12,
+              opacity: 0.85,
+              weight: 2,
+            },
+          }).addTo(boundaryLayer);
+        }
+
+        if (!cancelled) setBoundaryStatus('ready');
+      } catch (error) {
+        if (!cancelled) {
+          console.error('Unable to load city boundaries.', error);
+          setBoundaryStatus('error');
+        }
+      }
+    }
 
     async function setupMap() {
       try {
@@ -91,6 +167,7 @@ export default function ServiceAreaMap({
         resizeObserver = new ResizeObserver(() => map?.invalidateSize());
         resizeObserver.observe(containerRef.current);
         setStatus('ready');
+        void loadBoundaries(L, map);
       } catch {
         if (!cancelled) setStatus('error');
       }
@@ -104,9 +181,10 @@ export default function ServiceAreaMap({
       resizeObserver?.disconnect();
       map?.remove();
       mapRef.current = null;
+      boundariesRef.current = null;
       markers.clear();
     };
-  }, [cities]);
+  }, [cities, showBoundaries]);
 
   function showCity(city: ServiceCity) {
     const map = mapRef.current;
@@ -168,9 +246,20 @@ export default function ServiceAreaMap({
           ))}
         </ul>
         <p className='mt-3 text-xs leading-5 text-[#686170]'>
-          Pins mark service cities, not exact coverage boundaries. Call to
-          confirm service at your address.
+          Shaded outlines show city boundaries; pins mark the city centers.
+          Call to confirm service at your address.
         </p>
+        {boundaryStatus === 'loading' && (
+          <p role='status' className='mt-2 text-xs text-[#686170]'>
+            Loading city boundaries…
+          </p>
+        )}
+        {boundaryStatus === 'error' && (
+          <p role='status' className='mt-2 text-xs text-[#686170]'>
+            City boundaries could not load. The city pins and list are still
+            available.
+          </p>
+        )}
         {tileError && (
           <p
             role='status'
@@ -180,5 +269,14 @@ export default function ServiceAreaMap({
         )}
       </div>
     </div>
+  );
+}
+
+function isGeoJsonObject(value: unknown): value is GeoJSON.GeoJsonObject {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'type' in value &&
+    typeof value.type === 'string'
   );
 }

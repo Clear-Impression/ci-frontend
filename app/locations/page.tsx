@@ -40,7 +40,7 @@ export default function LocationsPage() {
         className='bg-[#faf8fd]'>
         <div className='mx-auto max-w-7xl px-6 py-12 sm:px-8 sm:py-16'>
           {/* Reuse the homepage map, with more height and the full page width. */}
-          <ServiceAreaMap cities={serviceCities} large />
+          <ServiceAreaMap cities={serviceCities} large showBoundaries />
 
           <div className='mt-12 sm:mt-16'>
             <h2 className='text-3xl font-semibold tracking-tight text-[#000000] sm:text-4xl'>
