@@ -50,7 +50,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
             className='mt-10 size-14 text-[#d9b65f]'
           />
           <p className='mt-6 text-sm font-semibold uppercase tracking-widest text-[#efb52b]'>
-            Clear Impression Services
+            what we do
           </p>
           <h1 className='mt-4 max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl'>
             {service.title}
@@ -61,6 +61,23 @@ export default async function ServicePage({ params }: ServicePageProps) {
         </div>
       </section>
       
+      <section
+        aria-labelledby='service-details-heading'
+        className='flex-1 border-0 bg-[#f7f4fb]'>
+        <div className='mx-auto max-w-4xl px-6 py-8 sm:px-8 sm:py-10'>
+          {/* <h2
+            id='service-details-heading'
+            className='text-1xl font-semibold tracking-tight sm:text-4xl'>
+            Here&apos;s a closer look at our {service.title.toLowerCase()} service.
+          </h2> */}
+          <div className='mt-4 space-y-6 text-lg leading-8 text-gray-700'>
+            {service.detailParagraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className='mx-auto max-w-7xl px-6 py-16 sm:px-8 sm:py-20'>
         <div className='rounded-2xl bg-[#200b38] px-8 py-12 text-white sm:px-12'>
           <h2 className='text-2xl font-semibold sm:text-3xl'>

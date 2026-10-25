@@ -40,8 +40,7 @@ export default function Services() {
             ))}
           </h1>
           <p className='hero-after mt-6 max-w-2xl text-lg text-white/80'>
-            Window and exterior cleaning for homes and businesses across Mesa
-            and the Phoenix metro.
+            Window and exterior cleaning for homes and businesses across Mesa and the Phoenix metro.
           </p>
         </div>
         <div aria-hidden='true' className='squeegee-fog absolute inset-0' />
@@ -57,12 +56,11 @@ export default function Services() {
             id='core-heading'
             className='text-3xl font-semibold tracking-tight sm:text-4xl'>
             <span className='line-mask'>
-              <span className='line-rise'>Two ways we clean your windows</span>
+              <span className='line-rise'>How we clean your windows.</span>
             </span>
           </h2>
           <p className='fade-up mt-4 text-lg leading-relaxed text-gray-600'>
-            We choose the method that suits the glass. Many homes get both:
-            hand detailing inside, pure water outside.
+            We choose the method that best suits the glass. Many homes get both: hand detailing inside, pure water outside.
           </p>
         </Reveal>
 
@@ -135,8 +133,8 @@ export default function Services() {
               </span>
             </h2>
             <p className='fade-up mt-4 text-lg leading-relaxed text-gray-600'>
-              For the jobs regular cleaning doesn’t cover. Select a service to
-              see what’s included.
+              For the jobs regular cleaning doesn&apos;t cover. Select a service to
+              see what&apos;s included.
             </p>
           </Reveal>
           <div className='mt-12'>
