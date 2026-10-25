@@ -6,8 +6,12 @@ import type {
   Map as LeafletMap,
   Marker,
 } from 'leaflet';
+import type { FeatureCollection } from 'geojson';
 import type { ServiceCity } from '@/data/home';
+import rawCityBoundaries from '@/data/geojson/service-city-boundaries.json';
 import 'leaflet/dist/leaflet.css';
+
+const cityBoundaries = rawCityBoundaries as unknown as FeatureCollection;
 
 type ServiceAreaMapProps = {
   cities: readonly ServiceCity[];
@@ -27,9 +31,6 @@ export default function ServiceAreaMap({
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>(
     'loading',
   );
-  const [boundaryStatus, setBoundaryStatus] = useState<
-    'idle' | 'loading' | 'ready' | 'error'
-  >('idle');
   const [tileError, setTileError] = useState(false);
 
   useEffect(() => {
@@ -38,70 +39,32 @@ export default function ServiceAreaMap({
     let resizeObserver: ResizeObserver | undefined;
     const markers = markersRef.current;
 
-    async function loadBoundaries(
+    function loadBoundaries(
       L: typeof import('leaflet'),
       targetMap: LeafletMap,
     ) {
       if (!showBoundaries) return;
 
-      setBoundaryStatus('loading');
       const boundaryLayer = L.layerGroup().addTo(targetMap);
       boundariesRef.current = boundaryLayer;
 
-      try {
-        for (const [index, city] of cities.entries()) {
-          if (cancelled) return;
-
-          if (index > 0) {
-            await new Promise((resolve) => setTimeout(resolve, 1100));
-          }
-
-          const params = new URLSearchParams({
-            q: `${city.name}, Arizona, USA`,
-            format: 'jsonv2',
-            limit: '1',
-            polygon_geojson: '1',
-          });
-          console.log(`${params.toString()}`);
-          const response = await fetch(
-            `https://nominatim.openstreetmap.org/search?${params.toString()}`,
-            { headers: { Accept: 'application/json' } },
-          );
-          if (!response.ok) {
-            throw new Error(
-              `Nominatim returned ${response.status} for ${city.name}.`,
-            );
-          }
-
-          const results: unknown = await response.json();
-          if (
-            !Array.isArray(results) ||
-            !results[0] ||
-            typeof results[0] !== 'object' ||
-            !('geojson' in results[0]) ||
-            !isGeoJsonObject(results[0].geojson)
-          ) {
-            throw new Error(`No polygon boundary was returned for ${city.name}!`);
-          }
-
-          L.geoJSON(results[0].geojson, {
-            style: {
-              color: '#6c3fb8',
-              fillColor: '#8f63d0',
-              fillOpacity: 0.12,
-              opacity: 0.85,
-              weight: 2,
-            },
-          }).addTo(boundaryLayer);
-        }
-
-        if (!cancelled) setBoundaryStatus('ready');
-      } catch (error) {
-        if (!cancelled) {
-          console.error('Unable to load city boundaries.', error);
-          setBoundaryStatus('error');
-        }
-      }
+      L.geoJSON(cityBoundaries, {
+        style: {
+          color: '#6c3fb8',
+          fillColor: '#8f63d0',
+          fillOpacity: 0.12,
+          opacity: 0.85,
+          weight: 2,
+        },
+        onEachFeature: (feature, layer) => {
+          const name =
+            feature.properties &&
+            typeof feature.properties.name === 'string'
+              ? feature.properties.name
+              : 'City';
+          layer.bindTooltip(`${name} city boundary`);
+        },
+      }).addTo(boundaryLayer);
     }
 
     async function setupMap() {
@@ -167,7 +130,7 @@ export default function ServiceAreaMap({
         resizeObserver = new ResizeObserver(() => map?.invalidateSize());
         resizeObserver.observe(containerRef.current);
         setStatus('ready');
-        void loadBoundaries(L, map);
+        loadBoundaries(L, map);
       } catch {
         if (!cancelled) setStatus('error');
       }
@@ -209,7 +172,7 @@ export default function ServiceAreaMap({
       {/* Only the Locations page requests a larger map; other pages keep the original height. */}
       <div
         className={`relative isolate bg-[#eeeaf4] ${
-          large ? 'h-[360px] sm:h-[480px] lg:h-[560px]' : 'h-80 sm:h-96'
+          large ? 'h-90 sm:h-120 lg:h-140' : 'h-80 sm:h-96'
         }`}>
         <div
           ref={containerRef}
@@ -249,17 +212,6 @@ export default function ServiceAreaMap({
           Shaded outlines show city boundaries; pins mark the city centers.
           Call to confirm service at your address.
         </p>
-        {boundaryStatus === 'loading' && (
-          <p role='status' className='mt-2 text-xs text-[#686170]'>
-            Loading city boundaries…
-          </p>
-        )}
-        {boundaryStatus === 'error' && (
-          <p role='status' className='mt-2 text-xs text-[#686170]'>
-            City boundaries could not load. The city pins and list are still
-            available.
-          </p>
-        )}
         {tileError && (
           <p
             role='status'
@@ -269,14 +221,5 @@ export default function ServiceAreaMap({
         )}
       </div>
     </div>
-  );
-}
-
-function isGeoJsonObject(value: unknown): value is GeoJSON.GeoJsonObject {
-  return (
-    typeof value === 'object' &&
-    value !== null &&
-    'type' in value &&
-    typeof value.type === 'string'
   );
 }
