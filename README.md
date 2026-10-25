@@ -13,19 +13,21 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-## Sanity content
+## FAQ API and Sanity content
 
-The FAQ page reads published content from Sanity project `vpeebhw5`, dataset
-`production`. These public identifiers are shared defaults in `sanity/client.ts`,
-so teammates do not need an environment file or API token to read the published
-FAQs. Internet access is required.
+The FAQ page fetches published FAQs through the separate FastAPI application in
+`../ci-backend`. Run that application on port 8000 alongside this frontend.
+See its README for Python setup and startup instructions.
 
-To use a different project or dataset, optionally set
-`NEXT_PUBLIC_SANITY_PROJECT_ID` and `NEXT_PUBLIC_SANITY_DATASET` in `.env.local`.
-Keep private tokens out of Git and out of `NEXT_PUBLIC_` variables.
+The default API address is `http://127.0.0.1:8000`. To change it, copy
+`.env.example` to `.env.local` and set `API_BASE_URL`. This is a server-side
+variable; it does not need a `NEXT_PUBLIC_` prefix. Set a reachable backend URL
+in the hosting environment when deploying. Keep private tokens out of Git.
 
-The website fetches published FAQs without caching so updates appear on
-the next page request. Running Studio is optional for viewing the website.
+FastAPI owns the Sanity configuration and query. The FAQ page fetches without
+caching, so published updates appear on the next request. If the API is
+unavailable, the page displays an unavailable message. An empty published list
+has a separate empty state. Internet access is required by the backend.
 
 Sanity Studio lives in `studio/` in this repository. To run the editing
 interface, open a second terminal from the repository root:
@@ -37,7 +39,10 @@ npm run dev
 ```
 
 Open the URL printed by Studio and sign in with a Sanity account that has
-access to the project. Keep the website running in its own terminal.
+access to the project. Keep the website and backend running in their own
+terminals. Studio is optional for viewing published content. The owner page
+links to `http://localhost:3333` by default; override it with
+`NEXT_PUBLIC_SANITY_STUDIO_URL` if needed.
 ## Commands
 
 - `npm run dev`: start the development server.
@@ -48,7 +53,7 @@ access to the project. Keep the website running in its own terminal.
 ## Current state and scope
 
 The public frontend includes shared layout components and business pages. The
-FAQ page is connected to Sanity; other content may still use local data files.
+FAQ page reads Sanity content through FastAPI; other content uses local data files.
 Google review API integration and real form submission are not implemented.
 
 Vercel is the planned deployment target. The existing Hostinger website remains live and unchanged.
