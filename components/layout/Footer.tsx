@@ -1,7 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { company, serviceAreas, services } from '@/data/company';
+import { company, serviceAreas } from '@/data/company';
 import { getLocationBySlug } from '@/data/locations';
+import { services as servicePages } from '@/data/services';
 
 // Keep hover and keyboard focus styles the same for footer links.
 const linkStyle =
@@ -31,12 +32,16 @@ export default function Footer() {
             {company.description}
           </p>
         </div>
-        {/* Keep service names as text until individual service pages are ready. */}
         <div>
           <h2 className='text-base font-semibold'>Our services</h2>
           <ul className='mt-3 space-y-1 text-sm leading-6 text-white/80'>
-            {services.map((service) => (
-              <li key={service}>{service}</li>
+            {/* 0, 1 are "how the windows are cleaned" thus 2 thru 6 have more relavant links */}
+            {servicePages.slice(2, 6).map((service) => (
+              <li key={service.slug}>
+                <Link href={`/services/${service.slug}`} className={linkStyle}>
+                  {service.title}
+                </Link>
+              </li>
             ))}
           </ul>
         </div>

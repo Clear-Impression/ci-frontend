@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { aboutClosing } from '@/data/about';
 import { company } from '@/data/company';
-import { coreServices, specializedServices } from '@/data/services';
+import { coreServices, howWeDoIt, specializedServices } from '@/data/services';
 import Reveal from '@/components/services/Reveal';
 import ServiceIcon from '@/components/services/ServiceIcon';
 import WindowPane from '@/components/services/WindowPane';
@@ -40,8 +40,7 @@ export default function Services() {
             ))}
           </h1>
           <p className='hero-after mt-6 max-w-2xl text-lg text-white/80'>
-            Window and exterior cleaning for homes and businesses across Mesa
-            and the Phoenix metro.
+            Window and exterior cleaning for homes and businesses across Mesa and the Phoenix metro.
           </p>
         </div>
         <div aria-hidden='true' className='squeegee-fog absolute inset-0' />
@@ -51,18 +50,17 @@ export default function Services() {
       {/* The two core methods are the two sashes of one window. */}
       <section
         aria-labelledby='core-heading'
-        className='mx-auto max-w-7xl px-6 py-16 sm:px-8 sm:py-20'>
+        className='mx-auto max-w-7xl px-6 pb-8 pt-16 sm:px-8 sm:pb-10 sm:pt-20'>
         <Reveal className='max-w-2xl'>
           <h2
             id='core-heading'
             className='text-3xl font-semibold tracking-tight sm:text-4xl'>
             <span className='line-mask'>
-              <span className='line-rise'>Two ways we clean your windows</span>
+              <span className='line-rise'>How we clean your windows.</span>
             </span>
           </h2>
           <p className='fade-up mt-4 text-lg leading-relaxed text-gray-600'>
-            We choose the method that suits the glass. Many homes get both:
-            hand detailing inside, pure water outside.
+            We choose the method that best suits the glass. Many homes get both: hand detailing inside, pure water outside.
           </p>
         </Reveal>
 
@@ -75,7 +73,7 @@ export default function Services() {
               className='pointer-events-none absolute inset-1.5 rounded-xl border border-white/15'
             />
             <div className='relative grid gap-3 sm:gap-4 md:grid-cols-2'>
-              {coreServices.map((service, index) => (
+              {howWeDoIt.map((service, index) => (
                 <div
                   key={service.slug}
                   className='window-sash rounded-lg bg-[#33195a] p-2 sm:p-2.5'>
@@ -121,6 +119,47 @@ export default function Services() {
         </Reveal>
       </section>
 
+      <section
+        aria-labelledby='core-services-heading'
+        className='bg-[#eee6f9]'>
+        <div className='mx-auto max-w-7xl px-6 pb-16 pt-8 sm:px-8 sm:pb-20 sm:pt-10'>
+          <Reveal className='max-w-2xl'>
+            <h2
+              id='core-services-heading'
+              className='text-3xl font-semibold tracking-tight sm:text-4xl'>
+              <span className='line-mask'>
+                <span className='line-rise'>Core Services</span>
+              </span>
+            </h2>
+            <p className='fade-up mt-4 text-lg leading-relaxed text-gray-600'>
+              Reliable property care for homes, businesses, and outdoor surfaces across the Phoenix Valley.
+            </p>
+          </Reveal>
+          <div className='mt-12 grid gap-6 md:grid-cols-2'>
+            {coreServices.map((service) => (
+              <article
+                key={service.slug}
+                className='rounded-2xl border border-[#200b38]/10 bg-[#faf8fd] p-8 shadow-sm'>
+                <h3 className='text-2xl font-semibold tracking-tight'>
+                  {service.title}
+                </h3>
+                <p className='mt-3 font-medium text-[#6c3fb8]'>
+                  {service.previewDescription}
+                </p>
+                <p className='mt-5 leading-relaxed text-gray-700'>
+                  {service.largeDescription}
+                </p>
+                <Link
+                  href={`/services/${service.slug}`}
+                  className='draw-link mt-6 inline-block rounded-sm py-1 font-semibold focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6c3fb8]'>
+                  Explore this service
+                </Link>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Specialized services as a list with a detail pane on wide screens. */}
       <section
         aria-labelledby='specialized-heading'
@@ -131,12 +170,11 @@ export default function Services() {
               id='specialized-heading'
               className='text-3xl font-semibold tracking-tight sm:text-4xl'>
               <span className='line-mask'>
-                <span className='line-rise'>Specialized services</span>
+                <span className='line-rise'>Specialized Services</span>
               </span>
             </h2>
             <p className='fade-up mt-4 text-lg leading-relaxed text-gray-600'>
-              For the jobs regular cleaning doesn’t cover. Select a service to
-              see what’s included.
+              For all your needs to make a Clear Impression.
             </p>
           </Reveal>
           <div className='mt-12'>
