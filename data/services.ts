@@ -6,10 +6,10 @@ export type Service = {
   detailParagraphs: readonly string[];
 };
 
-export const coreServices: Service[] = [
+export const howWeDoIt: Service[] = [
   {
     slug: 'window-washing-traditional-tools',
-    title: "Traditional Tools",
+    title: "Only Traditional Tools",
     previewDescription: "Hand-detailed for a streak-free shine.",
     largeDescription:
       "Professional-grade squeegees, microfiber washers, and eco-friendly soaps are used to scrub and polish fingerprints, grease, and debris. This method is ideal for interior glass, detailed frames, and a mirror-like finish at eye level.",
@@ -22,7 +22,7 @@ export const coreServices: Service[] = [
   },
   {
     slug: 'window-washing-100-percent-pure-water',
-    title: "100% Pure Water",
+    title: "100% Pure Deionized Water",
     previewDescription: "Crystal-clear cleaning for hard-to-reach glass.",
     largeDescription:
       "Our carbon filter, reverse osmosis membrane, and deionization resin produce 100% pure water. It evaporates without leaving minerals or residue, creating a spotless finish on exterior and elevated windows.",
@@ -33,12 +33,80 @@ export const coreServices: Service[] = [
   },
 ];
 
+type CoreServiceData = readonly[
+  title: string,
+  previewDescription : string,
+  largeDescription: string,
+  detailParagraphs: readonly string[],
+];
+
+const coreServiceData: readonly CoreServiceData[] = [
+    [ "Residential Window Washing",
+    "Keep your property looking fresh.",
+    "Comprehensive interior and exterior cleaning. We hand-detail your glass to remove streaks, fingerprints, and debris.",
+    [
+      "Your home is your sanctuary, but living in the valley of the sun means dealing with constant dust, pollen, and monsoon splatter that quickly dulls your view. At Clear Impression Services, our residential window washing is designed to restore the natural light to your living spaces while protecting the integrity of your glass.",
+      "We treat the inside of your home with the utmost respect. Our technicians utilize drop cloths, wear shoe covers, and carefully navigate around your furniture. We use professional-grade squeegees, eco-friendly soaps, and lint-free microfiber cloths to meticulously hand-detail every pane, ensuring that fingerprints, dog smudges, and cooking grease are entirely eliminated.",
+      "For the exterior, we deploy state-of-the-art Water Fed Pole (WFP) technology. By utilizing 100% pure, deionized water, we can safely scrub away heavy environmental buildup from the safety of the ground. Because the water contains zero minerals, it dries completely spot-free, leaving a crystal-clear finish that actually stays clean longer since there is no sticky soap residue left behind to attract new dust. Whether you need a one-time deep clean for an upcoming event or want to join our recurring maintenance schedule to keep your views immaculate year-round, Clear Impression Services is ready to help your home shine."
+    ]
+  ],
+  [ "Commercial & Office Glass",
+    "Make the best impression on your customers.",
+    "Keep your business looking sharp with reliable storefront, retail, and low-rise commercial window maintenance.",
+    [
+      "In the business world, perception is everything. When a potential customer walks up to your storefront, the clarity of your glass is often the very first thing they notice. Fingerprints, smog buildup, and hard water stains send the wrong message. Clear Impression Services provides high-quality, dependable commercial window cleaning that ensures your business always looks professional, inviting, and meticulously maintained.",
+      "We specialize in retail storefronts, restaurants, car dealerships, and low-rise commercial office buildings. We understand that running a business is demanding, which is why we build our service schedules around your operational needs. Whether you require weekly, bi-weekly, or monthly maintenance, our team arrives on time and works efficiently to clean your glass with minimal disruption to your staff and patrons. For ground-level glass, we use traditional applicator and squeegee methods to ensure heavy handprints and tape residues are completely removed. For hard-to-reach or multi-story architectural glass, we utilize our advanced pure water fed pole systems. This allows our technicians to safely clean upper-level windows without the liability and intrusion of heavy lifts or ladders. Protect your brand's image and let the Arizona sun shine into your workspace."
+    ]
+  ],
+  [ "Solar Panel Cleaning",
+    "Maximize energy efficency.",
+    "We safely wash away dust and grime to allow your solar panels to maximize their energy efficiency.",
+    [
+      "Investing in solar energy is a brilliant move in the Arizona Valley, but that investment only pays off if your panels can actually absorb the sun. Over time, a thick layer of desert dust, pollen, ash, and bird droppings will bake onto the surface of your solar array. This buildup acts as a physical barrier, blocking UV rays and reducing your system's energy output by as much as 20% to 30%.",
+      "At Clear Impression Services, we provide specialized solar panel cleaning designed to protect your warranty and maximize your energy production. It is critical to note that solar panels should *never* be cleaned with standard tap water, harsh chemical detergents, or abrasive tools, as this can permanently etch the delicate anti-reflective coating on the glass.",
+      "Instead, our technicians utilize premium XERO equipment and carbon-fiber Water Fed Poles equipped with ultra-soft, scratch-free bristle brushes. We agitate the baked-on grime and rinse the panels using 100% pure, deionized water. Because all the heavy minerals have been stripped from our water supply through advanced reverse osmosis filtration, the water evaporates flawlessly. There are no hard water spots left behind to cast micro-shadows on your solar cells. Maximize your green energy and your savings by keeping your array pristine."
+    ]
+  ],
+  [ "Gutter & Roof Care",
+    "Protect your roof and foundation.",
+    "We thoroughly scoop, clear, and flush your gutters and downspouts to ensure proper water flow during heavy storms.",
+    [
+      "While Arizona may be known for its dry heat, our intense seasonal monsoon storms can drop massive amounts of water in a matter of minutes. If your home's gutter system is clogged with dried leaves, roofing granules, bird nests, and wind-blown debris, that water has nowhere to go. Overflowing gutters can lead to catastrophic damage, including rotted fascia boards, roof leaks, damaged landscaping, and compromised home foundations.",
+      "Clear Impression Services takes the danger and hassle out of gutter maintenance. Our comprehensive gutter and roof care service starts with a careful manual removal of all large debris packed inside the channels. We safely access your roofline, ensuring that we never damage your shingles or metal roofing in the process.",
+      "Once the heavy debris is scooped out and bagged, we don't just pack up and leave. We perform a complete system flush using water to ensure that the downspouts are entirely clear of hidden blockages. We verify that water is flowing rapidly and directing itself safely away from your home's foundation. During our work, we also conduct a visual inspection of your gutter system and will immediately alert you if we spot loose brackets, separating seams, or potential repair needs."
+    ]
+  ],
+  [
+    "Track Detailing",
+    "Allow your windows to slide effortlessly.",
+    "We painstakingly vacuum, scrub, and wipe out the hidden dirt, dead bugs, and mud packed into your window tracks so your windows slide effortlessly and look brand new.",
+    [
+      "Arizona's hard water can leave mineral deposits that become increasingly difficult to remove over time. Our hard water stain removal service is designed to restore the clarity and shine of affected glass.",
+      "We assess the condition of the glass before selecting the appropriate restoration method. Our technicians work carefully to remove buildup while protecting the surrounding frames and surfaces.",
+      "This service is ideal for windows, glass doors, shower glass, and other surfaces affected by sprinkler overspray or mineral-rich water.",
+    ],
+  ],
+]
+
 type SpecializedServiceData = readonly [
   title: string,
   previewDescription: string,
   largeDescription: string,
   detailParagraphs: readonly string[],
 ];
+
+export const coreServices: Service[] = coreServiceData.map(
+  ([title, previewDescription, largeDescription, detailParagraphs]) => ({
+    slug: title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, ''),
+    title,
+    previewDescription,
+    largeDescription,
+    detailParagraphs,
+  }),
+);
 
 const specializedServiceData: readonly SpecializedServiceData[] = [
   [
@@ -54,8 +122,9 @@ const specializedServiceData: readonly SpecializedServiceData[] = [
   ["Screen Deep Cleaning", 
     "Refresh screens covered in dust and debris.", "We remove dust, pollen, and embedded debris from window screens for cleaner airflow and clearer natural light.", 
     [
-      "There is nothing more frustrating than paying for beautifully clean windows, only to have the technician place a filthy, dusty screen right back over the glass. Window screens act like giant air filters for your home. As the wind blows, the tiny mesh squares catch an incredible amount of dust, pollen, pet dander, and spiderwebs. When it rains, that trapped dirt splatters directly onto your freshly cleaned glass. At Clear Impression Services, we believe that clean screens are an absolutely essential part of the window washing process. While a quick dry-wipe might knock off the heaviest cobwebs, it does nothing to remove the fine particulate matter embedded in the mesh.",
-      "Our deep cleaning process involves safely removing your screens and taking them outside. We gently but thoroughly scrub the mesh using specialized screen-cleaning solutions and soft-bristle brushes to lift the embedded grime. We then rinse them completely and tap them dry before carefully reinstalling them. The result is better airflow, fewer allergens entering your home, and a perfectly unobstructed view through your pristine glass."
+      "Living in the Arizona Valley means waging a constant battle against blowing dust. While you might notice the dirt on the glass right away, the real mess is often hiding completely out of sight. Every time the wind blows, fine desert sand, dead insects, pet hair, and pollen are forced into the deep crevices of your window tracks. When it eventually rains, that loose dirt turns into a thick, stubborn mud that bakes hard into the plastic and aluminum channels.",
+      "Clear Impression Services offers a specialized Track Detailing service to combat this exact problem. Ignoring dirty tracks isn't just an aesthetic issue; over time, compacted grit grinds against the window's rollers and weatherstripping. This causes massive friction, making your windows incredibly difficult to open and close, and eventually leading to costly mechanical failures or broken seals.",
+      "Our detailing process is meticulous. We begin by dry-vacuuming the tracks with specialized crevice tools to pull out the loose, heavy debris and cobwebs. Next, we apply a safe, heavy-duty cleaning solution to break down the hardened mud and grime. Using precision track brushes, we agitate the corners and weep holes that normal sponges simply cannot reach. Finally, we wipe the entire assembly down with microfiber towels, leaving you with beautifully clean, fully functional tracks that allow your windows to glide effortlessly."
     ]
   ],
   ["Post-Construction Cleanup", 
@@ -136,7 +205,7 @@ export const specializedServices: Service[] = specializedServiceData.map(
   }),
 );
 
-export const services = [...coreServices, ...specializedServices];
+export const services = [...howWeDoIt, ...coreServices, ...specializedServices];
 
 export function getServiceBySlug(slug: string) {
   return services.find((service) => service.slug === slug);
