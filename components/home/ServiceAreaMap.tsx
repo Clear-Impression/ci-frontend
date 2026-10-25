@@ -1,22 +1,33 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import type { Map as LeafletMap, Marker } from 'leaflet';
+import type {
+  LayerGroup,
+  Map as LeafletMap,
+  Marker,
+} from 'leaflet';
+import type { FeatureCollection } from 'geojson';
 import type { ServiceCity } from '@/data/home';
+import rawCityBoundaries from '@/data/geojson/service-city-boundaries.json';
 import 'leaflet/dist/leaflet.css';
+
+const cityBoundaries = rawCityBoundaries as unknown as FeatureCollection;
 
 type ServiceAreaMapProps = {
   cities: readonly ServiceCity[];
   large?: boolean;
+  showBoundaries?: boolean;
 };
 
 export default function ServiceAreaMap({
   cities,
   large = false,
+  showBoundaries = false,
 }: ServiceAreaMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<LeafletMap | null>(null);
   const markersRef = useRef(new Map<string, Marker>());
+  const boundariesRef = useRef<LayerGroup | null>(null);
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>(
     'loading',
   );
@@ -27,6 +38,34 @@ export default function ServiceAreaMap({
     let map: LeafletMap | undefined;
     let resizeObserver: ResizeObserver | undefined;
     const markers = markersRef.current;
+
+    function loadBoundaries(
+      L: typeof import('leaflet'),
+      targetMap: LeafletMap,
+    ) {
+      if (!showBoundaries) return;
+
+      const boundaryLayer = L.layerGroup().addTo(targetMap);
+      boundariesRef.current = boundaryLayer;
+
+      L.geoJSON(cityBoundaries, {
+        style: {
+          color: '#6c3fb8',
+          fillColor: '#8f63d0',
+          fillOpacity: 0.12,
+          opacity: 0.85,
+          weight: 2,
+        },
+        onEachFeature: (feature, layer) => {
+          const name =
+            feature.properties &&
+            typeof feature.properties.name === 'string'
+              ? feature.properties.name
+              : 'City';
+          layer.bindTooltip(`${name} city boundary`);
+        },
+      }).addTo(boundaryLayer);
+    }
 
     async function setupMap() {
       try {
@@ -91,6 +130,7 @@ export default function ServiceAreaMap({
         resizeObserver = new ResizeObserver(() => map?.invalidateSize());
         resizeObserver.observe(containerRef.current);
         setStatus('ready');
+        loadBoundaries(L, map);
       } catch {
         if (!cancelled) setStatus('error');
       }
@@ -104,9 +144,10 @@ export default function ServiceAreaMap({
       resizeObserver?.disconnect();
       map?.remove();
       mapRef.current = null;
+      boundariesRef.current = null;
       markers.clear();
     };
-  }, [cities]);
+  }, [cities, showBoundaries]);
 
   function showCity(city: ServiceCity) {
     const map = mapRef.current;
@@ -131,7 +172,7 @@ export default function ServiceAreaMap({
       {/* Only the Locations page requests a larger map; other pages keep the original height. */}
       <div
         className={`relative isolate bg-[#eeeaf4] ${
-          large ? 'h-[360px] sm:h-[480px] lg:h-[560px]' : 'h-80 sm:h-96'
+          large ? 'h-90 sm:h-120 lg:h-140' : 'h-80 sm:h-96'
         }`}>
         <div
           ref={containerRef}
@@ -168,8 +209,8 @@ export default function ServiceAreaMap({
           ))}
         </ul>
         <p className='mt-3 text-xs leading-5 text-[#686170]'>
-          Pins mark service cities, not exact coverage boundaries. Call to
-          confirm service at your address.
+          Shaded outlines show city boundaries; pins mark the city centers.
+          Call to confirm service at your address.
         </p>
         {tileError && (
           <p
