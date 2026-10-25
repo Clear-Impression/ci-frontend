@@ -1,9 +1,18 @@
+import type { Metadata } from "next";
 // faq block
 import FAQAccordion from "./faqAccordion";
 // Read FAQ content from Sanity.
 import { client } from "@/sanity/client";
 import { FAQ_QUERY } from "@/sanity/queries";
 import type { FAQItem } from "@/types/faq";
+
+// Give search results a description of this page instead of the site default.
+export const metadata: Metadata = {
+  title: "Window Cleaning FAQs | Clear Impression Services",
+  description:
+    "Find answers to common questions about Clear Impression Services and window cleaning for homes and businesses in Mesa and the Phoenix metro area.",
+  alternates: { canonical: "/faq" },
+};
 
 // main faq page. use already made hader and footer
 export default async function FAQPage() {

@@ -25,7 +25,8 @@ export async function generateMetadata({
 
   return {
     title: `${service.title} | ${company.name}`,
-    description: service.largeDescription,
+    description: `${service.previewDescription} Explore ${service.title.toLowerCase()} for homes and businesses in Mesa and the Phoenix metro.`,
+    alternates: { canonical: `/services/${service.slug}` },
   };
 }
 

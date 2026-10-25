@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   title: 'Window Cleaning in Phoenix Metro | Clear Impression Services',
   description:
     'Residential and commercial window cleaning in Mesa, Gilbert, Chandler, and Tempe. Explore our cleaning methods and request a free quote.',
+  alternates: { canonical: '/' },
 };
 
 export default function Home() {

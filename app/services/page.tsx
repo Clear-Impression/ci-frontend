@@ -10,9 +10,10 @@ import ServiceIndex from './ServiceIndex';
 
 // Describe the page for search engines and link previews.
 export const metadata: Metadata = {
-  title: 'Services | Clear Impression Services',
+  title: 'Window & Exterior Cleaning Services | Clear Impression Services',
   description:
     'Window cleaning with traditional tools or 100% pure water, plus hard water stain removal, screen cleaning, and more across Mesa and the Phoenix metro.',
+  alternates: { canonical: '/services' },
 };
 
 const heroLines = ['Every pane,', 'cleaned the right way.'];

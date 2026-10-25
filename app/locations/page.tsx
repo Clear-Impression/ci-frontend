@@ -8,9 +8,10 @@ import styles from './locations.module.css';
 
 // Give the Locations page its own title and search description.
 export const metadata: Metadata = {
-  title: 'Locations | Clear Impression Services',
+  title: 'Window Cleaning Service Areas | Clear Impression Services',
   description:
     'Explore our window cleaning service cities: Phoenix, Mesa, Gilbert, Chandler, and Tempe.',
+  alternates: { canonical: '/locations' },
 };
 
 export default function LocationsPage() {

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import { company } from "@/data/company";
 import "./globals.css";
 
 // Load the font here so every page uses the same one.
@@ -10,8 +11,9 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-// Use these defaults until each page has its own metadata.
+// Use the public domain when pages supply relative metadata URLs.
 export const metadata: Metadata = {
+  metadataBase: new URL(company.website),
   title: "Clear Impression Services",
   description:
     "Residential and commercial window cleaning in the Phoenix metro area.",

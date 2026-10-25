@@ -8,9 +8,10 @@ import styles from './reviews.module.css';
 
 // Give the Reviews page its own title and search description.
 export const metadata: Metadata = {
-  title: 'Reviews | Clear Impression Services',
+  title: 'Window Cleaning Reviews | Clear Impression Services',
   description:
-    'Rated 5.0 on Google. Read what homeowners and businesses across Mesa and the Phoenix metro say about Clear Impression window cleaning.',
+    'Read customer reviews of Clear Impression Services and see what homeowners and businesses say about window cleaning in Mesa and the Phoenix metro.',
+  alternates: { canonical: '/reviews' },
 };
 
 // Where the small gold sparkles sit in the header, and when each one twinkles.

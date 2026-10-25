@@ -33,6 +33,7 @@ export async function generateMetadata({
   return {
     title: `Window Cleaning in ${location.name}, AZ | ${company.name}`,
     description: location.intro,
+    alternates: { canonical: location.href },
   };
 }
 

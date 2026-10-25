@@ -16,6 +16,7 @@ export const metadata: Metadata = {
   title: 'About Us | Clear Impression Services',
   description:
     'Founded in 2018 in Mesa, Clear Impression delivers honest, detail-focused window and exterior cleaning across the Phoenix metro area.',
+  alternates: { canonical: '/about' },
 };
 
 // Split text into words so each one can animate on its own.
