@@ -1,8 +1,11 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import ServiceAreaMap from '@/components/home/ServiceAreaMap';
-import HomeContact from '@/components/home/HomeContact';
+//import HomeContact from '@/components/home/HomeContact';
+import Reveal from '@/components/services/Reveal'
+import { company } from '@/data/company';;
 import { serviceCities } from '@/data/home';
+import { aboutClosing } from '@/data/about';
 import { locationPages, locationsPageContent } from '@/data/locations';
 import styles from './locations.module.css';
 
@@ -64,8 +67,20 @@ export default function LocationsPage() {
         </div>
       </section>
 
-      {/* Reuse the existing quote and text-message buttons. */}
-      <HomeContact />
+      {/* Reuse quote footer panel from about page.tsx */}
+      <section className='mx-auto max-w-7xl px-6 py-16 sm:px-8 sm:py-20'>
+        <Reveal className='cta-shine relative overflow-hidden rounded-2xl bg-[#200b38] px-8 py-12 text-white sm:px-12'>
+          <h2 className='text-2xl font-semibold sm:text-3xl'>
+            {aboutClosing.heading}
+          </h2>
+          <p className='mt-4 max-w-2xl text-white/80'>{aboutClosing.text}</p>
+          <a
+            href={company.phoneHref}
+            className='relative mt-8 inline-flex min-h-11 items-center rounded-lg bg-[#efb52b] px-5 py-3 text-sm font-semibold text-[#200b38] hover:bg-[#f6c95b] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white'>
+            Call {company.phone} for a quote
+          </a>
+        </Reveal>
+      </section>
     </main>
   );
 }
