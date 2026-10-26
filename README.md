@@ -38,6 +38,44 @@ npm run dev
 
 Open the URL printed by Studio and sign in with a Sanity account that has
 access to the project. Keep the website running in its own terminal.
+## Owner login in local development
+
+The API lives in the separate
+[ci-backend repository](https://github.com/Clear-Impression/ci-backend). Clone it
+beside `ci-frontend`, then follow its README to install Python dependencies, start
+PostgreSQL, apply migrations, and create an owner account.
+
+Start FastAPI from `ci-backend` in a separate terminal:
+
+```bash
+cd ../ci-backend
+source .venv/bin/activate
+python -m uvicorn app.main:app --reload
+```
+
+Start Next.js with `npm run dev` from the repository root, then open
+[http://localhost:3000/owner/login](http://localhost:3000/owner/login).
+Use the email and password entered when creating the owner account.
+
+Next.js forwards login requests to `http://127.0.0.1:8000` by default. Set
+`OWNER_API_URL` in the frontend `.env.local` if the backend uses another address.
+This variable is server-only; it does not need a `NEXT_PUBLIC_` prefix.
+
+For local HTTP, set `OWNER_COOKIE_SECURE=false` in `ci-backend/.env`. Production
+requires HTTPS, `OWNER_COOKIE_SECURE=true`, and the website's origin in
+`OWNER_ALLOWED_ORIGINS` (a JSON array in `ci-backend/.env`). Restart the servers after
+changing environment settings.
+
+Login saves an eight-hour session in an HttpOnly cookie and opens the dashboard.
+The dashboard verifies that session with FastAPI before rendering. Missing,
+invalid, expired, or inactive-owner sessions redirect to sign-in. If verification
+is unavailable, dashboard content stays hidden and a retry message is shown.
+Logout and login attempt limits are still pending. Future customer-data endpoints
+must also use the `require_owner` dependency from `ci-backend/app/api/auth.py`.
+
+Open `clear-impression.code-workspace` to work with both repositories in VS Code.
+They have separate Git histories, branches, and commits.
+
 ## Commands
 
 - `npm run dev`: start the development server.
