@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
       headers.Cookie = `owner_session=${previousToken}`;
     }
 
-    const backend = process.env.OWNER_API_URL || 'http://127.0.0.1:8000';
+    const backend = process.env.OWNER_API_URL || process.env.API_BASE_URL || 'http://127.0.0.1:8000';
     const upstream = await fetch(new URL('/auth/login', backend), {
       method: 'POST',
       headers,

@@ -6,12 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "fetch:boundaries": "node scripts/fetch-city-boundaries.mjs"
   },
   "dependencies": {
     "leaflet": "^1.9.4",
     "next": "16.3.8",
-    "next-sanity": "^13.3.4",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },

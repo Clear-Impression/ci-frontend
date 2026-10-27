@@ -48,7 +48,7 @@ export default async function OwnerDashboardPage() {
   let status = 503;
 
   try {
-    const backend = process.env.OWNER_API_URL || 'http://127.0.0.1:8000';
+    const backend = process.env.OWNER_API_URL || process.env.API_BASE_URL || 'http://127.0.0.1:8000';
     const response = await fetch(new URL('/auth/me', backend), {
       headers: { Cookie: `owner_session=${token}` },
       cache: 'no-store',
