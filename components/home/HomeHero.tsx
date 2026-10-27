@@ -51,7 +51,7 @@ export default function HomeHero({
           </p>
         </div>
         {/* Show the named service cities instead of the old map image. */}
-        <ServiceAreaMap cities={cities} />
+        <ServiceAreaMap cities={cities} showBoundaries />
       </div>
     </section>
   );

@@ -14,10 +14,14 @@ export type ServiceCity = {
 // These are city centers, not the edges of our service coverage.
 export const serviceCities: readonly ServiceCity[] = [
   { name: 'Phoenix', coordinates: [33.4484, -112.074] },
+  { name: 'Glendale', coordinates: [33.5483, -112.1917]},
+  { name: 'Paradise Valley', coordinates: [33.53111, -111.94278]},
+  { name: 'Tempe', coordinates: [33.4255, -111.94] },
+  { name: 'Scottsdale', coordinates: [33.50921, -111.89903]},
+  { name: 'Chandler', coordinates: [33.3062, -111.8413] },
   { name: 'Mesa', coordinates: [33.4152, -111.8315] },
   { name: 'Gilbert', coordinates: [33.3528, -111.789] },
-  { name: 'Chandler', coordinates: [33.3062, -111.8413] },
-  { name: 'Tempe', coordinates: [33.4255, -111.94] },
+  { name: 'Queen Creek', coordinates: [33.24866, -111.63430]},
 ];
 
 export type HomeService = {

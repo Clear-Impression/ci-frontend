@@ -13,7 +13,7 @@ import styles from './locations.module.css';
 export const metadata: Metadata = {
   title: 'Locations | Clear Impression Services',
   description:
-    'Explore our window cleaning service cities: Phoenix, Mesa, Gilbert, Chandler, and Tempe.',
+    'Explore our window cleaning service cities: Phoenix, Mesa, Gilbert, Chandler, Queen Creek, Paradise Valley, Scottsdale, and Tempe.',
 };
 
 export default function LocationsPage() {
