@@ -109,6 +109,9 @@ export default function Footer() {
             <Link href='/terms-and-conditions' className={`inline-flex min-h-11 items-center ${linkStyle}`}>
               Service terms
             </Link>
+            <Link href='/owner/login' className={`inline-flex min-h-11 items-center ${linkStyle}`}>
+              Owner sign in
+            </Link>
           </nav>
         </div>
       </div>

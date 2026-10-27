@@ -1,0 +1,12 @@
+{
+  "folders": [
+    {
+      "name": "ci-frontend",
+      "path": "."
+    },
+    {
+      "name": "ci-backend",
+      "path": "../ci-backend"
+    }
+  ]
+}

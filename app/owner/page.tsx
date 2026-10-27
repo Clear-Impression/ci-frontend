@@ -1,4 +1,9 @@
 import type { Metadata } from 'next';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+
+// Check access on every request instead of generating a public dashboard.
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'Owner Dashboard | Clear Impression Services',
@@ -33,7 +38,55 @@ const sections = [
   },
 ];
 
-export default function OwnerDashboardPage() {
+export default async function OwnerDashboardPage() {
+  const token = (await cookies()).get('owner_session')?.value;
+
+  if (!token || !/^[A-Za-z0-9_-]{43}$/.test(token)) {
+    redirect('/owner/login');
+  }
+
+  let status = 503;
+
+  try {
+    const backend = process.env.OWNER_API_URL || process.env.API_BASE_URL || 'http://127.0.0.1:8000';
+    const response = await fetch(new URL('/auth/me', backend), {
+      headers: { Cookie: `owner_session=${token}` },
+      cache: 'no-store',
+      redirect: 'error',
+      signal: AbortSignal.timeout(5000),
+    });
+    status = response.status;
+  } catch {
+    // Keep dashboard content hidden if verification is unavailable.
+    status = 503;
+  }
+
+  if (status === 401 || status === 403) {
+    redirect('/owner/login');
+  }
+
+  if (status !== 200) {
+    return (
+      <main className='flex-1 bg-[#faf8fd] px-6 py-16 sm:px-8'>
+        <div className='mx-auto max-w-lg rounded-2xl border border-[#200b38]/10 bg-white p-6 sm:p-8'>
+          <h1 className='text-2xl font-semibold text-[#200b38]'>
+            Unable to open your dashboard
+          </h1>
+          <p className='mt-4 leading-7 text-[#686170]'>
+            We couldn’t verify your sign-in. Please try again.
+          </p>
+          <form action='/owner' method='get' className='mt-6'>
+            <button
+              type='submit'
+              className='min-h-12 rounded-lg bg-[#200b38] px-5 py-3 font-semibold text-white hover:bg-[#432462] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6c3fb8]'>
+              Try again
+            </button>
+          </form>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className='flex-1 bg-[#faf8fd] px-6 py-16 sm:px-8'>
       <div className='mx-auto max-w-7xl'>
