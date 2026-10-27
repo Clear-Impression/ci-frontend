@@ -1,4 +1,4 @@
-// Thin line icons for services and the About page, drawn with the current text color.
+// Shared line icons, drawn with the current text color.
 // Each stroke is its own path so the icon can draw itself line by line.
 const icons: Record<string, string[]> = {
   'window-washing-traditional-tools': [
@@ -104,6 +104,8 @@ const fallback = ['M4 4h16v16H4z', 'M12 4v16', 'M4 12h16'];
 
 type ServiceIconProps = {
   slug: string;
+  // Page-specific icons leave the shared set unchanged.
+  paths?: readonly string[];
   className?: string;
   // Draw on mount, wait for a parent marked as shown, or appear without drawing.
   draw?: 'auto' | 'reveal' | 'none';
@@ -111,10 +113,10 @@ type ServiceIconProps = {
 
 export default function ServiceIcon({
   slug,
+  paths = icons[slug] ?? fallback,
   className = '',
   draw = 'reveal',
 }: ServiceIconProps) {
-  const paths = icons[slug] ?? fallback;
   return (
     <svg
       aria-hidden='true'
