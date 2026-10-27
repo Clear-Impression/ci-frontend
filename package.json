@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "fetch:boundaries": "node scripts/fetch-city-boundaries.mjs"
   },
   "dependencies": {
     "leaflet": "^1.9.4",
