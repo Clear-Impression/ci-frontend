@@ -1,0 +1,166 @@
+/* Feedback page motion. The page settles in from the left (text) and below
+   (form) on load, then the thank-you card rises and its check mark draws. */
+
+/* Header and side text lift and sharpen into place. */
+.enter {
+  animation: enter 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: var(--delay, 0ms);
+}
+
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+    filter: blur(4px);
+  }
+}
+
+/* A soft gold glow drifts slowly behind the header. */
+.glow {
+  right: -10%;
+  bottom: -60%;
+  width: 55%;
+  aspect-ratio: 1;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgb(239 181 43 / 0.18), rgb(108 63 184 / 0.12) 45%, transparent 70%);
+  animation: glow 12s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  to {
+    transform: translate(-18%, -12%) scale(1.15);
+  }
+}
+
+/* The three points slide in from the left one after another,
+   and each icon tile pops as its point arrives. */
+.slideIn {
+  animation: slide-in 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: var(--delay, 0ms);
+}
+
+.slideIn .tile {
+  animation: pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: calc(var(--delay, 0ms) + 150ms);
+}
+
+.tile {
+  transition: transform 0.25s ease, background-color 0.25s ease, color 0.25s ease;
+}
+
+.slideIn:hover .tile {
+  transform: translateY(-2px) rotate(-4deg);
+  background-color: #200b38;
+  color: #efb52b;
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0.4);
+  }
+}
+
+/* The urgent-help card gets one band of light across it. */
+.shine::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 35%, rgb(239 181 43 / 0.18) 50%, transparent 65%);
+  transform: translateX(-100%);
+  animation: shine 1.4s ease 1.3s forwards;
+}
+
+@keyframes shine {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* The form card rises in, its stripe draws across, then the fields follow. */
+.rise {
+  animation: rise-card 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: var(--delay, 0ms);
+}
+
+@keyframes rise-card {
+  from {
+    opacity: 0;
+    transform: translateY(32px) scale(0.98);
+  }
+}
+
+.stripe {
+  transform-origin: left;
+  animation: stripe 0.9s cubic-bezier(0.65, 0, 0.35, 1) 0.45s both;
+}
+
+@keyframes stripe {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+.field {
+  animation: enter 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: var(--delay, 0ms);
+}
+
+/* After a send attempt the form refills, so it should not animate in again. */
+[data-settled] .field {
+  animation: none;
+}
+
+/* Thank-you card. */
+.success {
+  animation: rise 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.check {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw 0.6s cubic-bezier(0.65, 0, 0.35, 1) 0.25s forwards;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .success,
+  .check,
+  .enter,
+  .glow,
+  .slideIn,
+  .slideIn .tile,
+  .shine::after,
+  .rise,
+  .stripe,
+  .field {
+    animation: none;
+  }
+
+  .shine::after {
+    display: none;
+  }
+
+  .check {
+    stroke-dashoffset: 0;
+  }
+}
