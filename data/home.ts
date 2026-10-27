@@ -1,7 +1,7 @@
 // Keep the homepage copy separate so it can move to a CMS later.
 export const homeHero = {
   eyebrow: 'Window cleaning in the Phoenix metro area',
-  title: 'Clear Impressions. Always.',
+  title: 'Clear Impression. Always.',
   description:
     'Serving Phoenix Metro with spotless windows that brighten your home or business inside and out.',
 };
