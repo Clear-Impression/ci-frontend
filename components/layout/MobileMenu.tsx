@@ -7,11 +7,13 @@ import type { NavigationItem } from '@/data/company';
 type MobileMenuProps = {
   items: readonly NavigationItem[];
   website: string;
+  quoteHref: string;
 };
 
 export default function MobileMenu({
   items,
   website,
+  quoteHref,
 }: MobileMenuProps) {
   // Start with the menu closed so it does not cover the page.
   const [open, setOpen] = useState(false);
@@ -83,14 +85,14 @@ export default function MobileMenu({
               )}
             </li>
           ))}
-          {/* Close the menu when opening the quote page. */}
+          {/* Close the menu when opening the quote form. */}
           <li className='mt-3'>
-            <Link
-              href='/quote'
+            <a
+              href={quoteHref}
               onClick={() => setOpen(false)}
               className='block rounded-lg bg-[#efb52b] px-4 py-3 text-center font-semibold text-[#200b38] hover:bg-[#f6c95b] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white'>
               Request a quote
-            </Link>
+            </a>
           </li>
           {/* Keep the existing website available while this one is being built. */}
           <li>

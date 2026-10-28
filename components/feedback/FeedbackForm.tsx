@@ -13,6 +13,7 @@ import {
 type FeedbackFormProps = {
   phone: string;
   phoneHref: string;
+  formUrl: string;
 };
 
 const initialState: FeedbackState = { status: 'idle' };
@@ -93,8 +94,8 @@ function IconInput({ field, label, type, autoComplete, placeholder, defaultValue
   );
 }
 
-export default function FeedbackForm({ phone, phoneHref }: FeedbackFormProps) {
-  const [state, formAction, pending] = useActionState(submitFeedback, initialState);
+export default function FeedbackForm({ phone, phoneHref, formUrl }: FeedbackFormProps) {
+  const [state, formAction] = useActionState(submitFeedback, initialState);
   const [clientErrors, setClientErrors] = useState<Partial<Record<FeedbackField, string>>>({});
   const [messageLength, setMessageLength] = useState(state.values?.message?.length ?? 0);
   const resultRef = useRef<HTMLDivElement>(null);
@@ -254,18 +255,15 @@ export default function FeedbackForm({ phone, phoneHref }: FeedbackFormProps) {
             <p className='text-xs leading-5 text-gray-500'>
               We only use your email to follow up on your feedback.
             </p>
-            <button
-              type='submit'
-              disabled={pending}
-              className='inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-[#200b38] px-7 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#33195a] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6c3fb8] active:scale-[0.98] disabled:cursor-wait disabled:opacity-80'>
-              {pending && (
-                <svg aria-hidden='true' viewBox='0 0 24 24' className='size-4 animate-spin' fill='none'>
-                  <circle cx='12' cy='12' r='9' stroke='currentColor' strokeOpacity='0.3' strokeWidth='3' />
-                  <path d='M21 12a9 9 0 0 0-9-9' stroke='currentColor' strokeWidth='3' strokeLinecap='round' />
-                </svg>
-              )}
-              {pending ? 'Sending…' : 'Send feedback'}
-            </button>
+            {/* Open the Google Form in a new tab, so anything typed here stays put. */}
+            <a
+              href={formUrl}
+              target='_blank'
+              rel='noopener noreferrer'
+              className='inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-[#200b38] px-7 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#33195a] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6c3fb8] active:scale-[0.98]'>
+              Send feedback
+              <span className='sr-only'> (opens in a new tab)</span>
+            </a>
           </div>
         </form>
       </div>

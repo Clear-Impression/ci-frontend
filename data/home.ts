@@ -1,7 +1,7 @@
 import { company } from '@/data/company';
 
-// Keep using the live quote form until the new form can submit requests.
-const quoteHref = `${company.website}get-a-quote`;
+// Send quote requests to the Google Form until the new form can submit them.
+const quoteHref = company.quoteFormUrl;
 
 // Keep the homepage copy separate so it can move to a CMS later.
 export const homeHero = {
