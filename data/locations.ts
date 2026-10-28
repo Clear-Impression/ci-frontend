@@ -3,9 +3,9 @@ import { serviceCities } from '@/data/home';
 // Keep Locations page copy here so it can move to a CMS later.
 export const locationsPageContent = {
   eyebrow: 'Where we work',
-  title: 'Our locations.',
-  description:
-    'Residential and commercial window cleaning across Phoenix, Mesa, Gilbert, Chandler, and Tempe.',
+  title: 'Clear views across the Valley.',
+  // Count the cities so this stays right when a new one is added.
+  description: `Residential and commercial window cleaning in ${serviceCities.length} cities, from Glendale to Queen Creek.`,
   citiesHeading: 'Cities we serve.',
   citiesDescription: 'Explore window cleaning in your city.',
 } as const;

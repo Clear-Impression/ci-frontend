@@ -1,4 +1,120 @@
 /* These styles apply only to the Locations overview and city pages. */
+
+/* Overview header: the description fades up once the headline has risen. */
+.headerIntro {
+  opacity: 0;
+  animation: fade-up 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) 0.45s forwards;
+}
+
+/* The route map in the header. Faint city outlines appear first, then the
+   route draws from Glendale to Queen Creek as each city's pin drops in. */
+.routeOutline {
+  fill: rgb(255 255 255 / 0.04);
+  stroke: rgb(255 255 255 / 0.16);
+  stroke-width: 1;
+  opacity: 0;
+  animation: fade-in 1.2s ease forwards;
+}
+
+.routeTrail {
+  fill: none;
+  stroke: rgb(255 255 255 / 0.18);
+  stroke-width: 2;
+  stroke-dasharray: 2 7;
+  stroke-linecap: round;
+}
+
+.routeLine {
+  fill: none;
+  stroke: #efb52b;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw-route 2.6s cubic-bezier(0.65, 0, 0.35, 1) 0.4s forwards;
+}
+
+.routePin {
+  opacity: 0;
+  animation: pin-drop 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  animation-delay: calc(0.5s + var(--i, 0) * 0.27s);
+}
+
+.pinDot {
+  fill: #efb52b;
+  stroke: #200b38;
+  stroke-width: 2;
+}
+
+/* Mesa, the home base, keeps a soft pulsing ring. */
+.pinHalo {
+  fill: none;
+  stroke: #efb52b;
+  stroke-width: 1.5;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pin-halo 2.4s ease-out 3.4s infinite both;
+}
+
+.pinLabel {
+  fill: rgb(255 255 255 / 0.85);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.homeLabel {
+  fill: #efb52b;
+  font-weight: 600;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-in {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes draw-route {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes pin-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pin-halo {
+  0% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  10% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.6);
+  }
+}
+
 .directoryDescription {
   margin-top: 12px;
   color: #686170;
@@ -17,6 +133,34 @@
 
 .cityGrid > li {
   border-bottom: 1px solid #ddd5e6;
+}
+
+/* When the list scrolls into view, each divider draws across and the city
+   names rise in one after another, like the list on the Services page. */
+[data-reveal] .cityGrid > li {
+  border-bottom-color: transparent;
+  background: linear-gradient(#ddd5e6, #ddd5e6) left bottom / 0 1px no-repeat;
+  background-origin: border-box;
+  transition: background-size 0.9s cubic-bezier(0.65, 0, 0.35, 1);
+  transition-delay: calc(var(--i, 0) * 70ms);
+}
+
+[data-reveal][data-shown] .cityGrid > li {
+  background-size: 100% 1px;
+}
+
+[data-reveal] .cityLink {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 0.6s ease,
+    transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition-delay: calc(120ms + var(--i, 0) * 70ms);
+}
+
+[data-reveal][data-shown] .cityLink {
+  opacity: 1;
+  transform: none;
 }
 
 .cityLink {
@@ -268,5 +412,45 @@
 @media (max-width: 400px) {
   .cityGrid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* City names on the header map need the wider layout to fit. */
+@media (max-width: 1023px) {
+  .pinLabel {
+    display: none;
+  }
+}
+
+/* The header map appears in place for people who turn motion off. */
+@media (prefers-reduced-motion: reduce) {
+  .headerIntro,
+  .routeOutline,
+  .routePin {
+    animation: none;
+    opacity: 1;
+  }
+
+  .routeLine {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+
+  .pinHalo {
+    display: none;
+  }
+
+  [data-reveal] .cityGrid > li,
+  [data-reveal] .cityLink {
+    transition: none;
+  }
+
+  [data-reveal] .cityGrid > li {
+    background-size: 100% 1px;
+  }
+
+  [data-reveal] .cityLink {
+    opacity: 1;
+    transform: none;
   }
 }
