@@ -35,10 +35,15 @@ export const services = [
   'Screen cleaning',
 ] as const;
 
+// Keep these names in sync with serviceCities in data/home.ts.
 export const serviceAreas = [
   'Mesa',
-  'Gilbert',
-  'Chandler',
+  'Phoenix',
+  'Glendale',
+  'Paradise Valley',
   'Tempe',
-  'Phoenix metro',
+  'Scottsdale',
+  'Chandler',
+  'Gilbert',
+  'Queen Creek',
 ] as const;

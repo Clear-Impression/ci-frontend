@@ -40,7 +40,7 @@ export const googleRating = {
 
 // Full Google reviews for the Reviews page, copied word for word on
 // October 22, 2026. Text marked with … was shortened, not reworded.
-// The homepage keeps using the short `reviews` excerpts above.
+// The homepage and the Reviews page both show these in the review wall.
 export const googleReviews: readonly Review[] = [
   {
     id: 'robin-haney',

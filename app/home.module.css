@@ -1,0 +1,195 @@
+/* Home page animations. Shared effects stay in globals.css. */
+
+.heroGlow {
+  pointer-events: none;
+  background:
+    radial-gradient(60% 80% at 85% 15%, rgb(108 63 184 / 0.5), transparent 70%),
+    radial-gradient(45% 55% at 5% 105%, rgb(239 181 43 / 0.1), transparent 70%);
+}
+
+.heroIntro {
+  opacity: 0;
+  animation: rise-in 0.9s var(--ease-rise) forwards;
+  animation-delay: calc(450ms + var(--i, 0) * 140ms);
+}
+
+.heroWindow {
+  opacity: 0;
+  animation: rise-in 1s var(--ease-rise) 250ms forwards;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Move each water drop down its own full-height strip. */
+.drop {
+  position: absolute;
+  top: 0;
+  left: var(--x);
+  width: 5px;
+  height: 100%;
+  pointer-events: none;
+  transform: translateY(-100%);
+  animation: drip 4.4s cubic-bezier(0.5, 0, 0.75, 1) var(--delay, 0s) infinite both;
+}
+
+.drop::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: var(--h, 18px);
+  border-radius: 9999px;
+  background: linear-gradient(rgb(255 255 255 / 0), rgb(255 255 255 / 0.85));
+  box-shadow: 0 0 6px rgb(255 255 255 / 0.4);
+}
+
+@keyframes drip {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  12%,
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+}
+
+.glare {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 30%, rgb(255 255 255 / 0.3) 45%, transparent 60%);
+  transform: translateX(-120%);
+  animation: glare 7s ease-in-out 1.5s infinite;
+}
+
+@keyframes glare {
+  0% {
+    transform: translateX(-120%);
+  }
+  35%,
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+/* Reveal can wrap a group or be the animated item itself. */
+[data-reveal].rise,
+[data-reveal] .rise {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.7s ease,
+    transform 0.8s var(--ease-rise);
+  transition-delay: calc(var(--d, 0ms) + var(--i, 0) * 110ms);
+}
+
+[data-reveal][data-shown].rise,
+[data-reveal][data-shown] .rise {
+  opacity: 1;
+  transform: none;
+}
+
+/* Show water moving between the filter stages. */
+.pipe {
+  overflow: hidden;
+  border-radius: 9999px;
+  background: #e9e1f5;
+}
+
+.pipe::after {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: 30%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, transparent, #6c3fb8, #efb52b);
+  transform: translateX(-100%);
+  animation: flow 2.8s linear infinite;
+}
+
+@keyframes flow {
+  to {
+    transform: translateX(340%);
+  }
+}
+
+.stepIn {
+  animation: rise-in 0.5s var(--ease-rise);
+}
+
+/* Keep the decorative shine from intercepting card clicks. */
+.serviceCard::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(100deg, transparent 35%, rgb(239 181 43 / 0.18) 50%, transparent 65%);
+  transform: translateX(-110%);
+  transition: transform 0.7s var(--ease-wipe);
+}
+
+.serviceCard:hover::after {
+  transform: translateX(110%);
+}
+
+.stepsLine {
+  transform-origin: left;
+}
+
+[data-reveal] .stepsLine {
+  transform: scaleX(0);
+  transition: transform 1.4s var(--ease-wipe) 200ms;
+}
+
+[data-reveal][data-shown] .stepsLine {
+  transform: scaleX(1);
+}
+
+/* Show content without movement when reduced motion is enabled. */
+@media (prefers-reduced-motion: reduce) {
+  .drop,
+  .glare {
+    display: none;
+  }
+
+  .pipe::after {
+    animation: none;
+    opacity: 0;
+  }
+
+  .heroIntro,
+  .heroWindow,
+  .stepIn {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  [data-reveal].rise,
+  [data-reveal] .rise,
+  [data-reveal] .stepsLine {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .serviceCard::after {
+    display: none;
+  }
+}

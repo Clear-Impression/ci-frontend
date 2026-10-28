@@ -49,8 +49,8 @@ export default function Footer() {
           <h2 className='text-base font-semibold'>Service areas</h2>
           <ul className='mt-3 space-y-1 text-sm leading-6 text-white/80'>
             {serviceAreas.map((area) => {
-              // Keep the original order; Phoenix now has its own city page.
-              const slug = area === 'Phoenix metro' ? 'phoenix' : area.toLowerCase();
+              // Use hyphens for city names with spaces.
+              const slug = area.toLowerCase().replace(/ /g, '-');
               const location = getLocationBySlug(slug);
 
               return (
