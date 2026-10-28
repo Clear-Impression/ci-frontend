@@ -111,6 +111,7 @@ export default function FeedbackPage() {
             <FeedbackForm
               phone={company.phone}
               phoneHref={company.phoneHref}
+              formUrl={company.feedbackFormUrl}
             />
           </div>
         </div>

@@ -9,6 +9,11 @@ export const company = {
   emailHref: 'mailto:info@clearimpressionservices.com',
   website: 'https://clearimpressionservices.com/',
   logo: '/logos/logo.png',
+  // Google Forms collect quote requests and feedback until the site's own forms can send.
+  quoteFormUrl:
+    'https://docs.google.com/forms/d/e/1FAIpQLSeBNIiA-2ARD6cFt-8b4Qk-QQyFrjhL8AwlswpYtWp3SCTMWw/viewform',
+  feedbackFormUrl:
+    'https://docs.google.com/forms/d/e/1FAIpQLSevEVD-eUzXwsID7ZJc0XC7KFT5cKhLwyUU9Ifvm2ILNu9F1A/viewform',
 } as const;
 
 export type NavigationItem = {

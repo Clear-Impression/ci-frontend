@@ -13,14 +13,13 @@ export default function HomeContact() {
             Ready for a clearer view?
           </h2>
           <p className='mt-3 text-sm leading-7 text-[#686170]'>
-            Call or text {company.phone}, or request a free quote on our live
-            website.
+            Call or text {company.phone}, or request a free quote online.
           </p>
         </div>
         {/* Use working contact options while the new site's forms are being built. */}
         <div className='flex flex-wrap gap-3'>
           <a
-            href={`${company.website}get-a-quote`}
+            href={company.quoteFormUrl}
             className='inline-flex min-h-12 items-center justify-center rounded-lg bg-[#200b38] px-5 py-3 text-sm font-semibold text-white hover:bg-[#432462] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6c3fb8]'>
             Get a free quote
           </a>
