@@ -2,12 +2,15 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { company, navigation } from '@/data/company';
 import MobileMenu from './MobileMenu';
+import StickyHeader from './StickyHeader';
 
 export default function Navbar() {
   return (
-    <header className='relative z-20 bg-[#200b38] text-white'>
+    // Pinned to the top of the screen. The top strip tucks away and the logo
+    // shrinks after scrolling, then both come back at the top of the page.
+    <StickyHeader className='site-header sticky top-0 z-50 bg-[#200b38] text-white'>
       {/* Keep the service area and phone number easy to find. */}
-      <div className='border-b border-white/15'>
+      <div className='header-strip border-b border-white/15'>
         <div className='mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-6 py-3 text-xs sm:px-8 sm:text-sm'>
           <span className='text-white/80'>Serving the Phoenix metro area</span>
           <a
@@ -17,7 +20,7 @@ export default function Navbar() {
           </a>
         </div>
       </div>
-      <div className='mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-3 sm:px-8'>
+      <div className='header-row mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-3 sm:px-8'>
         {/* The company logo takes visitors back to the homepage. */}
         <Link
           href='/'
@@ -31,7 +34,7 @@ export default function Navbar() {
             height={375}
             priority
             sizes='96px'
-            className='h-24 w-24 rounded-lg'
+            className='header-logo h-24 w-24 rounded-lg'
           />
         </Link>
         {/* Keep unfinished pages visible without linking to missing routes. */}
@@ -73,6 +76,6 @@ export default function Navbar() {
           quoteHref={company.quoteFormUrl}
         />
       </div>
-    </header>
+    </StickyHeader>
   );
 }

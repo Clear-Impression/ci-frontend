@@ -33,7 +33,7 @@ export default function TermsPage() {
 
       <div className='mx-auto grid max-w-7xl items-start gap-8 px-6 py-10 sm:px-8 sm:py-12 lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-12'>
         {/* Plain anchor links work with a keyboard and need no client JavaScript. */}
-        <aside className='lg:sticky lg:top-8'>
+        <aside className='lg:sticky lg:top-28'>
           <nav aria-label='Jump to terms topic'>
             <h2 className='text-xs font-semibold uppercase tracking-widest text-[#6c3fb8]'>On this page</h2>
             <ul className='mt-4 flex flex-wrap gap-2 lg:flex-col'>

@@ -65,7 +65,7 @@ export default function ServiceIndex({ services }: ServiceIndexProps) {
 
       {/* Desktop only: phones go straight to each service page from the list. */}
       <aside aria-label='Selected service' className='hidden lg:block'>
-        <div className='sticky top-8 overflow-hidden rounded-2xl bg-[#200b38] text-white shadow-lg shadow-[#200b38]/20'>
+        <div className='sticky top-28 overflow-hidden rounded-2xl bg-[#200b38] text-white shadow-lg shadow-[#200b38]/20'>
           {/* Re-keying replays the squeegee wipe each time the service changes. */}
           <div key={active.slug} className='relative'>
             <div className='pane-wipe p-8 sm:p-10'>
