@@ -30,6 +30,139 @@ html:has(#service-terms) {
 }
 
 /* ------------------------------------------------------------------
+   Pinned header
+   ------------------------------------------------------------------ */
+
+/* Jump links stop below the pinned header instead of under it. */
+html {
+  scroll-padding-top: 6rem;
+}
+
+.header-strip {
+  max-height: 4rem;
+  overflow: hidden;
+  transition:
+    max-height 0.3s ease,
+    opacity 0.25s ease;
+}
+
+.header-row {
+  transition: padding 0.3s ease;
+}
+
+.header-logo {
+  transition:
+    width 0.3s ease,
+    height 0.3s ease;
+}
+
+.site-header {
+  transition: box-shadow 0.3s ease;
+}
+
+/* After scrolling: hide the top strip, shrink the logo, add a soft shadow. */
+.site-header[data-scrolled] {
+  box-shadow: 0 10px 30px -14px rgb(0 0 0 / 0.55);
+}
+
+.site-header[data-scrolled] .header-strip {
+  max-height: 0;
+  opacity: 0;
+}
+
+.site-header[data-scrolled] .header-row {
+  padding-block: 0.5rem;
+}
+
+.site-header[data-scrolled] .header-logo {
+  width: 3.5rem;
+  height: 3.5rem;
+}
+
+/* Preview panels under the Services and Locations tabs. */
+.nav-caret {
+  transition: rotate 0.25s ease;
+}
+
+.nav-tab[data-open] {
+  color: #efb52b;
+}
+
+.nav-tab[data-open] .nav-caret {
+  rotate: 180deg;
+}
+
+.nav-panel {
+  visibility: hidden;
+  opacity: 0;
+  translate: 0 8px;
+  pointer-events: none;
+  transition:
+    opacity 0.2s ease,
+    translate 0.25s var(--ease-rise, ease),
+    visibility 0s linear 0.25s;
+}
+
+.nav-panel[data-open] {
+  visibility: visible;
+  opacity: 1;
+  translate: 0 0;
+  pointer-events: auto;
+  transition:
+    opacity 0.2s ease,
+    translate 0.3s var(--ease-rise, ease),
+    visibility 0s;
+}
+
+/* Items rise in one after another when the panel opens. */
+.nav-panel .nav-stagger {
+  opacity: 0;
+  translate: 0 6px;
+}
+
+.nav-panel[data-open] .nav-stagger {
+  opacity: 1;
+  translate: 0 0;
+  transition:
+    opacity 0.3s ease,
+    translate 0.35s var(--ease-rise, ease);
+  transition-delay: calc(60ms + var(--n, 0) * 25ms);
+}
+
+.nav-item .nav-icon {
+  transition:
+    background-color 0.2s ease,
+    scale 0.2s ease;
+}
+
+.nav-item:hover .nav-icon {
+  scale: 1.08;
+}
+
+.nav-all:hover .nav-arrow {
+  translate: 3px 0;
+}
+
+.nav-arrow {
+  transition: translate 0.2s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header-strip,
+  .header-row,
+  .header-logo,
+  .site-header,
+  .nav-caret,
+  .nav-panel,
+  .nav-panel[data-open],
+  .nav-panel .nav-stagger,
+  .nav-panel[data-open] .nav-stagger {
+    transition: none;
+    translate: none;
+  }
+}
+
+/* ------------------------------------------------------------------
    Services page
    Uses the site palette: ink #200b38, gold #efb52b, violet #6c3fb8,
    lavender #f7f4fb, with a softer gold #d9b65f for animated accents.
@@ -842,4 +975,24 @@ html:has(#service-terms) {
   .cta-shine::after {
     display: none;
   }
+}
+
+/* ------------------------------------------------------------------
+   Services page: media library.
+   ------------------------------------------------------------------ */
+
+/* Placeholder for services that do not have media yet: frosted glass. */
+.media-empty {
+  background:
+    linear-gradient(135deg, rgb(255 255 255 / 0.12), transparent 45%),
+    linear-gradient(315deg, rgb(239 181 43 / 0.14), transparent 50%),
+    #33195a;
+}
+
+.media-empty::before {
+  content: '';
+  position: absolute;
+  inset: 12px;
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-radius: 0.5rem;
 }

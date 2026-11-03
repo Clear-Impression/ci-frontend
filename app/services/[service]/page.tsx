@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import QuoteActions from '@/components/ui/QuoteActions';
 import { aboutClosing } from '@/data/about';
 import { company } from '@/data/company';
 import { getServiceBySlug, services } from '@/data/services';
@@ -84,11 +85,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
             {aboutClosing.heading}
           </h2>
           <p className='mt-4 max-w-2xl text-white/80'>{aboutClosing.text}</p>
-          <a
-            href={company.phoneHref}
-            className='mt-8 inline-flex min-h-11 items-center rounded-lg bg-[#efb52b] px-5 py-3 text-sm font-semibold text-[#200b38] hover:bg-[#f6c95b] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white'>
-            Call {company.phone} for a quote
-          </a>
+          <QuoteActions />
         </div>
       </section>
     </main>

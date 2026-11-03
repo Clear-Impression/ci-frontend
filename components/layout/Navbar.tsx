@@ -2,12 +2,17 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { company, navigation } from '@/data/company';
 import MobileMenu from './MobileMenu';
+import NavDropdown from './NavDropdown';
+import { LocationsPreview, ServicesPreview } from './NavPreviews';
+import StickyHeader from './StickyHeader';
 
 export default function Navbar() {
   return (
-    <header className='relative z-20 bg-[#200b38] text-white'>
+    // Pinned to the top of the screen. The top strip tucks away and the logo
+    // shrinks after scrolling, then both come back at the top of the page.
+    <StickyHeader className='site-header sticky top-0 z-50 bg-[#200b38] text-white'>
       {/* Keep the service area and phone number easy to find. */}
-      <div className='border-b border-white/15'>
+      <div className='header-strip border-b border-white/15'>
         <div className='mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-6 py-3 text-xs sm:px-8 sm:text-sm'>
           <span className='text-white/80'>Serving the Phoenix metro area</span>
           <a
@@ -17,7 +22,7 @@ export default function Navbar() {
           </a>
         </div>
       </div>
-      <div className='mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-3 sm:px-8'>
+      <div className='header-row mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-3 sm:px-8'>
         {/* The company logo takes visitors back to the homepage. */}
         <Link
           href='/'
@@ -31,7 +36,7 @@ export default function Navbar() {
             height={375}
             priority
             sizes='96px'
-            className='h-24 w-24 rounded-lg'
+            className='header-logo h-24 w-24 rounded-lg'
           />
         </Link>
         {/* Keep unfinished pages visible without linking to missing routes. */}
@@ -39,25 +44,35 @@ export default function Navbar() {
           aria-label='Main navigation'
           className='hidden lg:block'>
           <ul className='flex items-center gap-6 text-sm font-medium'>
-            {navigation.map((item) => (
-              <li key={item.href}>
-                {item.available ? (
-                  <Link
-                    href={item.href}
-                    className='rounded-sm py-3 hover:text-[#efb52b] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#efb52b]'>
-                    {item.label}
-                  </Link>
-                ) : (
-                  <span
-                    aria-disabled='true'
-                    title='Coming soon'
-                    className='text-white/60'>
-                    {item.label}
-                    <span className='sr-only'> (coming soon)</span>
-                  </span>
-                )}
-              </li>
-            ))}
+            {navigation.map((item) =>
+              item.available && item.preview ? (
+                // Services and Locations show a preview of every page under them.
+                <NavDropdown
+                  key={item.href}
+                  label={item.label}
+                  href={item.href}>
+                  {item.preview === 'services' ? <ServicesPreview /> : <LocationsPreview />}
+                </NavDropdown>
+              ) : (
+                <li key={item.href}>
+                  {item.available ? (
+                    <Link
+                      href={item.href}
+                      className='rounded-sm py-3 hover:text-[#efb52b] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#efb52b]'>
+                      {item.label}
+                    </Link>
+                  ) : (
+                    <span
+                      aria-disabled='true'
+                      title='Coming soon'
+                      className='text-white/60'>
+                      {item.label}
+                      <span className='sr-only'> (coming soon)</span>
+                    </span>
+                  )}
+                </li>
+              ),
+            )}
           </ul>
         </nav>
         {/* Open the quote form while keeping calls available in the top bar. */}
@@ -73,6 +88,6 @@ export default function Navbar() {
           quoteHref={company.quoteFormUrl}
         />
       </div>
-    </header>
+    </StickyHeader>
   );
 }

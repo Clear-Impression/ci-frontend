@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import { aboutClosing } from '@/data/about';
-import { company } from '@/data/company';
 import RatingSummary from '@/components/reviews/RatingSummary';
 import ReviewWall from '@/components/reviews/ReviewWall';
+import QuoteActions from '@/components/ui/QuoteActions';
 import { googleRating, googleReviews, googleReviewsUrl } from '@/data/reviews';
 import styles from './reviews.module.css';
 
@@ -28,7 +28,7 @@ export default function ReviewsPage() {
   return (
     // The shared layout already supplies the website's header and footer.
     <main className='flex-1 bg-white text-[#200b38]'>
-      {/* Same header height as the other pages, with a few twinkling stars. */}
+      {/* A shorter header than the other pages, so the rating shows sooner. */}
       <section className='relative isolate overflow-hidden bg-[#200b38] text-white'>
         <div aria-hidden='true' className='absolute inset-0 -z-10'>
           {sparkles.map((sparkle) => (
@@ -47,7 +47,7 @@ export default function ReviewsPage() {
             />
           ))}
         </div>
-        <div className='mx-auto flex min-h-88 max-w-7xl flex-col justify-center px-6 py-10 sm:min-h-80 sm:px-8 sm:py-12'>
+        <div className='mx-auto max-w-7xl px-6 pb-20 pt-12 sm:px-8 sm:pb-20 sm:pt-14'>
           <p className={`${styles.lift} text-sm font-semibold uppercase tracking-widest text-[#efb52b]`}>
             Google reviews
           </p>
@@ -57,9 +57,9 @@ export default function ReviewsPage() {
             Customer Reviews
           </h1>
           <p
-            className={`${styles.lift} mt-6 max-w-2xl text-lg text-white/80`}
+            className={`${styles.lift} mt-4 max-w-2xl text-lg text-white/80`}
             style={{ animationDelay: '240ms' }}>
-            See what our customers say about their experiences with us.
+            What our customers say about us.
           </p>
         </div>
       </section>
@@ -100,11 +100,7 @@ export default function ReviewsPage() {
             {aboutClosing.heading}
           </h2>
           <p className='mt-4 max-w-2xl text-white/80'>{aboutClosing.text}</p>
-          <a
-            href={company.phoneHref}
-            className='mt-8 inline-flex min-h-11 items-center rounded-lg bg-[#efb52b] px-5 py-3 text-sm font-semibold text-[#200b38] hover:bg-[#f6c95b] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white'>
-            Call {company.phone} for a quote
-          </a>
+          <QuoteActions />
         </div>
       </section>
     </main>
