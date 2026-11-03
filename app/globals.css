@@ -79,12 +79,86 @@ html {
   height: 3.5rem;
 }
 
+/* Preview panels under the Services and Locations tabs. */
+.nav-caret {
+  transition: rotate 0.25s ease;
+}
+
+.nav-tab[data-open] {
+  color: #efb52b;
+}
+
+.nav-tab[data-open] .nav-caret {
+  rotate: 180deg;
+}
+
+.nav-panel {
+  visibility: hidden;
+  opacity: 0;
+  translate: 0 8px;
+  pointer-events: none;
+  transition:
+    opacity 0.2s ease,
+    translate 0.25s var(--ease-rise, ease),
+    visibility 0s linear 0.25s;
+}
+
+.nav-panel[data-open] {
+  visibility: visible;
+  opacity: 1;
+  translate: 0 0;
+  pointer-events: auto;
+  transition:
+    opacity 0.2s ease,
+    translate 0.3s var(--ease-rise, ease),
+    visibility 0s;
+}
+
+/* Items rise in one after another when the panel opens. */
+.nav-panel .nav-stagger {
+  opacity: 0;
+  translate: 0 6px;
+}
+
+.nav-panel[data-open] .nav-stagger {
+  opacity: 1;
+  translate: 0 0;
+  transition:
+    opacity 0.3s ease,
+    translate 0.35s var(--ease-rise, ease);
+  transition-delay: calc(60ms + var(--n, 0) * 25ms);
+}
+
+.nav-item .nav-icon {
+  transition:
+    background-color 0.2s ease,
+    scale 0.2s ease;
+}
+
+.nav-item:hover .nav-icon {
+  scale: 1.08;
+}
+
+.nav-all:hover .nav-arrow {
+  translate: 3px 0;
+}
+
+.nav-arrow {
+  transition: translate 0.2s ease;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .header-strip,
   .header-row,
   .header-logo,
-  .site-header {
+  .site-header,
+  .nav-caret,
+  .nav-panel,
+  .nav-panel[data-open],
+  .nav-panel .nav-stagger,
+  .nav-panel[data-open] .nav-stagger {
     transition: none;
+    translate: none;
   }
 }
 

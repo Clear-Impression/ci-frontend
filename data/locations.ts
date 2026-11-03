@@ -51,6 +51,19 @@ export const locationPages = [...serviceCities]
     description: cityDescriptions[city.name],
   }));
 
+// The short line under each city in the header's Locations preview.
+export const cityRegions: Record<string, string> = {
+  Mesa: 'Our home base · East Valley',
+  Phoenix: 'Central Valley',
+  Glendale: 'West Valley',
+  'Paradise Valley': 'Northeast Valley',
+  Scottsdale: 'Northeast Valley',
+  Tempe: 'East Valley',
+  Chandler: 'East Valley',
+  Gilbert: 'East Valley',
+  'Queen Creek': 'Southeast Valley',
+};
+
 export function getLocationBySlug(slug: string) {
   return locationPages.find((location) => location.slug === slug);
 }

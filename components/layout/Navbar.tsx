@@ -2,6 +2,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { company, navigation } from '@/data/company';
 import MobileMenu from './MobileMenu';
+import NavDropdown from './NavDropdown';
+import { LocationsPreview, ServicesPreview } from './NavPreviews';
 import StickyHeader from './StickyHeader';
 
 export default function Navbar() {
@@ -42,25 +44,35 @@ export default function Navbar() {
           aria-label='Main navigation'
           className='hidden lg:block'>
           <ul className='flex items-center gap-6 text-sm font-medium'>
-            {navigation.map((item) => (
-              <li key={item.href}>
-                {item.available ? (
-                  <Link
-                    href={item.href}
-                    className='rounded-sm py-3 hover:text-[#efb52b] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#efb52b]'>
-                    {item.label}
-                  </Link>
-                ) : (
-                  <span
-                    aria-disabled='true'
-                    title='Coming soon'
-                    className='text-white/60'>
-                    {item.label}
-                    <span className='sr-only'> (coming soon)</span>
-                  </span>
-                )}
-              </li>
-            ))}
+            {navigation.map((item) =>
+              item.available && item.preview ? (
+                // Services and Locations show a preview of every page under them.
+                <NavDropdown
+                  key={item.href}
+                  label={item.label}
+                  href={item.href}>
+                  {item.preview === 'services' ? <ServicesPreview /> : <LocationsPreview />}
+                </NavDropdown>
+              ) : (
+                <li key={item.href}>
+                  {item.available ? (
+                    <Link
+                      href={item.href}
+                      className='rounded-sm py-3 hover:text-[#efb52b] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#efb52b]'>
+                      {item.label}
+                    </Link>
+                  ) : (
+                    <span
+                      aria-disabled='true'
+                      title='Coming soon'
+                      className='text-white/60'>
+                      {item.label}
+                      <span className='sr-only'> (coming soon)</span>
+                    </span>
+                  )}
+                </li>
+              ),
+            )}
           </ul>
         </nav>
         {/* Open the quote form while keeping calls available in the top bar. */}

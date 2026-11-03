@@ -81,6 +81,40 @@ const icons: Record<string, string[]> = {
     'M5 9.5V20h14V9.5',
     'M10 20v-5h4v5',
   ],
+  // Core services.
+  'residential-window-washing': [
+    'M3 11l9-7 9 7',
+    'M5 9.5V20h14V9.5',
+    'M9 12h6v5H9z',
+    'M12 12v5',
+  ],
+  'commercial-office-glass': [
+    'M3 21h18',
+    'M5 21V4h14v17',
+    'M8.5 7.5h2M13.5 7.5h2',
+    'M8.5 11.5h2M13.5 11.5h2',
+    'M10.5 21v-4h3v4',
+  ],
+  'solar-panel-cleaning': [
+    'M4 20l2-7h12l2 7z',
+    'M5 16.5h14',
+    'M12 13v7',
+    'M9 9a3 3 0 0 1 6 0',
+    'M12 3.5v2M6.8 5.6l1.2 1.2M17.2 5.6L16 6.8',
+  ],
+  'gutter-roof-care': [
+    'M3 10l9-6 9 6',
+    'M3 10h18v2.5H3z',
+    'M18 12.5v4',
+    'M18 18.5c.8 1 1.2 1.6 1.2 2.1a1.2 1.2 0 0 1-2.4 0c0-.5.4-1.1 1.2-2.1z',
+  ],
+  'track-detailing': [
+    'M3 20h18',
+    'M3 17h18',
+    'M6 17V4h12v13',
+    'M9 10.5h6',
+    'M13 8.5l2 2-2 2',
+  ],
   // Icons for the About page value cards.
   'value-honesty': [
     'M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z',
