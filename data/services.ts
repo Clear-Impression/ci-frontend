@@ -59,7 +59,7 @@ const coreServiceData: readonly CoreServiceData[] = [
     ]
   ],
   [ "Solar Panel Cleaning",
-    "Maximize energy efficency.",
+    "Maximize energy efficiency.",
     "We safely wash away dust and grime to allow your solar panels to maximize their energy efficiency.",
     [
       "Investing in solar energy is a brilliant move in the Arizona Valley, but that investment only pays off if your panels can actually absorb the sun. Over time, a thick layer of desert dust, pollen, ash, and bird droppings will bake onto the surface of your solar array. This buildup acts as a physical barrier, blocking UV rays and reducing your system's energy output by as much as 20% to 30%.",
@@ -81,9 +81,9 @@ const coreServiceData: readonly CoreServiceData[] = [
     "Allow your windows to slide effortlessly.",
     "We painstakingly vacuum, scrub, and wipe out the hidden dirt, dead bugs, and mud packed into your window tracks so your windows slide effortlessly and look brand new.",
     [
-      "Arizona's hard water can leave mineral deposits that become increasingly difficult to remove over time. Our hard water stain removal service is designed to restore the clarity and shine of affected glass.",
-      "We assess the condition of the glass before selecting the appropriate restoration method. Our technicians work carefully to remove buildup while protecting the surrounding frames and surfaces.",
-      "This service is ideal for windows, glass doors, shower glass, and other surfaces affected by sprinkler overspray or mineral-rich water.",
+      "Living in the Arizona Valley means waging a constant battle against blowing dust. While you might notice the dirt on the glass right away, the real mess is often hiding completely out of sight. Every time the wind blows, fine desert sand, dead insects, pet hair, and pollen are forced into the deep crevices of your window tracks. When it eventually rains, that loose dirt turns into a thick, stubborn mud that bakes hard into the plastic and aluminum channels.",
+      "Clear Impression Services offers a specialized Track Detailing service to combat this exact problem. Ignoring dirty tracks isn't just an aesthetic issue; over time, compacted grit grinds against the window's rollers and weatherstripping. This causes massive friction, making your windows incredibly difficult to open and close, and eventually leading to costly mechanical failures or broken seals.",
+      "Our detailing process is meticulous. We begin by dry-vacuuming the tracks with specialized crevice tools to pull out the loose, heavy debris and cobwebs. Next, we apply a safe, heavy-duty cleaning solution to break down the hardened mud and grime. Using precision track brushes, we agitate the corners and weep holes that normal sponges simply cannot reach. Finally, we wipe the entire assembly down with microfiber towels, leaving you with beautifully clean, fully functional tracks that allow your windows to glide effortlessly.",
     ],
   ],
 ]
@@ -122,9 +122,8 @@ const specializedServiceData: readonly SpecializedServiceData[] = [
   ["Screen Deep Cleaning", 
     "Refresh screens covered in dust and debris.", "We remove dust, pollen, and embedded debris from window screens for cleaner airflow and clearer natural light.", 
     [
-      "Living in the Arizona Valley means waging a constant battle against blowing dust. While you might notice the dirt on the glass right away, the real mess is often hiding completely out of sight. Every time the wind blows, fine desert sand, dead insects, pet hair, and pollen are forced into the deep crevices of your window tracks. When it eventually rains, that loose dirt turns into a thick, stubborn mud that bakes hard into the plastic and aluminum channels.",
-      "Clear Impression Services offers a specialized Track Detailing service to combat this exact problem. Ignoring dirty tracks isn't just an aesthetic issue; over time, compacted grit grinds against the window's rollers and weatherstripping. This causes massive friction, making your windows incredibly difficult to open and close, and eventually leading to costly mechanical failures or broken seals.",
-      "Our detailing process is meticulous. We begin by dry-vacuuming the tracks with specialized crevice tools to pull out the loose, heavy debris and cobwebs. Next, we apply a safe, heavy-duty cleaning solution to break down the hardened mud and grime. Using precision track brushes, we agitate the corners and weep holes that normal sponges simply cannot reach. Finally, we wipe the entire assembly down with microfiber towels, leaving you with beautifully clean, fully functional tracks that allow your windows to glide effortlessly."
+      "Window screens catch the same desert dust, pollen, and bugs that land on your glass. Over time that buildup clogs the mesh, dims the light coming into your home, and blows right back onto freshly cleaned windows.",
+      "We remove each screen, brush and wash the mesh and frame to lift embedded debris, then let it dry before putting it back in place. Your rooms get more light and better airflow, and your clean glass stays clean longer."
     ]
   ],
   ["Post-Construction Cleanup", 
