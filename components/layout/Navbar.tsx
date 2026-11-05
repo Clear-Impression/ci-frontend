@@ -30,13 +30,13 @@ export default function Navbar() {
           className='shrink-0 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#efb52b]'>
           {/* Load the header logo early because it appears at the top. */}
           <Image
-            src={company.logo}
+            src={company.logoHorizontal}
             alt='Clear Impression Window Cleaning'
-            width={375}
-            height={375}
+            width={647}
+            height={256}
             priority
-            sizes='96px'
-            className='header-logo h-24 w-24 rounded-lg'
+            sizes='(min-width: 640px) 203px, 162px'
+            className='header-logo h-16 w-auto sm:h-20'
           />
         </Link>
         {/* Keep unfinished pages visible without linking to missing routes. */}

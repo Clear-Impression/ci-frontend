@@ -97,7 +97,7 @@ export default function Footer() {
       </div>
       {/* Use the year when the page is rendered for the copyright text. */}
       <div className='border-t border-white/15'>
-        <div className='mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-6 py-4 text-xs text-white/70 sm:px-8'>
+        <div className='mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-6 py-4 text-sm font-medium text-white sm:px-8'>
           <p>
             © {new Date().getFullYear()} {company.name}. All rights reserved.
           </p>

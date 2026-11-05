@@ -68,7 +68,7 @@ export default function HomeTrust({
       className='relative z-10 mx-auto -mt-16 max-w-7xl px-6 sm:px-8'>
       <ul
         ref={listRef}
-        className='grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-[#ebe6f2] shadow-xl shadow-[#200b38]/10 ring-1 ring-[#200b38]/10 lg:grid-cols-4'>
+        className='grid grid-cols-1 gap-px overflow-hidden rounded-2xl bg-[#ebe6f2] shadow-xl shadow-[#200b38]/10 ring-1 ring-[#200b38]/10 sm:grid-cols-3'>
         <li className={itemStyle}>
           {/* Announce the final rating once instead of every animation frame. */}
           <p className='sr-only'>
@@ -89,10 +89,6 @@ export default function HomeTrust({
         <li className={itemStyle}>
           <p className={numberStyle}>{since}</p>
           <p className={labelStyle}>Serving the Valley since</p>
-        </li>
-        <li className={itemStyle}>
-          <p className={numberStyle}>100%</p>
-          <p className={labelStyle}>Pure, deionized water outside</p>
         </li>
         <li className={itemStyle}>
           <p className={numberStyle}>{cityCount}</p>

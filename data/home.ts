@@ -8,8 +8,6 @@ export const homeHero = {
   eyebrow: 'Window cleaning in the Phoenix metro area',
   titleLines: ['Clear Impression.', 'Always.'],
   quoteHref,
-  description:
-    'Serving Phoenix Metro with spotless windows that brighten your home or business inside and out.',
 };
 
 export type ServiceCity = {
@@ -39,7 +37,7 @@ export type PureWaterStep = {
 };
 
 export const pureWater = {
-  eyebrow: 'Our pure water method',
+  eyebrow: 'New technology, same reliable results',
   title: 'Easy as 1, 2, 3.',
   lead: 'Tap water leaves spots. Ours goes through three stages first, so nothing is left behind when it dries.',
   steps: [
