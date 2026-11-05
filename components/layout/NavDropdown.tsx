@@ -1,7 +1,9 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
+import { getCurrent } from '@/lib/navigation';
 
 type NavDropdownProps = {
   label: string;
@@ -35,6 +37,8 @@ export default function NavDropdown({ label, href, children, align = 'center' }:
   const boxRef = useRef<HTMLDivElement>(null);
   // How far to nudge the panel so it never runs off either side of the screen.
   const [shift, setShift] = useState(0);
+  // Keep the tab gold on its own page and the pages under it.
+  const current = getCurrent(usePathname(), href);
 
   const close = () => {
     window.clearTimeout(openTimer.current);
@@ -118,9 +122,12 @@ export default function NavDropdown({ label, href, children, align = 'center' }:
         href={href}
         aria-expanded={open}
         aria-controls={panelId}
+        aria-current={current}
         data-open={open ? '' : undefined}
+        data-active={current ? '' : undefined}
         className='nav-tab inline-flex items-center gap-1 rounded-sm py-3 hover:text-[#efb52b] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#efb52b]'>
-        {label}
+        {/* The current-page bar goes under the name only, not the arrow. */}
+        <span className='nav-label'>{label}</span>
         <svg
           aria-hidden='true'
           viewBox='0 0 24 24'
