@@ -50,6 +50,7 @@ export const serviceAreas = [
   'Paradise Valley',
   'Tempe',
   'Scottsdale',
+  'Fountain Hills',
   'Chandler',
   'Gilbert',
   'Queen Creek',

@@ -24,6 +24,8 @@ const cityDescriptions: Record<string, string> = {
     'Chandler is home to established neighborhoods and a range of business districts. Clear Impression Services helps homeowners and businesses care for their windows, with screen and solar panel cleaning available alongside. Whether your property needs a refresh or ongoing attention, tell us what you have in mind.',
   'Paradise Valley':
     'Paradise Valley is known for its beautiful homes, desert surroundings, and exceptional resorts. Clear Impression Services provides detailed window cleaning for local residences and businesses, along with screen and solar panel cleaning to help keep every property looking its best. Contact us for reliable service tailored to your space.',
+  'Fountain Hills':
+    'Fountain Hills sits at the edge of the McDowell Mountains and is known for its famous fountain and wide desert views. Clear Impression Services provides window cleaning for local homes and businesses, with screen and solar panel cleaning also available. Contact us to plan the cleaning your property needs.',
   Scottsdale:
     'Known for its vibrant neighborhoods, resorts, and growing business community, Scottsdale is home to a wide range of residential and commercial properties. Clear Impression Services provides window cleaning for local homes and businesses, with screen and solar panel cleaning also available. Whether you are maintaining your home or preparing a commercial space, contact us to discuss the care your property needs.',
   'Queen Creek':
@@ -58,6 +60,7 @@ export const cityRegions: Record<string, string> = {
   Glendale: 'West Valley',
   'Paradise Valley': 'Northeast Valley',
   Scottsdale: 'Northeast Valley',
+  'Fountain Hills': 'Northeast Valley',
   Tempe: 'East Valley',
   Chandler: 'East Valley',
   Gilbert: 'East Valley',
