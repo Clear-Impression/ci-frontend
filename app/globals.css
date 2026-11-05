@@ -51,9 +51,7 @@ html {
 }
 
 .header-logo {
-  transition:
-    width 0.3s ease,
-    height 0.3s ease;
+  transition: height 0.3s ease;
 }
 
 .site-header {
@@ -75,7 +73,6 @@ html {
 }
 
 .site-header[data-scrolled] .header-logo {
-  width: 3.5rem;
   height: 3.5rem;
 }
 
@@ -254,14 +251,54 @@ html {
   animation: squeegee-clear 1.4s var(--ease-wipe) 0.7s forwards;
 }
 
-.squeegee-blade {
+/* The moving line drawn as a squeegee in the logo's green. The handle points
+   the way it travels and the rubber edge trails behind it. */
+.squeegee-blade,
+.pane-blade {
   pointer-events: none;
+  width: var(--blade-w);
+  margin-left: calc(var(--blade-w) / -2);
+  border-radius: 6px;
+  background: linear-gradient(to right, #1b1324 45%, #55ab68 45%, #72c587);
+  box-shadow: 0 0 24px 2px rgb(85 171 104 / 0.4);
+}
+
+/* The handle, with the hanging hole near its end. */
+.squeegee-blade::before,
+.pane-blade::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: calc(100% + var(--neck-w) - 2px);
+  width: var(--handle-w);
+  height: var(--handle-h);
+  translate: 0 -50%;
+  border-radius: 6px 9999px 9999px 6px;
+  background:
+    radial-gradient(circle at calc(100% - var(--handle-h) * 0.8) 50%, #200b38 0 calc(var(--handle-h) * 0.2), transparent calc(var(--handle-h) * 0.2 + 1px)),
+    linear-gradient(#72c587, #55ab68 60%, #43915a);
+}
+
+/* The flared neck joining the handle to the blade. */
+.squeegee-blade::after,
+.pane-blade::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  width: var(--neck-w);
+  height: calc(var(--handle-h) * 2.4);
+  translate: 0 -50%;
+  background: #55ab68;
+  clip-path: polygon(0 0, 100% 32%, 100% 68%, 0 100%);
+}
+
+.squeegee-blade {
+  --blade-w: 12px;
+  --neck-w: 16px;
+  --handle-w: 120px;
+  --handle-h: 18px;
   left: 0;
-  width: 4px;
-  margin-left: -2px;
-  border-radius: 9999px;
-  background: #d9b65f;
-  box-shadow: 0 0 28px 4px rgb(217 182 95 / 0.45);
   animation:
     squeegee-move 1.4s var(--ease-wipe) 0.7s forwards,
     fade-out 0.3s ease-out 2.1s forwards;
@@ -589,21 +626,20 @@ html {
   }
 }
 
-/* Detail pane: a gold blade wipes in each newly selected service. */
+/* Detail pane: a small squeegee wipes in each newly selected service. */
 .pane-wipe {
   animation: pane-wipe 0.7s var(--ease-wipe);
 }
 
 .pane-blade {
+  --blade-w: 9px;
+  --neck-w: 12px;
+  --handle-w: 84px;
+  --handle-h: 14px;
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
-  width: 3px;
-  border-radius: 9999px;
-  background: #d9b65f;
-  box-shadow: 0 0 18px 2px rgb(217 182 95 / 0.5);
-  pointer-events: none;
   animation: pane-blade 0.7s var(--ease-wipe) forwards;
 }
 

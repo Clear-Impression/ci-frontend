@@ -1,11 +1,11 @@
 import Image from 'next/image';
 import { company } from '@/data/company';
+import { googleReviewsUrl } from '@/data/reviews';
 import styles from '@/app/home.module.css';
 
 type HomeHeroProps = {
   eyebrow: string;
   titleLines: readonly string[];
-  description: string;
   quoteHref: string;
   rating: number;
 };
@@ -23,7 +23,6 @@ const drops = [
 export default function HomeHero({
   eyebrow,
   titleLines,
-  description,
   quoteHref,
   rating,
 }: HomeHeroProps) {
@@ -55,9 +54,6 @@ export default function HomeHero({
               </span>
             ))}
           </h1>
-          <p className={`${styles.heroIntro} mt-6 max-w-lg text-lg leading-8 text-white/80`}>
-            {description}
-          </p>
           <div
             className={`${styles.heroIntro} mt-9 flex flex-wrap gap-3`}
             style={{ '--i': 1 } as React.CSSProperties}>
@@ -126,13 +122,19 @@ export default function HomeHero({
                 aria-hidden='true'
                 className='window-latch absolute left-1/2 top-1/2 h-12 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#d9b65f]'
               />
-              <p className='absolute bottom-4 left-4 rounded-lg bg-[#200b38]/85 px-3.5 py-2 text-sm font-semibold backdrop-blur-sm'>
+              {/* The rating badge opens our Google Business listing in a new tab. */}
+              <a
+                href={googleReviewsUrl}
+                target='_blank'
+                rel='noopener noreferrer'
+                className='absolute bottom-4 left-4 rounded-lg bg-[#200b38]/85 px-3.5 py-2 text-sm font-semibold backdrop-blur-sm underline-offset-4 hover:bg-[#200b38] hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#efb52b]'>
                 <span className='text-[#efb52b]'>
                   <span aria-hidden='true'>★ </span>
                   {rating.toFixed(1)}
                 </span>{' '}
                 on Google
-              </p>
+                <span className='sr-only'> (opens in a new tab)</span>
+              </a>
             </div>
           </div>
           <div

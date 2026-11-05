@@ -9,6 +9,8 @@ export const company = {
   emailHref: 'mailto:info@clearimpressionservices.com',
   website: 'https://clearimpressionservices.com/',
   logo: '/logos/logo.png',
+  // Wide version of the logo for the header bar.
+  logoHorizontal: '/logos/logo-horizontal.png',
   // Google Forms collect quote requests and feedback until the site's own forms can send.
   quoteFormUrl:
     'https://docs.google.com/forms/d/e/1FAIpQLSeBNIiA-2ARD6cFt-8b4Qk-QQyFrjhL8AwlswpYtWp3SCTMWw/viewform',
