@@ -23,7 +23,7 @@ import { googleRating, googleReviews } from '@/data/reviews';
 export const metadata: Metadata = {
   title: 'Window Cleaning in Phoenix Metro | Clear Impression Services',
   description:
-    'Residential and commercial window cleaning in Mesa, Phoenix, Glendale, Paradise Valley, Scottsdale, Queen Creek, Gilbert, Chandler, and Tempe. Explore our cleaning methods and request a free quote.',
+    'Residential and commercial window cleaning in Mesa, Phoenix, Glendale, Paradise Valley, Scottsdale, Fountain Hills, Queen Creek, Gilbert, Chandler, and Tempe. Explore our cleaning methods and request a free quote.',
 };
 
 export default function Home() {

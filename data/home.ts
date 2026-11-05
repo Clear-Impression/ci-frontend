@@ -24,6 +24,7 @@ export const serviceCities: readonly ServiceCity[] = [
   { name: 'Paradise Valley', coordinates: [33.53111, -111.94278]},
   { name: 'Tempe', coordinates: [33.4255, -111.94] },
   { name: 'Scottsdale', coordinates: [33.50921, -111.89903]},
+  { name: 'Fountain Hills', coordinates: [33.6117, -111.7173]},
   { name: 'Chandler', coordinates: [33.3062, -111.8413] },
   { name: 'Mesa', coordinates: [33.4152, -111.8315] },
   { name: 'Gilbert', coordinates: [33.3528, -111.789] },
@@ -137,7 +138,7 @@ export const homeSteps = {
 export const homeAreas = {
   eyebrow: 'Where we work',
   title: 'From Glendale to Queen Creek.',
-  lead: 'Nine cities across the Valley, from West Valley storefronts to new homes in Queen Creek. Pick yours to see what we do there.',
+  lead: 'Ten cities across the Valley, from West Valley storefronts to new homes in Queen Creek. Pick yours to see what we do there.',
 };
 
 export const homeClosing = {

@@ -24,7 +24,9 @@ const height = 340;
 // A decorative map for the Locations header, built from the real city
 // centers and boundaries. Screen readers skip it; the page lists every city.
 export default function ValleyRoute({ className = '' }: { className?: string }) {
-  const { pins, outlines, route } = getValleyMap(serviceCities, routeOrder, {
+  // Only draw the cities on the route, so new cities don't resize the map.
+  const routeCities = serviceCities.filter((city) => routeOrder.includes(city.name));
+  const { pins, outlines, route } = getValleyMap(routeCities, routeOrder, {
     width,
     height,
     padding: 56,

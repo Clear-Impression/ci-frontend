@@ -15,7 +15,7 @@ const outputPath = path.join(
 
 //Use to define cities to add boundaries to /data/geojson/service-city-boundaries.json !!
 //EXAMPLE: const cities = ['Scottsdale', 'Paradise Valley', 'Queen Creek', 'Glendale'];
-const cities = [''];
+const cities = ['Fountain Hills'];
 //
 
 const userAgent = 'ci-frontend-city-boundaries/1.0 (Clear Impression Services)';
