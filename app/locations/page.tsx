@@ -5,7 +5,6 @@ import ServiceAreaMap from '@/components/home/ServiceAreaMap';
 import Reveal from '@/components/services/Reveal'
 import { company } from '@/data/company';;
 import { serviceCities } from '@/data/home';
-import { aboutClosing } from '@/data/about';
 import { locationPages, locationsPageContent } from '@/data/locations';
 import ValleyRoute from '@/components/locations/ValleyRoute';
 import styles from './locations.module.css';
@@ -89,18 +88,28 @@ export default function LocationsPage() {
         </div>
       </section>
 
-      {/* Reuse quote footer panel from about page.tsx */}
+      {/* Same panel as the About page, pointing on to Services or a quote. */}
       <section className='mx-auto max-w-7xl px-6 py-16 sm:px-8 sm:py-20'>
         <Reveal className='cta-shine relative overflow-hidden rounded-2xl bg-[#200b38] px-8 py-12 text-white sm:px-12'>
           <h2 className='text-2xl font-semibold sm:text-3xl'>
-            {aboutClosing.heading}
+            {locationsPageContent.nextHeading}
           </h2>
-          <p className='mt-4 max-w-2xl text-white/80'>{aboutClosing.text}</p>
-          <a
-            href={company.phoneHref}
-            className='relative mt-8 inline-flex min-h-11 items-center rounded-lg bg-[#efb52b] px-5 py-3 text-sm font-semibold text-[#200b38] hover:bg-[#f6c95b] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white'>
-            Call {company.phone} for a quote
-          </a>
+          <p className='mt-4 max-w-2xl text-white/80'>{locationsPageContent.nextText}</p>
+          <div className='relative mt-8 flex flex-wrap gap-3'>
+            <Link
+              href='/services'
+              className='inline-flex min-h-11 items-center rounded-lg bg-[#efb52b] px-5 py-3 text-sm font-semibold text-[#200b38] hover:bg-[#f6c95b] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white'>
+              {locationsPageContent.servicesLabel}
+            </Link>
+            <a
+              href={company.quoteFormUrl}
+              target='_blank'
+              rel='noopener noreferrer'
+              className='inline-flex min-h-11 items-center rounded-lg border border-white/30 px-5 py-3 text-sm font-semibold text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white'>
+              Get a free quote
+              <span className='sr-only'> (opens in a new tab)</span>
+            </a>
+          </div>
         </Reveal>
       </section>
     </main>

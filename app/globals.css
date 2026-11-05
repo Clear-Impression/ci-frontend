@@ -89,6 +89,25 @@ html {
   rotate: 180deg;
 }
 
+/* The tab for the page you're on stays gold, with a short bar under its
+   name, so visitors can see where they are without relying on color alone. */
+.nav-tab[data-active] {
+  color: #efb52b;
+}
+
+.nav-label {
+  position: relative;
+}
+
+.nav-tab[data-active] .nav-label::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 -8px;
+  height: 2px;
+  border-radius: 9999px;
+  background: currentColor;
+}
+
 .nav-panel {
   visibility: hidden;
   opacity: 0;

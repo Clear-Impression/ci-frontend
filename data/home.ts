@@ -135,12 +135,15 @@ export const homeSteps = {
 
 export const homeAreas = {
   eyebrow: 'Where we work',
-  title: 'From Glendale to Queen Creek.',
-  lead: 'Ten cities across the Valley, from West Valley storefronts to new homes in Queen Creek. Pick yours to see what we do there.',
+  title: 'Do we serve your area?',
+  // Name the service and the region, so this short section still helps search.
+  lead: `Window cleaning in ${serviceCities.length} cities across the Phoenix metro. Pick yours to see what we do there.`,
+  cityPagesLabel: 'See the page for your city',
 };
 
 export const homeClosing = {
   quoteHref,
   heading: 'Unlock the beauty beyond the glass.',
   text: 'Tell us about your home or business and we’ll get back to you with a free quote, no surprises. Rather talk it through? Call or text us any time.',
+  stepsLabel: 'What happens after I ask for a quote?',
 };

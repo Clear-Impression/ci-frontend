@@ -1,8 +1,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { company, navigation } from '@/data/company';
+import BackButton from './BackButton';
 import MobileMenu from './MobileMenu';
 import NavDropdown from './NavDropdown';
+import NavLink from './NavLink';
 import { LocationsPreview, ServicesPreview } from './NavPreviews';
 import StickyHeader from './StickyHeader';
 
@@ -56,11 +58,11 @@ export default function Navbar() {
               ) : (
                 <li key={item.href}>
                   {item.available ? (
-                    <Link
+                    <NavLink
                       href={item.href}
                       className='rounded-sm py-3 hover:text-[#efb52b] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#efb52b]'>
                       {item.label}
-                    </Link>
+                    </NavLink>
                   ) : (
                     <span
                       aria-disabled='true'
@@ -79,15 +81,16 @@ export default function Navbar() {
         <a
           href={company.quoteFormUrl}
           className='hidden min-h-11 items-center rounded-lg bg-[#efb52b] px-5 py-3 text-sm font-semibold text-[#200b38] hover:bg-[#f6c95b] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white lg:inline-flex'>
-          Request a quote
+          Get a free quote
         </a>
         {/* Show the mobile menu below the desktop breakpoint. */}
         <MobileMenu
           items={navigation}
-          website={company.website}
           quoteHref={company.quoteFormUrl}
         />
       </div>
+      {/* Floats just under the header on every page except the homepage. */}
+      <BackButton />
     </StickyHeader>
   );
 }

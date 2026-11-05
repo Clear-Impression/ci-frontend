@@ -12,6 +12,12 @@ export const feedbackPage = {
     'Tell us how your service went or what we could improve. Every message is read by our team.',
 } as const;
 
+// The panel at the bottom of the page, for customers ready to book again.
+export const feedbackClosing = {
+  heading: 'Need another cleaning?',
+  text: 'Book your next visit with a free quote, no surprises.',
+} as const;
+
 export type FeedbackField = 'name' | 'email' | 'message';
 
 export type FeedbackState = {
