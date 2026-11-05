@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 //Script which calls Nominatim API to obtain city boundaries. See line 15!
 //Run this script via ./fetch-city-boundaries.mjs on your machine to add boundaries.
 
