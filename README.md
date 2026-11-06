@@ -13,7 +13,7 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-## FAQ API and Sanity content
+## FAQ and service content
 
 The FAQ page fetches published FAQs through the separate FastAPI application in
 `../ci-backend`. Run that application on port 8000 alongside this frontend.
@@ -29,8 +29,9 @@ caching, so published updates appear on the next request. If the API is
 unavailable, the page displays an unavailable message. An empty published list
 has a separate empty state. Internet access is required by the backend.
 
-Sanity Studio lives in `studio/` in this repository. To run the editing
-interface, open a second terminal from the repository root:
+Sanity Studio lives in `studio/` in this repository. It now contains FAQ and
+Service document types. To run the editing interface, open a second terminal
+from the repository root:
 
 ```bash
 cd studio
@@ -43,6 +44,35 @@ access to the project. Keep the website and backend running in their own
 terminals. Studio is optional for viewing published content. The owner page
 links to `http://localhost:3333` by default; override it with
 `NEXT_PUBLIC_SANITY_STUDIO_URL` if needed.
+
+The public services pages read published Service documents through
+`next-sanity`. Set these values in `.env.local` when using a different Sanity
+project or dataset:
+
+```env
+NEXT_PUBLIC_SANITY_PROJECT_ID=vpeebhw5
+NEXT_PUBLIC_SANITY_DATASET=production
+NEXT_PUBLIC_SANITY_STUDIO_URL=http://localhost:3333
+```
+
+### Adding services to Sanity
+
+The existing service catalog in `data/services.ts` remains as a safe fallback
+until the records are added to Sanity. In Studio, create one Service document
+for each service and set:
+
+1. **Title** and **URL slug** — preserve the existing slug so current links keep working.
+2. **Category** — Cleaning method, Core service, or Specialized service.
+3. **Preview description**, **Large description**, and **Detail paragraphs**.
+4. **Display order** — lower numbers appear first within the service page.
+5. **Show on website** — publish the document when it is ready.
+
+After the first published Service document exists, the website uses the
+published Sanity catalog instead of the local fallback. Owners can open
+**Owner dashboard → Edit services** to launch Studio, edit a service, and
+publish it. Published changes appear after the website's 60-second cache
+expires; a new service also becomes available at its slug without requiring a
+code change.
 
 ## Owner login in local development
 

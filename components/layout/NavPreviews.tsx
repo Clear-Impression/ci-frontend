@@ -2,7 +2,7 @@ import Link from 'next/link';
 import ServiceIcon from '@/components/services/ServiceIcon';
 import { serviceAreas } from '@/data/company';
 import { cityRegions, locationPages } from '@/data/locations';
-import { coreServices, specializedServices } from '@/data/services';
+import { getServices } from '@/lib/services';
 
 const pin = [
   'M12 21s-6-5.6-6-11a6 6 0 0 1 12 0c0 5.4-6 11-6 11z',
@@ -28,7 +28,13 @@ function PanelFooter({ note, href, label }: { note: string; href: string; label:
 }
 
 // Every service: the core ones with icons, the specialized ones as a quick list.
-export function ServicesPreview() {
+export async function ServicesPreview() {
+  const services = await getServices();
+  const coreServices = services.filter((service) => service.category === 'core');
+  const specializedServices = services.filter(
+    (service) => service.category === 'specialized',
+  );
+
   return (
     <div className='w-[min(48rem,calc(100vw-3rem))]'>
       <div className='grid grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] gap-2 p-3'>

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Reveal from '@/components/services/Reveal';
 import ServiceIcon from '@/components/services/ServiceIcon';
 import type { HomeServiceCard } from '@/data/home';
-import { getServiceBySlug } from '@/data/services';
+import { getServices } from '@/lib/services';
 import styles from '@/app/home.module.css';
 
 type HomeServicesProps = {
@@ -42,14 +42,15 @@ const homeIcons: Record<string, string[]> = {
   ],
 };
 
-export default function HomeServices({
+export default async function HomeServices({
   eyebrow,
   title,
   cards,
 }: HomeServicesProps) {
+  const services = await getServices();
   // Read titles from the service catalog and leave out missing pages.
   const items = cards.flatMap((card) => {
-    const service = getServiceBySlug(card.slug);
+    const service = services.find((item) => item.slug === card.slug);
     return service ? [{ ...card, title: service.title }] : [];
   });
 

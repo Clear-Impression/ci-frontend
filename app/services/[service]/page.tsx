@@ -4,16 +4,15 @@ import { notFound } from 'next/navigation';
 import QuoteActions from '@/components/ui/QuoteActions';
 import { aboutClosing } from '@/data/about';
 import { company } from '@/data/company';
-import { getServiceBySlug, services } from '@/data/services';
+import { getServices } from '@/lib/services';
 import ServiceIcon from '@/components/services/ServiceIcon';
 
 type ServicePageProps = {
   params: Promise<{ service: string }>;
 };
 
-export const dynamicParams = false;
-
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const services = await getServices();
   return services.map((service) => ({ service: service.slug }));
 }
 
@@ -21,7 +20,7 @@ export async function generateMetadata({
   params,
 }: ServicePageProps): Promise<Metadata> {
   const { service: slug } = await params;
-  const service = getServiceBySlug(slug);
+  const service = (await getServices()).find((item) => item.slug === slug);
   if (!service) notFound();
 
   return {
@@ -32,7 +31,7 @@ export async function generateMetadata({
 
 export default async function ServicePage({ params }: ServicePageProps) {
   const { service: slug } = await params;
-  const service = getServiceBySlug(slug);
+  const service = (await getServices()).find((item) => item.slug === slug);
   if (!service) notFound();
 
   return (
@@ -65,16 +64,19 @@ export default async function ServicePage({ params }: ServicePageProps) {
       <section
         aria-labelledby='service-details-heading'
         className='flex-1 border-0 bg-[#f7f4fb]'>
-        <div className='mx-auto max-w-4xl px-6 py-8 sm:px-8 sm:py-10'>
-          {/* <h2
-            id='service-details-heading'
-            className='text-1xl font-semibold tracking-tight sm:text-4xl'>
-            Here&apos;s a closer look at our {service.title.toLowerCase()} service.
-          </h2> */}
-          <div className='mt-4 space-y-6 text-lg leading-8 text-gray-700'>
-            {service.detailParagraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
+        <div className='mx-auto max-w-7xl px-6 pb-14 pt-6 sm:px-8 sm:pb-20 sm:pt-8'>
+
+          <div className='grid gap-16 lg:grid-cols-2 lg:items-start'>
+            <div className='space-y-6 text-lg leading-8 text-gray-700'>
+              {service.detailParagraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </div>
+              
+            {/* When service images come in, pulls from public/images/service-placeholder.webp */}
+            <div className='flex aspect-[4/3] items-center justify-center rounded-2xl bg-[#eee6f9] text-[#6c3fb8]'>
+              Service image coming soon
+            </div>
           </div>
         </div>
       </section>
