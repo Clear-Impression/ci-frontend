@@ -84,15 +84,6 @@ export default function Footer() {
               </a>
             </p>
           </address>
-          {/* Link to the live site without replacing this page. */}
-          <a
-            href={company.website}
-            target='_blank'
-            rel='noopener noreferrer'
-            className={`mt-2 inline-block min-h-11 py-2 text-sm font-medium text-[#efb52b] ${linkStyle}`}>
-            Visit our live website <span aria-hidden='true'>↗</span>
-            <span className='sr-only'> (opens in a new tab)</span>
-          </a>
         </div>
       </div>
       {/* Use the year when the page is rendered for the copyright text. */}

@@ -16,12 +16,15 @@ const cityBoundaries = rawCityBoundaries as unknown as FeatureCollection;
 type ServiceAreaMapProps = {
   cities: readonly ServiceCity[];
   large?: boolean;
+  // A shorter map for the homepage.
+  compact?: boolean;
   showBoundaries?: boolean;
 };
 
 export default function ServiceAreaMap({
   cities,
   large = false,
+  compact = false,
   showBoundaries = false,
 }: ServiceAreaMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -169,10 +172,10 @@ export default function ServiceAreaMap({
         </span>
       </div>
       {/* Keep a fixed map height so loading tiles does not move the page. */}
-      {/* Only the Locations page requests a larger map; other pages keep the original height. */}
+      {/* The Locations page asks for a larger map and the homepage for a shorter one. */}
       <div
         className={`relative isolate bg-[#eeeaf4] ${
-          large ? 'h-90 sm:h-120 lg:h-140' : 'h-80 sm:h-96'
+          large ? 'h-90 sm:h-120 lg:h-140' : compact ? 'h-64 sm:h-72' : 'h-80 sm:h-96'
         }`}>
         <div
           ref={containerRef}

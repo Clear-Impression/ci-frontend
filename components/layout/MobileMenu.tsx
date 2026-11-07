@@ -1,18 +1,18 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useId, useRef, useState } from 'react';
 import type { NavigationItem } from '@/data/company';
+import { getCurrent } from '@/lib/navigation';
 
 type MobileMenuProps = {
   items: readonly NavigationItem[];
-  website: string;
   quoteHref: string;
 };
 
 export default function MobileMenu({
   items,
-  website,
   quoteHref,
 }: MobileMenuProps) {
   // Start with the menu closed so it does not cover the page.
@@ -20,6 +20,8 @@ export default function MobileMenu({
   // Connect the button to its menu without reusing an ID.
   const menuId = useId();
   const toggleRef = useRef<HTMLButtonElement>(null);
+  // Used to mark the page the visitor is on.
+  const pathname = usePathname();
 
   return (
     <div
@@ -72,7 +74,9 @@ export default function MobileMenu({
                 <Link
                   href={item.href}
                   onClick={() => setOpen(false)}
-                  className='block rounded-lg px-3 py-3 font-medium text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-[#efb52b]'>
+                  aria-current={getCurrent(pathname, item.href)}
+                  data-active={getCurrent(pathname, item.href) ? '' : undefined}
+                  className='block rounded-lg px-3 py-3 font-medium text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-[#efb52b] data-active:bg-white/10 data-active:text-[#efb52b] data-active:shadow-[inset_3px_0_0_#efb52b]'>
                   {item.label}
                 </Link>
               ) : (
@@ -91,18 +95,7 @@ export default function MobileMenu({
               href={quoteHref}
               onClick={() => setOpen(false)}
               className='block rounded-lg bg-[#efb52b] px-4 py-3 text-center font-semibold text-[#200b38] hover:bg-[#f6c95b] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white'>
-              Request a quote
-            </a>
-          </li>
-          {/* Keep the existing website available while this one is being built. */}
-          <li>
-            <a
-              href={website}
-              target='_blank'
-              rel='noopener noreferrer'
-              className='block rounded-lg px-3 py-3 text-center text-sm text-white underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-[#efb52b]'>
-              Visit our live website
-              <span className='sr-only'> (opens in a new tab)</span>
+              Get a free quote
             </a>
           </li>
         </ul>
