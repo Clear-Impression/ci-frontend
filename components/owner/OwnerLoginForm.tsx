@@ -50,7 +50,7 @@ export default function OwnerLoginForm() {
     setIsLoading(true);
 
     try {
-      // Keep the session cookie on this website; the server talks to FastAPI.
+      // Use the website API so the cookie stays on this domain.
       const response = await fetch('/api/owner/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

@@ -77,8 +77,16 @@ Login saves an eight-hour session in an HttpOnly cookie and opens the dashboard.
 The dashboard verifies that session with FastAPI before rendering. Missing,
 invalid, expired, or inactive-owner sessions redirect to sign-in. If verification
 is unavailable, dashboard content stays hidden and a retry message is shown.
-Logout and login attempt limits are still pending. Future customer-data endpoints
+The dashboard supports sign-out and the backend enforces shared login attempt limits.
+Future customer-data endpoints
 must also use the `require_owner` dependency from `ci-backend/app/api/auth.py`.
+
+For the live website, set `OWNER_SITE_URL=https://www.clearimpressionservices.com`
+and `API_BASE_URL=https://ci-backend-mnzv.onrender.com` in Vercel's Production
+environment, then redeploy. Production rejects missing API/origin settings and
+insecure cookies. Backend migration and owner provisioning instructions are in
+`ci-backend/DEPLOYMENT.md`. Production owners must be provisioned separately from
+local test accounts. The frontend must run as a Next.js server, not a static export.
 
 Open `clear-impression.code-workspace` to work with both repositories in VS Code.
 They have separate Git histories, branches, and commits.
