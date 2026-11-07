@@ -6,6 +6,7 @@ import MobileMenu from './MobileMenu';
 import NavDropdown from './NavDropdown';
 import NavLink from './NavLink';
 import { LocationsPreview, ServicesPreview } from './NavPreviews';
+import SiteSearch from './SiteSearch';
 import StickyHeader from './StickyHeader';
 
 export default function Navbar() {
@@ -24,7 +25,7 @@ export default function Navbar() {
           </a>
         </div>
       </div>
-      <div className='header-row mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-3 sm:px-8'>
+      <div className='header-row relative mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-3 sm:px-8'>
         {/* The company logo takes visitors back to the homepage. */}
         <Link
           href='/'
@@ -41,42 +42,46 @@ export default function Navbar() {
             className='header-logo h-16 w-auto sm:h-20'
           />
         </Link>
-        {/* Keep unfinished pages visible without linking to missing routes. */}
-        <nav
-          aria-label='Main navigation'
-          className='hidden lg:block'>
-          <ul className='flex items-center gap-6 text-sm font-medium'>
-            {navigation.map((item) =>
-              item.available && item.preview ? (
-                // Services and Locations show a preview of every page under them.
-                <NavDropdown
-                  key={item.href}
-                  label={item.label}
-                  href={item.href}>
-                  {item.preview === 'services' ? <ServicesPreview /> : <LocationsPreview />}
-                </NavDropdown>
-              ) : (
-                <li key={item.href}>
-                  {item.available ? (
-                    <NavLink
-                      href={item.href}
-                      className='rounded-sm py-3 hover:text-[#efb52b] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#efb52b]'>
-                      {item.label}
-                    </NavLink>
-                  ) : (
-                    <span
-                      aria-disabled='true'
-                      title='Coming soon'
-                      className='text-white/60'>
-                      {item.label}
-                      <span className='sr-only'> (coming soon)</span>
-                    </span>
-                  )}
-                </li>
-              ),
-            )}
-          </ul>
-        </nav>
+        {/* The search icon sits at the end of the menu, and opens a search box in its place. */}
+        <SiteSearch>
+          {/* Keep unfinished pages visible without linking to missing routes. */}
+          <nav
+            aria-label='Main navigation'
+            className='hidden lg:block'>
+            {/* A little tighter on laptops so the search icon fits next to the quote button. */}
+            <ul className='flex items-center gap-5 text-sm font-medium xl:gap-6'>
+              {navigation.map((item) =>
+                item.available && item.preview ? (
+                  // Services and Locations show a preview of every page under them.
+                  <NavDropdown
+                    key={item.href}
+                    label={item.label}
+                    href={item.href}>
+                    {item.preview === 'services' ? <ServicesPreview /> : <LocationsPreview />}
+                  </NavDropdown>
+                ) : (
+                  <li key={item.href}>
+                    {item.available ? (
+                      <NavLink
+                        href={item.href}
+                        className='rounded-sm py-3 hover:text-[#efb52b] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#efb52b]'>
+                        {item.label}
+                      </NavLink>
+                    ) : (
+                      <span
+                        aria-disabled='true'
+                        title='Coming soon'
+                        className='text-white/60'>
+                        {item.label}
+                        <span className='sr-only'> (coming soon)</span>
+                      </span>
+                    )}
+                  </li>
+                ),
+              )}
+            </ul>
+          </nav>
+        </SiteSearch>
         {/* Open the quote form while keeping calls available in the top bar. */}
         <a
           href={company.quoteFormUrl}
