@@ -18,6 +18,15 @@ body {
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
 
+/* Tailwind v4 gives buttons a plain arrow cursor, so bring back the pointer
+   for every button you can click (Back, Menu, the map cities, and so on). */
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
 /* Scroll between terms sections without jumping straight to them. */
 html:has(#service-terms) {
   scroll-behavior: smooth;

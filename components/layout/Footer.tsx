@@ -12,7 +12,8 @@ export default function Footer() {
   return (
     <footer className='bg-[#200b38] text-white'>
       <div className='h-1 bg-[#55ab68]' />
-      <div className='mx-auto grid max-w-7xl gap-6 px-6 py-6 sm:grid-cols-2 sm:px-8 lg:grid-cols-[1.5fr_1fr_1fr_1.5fr]'>
+      {/* Four columns on wide screens. Below that, two by two, so the city list has room for its two columns. */}
+      <div className='mx-auto grid max-w-7xl gap-6 px-6 py-6 sm:grid-cols-2 sm:px-8 xl:grid-cols-[1.5fr_1fr_1.25fr_1.25fr]'>
         {/* Repeat the logo and short company description at the bottom. */}
         <div>
           <Link
@@ -47,7 +48,8 @@ export default function Footer() {
         </div>
         <div>
           <h2 className='text-base font-semibold'>Service areas</h2>
-          <ul className='mt-3 space-y-1 text-sm leading-6 text-white/80'>
+          {/* Two columns of five cities instead of one long list. */}
+          <ul className='mt-3 grid auto-cols-max grid-flow-col grid-rows-5 gap-x-10 gap-y-1 text-sm leading-6 text-white/80'>
             {serviceAreas.map((area) => {
               // Use hyphens for city names with spaces.
               const slug = area.toLowerCase().replace(/ /g, '-');
@@ -99,9 +101,6 @@ export default function Footer() {
             </Link>
             <Link href='/terms-and-conditions' className={`inline-flex min-h-11 items-center ${linkStyle}`}>
               Service terms
-            </Link>
-            <Link href='/owner/login' className={`inline-flex min-h-11 items-center ${linkStyle}`}>
-              Owner sign in
             </Link>
           </nav>
         </div>
