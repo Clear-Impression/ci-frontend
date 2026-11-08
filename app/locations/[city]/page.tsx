@@ -1,3 +1,4 @@
+import { getPageHeader } from '@/lib/page-headers';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -41,6 +42,8 @@ export default async function CityPage({ params }: CityPageProps) {
   const location = getLocationBySlug(city);
   if (!location) notFound();
 
+  const header = await getPageHeader(`location-${location.slug}`);
+
   return (
     <main className='flex-1 border-0 bg-white text-[#200b38]'>
       {/* The shared layout supplies the original header, footer, and font. */}
@@ -56,10 +59,10 @@ export default async function CityPage({ params }: CityPageProps) {
             {location.name}, Arizona
           </p>
           <h1 className='mt-4 text-4xl font-semibold tracking-tight sm:text-5xl'>
-            {location.title}
+            {header.title}
           </h1>
           <p className='mt-6 max-w-2xl text-base leading-8 text-white/80 sm:text-lg'>
-            {location.intro}
+            {header.subtitle}
           </p>
         </div>
       </section>

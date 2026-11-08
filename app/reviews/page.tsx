@@ -1,3 +1,4 @@
+import { getPageHeader } from '@/lib/page-headers';
 import type { Metadata } from 'next';
 import { aboutClosing } from '@/data/about';
 import RatingSummary from '@/components/reviews/RatingSummary';
@@ -24,7 +25,8 @@ const sparkles = [
   { x: '48%', y: '62%', size: 11, delay: 3.4 },
 ];
 
-export default function ReviewsPage() {
+export default async function ReviewsPage() {
+  const header = await getPageHeader('reviews');
   return (
     // The shared layout already supplies the website's header and footer.
     <main className='flex-1 bg-white text-[#200b38]'>
@@ -54,12 +56,12 @@ export default function ReviewsPage() {
           <h1
             className={`${styles.lift} mt-3 max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl`}
             style={{ animationDelay: '120ms' }}>
-            Customer Reviews
+            {header.title}
           </h1>
           <p
             className={`${styles.lift} mt-4 max-w-2xl text-lg text-white/80`}
             style={{ animationDelay: '240ms' }}>
-            What our customers say about us.
+            {header.subtitle}
           </p>
         </div>
       </section>

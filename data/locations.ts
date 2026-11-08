@@ -1,4 +1,4 @@
-import { serviceCities } from '@/data/home';
+import { serviceCities } from './home';
 
 // Keep Locations page copy here so it can move to a CMS later.
 export const locationsPageContent = {

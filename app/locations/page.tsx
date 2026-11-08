@@ -1,3 +1,4 @@
+import { getPageHeader } from '@/lib/page-headers';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import ServiceAreaMap from '@/components/home/ServiceAreaMap';
@@ -21,7 +22,8 @@ export const metadata: Metadata = {
   description: `Residential and commercial window cleaning in ${cityList}. Find your city and see what we do there.`,
 };
 
-export default function LocationsPage() {
+export default async function LocationsPage() {
+  const header = await getPageHeader('locations');
   return (
     <main className='flex-1 border-0 bg-white text-[#200b38]'>
       {/* The shared layout already supplies the website's header and footer. */}
@@ -40,11 +42,11 @@ export default function LocationsPage() {
               id='locations-heading'
               className='mt-4 text-4xl font-semibold tracking-tight sm:text-5xl'>
               <span className='line-mask'>
-                <span className='line-rise'>{locationsPageContent.title}</span>
+                <span className='line-rise'>{header.title}</span>
               </span>
             </h1>
             <p className={`${styles.headerIntro} mt-6 max-w-2xl text-base leading-8 text-white/80 sm:text-lg`}>
-              {locationsPageContent.description}
+              {header.subtitle}
             </p>
           </div>
         </div>

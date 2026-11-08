@@ -1,6 +1,5 @@
-// Load the FAQ editing fields.
 import {faq} from './faq'
 import {service} from './service'
+import {pageHeader} from './pageHeader'
 
-// Register the content types available in Studio.
-export const schemaTypes = [faq, service]
+export const schemaTypes = [faq, service, pageHeader]

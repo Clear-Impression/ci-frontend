@@ -1,3 +1,4 @@
+import { getPageHeader } from '@/lib/page-headers';
 import type { Metadata } from 'next';
 import FeedbackForm from '@/components/feedback/FeedbackForm';
 import { company } from '@/data/company';
@@ -34,7 +35,8 @@ const highlights = [
   },
 ];
 
-export default function FeedbackPage() {
+export default async function FeedbackPage() {
+  const header = await getPageHeader('feedback');
   return (
     // The shared layout already supplies the website's header and footer.
     <main className='flex-1 bg-white text-[#200b38]'>
@@ -49,12 +51,12 @@ export default function FeedbackPage() {
           <h1
             className={`${styles.enter} mt-3 max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl`}
             style={{ '--delay': '90ms' } as React.CSSProperties}>
-            {feedbackPage.title}
+            {header.title}
           </h1>
           <p
             className={`${styles.enter} mt-6 max-w-2xl text-lg text-white/80`}
             style={{ '--delay': '180ms' } as React.CSSProperties}>
-            {feedbackPage.description}
+            {header.subtitle}
           </p>
         </div>
       </section>

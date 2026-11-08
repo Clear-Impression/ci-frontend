@@ -6,6 +6,7 @@ import styles from '@/app/home.module.css';
 type HomeHeroProps = {
   eyebrow: string;
   titleLines: readonly string[];
+  subtitle?: string;
   quoteHref: string;
   rating: number;
 };
@@ -23,6 +24,7 @@ const drops = [
 export default function HomeHero({
   eyebrow,
   titleLines,
+  subtitle,
   quoteHref,
   rating,
 }: HomeHeroProps) {
@@ -54,6 +56,7 @@ export default function HomeHero({
               </span>
             ))}
           </h1>
+          {subtitle && <p className='mt-6 max-w-2xl text-lg text-white/80'>{subtitle}</p>}
           <div
             className={`${styles.heroIntro} mt-9 flex flex-wrap gap-3`}
             style={{ '--i': 1 } as React.CSSProperties}>

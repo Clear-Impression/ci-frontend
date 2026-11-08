@@ -1,3 +1,4 @@
+import { getPageHeader } from '@/lib/page-headers';
 import type { Metadata } from 'next';
 import { company, serviceAreas, services } from '@/data/company';
 import {
@@ -34,7 +35,8 @@ function Words({ text, className }: { text: string; className: string }) {
   ));
 }
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const header = await getPageHeader('about');
   return (
     // Let the page fill the space between the header and footer.
     <main className='flex-1 bg-white text-gray-900'>
@@ -46,10 +48,10 @@ export default function AboutPage() {
             {aboutIntro.eyebrow}
           </p>
           <h1 className='mt-3 max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl'>
-            <Words text={aboutIntro.title} className='focus-word' />
+            <Words text={header.title} className='focus-word' />
           </h1>
           <p className='focus-in focus-in-late mt-6 max-w-2xl text-lg text-white/80'>
-            {aboutIntro.lead}
+            {header.subtitle}
           </p>
         </div>
       </section>

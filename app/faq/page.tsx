@@ -6,6 +6,7 @@ import { aboutClosing } from "@/data/about";
 import { company } from "@/data/company";
 import { getFAQs } from "@/lib/api";
 import type { FAQItem } from "@/types/faq";
+import { getPageHeader } from "@/lib/page-headers";
 
 const title = "FAQ | Clear Impression Services";
 const description =
@@ -24,6 +25,7 @@ type FAQPageProps = {
 export default async function FAQPage({ searchParams }: FAQPageProps) {
   // the site search links here with ?open= so that answer shows right away
   const { open } = await searchParams;
+  const header = await getPageHeader('faq');
   let faqItems: FAQItem[] = [];
   let unavailable = false;
 
@@ -47,14 +49,13 @@ export default async function FAQPage({ searchParams }: FAQPageProps) {
             className={`${styles.enter} mt-3 max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl`}
             style={{ "--delay": "90ms" } as React.CSSProperties}
           >
-            Frequently asked questions
+            {header.title}
           </h1>
           <p
             className={`${styles.enter} mt-6 max-w-2xl text-lg text-white/80`}
             style={{ "--delay": "180ms" } as React.CSSProperties}
           >
-            Quick answers to what customers ask us most. Don’t see your
-            question? Call or text, and we’ll help.
+            {header.subtitle}
           </p>
         </div>
       </section>
