@@ -3,9 +3,10 @@
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 
-// The homepage has nothing to go back to, and city and service pages
-// already have their own back link in the same corner.
-const hiddenOn = [/^\/$/, /^\/locations\/[^/]+$/, /^\/services\/[^/]+$/];
+// The homepage has nothing to go back to, city and service pages already
+// have their own back link in the same corner, and the owner sign-in page
+// and dashboard are the owner's tools, not part of browsing the website.
+const hiddenOn = [/^\/$/, /^\/locations\/[^/]+$/, /^\/services\/[^/]+$/, /^\/owner(\/login)?$/];
 
 // A small "Back" button that floats just under the header. It sits over the
 // page instead of in it, so the layout underneath never moves. It returns to
