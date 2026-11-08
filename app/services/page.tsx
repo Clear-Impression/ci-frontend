@@ -1,3 +1,4 @@
+import { getPageHeader } from '@/lib/page-headers';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { aboutClosing } from '@/data/about';
@@ -13,14 +14,14 @@ export const metadata: Metadata = {
     'Window cleaning with traditional tools or 100% pure water, plus hard water stain removal, screen cleaning, and more across Mesa and the Phoenix metro.',
 };
 
-const heroLines = ['Every pane,', 'cleaned the right way.'];
-
 // The two cleaning methods, linked from the Core Services intro.
 const [traditional, pureWater] = howWeDoIt;
 const methodLink =
   'rounded-sm font-medium text-[#6c3fb8] underline underline-offset-4 hover:text-[#200b38] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#6c3fb8]';
 
-export default function Services() {
+export default async function Services() {
+  const header = await getPageHeader('services');
+  const heroLines = header.title.split('\n');
   return (
     <main className='flex-1 bg-white text-[#200b38]'>
       {/* The headline rises behind fogged glass, then a squeegee wipes it clear. */}
@@ -43,7 +44,7 @@ export default function Services() {
             ))}
           </h1>
           <p className='hero-after mt-6 max-w-2xl text-lg text-white/80'>
-            Window and exterior cleaning for homes and businesses across Mesa and the Phoenix metro.
+            {header.subtitle}
           </p>
         </div>
         <div aria-hidden='true' className='squeegee-fog absolute inset-0' />

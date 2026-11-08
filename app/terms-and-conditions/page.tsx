@@ -1,7 +1,8 @@
+import { getPageHeader } from '@/lib/page-headers';
 import type { Metadata } from 'next';
 import TermsContent from '@/components/terms/TermsContent';
 import { company } from '@/data/company';
-import { termsEffectiveDate, termsIntroduction, termsNavigation, termsSections } from '@/data/terms';
+import { termsIntroduction, termsNavigation, termsSections } from '@/data/terms';
 
 const title = 'Appointment, Cancellation, and Service Terms | Clear Impression';
 const description = 'Read Clear Impression’s appointment, cancellation, rescheduling, weather, payment, property access, and service terms.';
@@ -18,15 +19,23 @@ export const metadata: Metadata = {
   },
 };
 
-export default function TermsPage() {
+export default async function TermsPage() {
+  const header = await getPageHeader('terms');
   return (
     <main id='service-terms' className='flex-1 bg-[#faf8fd]'>
       <header className='border-b border-[#200b38]/10'>
         <div className='mx-auto max-w-7xl px-6 py-12 sm:px-8 sm:py-16'>
           <p className='text-sm font-semibold text-[#6c3fb8]'>Clear Impression Window Cleaning</p>
-          <h1 className='mt-4 max-w-4xl text-3xl font-semibold leading-tight tracking-tight text-[#200b38] sm:text-5xl'>Appointment, Cancellation,<br className='hidden sm:block' /> and Service Terms<span className='text-[#6c3fb8]'>.</span></h1>
+          <h1 className='mt-4 max-w-4xl text-3xl font-semibold leading-tight tracking-tight text-[#200b38] sm:text-5xl'>
+            {header.title.split('\n').map((line, index) => (
+              <span key={index}>
+                {index > 0 && <><br className='hidden sm:block' />{' '}</>}
+                {line.endsWith('.') ? <>{line.slice(0, -1)}<span className='text-[#6c3fb8]'>.</span></> : line}
+              </span>
+            ))}
+          </h1>
           <p className='mt-6 inline-flex flex-wrap gap-x-2 rounded-lg border border-[#efb52b]/30 bg-[#fffaf0] px-4 py-2 text-sm leading-6 text-[#59441c]'>
-            <span className='font-semibold'>Effective date:</span> {termsEffectiveDate}
+            <span className='font-semibold'>Effective date:</span> {header.subtitle}
           </p>
         </div>
       </header>

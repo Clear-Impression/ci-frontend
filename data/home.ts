@@ -1,4 +1,4 @@
-import { company } from '@/data/company';
+import { company } from './company';
 
 // Send quote requests to the Google Form until the new form can submit them.
 const quoteHref = company.quoteFormUrl;

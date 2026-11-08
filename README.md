@@ -74,6 +74,15 @@ publish it. Published changes appear after the website's 60-second cache
 expires; a new service also becomes available at its slug without requiring a
 code change.
 
+## Page headers in Sanity
+
+Open a page in Studio and choose Page header to edit its title and subtitle.
+Under FAQ, Questions still holds the individual questions and answers. Locations
+has a header for each city. Service pages use their existing service records.
+
+Headers start with the current text. Publish your edits to show them on the
+website after about a minute. Until then, the website keeps its current wording.
+
 ## Owner login in local development
 
 The API lives in the separate

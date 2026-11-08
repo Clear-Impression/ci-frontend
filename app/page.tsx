@@ -1,3 +1,4 @@
+import { getPageHeader } from '@/lib/page-headers';
 import type { Metadata } from 'next';
 import HomeHero from '@/components/home/HomeHero';
 import HomeTrust from '@/components/home/HomeTrust';
@@ -25,11 +26,12 @@ export const metadata: Metadata = {
     'Residential and commercial window cleaning in Mesa, Phoenix, Glendale, Paradise Valley, Scottsdale, Fountain Hills, Queen Creek, Gilbert, Chandler, and Tempe. Explore our cleaning methods and request a free quote.',
 };
 
-export default function Home() {
+export default async function Home() {
+  const header = await getPageHeader('home');
   return (
     <main className='flex-1 bg-white text-[#200b38]'>
       {/* Build the page from sections so their content can change independently. */}
-      <HomeHero {...homeHero} rating={googleRating.score} />
+      <HomeHero {...homeHero} titleLines={header.title.split('\n')} subtitle={header.subtitle} rating={googleRating.score} />
       <HomeTrust
         score={googleRating.score}
         count={googleRating.count}
