@@ -11,6 +11,18 @@ export const structure: StructureResolver = (S) => {
       .title(`${pageHeaders[pageId].label} header`)
       .initialValueTemplate('page-header', {pageId}))
 
+  const services = (category: string, title: string) => S.listItem()
+    .id(`services-${category}`)
+    .title(title)
+    .child(S.documentTypeList('service')
+      .id(`services-${category}`)
+      .title(title)
+      .apiVersion('2026-10-19')
+      .filter('_type == "service" && category == $category')
+      .params({category})
+      .defaultOrdering([{field: 'displayOrder', direction: 'asc'}, {field: 'title', direction: 'asc'}])
+      .initialValueTemplates([S.initialValueTemplateItem('service-category', {category})]))
+
   return S.list().title('Content').items([
     S.listItem().id('faq').title('FAQ').child(S.list().title('FAQ').items([
       header('faq'),
@@ -18,7 +30,9 @@ export const structure: StructureResolver = (S) => {
     ])),
     S.listItem().id('services').title('Services').child(S.list().title('Services').items([
       header('services'),
-      S.documentTypeListItem('service').title('Service pages'),
+      services('method', 'Methods'),
+      services('core', 'Core services'),
+      services('specialized', 'Specialized services'),
     ])),
     S.listItem().id('locations').title('Locations').child(S.list().title('Locations').items([
       header('locations'),

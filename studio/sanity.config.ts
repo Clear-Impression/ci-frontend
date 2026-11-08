@@ -19,6 +19,13 @@ export default defineConfig({
     templates: (templates) => [
       ...templates.filter((template) => template.schemaType !== 'pageHeader'),
       {
+        id: 'service-category',
+        title: 'Service',
+        schemaType: 'service',
+        parameters: [{name: 'category', type: 'string'}],
+        value: ({category}: {category: string}) => ({category}),
+      },
+      {
         id: 'page-header',
         title: 'Page header',
         schemaType: 'pageHeader',
@@ -34,6 +41,9 @@ export default defineConfig({
   document: {
     actions: (actions, context) => context.schemaType === 'pageHeader'
       ? actions.filter((action) => action.action !== 'duplicate') : actions,
-    newDocumentOptions: (options) => options.filter((option) => option.templateId !== 'page-header'),
+    newDocumentOptions: (options, {creationContext}) => options.filter((option) =>
+      option.templateId !== 'page-header' &&
+      (option.templateId !== 'service-category' || creationContext.type !== 'global'),
+    ),
   },
 })
