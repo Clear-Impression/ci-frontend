@@ -10,6 +10,7 @@ import {
 import Reveal from '@/components/services/Reveal';
 import ServiceIcon from '@/components/services/ServiceIcon';
 import TiltCard from '@/components/about/TiltCard';
+import HowWeClean from '@/components/services/HowWeClean';
 
 // Give the About page its own title and search description.
 export const metadata: Metadata = {
@@ -111,6 +112,9 @@ export default function AboutPage() {
           </div>
         </Reveal>
       </section>
+
+      {/* The two cleaning methods, moved here from the Services page. */}
+      <HowWeClean />
 
       {/* Highlight the company promise and the values behind it. */}
       <section className='bg-[#f7f4fb]'>

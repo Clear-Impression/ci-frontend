@@ -34,6 +34,8 @@ export default async function ServicePage({ params }: ServicePageProps) {
   const service = (await getServices()).find((item) => item.slug === slug);
   if (!service) notFound();
 
+  const [firstParagraph, ...moreParagraphs] = service.detailParagraphs;
+
   return (
     <main className='flex-1 border-0 bg-white text-[#200b38]'>
       <section className='bg-[#200b38] text-white'>
@@ -65,15 +67,34 @@ export default async function ServicePage({ params }: ServicePageProps) {
         aria-labelledby='service-details-heading'
         className='flex-1 border-0 bg-[#f7f4fb]'>
         <div className='mx-auto max-w-7xl px-6 pb-14 pt-6 sm:px-8 sm:pb-20 sm:pt-8'>
-
           <div className='grid gap-16 lg:grid-cols-2 lg:items-start'>
             <div className='space-y-6 text-lg leading-8 text-gray-700'>
-              {service.detailParagraphs.map((paragraph) => (
-                <p key={paragraph}>{paragraph}</p>
-              ))}
+              <p>{firstParagraph}</p>
+              {moreParagraphs.length > 0 && (
+                <details className='group mt-6'>
+                  <summary className='inline-flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-sm font-semibold text-[#6c3fb8] hover:text-[#200b38] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6c3fb8] [&::-webkit-details-marker]:hidden'>
+                    <span className='group-open:hidden'>Read more about {service.title.toLowerCase()}</span>
+                    <span className='hidden group-open:inline'>Show less</span>
+                    <svg
+                      aria-hidden='true'
+                      viewBox='0 0 24 24'
+                      fill='none'
+                      stroke='currentColor'
+                      strokeWidth='2'
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      className='size-5 motion-safe:transition-transform group-open:rotate-180'>
+                      <path d='M6 9l6 6 6-6' />
+                    </svg>
+                  </summary>
+                  <div className='mt-4 space-y-6'>
+                    {moreParagraphs.map((paragraph) => (
+                      <p key={paragraph}>{paragraph}</p>
+                    ))}
+                  </div>
+                </details>
+              )}
             </div>
-              
-            {/* When service images come in, pulls from public/images/service-placeholder.webp */}
             <div className='flex aspect-[4/3] items-center justify-center rounded-2xl bg-[#eee6f9] text-[#6c3fb8]'>
               Service image coming soon
             </div>

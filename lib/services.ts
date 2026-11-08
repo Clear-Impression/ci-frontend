@@ -13,6 +13,16 @@ type ServiceDocument = Service & {
 
 const localServices = [...howWeDoIt, ...coreServices, ...specializedServices]
 
+// Keep existing service URLs.
+const legacySlugs: Record<string, string> = {
+  'commercial-and-office-glass': 'commercial-office-glass',
+  'gutter-and-roof-care': 'gutter-roof-care',
+  'french-and-storm-windows': 'french-storm-windows',
+  'glass-door-and-mirror-polishing': 'glass-door-mirror-polishing',
+  'awning-and-sunroom-cleaning': 'awning-sunroom-cleaning',
+  'skylight-and-rooftop-glass': 'skylight-rooftop-glass',
+}
+
 export async function getServices(): Promise<ServiceDocument[]> {
   try {
     const services = await client.fetch<ServiceDocument[]>(
@@ -22,7 +32,10 @@ export async function getServices(): Promise<ServiceDocument[]> {
     )
 
     return services.length > 0
-      ? services
+      ? services.map((service) => ({
+          ...service,
+          slug: legacySlugs[service.slug] ?? service.slug,
+        }))
       : localServices.map((service) => ({
           ...service,
           category: howWeDoIt.some((item) => item.slug === service.slug)

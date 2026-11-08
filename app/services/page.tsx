@@ -3,9 +3,6 @@ import Link from 'next/link';
 import { aboutClosing } from '@/data/about';
 import { coreServices, howWeDoIt, specializedServices } from '@/data/services';
 import Reveal from '@/components/services/Reveal';
-import ServiceIcon from '@/components/services/ServiceIcon';
-import ServiceMedia from '@/components/services/ServiceMedia';
-import WindowPane from '@/components/services/WindowPane';
 import QuoteActions from '@/components/ui/QuoteActions';
 import ServiceIndex from './ServiceIndex';
 
@@ -17,6 +14,11 @@ export const metadata: Metadata = {
 };
 
 const heroLines = ['Every pane,', 'cleaned the right way.'];
+
+// The two cleaning methods, linked from the Core Services intro.
+const [traditional, pureWater] = howWeDoIt;
+const methodLink =
+  'rounded-sm font-medium text-[#6c3fb8] underline underline-offset-4 hover:text-[#200b38] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#6c3fb8]';
 
 export default function Services() {
   return (
@@ -48,86 +50,10 @@ export default function Services() {
         <div aria-hidden='true' className='squeegee-blade absolute inset-y-0' />
       </section>
 
-      {/* The two core methods are the two sashes of one window. */}
-      <section
-        aria-labelledby='core-heading'
-        className='mx-auto max-w-7xl px-6 pb-8 pt-16 sm:px-8 sm:pb-10 sm:pt-20'>
-        <Reveal className='max-w-2xl'>
-          <h2
-            id='core-heading'
-            className='text-3xl font-semibold tracking-tight sm:text-4xl'>
-            <span className='line-mask'>
-              <span className='line-rise'>How we clean your windows.</span>
-            </span>
-          </h2>
-          <p className='fade-up mt-4 text-lg leading-relaxed text-gray-600'>
-            Two methods, chosen for your glass. Most homes get both.
-          </p>
-        </Reveal>
-
-        {/* A real window: outer frame, inner bead, two sashes, a latch, and a sill. */}
-        <Reveal className='window mt-12'>
-          <div className='window-frame relative rounded-2xl bg-[#200b38] p-3 shadow-xl shadow-[#200b38]/25 sm:p-4'>
-            {/* The inner bead is the second border, just inside the frame. */}
-            <span
-              aria-hidden='true'
-              className='pointer-events-none absolute inset-1.5 rounded-xl border border-white/15'
-            />
-            <div className='relative grid gap-3 sm:gap-4 md:grid-cols-2'>
-              {howWeDoIt.map((service, index) => (
-                <div
-                  key={service.slug}
-                  className='window-sash rounded-lg bg-[#33195a] p-2 sm:p-2.5'>
-                  <WindowPane className='relative h-full rounded-md'>
-                    <article
-                      aria-labelledby={`${service.slug}-heading`}
-                      className='pane-content flex h-full flex-col p-5 sm:p-6'
-                      style={{ '--i': index } as React.CSSProperties}>
-                      {/* The photo is the view through this half of the window. */}
-                      <ServiceMedia
-                        slug={service.slug}
-                        sizes='(min-width: 768px) 45vw, 100vw'
-                        className='aspect-16/9 rounded-md'
-                      />
-                      <h3
-                        id={`${service.slug}-heading`}
-                        className='mt-6 flex items-center gap-3 px-2 text-2xl font-semibold leading-tight tracking-tight sm:px-3 sm:text-3xl'>
-                        <span className='grid size-10 shrink-0 place-items-center rounded-lg bg-[#efb52b]/15'>
-                          <ServiceIcon
-                            slug={service.slug}
-                            className='size-6 text-[#200b38]'
-                          />
-                        </span>
-                        {service.title}
-                      </h3>
-                      <p className='mt-3 px-2 font-medium text-[#6c3fb8] sm:px-3'>
-                        {service.previewDescription}
-                      </p>
-                      <span className='flex-1' />
-                      <Link
-                        href={`/services/${service.slug}`}
-                        className='draw-link mx-2 mb-2 mt-6 self-start rounded-sm py-1 font-semibold sm:mx-3 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6c3fb8]'>
-                        How this method works
-                      </Link>
-                    </article>
-                  </WindowPane>
-                </div>
-              ))}
-              {/* The latch sits where the two sashes meet. */}
-              <span
-                aria-hidden='true'
-                className='window-latch absolute left-1/2 top-1/2 hidden h-12 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#d9b65f] md:block'
-              />
-            </div>
-          </div>
-          <div aria-hidden='true' className='window-sill' />
-        </Reveal>
-      </section>
-
       <section
         aria-labelledby='core-services-heading'
         className='bg-[#eee6f9]'>
-        <div className='mx-auto max-w-7xl px-6 pb-16 pt-8 sm:px-8 sm:pb-20 sm:pt-10'>
+        <div className='mx-auto max-w-7xl px-6 py-16 sm:px-8 sm:py-20'>
           <Reveal className='max-w-2xl'>
             <h2
               id='core-services-heading'
@@ -138,6 +64,28 @@ export default function Services() {
             </h2>
             <p className='fade-up mt-4 text-lg leading-relaxed text-gray-600'>
               Reliable property care for homes, businesses, and outdoor surfaces across the Phoenix Valley.
+            </p>
+            {/* The methods moved to About. These links keep both method pages
+                one click from Services for visitors and search engines. */}
+            <p className='fade-up mt-3 leading-relaxed text-gray-600'>
+              We clean with{' '}
+              <Link
+                href={`/services/${traditional.slug}`}
+                className={methodLink}>
+                traditional tools
+              </Link>
+              ,{' '}
+              <Link
+                href={`/services/${pureWater.slug}`}
+                className={methodLink}>
+                100% pure water
+              </Link>
+              , or both, chosen for your glass.{' '}
+              <Link
+                href='/about#how-we-clean'
+                className='draw-link rounded-sm font-semibold text-[#200b38] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6c3fb8]'>
+                How we clean your windows
+              </Link>
             </p>
           </Reveal>
           <div className='mt-12 grid gap-6 md:grid-cols-2'>

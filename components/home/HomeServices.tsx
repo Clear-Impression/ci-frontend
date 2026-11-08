@@ -80,7 +80,7 @@ export default async function HomeServices({
           </Link>
         </div>
 
-        <ul className='mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3'>
+        <ul className='mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
           {items.map((item, index) => (
             <Reveal
               key={item.slug}
@@ -90,25 +90,26 @@ export default async function HomeServices({
               <Link
                 href={`/services/${item.slug}`}
                 aria-labelledby={`home-service-${item.slug}`}
-                className={`${styles.serviceCard} group relative flex h-full flex-col overflow-hidden rounded-2xl bg-white p-7 ring-1 ring-[#200b38]/10 hover:shadow-xl hover:shadow-[#200b38]/10 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6c3fb8] motion-safe:transition motion-safe:duration-300 motion-safe:hover:-translate-y-1 sm:p-8`}>
-                <span className='grid size-14 place-items-center rounded-xl bg-[#efb52b]/15'>
+                className={`${styles.serviceCard} group relative grid h-full grid-cols-[auto_minmax(0,1fr)] grid-rows-[auto_1fr_auto] gap-x-4 overflow-hidden rounded-2xl bg-white p-5 ring-1 ring-[#200b38]/10 hover:shadow-xl hover:shadow-[#200b38]/10 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6c3fb8] motion-safe:transition motion-safe:duration-300 motion-safe:hover:-translate-y-1 sm:p-6`}>
+                {/* The icon sits beside the name to keep each card short. */}
+                <span className='row-span-3 grid size-11 place-items-center rounded-xl bg-[#efb52b]/15'>
                   <ServiceIcon
                     slug={item.slug}
                     paths={homeIcons[item.slug]}
-                    className='size-8 text-[#200b38]'
+                    className='size-6 text-[#200b38]'
                   />
                 </span>
                 <h3
                   id={`home-service-${item.slug}`}
-                  className='mt-6 text-xl font-semibold tracking-tight text-[#200b38]'>
+                  className='mt-2 text-lg font-semibold tracking-tight text-[#200b38]'>
                   {item.title}
                 </h3>
-                <p className='mt-3 flex-1 leading-relaxed text-gray-600'>
+                <p className='mt-1.5 leading-relaxed text-gray-600'>
                   {item.blurb}
                 </p>
                 <p
                   aria-hidden='true'
-                  className='mt-5 text-sm font-semibold text-[#6c3fb8]'>
+                  className='mt-3 text-sm font-semibold text-[#6c3fb8]'>
                   Explore{' '}
                   <span className='inline-block motion-safe:transition-transform motion-safe:group-hover:translate-x-1'>
                     →

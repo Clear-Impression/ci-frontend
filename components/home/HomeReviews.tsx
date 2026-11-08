@@ -9,7 +9,7 @@ type HomeReviewsProps = {
   count: number;
 };
 
-// Use the existing review wall and its pause control.
+// Use the existing review wall and its pause control, as a single row.
 export default function HomeReviews({ reviews, score, count }: HomeReviewsProps) {
   return (
     <section
@@ -38,7 +38,10 @@ export default function HomeReviews({ reviews, score, count }: HomeReviewsProps)
         </Link>
       </div>
       <div className='mt-10'>
-        <ReviewWall reviews={reviews} />
+        <ReviewWall
+          reviews={reviews}
+          rows={1}
+        />
       </div>
     </section>
   );
