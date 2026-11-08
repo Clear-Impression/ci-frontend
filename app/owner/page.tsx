@@ -23,6 +23,13 @@ const sections = [
     available: true,
   },
   {
+    title: 'Services',
+    description: 'Add, remove, and update the services shown on the website.',
+    label: 'Edit services',
+    href: studioUrl,
+    available: true,
+  },
+  {
     title: 'Leads',
     description: 'View quote requests and customer inquiries.',
     label: 'View leads',
