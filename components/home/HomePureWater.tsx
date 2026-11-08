@@ -55,8 +55,6 @@ export default function HomePureWater({
     };
   }, [selected, hovered, focused, steps.length]);
 
-  const current = steps[active];
-
   return (
     <section
       aria-labelledby='pure-water-heading'
@@ -118,18 +116,24 @@ export default function HomePureWater({
 
             <div
               id='pure-water-step'
-              className='mt-6 rounded-2xl bg-[#f7f4fb] px-7 py-6 sm:px-8'>
-              {/* Changing the key restarts the fade for the selected stage. */}
-              <div
-                key={current.label}
-                className={styles.stepIn}>
-                <h3 className='text-xl font-semibold text-[#200b38]'>
-                  {current.label}
-                </h3>
-                <p className='mt-2 leading-relaxed text-gray-700'>
-                  {current.detail}
-                </p>
-              </div>
+              className='mt-6 grid rounded-2xl bg-[#f7f4fb] px-7 py-6 sm:px-8'>
+              {/* Stack every stage in the same spot so the box always fits the
+                  longest one and keeps its size when the stage changes. Only the
+                  selected stage is shown, and it fades in each time it's picked. */}
+              {steps.map((step, index) => (
+                <div
+                  key={step.label}
+                  className={`col-start-1 row-start-1 ${
+                    index === active ? styles.stepIn : 'invisible'
+                  }`}>
+                  <h3 className='text-xl font-semibold text-[#200b38]'>
+                    {step.label}
+                  </h3>
+                  <p className='mt-2 leading-relaxed text-gray-700'>
+                    {step.detail}
+                  </p>
+                </div>
+              ))}
             </div>
 
             <p className='mt-5 flex items-start gap-3 leading-relaxed text-gray-700'>

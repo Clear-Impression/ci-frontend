@@ -98,3 +98,18 @@ export const googleReviews: readonly Review[] = [
       'Had Clear Impression Window Cleaning come by today and they did our front door windows for us and they are responsible for doing some of our neighboring businesses window cleaning for them. Great guy and great company, if we ever switch we will give them a try for sure!',
   },
 ];
+
+// One row of reviews for the homepage, one per customer, mixing homes and
+// businesses. Six cards keeps the row moving at the same speed as before.
+const homeReviewIds = [
+  'robin-haney',
+  'ali-pano-full',
+  'bryce',
+  'appliances-4-less-tempe',
+  'mary-blake',
+  'kate-willenborg',
+];
+
+export const homeReviews = homeReviewIds.flatMap((id) =>
+  googleReviews.filter((review) => review.id === id),
+);

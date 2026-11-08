@@ -6,6 +6,8 @@ import styles from '@/app/reviews/reviews.module.css';
 
 type ReviewWallProps = {
   reviews: readonly Review[];
+  // The Reviews page uses two rows. The homepage uses one.
+  rows?: 1 | 2;
 };
 
 // One review card. The initial stands in for the reviewer's photo.
@@ -35,12 +37,12 @@ function WallCard({ review }: { review: Review }) {
   );
 }
 
-// Two rows of reviews drift past in opposite directions.
+// Rows of reviews drift past, in opposite directions when there are two.
 // Hovering, focusing, or the pause button stops them so they can be read.
-export default function ReviewWall({ reviews }: ReviewWallProps) {
+export default function ReviewWall({ reviews, rows: rowCount = 2 }: ReviewWallProps) {
   const [paused, setPaused] = useState(false);
   const half = Math.ceil(reviews.length / 2);
-  const rows = [reviews.slice(0, half), reviews.slice(half)];
+  const rows = rowCount === 1 ? [reviews] : [reviews.slice(0, half), reviews.slice(half)];
 
   return (
     <div

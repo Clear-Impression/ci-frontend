@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import FeedbackForm from '@/components/feedback/FeedbackForm';
 import { company } from '@/data/company';
-import { feedbackPage } from '@/data/feedback';
+import QuoteActions from '@/components/ui/QuoteActions';
+import { feedbackClosing, feedbackPage } from '@/data/feedback';
 import styles from './feedback.module.css';
 
 const title = 'Feedback | Clear Impression Services';
@@ -114,6 +115,17 @@ export default function FeedbackPage() {
               formUrl={company.feedbackFormUrl}
             />
           </div>
+        </div>
+      </section>
+
+      {/* End with the same call to action as the other pages. */}
+      <section className='mx-auto max-w-7xl px-6 py-16 sm:px-8 sm:py-20'>
+        <div className='rounded-2xl bg-[#200b38] px-8 py-12 text-white sm:px-12'>
+          <h2 className='text-2xl font-semibold sm:text-3xl'>
+            {feedbackClosing.heading}
+          </h2>
+          <p className='mt-4 max-w-2xl text-white/80'>{feedbackClosing.text}</p>
+          <QuoteActions />
         </div>
       </section>
     </main>

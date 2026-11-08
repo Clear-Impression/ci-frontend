@@ -1,3 +1,9 @@
+//
+//
+// INFORMATION HAS BEEN PORTED TO SANITY!! ADD SERVICE DATA WITHIN APPLICATION INSTEAD, DO NOT ADD HERE!
+//
+//
+
 export type Service = {
   slug: string;
   title: string;

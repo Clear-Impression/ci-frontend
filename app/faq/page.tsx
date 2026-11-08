@@ -1,8 +1,29 @@
+import type { Metadata } from "next";
 import FAQAccordion from "./faqAccordion";
+import styles from "./faq.module.css";
+import QuoteActions from "@/components/ui/QuoteActions";
+import { aboutClosing } from "@/data/about";
+import { company } from "@/data/company";
 import { getFAQs } from "@/lib/api";
 import type { FAQItem } from "@/types/faq";
 
-export default async function FAQPage() {
+const title = "FAQ | Clear Impression Services";
+const description =
+  "Answers to common questions about Clear Impression's window cleaning, scheduling, and service across the Phoenix metro area.";
+
+export const metadata: Metadata = {
+  title,
+  description,
+  alternates: { canonical: `${company.website}faq` },
+};
+
+type FAQPageProps = {
+  searchParams: Promise<{ open?: string | string[] }>;
+};
+
+export default async function FAQPage({ searchParams }: FAQPageProps) {
+  // the site search links here with ?open= so that answer shows right away
+  const { open } = await searchParams;
   let faqItems: FAQItem[] = [];
   let unavailable = false;
 
@@ -13,24 +34,64 @@ export default async function FAQPage() {
   }
 
   return (
-    <main className="flex-1 px-6 py-16">
-      {/* title */}
-      <h1 className="text-3xl font-semibold">
-        Frequently Asked Questions
-      </h1>
-
-      {/* title spacing */}
-      <div className="mt-8">
-        {unavailable ? (
-          <p role="status" className="text-gray-600">
-            FAQs are temporarily unavailable. Please try again shortly.
+    <main className="flex-1 bg-white text-[#200b38]">
+      {/* same header band as the other pages */}
+      <section className="relative isolate overflow-hidden bg-[#200b38] text-white">
+        {/* a soft glow that drifts slowly behind the title */}
+        <div aria-hidden="true" className={`${styles.glow} absolute -z-10`} />
+        <div className="mx-auto flex min-h-88 max-w-7xl flex-col justify-center px-6 py-10 sm:min-h-80 sm:px-8 sm:py-12">
+          <p className={`${styles.enter} text-sm font-semibold uppercase tracking-widest text-[#efb52b]`}>
+            FAQ
           </p>
-        ) : faqItems.length === 0 ? (
-          <p className="text-gray-600">There are no published FAQs yet.</p>
-        ) : (
-          <FAQAccordion items={faqItems} />
-        )}
-      </div>
+          <h1
+            className={`${styles.enter} mt-3 max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl`}
+            style={{ "--delay": "90ms" } as React.CSSProperties}
+          >
+            Frequently asked questions
+          </h1>
+          <p
+            className={`${styles.enter} mt-6 max-w-2xl text-lg text-white/80`}
+            style={{ "--delay": "180ms" } as React.CSSProperties}
+          >
+            Quick answers to what customers ask us most. Don’t see your
+            question? Call or text, and we’ll help.
+          </p>
+        </div>
+      </section>
+
+      <section className="bg-[#f7f4fb]">
+        {/* the questions */}
+        <div
+          className={`${styles.enter} mx-auto max-w-7xl px-6 py-16 sm:px-8 sm:py-20`}
+          style={{ "--delay": "250ms" } as React.CSSProperties}
+        >
+          {unavailable ? (
+            <p role="status" className="rounded-xl bg-white p-5 text-gray-600 ring-1 ring-[#200b38]/10">
+              FAQs are temporarily unavailable. Please try again shortly.
+            </p>
+          ) : faqItems.length === 0 ? (
+            <p className="rounded-xl bg-white p-5 text-gray-600 ring-1 ring-[#200b38]/10">
+              There are no published FAQs yet.
+            </p>
+          ) : (
+            <FAQAccordion
+              items={faqItems}
+              openId={typeof open === "string" ? open : undefined}
+            />
+          )}
+        </div>
+      </section>
+
+      {/* End with the same call to action as the other pages. */}
+      <section className="mx-auto max-w-7xl px-6 py-16 sm:px-8 sm:py-20">
+        <div className="rounded-2xl bg-[#200b38] px-8 py-12 text-white sm:px-12">
+          <h2 className="text-2xl font-semibold sm:text-3xl">
+            {aboutClosing.heading}
+          </h2>
+          <p className="mt-4 max-w-2xl text-white/80">{aboutClosing.text}</p>
+          <QuoteActions />
+        </div>
+      </section>
     </main>
   );
 }

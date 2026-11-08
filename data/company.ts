@@ -29,8 +29,8 @@ export type NavigationItem = {
 // Set available to true only when the page exists.
 export const navigation: readonly NavigationItem[] = [
   { label: 'Home', href: '/', available: true },
-  { label: 'Services', href: '/services', available: true, preview: 'services' },
   { label: 'Locations', href: '/locations', available: true, preview: 'locations' },
+  { label: 'Services', href: '/services', available: true, preview: 'services' },
   { label: 'About', href: '/about', available: true },
   { label: 'Reviews', href: '/reviews', available: true },
   { label: 'FAQ', href: '/faq', available: true },

@@ -8,6 +8,10 @@ export const locationsPageContent = {
   description: `Residential and commercial window cleaning in ${serviceCities.length} cities, from Glendale to Queen Creek.`,
   citiesHeading: 'Cities we serve.',
   citiesDescription: 'Explore window cleaning in your city.',
+  // The bottom band sends visitors on to Services, the next stop before a quote.
+  nextHeading: 'See what we can do for you.',
+  nextText: 'Every service we offer across the Valley, with a free quote whenever you’re ready.',
+  servicesLabel: 'See our services',
 } as const;
 
 // Edit these draft descriptions when the business supplies more local details.

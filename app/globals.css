@@ -18,6 +18,15 @@ body {
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
 
+/* Tailwind v4 gives buttons a plain arrow cursor, so bring back the pointer
+   for every button you can click (Back, Menu, the map cities, and so on). */
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
 /* Scroll between terms sections without jumping straight to them. */
 html:has(#service-terms) {
   scroll-behavior: smooth;
@@ -76,6 +85,100 @@ html {
   height: 3.5rem;
 }
 
+/* On phones and tablets the open search box covers the whole header row,
+   so the logo and Menu button step out of sight behind it. */
+@media (width < 64rem) {
+  .header-row:has(> .site-search[data-open]) > :not(.site-search) {
+    visibility: hidden;
+  }
+}
+
+/* Opening search: the box sweeps open from the search icon's side, then the
+   results drop in just below it. */
+.search-field {
+  animation: search-field 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.search-results {
+  animation: search-results 0.2s 0.06s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes search-field {
+  from {
+    opacity: 0;
+    clip-path: inset(0 0 0 75% round 0.75rem);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(-4px round 1rem);
+  }
+}
+
+@keyframes search-results {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+/* Closing runs the same moves backwards, a little faster. */
+.site-search[data-closing] .search-field {
+  animation: search-field-out 0.16s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+.site-search[data-closing] .search-results {
+  animation: search-results-out 0.12s ease-in forwards;
+}
+
+/* Once the box is gone, the menu and search icon fade back in. */
+.site-search[data-closed] nav,
+.site-search[data-closed] > button {
+  animation: search-menu-in 0.2s ease-out;
+}
+
+/* On phones, the logo and Menu button come back the same way. */
+@media (width < 64rem) {
+  .header-row:has(> .site-search[data-closed]) > :not(.site-search) {
+    animation: search-menu-in 0.2s ease-out;
+  }
+}
+
+@keyframes search-field-out {
+  from {
+    opacity: 1;
+    clip-path: inset(-4px round 1rem);
+  }
+  to {
+    opacity: 0;
+    clip-path: inset(0 0 0 75% round 0.75rem);
+  }
+}
+
+@keyframes search-results-out {
+  to {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes search-menu-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .search-field,
+  .search-results,
+  .site-search[data-closing] .search-field,
+  .site-search[data-closing] .search-results,
+  .site-search[data-closed] nav,
+  .site-search[data-closed] > button,
+  .header-row:has(> .site-search[data-closed]) > :not(.site-search) {
+    animation: none;
+  }
+}
+
 /* Preview panels under the Services and Locations tabs. */
 .nav-caret {
   transition: rotate 0.25s ease;
@@ -87,6 +190,25 @@ html {
 
 .nav-tab[data-open] .nav-caret {
   rotate: 180deg;
+}
+
+/* The tab for the page you're on stays gold, with a short bar under its
+   name, so visitors can see where they are without relying on color alone. */
+.nav-tab[data-active] {
+  color: #efb52b;
+}
+
+.nav-label {
+  position: relative;
+}
+
+.nav-tab[data-active] .nav-label::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 -8px;
+  height: 2px;
+  border-radius: 9999px;
+  background: currentColor;
 }
 
 .nav-panel {
