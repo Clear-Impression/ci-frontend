@@ -82,16 +82,16 @@ export default function Navbar() {
             </ul>
           </nav>
         </SiteSearch>
-        {/* Open the quote form while keeping calls available in the top bar. */}
-        <a
-          href={company.quoteFormUrl}
+        {/* Open the quote page: an instant estimate or a full quote request. */}
+        <Link
+          href='/estimate'
           className='hidden min-h-11 items-center rounded-lg bg-[#efb52b] px-5 py-3 text-sm font-semibold text-[#200b38] hover:bg-[#f6c95b] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white lg:inline-flex'>
           Get a free quote
-        </a>
+        </Link>
         {/* Show the mobile menu below the desktop breakpoint. */}
         <MobileMenu
           items={navigation}
-          quoteHref={company.quoteFormUrl}
+          quoteHref='/estimate'
         />
       </div>
       {/* Floats just under the header on every page except the homepage. */}

@@ -89,7 +89,7 @@ export default function MobileMenu({
               )}
             </li>
           ))}
-          {/* Close the menu when opening the quote form. */}
+          {/* Close the menu when opening the quote page. */}
           <li className='mt-3'>
             <a
               href={quoteHref}
