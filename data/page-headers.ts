@@ -43,6 +43,11 @@ export const pageHeaders: Record<string, PageHeaderSettings> = {
     title: feedbackPage.title,
     subtitle: feedbackPage.description,
   },
+  estimate: {
+    label: 'Get a free quote',
+    title: 'Get a free quote.',
+    subtitle: 'See a ballpark price in about two minutes, or request an exact quote from our team.',
+  },
   quote: {
     label: 'Request a quote',
     title: 'Request a quote.',

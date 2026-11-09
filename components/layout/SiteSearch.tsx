@@ -177,6 +177,8 @@ export default function SiteSearch({ children }: SiteSearchProps) {
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       const typing = event.target instanceof HTMLElement && event.target.closest('input, textarea, select, [contenteditable]');
+      // Browser autofill sends key events with no key, so check it exists first.
+      if (typeof event.key !== 'string') return;
       const shortcut = event.key.toLowerCase() === 'k' && (event.metaKey || event.ctrlKey);
       if (!shortcut && (event.key !== '/' || typing)) return;
       event.preventDefault();
