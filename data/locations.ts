@@ -1,18 +1,19 @@
 import { serviceCities } from './home';
 
-// Keep Locations page copy here so it can move to a CMS later.
+// Locations content now comes from Sanity (see lib/locations.ts). This file is
+// the starting text for Studio, and the backup if Sanity can't be reached.
 export const locationsPageContent = {
   eyebrow: 'Where we work',
   title: 'Clear views across the Valley.',
-  // Count the cities so this stays right when a new one is added.
-  description: `Residential and commercial window cleaning in ${serviceCities.length} cities, from Glendale to Queen Creek.`,
+  // {count} becomes the number of cities, so this stays right when one is added.
+  description: 'Residential and commercial window cleaning in {count} cities, from Glendale to Queen Creek.',
   citiesHeading: 'Cities we serve.',
   citiesDescription: 'Explore window cleaning in your city.',
   // The bottom band sends visitors on to Services, the next stop before a quote.
   nextHeading: 'See what we can do for you.',
   nextText: 'Every service we offer across the Valley, with a free quote whenever you’re ready.',
   servicesLabel: 'See our services',
-} as const;
+};
 
 // Edit these draft descriptions when the business supplies more local details.
 const cityDescriptions: Record<string, string> = {
@@ -38,25 +39,6 @@ const cityDescriptions: Record<string, string> = {
     'Tempe combines a university setting with residential neighborhoods and local businesses. Clear Impression Services offers window cleaning for homes and commercial properties, plus screen and solar panel cleaning. Whether you’re preparing your space for visitors or keeping up with routine care, contact us to discuss your next cleaning.',
 };
 
-// Use the map's city list for routes and footer links, with Mesa shown first.
-export const locationPages = [...serviceCities]
-  .sort((first, second) => {
-    if (first.name === 'Mesa') return -1;
-    if (second.name === 'Mesa') return 1;
-    return 0;
-  })
-  .map((city) => ({
-    name: city.name,
-    slug: city.name.toLowerCase().replace(/ /g, '-'),
-    href: `/locations/${city.name.toLowerCase().replace(/ /g, '-')}`,
-    title: `Window cleaning in ${city.name}, AZ.`,
-    intro:
-      city.name === 'Mesa'
-        ? 'Clear Impression Services is based in Mesa, providing residential and commercial window cleaning across the Phoenix metro area.'
-        : `Residential and commercial window cleaning in ${city.name}, provided by Clear Impression Services.`,
-    description: cityDescriptions[city.name],
-  }));
-
 // The short line under each city in the header's Locations preview.
 export const cityRegions: Record<string, string> = {
   Mesa: 'Our home base · East Valley',
@@ -71,25 +53,81 @@ export const cityRegions: Record<string, string> = {
   'Queen Creek': 'Southeast Valley',
 };
 
-export function getLocationBySlug(slug: string) {
-  return locationPages.find((location) => location.slug === slug);
-}
+// A photo, a video, or both. The video plays in place of the photo.
+export type LocationMedia = {
+  photo: {
+    url: string;
+    width: number;
+    height: number;
+    // The point to keep in view when the photo is cropped (0 to 1).
+    hotspot: { x: number; y: number } | null;
+  } | null;
+  video: { url: string; mimeType: string } | null;
+  alt: string;
+};
+
+export type LocationPage = {
+  name: string;
+  slug: string;
+  href: string;
+  title: string;
+  intro: string;
+  description: string;
+  region: string;
+  coordinates: [number, number];
+  // Empty means the city uses the shared photo or video.
+  media: LocationMedia | null;
+};
+
+// Use the map's city list for routes and footer links, with Mesa shown first.
+export const locationPages: LocationPage[] = [...serviceCities]
+  .sort((first, second) => {
+    if (first.name === 'Mesa') return -1;
+    if (second.name === 'Mesa') return 1;
+    return 0;
+  })
+  .map((city) => {
+    const slug = city.name.toLowerCase().replace(/ /g, '-');
+    return {
+      name: city.name,
+      slug,
+      href: `/locations/${slug}`,
+      title: `Window cleaning in ${city.name}, AZ.`,
+      intro:
+        city.name === 'Mesa'
+          ? 'Clear Impression Services is based in Mesa, providing residential and commercial window cleaning across the Phoenix metro area.'
+          : `Residential and commercial window cleaning in ${city.name}, provided by Clear Impression Services.`,
+      description: cityDescriptions[city.name],
+      region: cityRegions[city.name] ?? 'Phoenix metro',
+      coordinates: city.coordinates,
+      media: null,
+    };
+  });
 
 export const cityPageContent = {
   backLabel: 'All locations',
   photoEyebrow: 'For your home or business',
   photoHeading: 'A clearer view,\ncloser to home.',
-  photo: '/images/home/window-cleaning.webp',
-  photoAlt:
-    'A window cleaner using a squeegee on a large window in an Arizona home.',
   quoteLabel: 'Call for a quote',
   servicesDescription:
     'Cleaning for your home, business, and the details in between.',
   servicesLinkLabel: 'Explore all services',
-} as const;
+};
+
+// The photo city pages use until one is added in Sanity.
+export const defaultCityMedia: LocationMedia = {
+  photo: {
+    url: '/images/home/window-cleaning.webp',
+    width: 1440,
+    height: 1440,
+    hotspot: null,
+  },
+  video: null,
+  alt: 'A window cleaner using a squeegee on a large window in an Arizona home.',
+};
 
 // Show a short service summary here; the Services page keeps its full catalog.
-export const locationServices = [
+export const locationServices: { name: string; description: string }[] = [
   {
     name: 'Window cleaning',
     description:
@@ -120,4 +158,4 @@ export const locationServices = [
     description:
       'Remove fingerprints and smudges from the glass you use every day.',
   },
-] as const;
+];

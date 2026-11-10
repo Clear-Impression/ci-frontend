@@ -6,7 +6,6 @@ import ServiceIcon from '@/components/services/ServiceIcon';
 import { company } from '@/data/company';
 import {
   describeItem,
-  estimateCities,
   estimateNote,
   estimateServices,
   formatAmount,
@@ -75,7 +74,9 @@ function StepTitle({ number, title, note }: { number: string; title: string; not
   );
 }
 
-export default function InstantEstimate() {
+// The page passes in the cities from Sanity, so the list matches the Locations page.
+export default function InstantEstimate({ cities }: { cities: string[] }) {
+  const cityChoices = [...cities, 'Other'];
   const [state, setState] = useState<Saved>(emptyState);
   const [loaded, setLoaded] = useState(false);
   const [wipe, setWipe] = useState(0);
@@ -421,7 +422,7 @@ export default function InstantEstimate() {
                 <fieldset className='mt-8 min-w-0'>
                   <legend className='text-sm font-medium text-[#200b38]'>City</legend>
                   <div className='mt-3 flex flex-wrap gap-2'>
-                    {estimateCities.map((city, index) => {
+                    {cityChoices.map((city, index) => {
                       const picked = state.details.city === city;
                       return (
                         <label

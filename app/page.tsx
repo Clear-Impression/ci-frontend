@@ -14,20 +14,28 @@ import {
   homeServices,
   homeSteps,
   pureWater,
-  serviceCities,
   servingSince,
 } from '@/data/home';
-import { locationPages } from '@/data/locations';
 import { googleRating, homeReviews } from '@/data/reviews';
+import { getLocations, withCityCount } from '@/lib/locations';
 
-export const metadata: Metadata = {
-  title: 'Window Cleaning in Phoenix Metro | Clear Impression Services',
-  description:
-    'Residential and commercial window cleaning in Mesa, Phoenix, Glendale, Paradise Valley, Scottsdale, Fountain Hills, Queen Creek, Gilbert, Chandler, and Tempe. Explore our cleaning methods and request a free quote.',
-};
+// Name every city we serve, so the search description stays current.
+export async function generateMetadata(): Promise<Metadata> {
+  const { cities } = await getLocations();
+  const cityList = new Intl.ListFormat('en', {
+    style: 'long',
+    type: 'conjunction',
+  }).format(cities.map((city) => city.name));
+
+  return {
+    title: 'Window Cleaning in Phoenix Metro | Clear Impression Services',
+    description: `Residential and commercial window cleaning in ${cityList}. Explore our cleaning methods and request a free quote.`,
+  };
+}
 
 export default async function Home() {
   const header = await getPageHeader('home');
+  const { cities } = await getLocations();
   return (
     <main className='flex-1 bg-white text-[#200b38]'>
       {/* Build the page from sections so their content can change independently. */}
@@ -36,13 +44,14 @@ export default async function Home() {
         score={googleRating.score}
         count={googleRating.count}
         since={servingSince}
-        cityCount={locationPages.length}
+        cityCount={cities.length}
       />
       {/* Follow the path visitors take: find their city, pick a service, get a quote. */}
       <HomeServiceArea
         {...homeAreas}
-        cities={serviceCities}
-        cityPages={locationPages}
+        lead={withCityCount(homeAreas.lead, cities.length)}
+        cities={cities.map(({ name, coordinates }) => ({ name, coordinates }))}
+        cityPages={cities}
       />
       <HomeServices {...homeServices} />
       <HomePureWater {...pureWater} />

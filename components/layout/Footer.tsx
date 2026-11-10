@@ -1,14 +1,16 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { company, serviceAreas } from '@/data/company';
-import { getLocationBySlug } from '@/data/locations';
+import { company } from '@/data/company';
 import { services as servicePages } from '@/data/services';
+import { getLocations } from '@/lib/locations';
 
 // Keep hover and keyboard focus styles the same for footer links.
 const linkStyle =
   'rounded-sm underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#efb52b]';
 
-export default function Footer() {
+export default async function Footer() {
+  const { cities } = await getLocations();
+
   return (
     <footer className='bg-[#200b38] text-white'>
       <div className='h-1 bg-[#55ab68]' />
@@ -48,23 +50,17 @@ export default function Footer() {
         </div>
         <div>
           <h2 className='text-base font-semibold'>Service areas</h2>
-          {/* Two columns of five cities instead of one long list. */}
-          <ul className='mt-3 grid auto-cols-max grid-flow-col grid-rows-5 gap-x-10 gap-y-1 text-sm leading-6 text-white/80'>
-            {serviceAreas.map((area) => {
-              // Use hyphens for city names with spaces.
-              const slug = area.toLowerCase().replace(/ /g, '-');
-              const location = getLocationBySlug(slug);
-
-              return (
-                <li key={area}>
-                  {location ? (
-                    <Link href={location.href} className={linkStyle}>
-                      {location.name}
-                    </Link>
-                  ) : area}
-                </li>
-              );
-            })}
+          {/* Two columns instead of one long list. The rows grow as cities are added. */}
+          <ul
+            className='mt-3 grid auto-cols-max grid-flow-col gap-x-10 gap-y-1 text-sm leading-6 text-white/80'
+            style={{ gridTemplateRows: `repeat(${Math.ceil(cities.length / 2)}, auto)` }}>
+            {cities.map((location) => (
+              <li key={location.slug}>
+                <Link href={location.href} className={linkStyle}>
+                  {location.name}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
         {/* Phone and email links open the visitor's calling or email app. */}

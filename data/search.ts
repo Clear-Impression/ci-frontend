@@ -1,5 +1,4 @@
 import { company, navigation } from '@/data/company';
-import { cityRegions, locationPages } from '@/data/locations';
 import { coreServices, services } from '@/data/services';
 import type { SearchEntry } from '@/lib/search';
 
@@ -99,15 +98,7 @@ export const siteSearchEntries: SearchEntry[] = [
     keywords: serviceKeywords[service.slug] ?? [],
     boost: coreServices.includes(service) ? 0.3 : 0,
   })),
-  // Every city page.
-  ...locationPages.map((city): SearchEntry => ({
-    type: 'location',
-    title: city.name,
-    href: city.href,
-    description: `${cityRegions[city.name]}. ${city.intro}`,
-    short: cityRegions[city.name],
-    keywords: ['az', 'arizona', 'city'],
-  })),
+  // City pages come from Sanity through /api/search/locations.
 ];
 
 // Shown before anything is typed.

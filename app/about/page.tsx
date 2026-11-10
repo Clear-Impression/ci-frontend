@@ -1,6 +1,7 @@
 import { getPageHeader } from '@/lib/page-headers';
 import type { Metadata } from 'next';
-import { company, serviceAreas, services } from '@/data/company';
+import { company, services } from '@/data/company';
+import { getLocations } from '@/lib/locations';
 import {
   aboutClosing,
   aboutIntro,
@@ -37,6 +38,7 @@ function Words({ text, className }: { text: string; className: string }) {
 
 export default async function AboutPage() {
   const header = await getPageHeader('about');
+  const { cities } = await getLocations();
   return (
     // Let the page fill the space between the header and footer.
     <main className='flex-1 bg-white text-gray-900'>
@@ -102,12 +104,12 @@ export default async function AboutPage() {
               Where we work
             </h3>
             <ul className='mt-3 flex flex-wrap gap-2'>
-              {serviceAreas.map((area, index) => (
+              {cities.map((city, index) => (
                 <li
-                  key={area}
+                  key={city.slug}
                   style={{ '--i': index + 3 } as React.CSSProperties}
                   className='tag-flip rounded-full bg-white px-4 py-2 text-sm font-medium text-[#200b38] ring-1 ring-gray-200'>
-                  {area}
+                  {city.name}
                 </li>
               ))}
             </ul>

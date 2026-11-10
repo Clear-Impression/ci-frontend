@@ -50,8 +50,11 @@ export default function ServiceAreaMap({
 
       const boundaryLayer = L.layerGroup().addTo(targetMap);
       boundariesRef.current = boundaryLayer;
+      // Only outline the cities on the map, so a city hidden in Sanity loses its outline too.
+      const cityNames = new Set(cities.map((city) => city.name));
 
       L.geoJSON(cityBoundaries, {
+        filter: (feature) => cityNames.has(feature.properties?.name),
         style: {
           color: '#6c3fb8',
           fillColor: '#8f63d0',
