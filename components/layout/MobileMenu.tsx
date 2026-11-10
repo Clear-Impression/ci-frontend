@@ -5,15 +5,14 @@ import { usePathname } from 'next/navigation';
 import { useId, useRef, useState } from 'react';
 import type { NavigationItem } from '@/data/company';
 import { getCurrent } from '@/lib/navigation';
+import QuoteButton from '@/components/quote/QuoteButton';
 
 type MobileMenuProps = {
   items: readonly NavigationItem[];
-  quoteHref: string;
 };
 
 export default function MobileMenu({
   items,
-  quoteHref,
 }: MobileMenuProps) {
   // Start with the menu closed so it does not cover the page.
   const [open, setOpen] = useState(false);
@@ -89,14 +88,13 @@ export default function MobileMenu({
               )}
             </li>
           ))}
-          {/* Close the menu when opening the quote page. */}
+          {/* Close the menu, then open the quote chooser popup. */}
           <li className='mt-3'>
-            <a
-              href={quoteHref}
-              onClick={() => setOpen(false)}
+            <QuoteButton
+              onOpen={() => setOpen(false)}
               className='block rounded-lg bg-[#efb52b] px-4 py-3 text-center font-semibold text-[#200b38] hover:bg-[#f6c95b] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white'>
               Get a free quote
-            </a>
+            </QuoteButton>
           </li>
         </ul>
       </nav>

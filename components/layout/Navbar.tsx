@@ -5,6 +5,8 @@ import BackButton from './BackButton';
 import MobileMenu from './MobileMenu';
 import NavDropdown from './NavDropdown';
 import NavLink from './NavLink';
+import QuoteButton from '@/components/quote/QuoteButton';
+import QuoteChooser from '@/components/quote/QuoteChooser';
 import { LocationsPreview, ServicesPreview } from './NavPreviews';
 import SiteSearch from './SiteSearch';
 import StickyHeader from './StickyHeader';
@@ -82,20 +84,16 @@ export default function Navbar() {
             </ul>
           </nav>
         </SiteSearch>
-        {/* Open the quote page: an instant estimate or a full quote request. */}
-        <Link
-          href='/estimate'
-          className='hidden min-h-11 items-center rounded-lg bg-[#efb52b] px-5 py-3 text-sm font-semibold text-[#200b38] hover:bg-[#f6c95b] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white lg:inline-flex'>
+        {/* Opens a popup explaining the instant estimate and the detailed quote. */}
+        <QuoteButton className='hidden min-h-11 items-center rounded-lg bg-[#efb52b] px-5 py-3 text-sm font-semibold text-[#200b38] hover:bg-[#f6c95b] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white lg:inline-flex'>
           Get a free quote
-        </Link>
+        </QuoteButton>
         {/* Show the mobile menu below the desktop breakpoint. */}
-        <MobileMenu
-          items={navigation}
-          quoteHref='/estimate'
-        />
+        <MobileMenu items={navigation} />
       </div>
       {/* Floats just under the header on every page except the homepage. */}
       <BackButton />
+      <QuoteChooser />
     </StickyHeader>
   );
 }
