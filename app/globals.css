@@ -1154,3 +1154,215 @@ html {
   border: 1px solid rgb(255 255 255 / 0.14);
   border-radius: 0.5rem;
 }
+
+/* Homepage sidebar: a small floating card listing the page's sections. */
+.home-rail {
+  top: calc(50% + 2.5rem);
+  opacity: 0;
+  transform: translate(-0.75rem, -50%);
+  transition:
+    opacity 300ms ease,
+    transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.home-rail[data-shown] {
+  opacity: 1;
+  transform: translate(0, -50%);
+}
+
+.home-rail-card {
+  display: flex;
+  width: 13.5rem;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 1.25rem;
+  background: #200b38;
+  box-shadow: 0 12px 32px rgb(32 11 56 / 0.18);
+  transition: width 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.home-rail[data-collapsed] .home-rail-card {
+  width: 4rem;
+}
+
+.home-rail-head {
+  display: flex;
+  height: 2.25rem;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 0.6rem;
+}
+
+.home-rail-title {
+  color: rgb(255 255 255 / 0.5);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: opacity 150ms ease;
+}
+
+.home-rail-toggle {
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex-shrink: 0;
+  place-items: center;
+  border-radius: 0.65rem;
+  color: rgb(255 255 255 / 0.6);
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+}
+
+.home-rail-toggle svg {
+  transition: transform 300ms ease;
+}
+
+.home-rail[data-collapsed] .home-rail-toggle svg {
+  transform: scaleX(-1);
+}
+
+.home-rail-toggle:hover {
+  background: rgb(255 255 255 / 0.08);
+  color: #fff;
+}
+
+.home-rail[data-collapsed] .home-rail-head {
+  padding-left: 0;
+}
+
+.home-rail[data-collapsed] .home-rail-title {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* The white highlight slides to the current row. */
+.home-rail-active {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2.5rem;
+  border-radius: 0.65rem;
+  background: #fff;
+  transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.home-rail-link,
+.home-rail-quote {
+  position: relative;
+  display: flex;
+  height: 2.5rem;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 0.6rem 0 0.7rem;
+  border-radius: 0.65rem;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.home-rail-link {
+  color: rgb(255 255 255 / 0.7);
+  transition:
+    color 200ms ease,
+    background-color 150ms ease;
+}
+
+.home-rail-link:hover:not([aria-current]) {
+  background: rgb(255 255 255 / 0.06);
+  color: #fff;
+}
+
+.home-rail-link[aria-current] {
+  color: #200b38;
+  font-weight: 600;
+}
+
+.home-rail-link[aria-current] svg {
+  color: #6c3fb8;
+}
+
+.home-rail-link:focus-visible,
+.home-rail-toggle:focus-visible,
+.home-rail-quote:focus-visible {
+  outline: 2px solid #efb52b;
+  outline-offset: 2px;
+}
+
+.home-rail-label {
+  transition: opacity 150ms ease;
+}
+
+.home-rail-foot {
+  padding-top: 0.75rem;
+  border-top: 1px solid rgb(255 255 255 / 0.08);
+}
+
+.home-rail-quote {
+  justify-content: center;
+  background: #efb52b;
+  color: #200b38;
+  font-weight: 600;
+  transition: background-color 150ms ease;
+}
+
+.home-rail-quote:hover {
+  background: #f6c64f;
+}
+
+/* Collapsed: icons only, and each name shows as a small tooltip on hover. */
+.home-rail[data-collapsed] .home-rail-link,
+.home-rail[data-collapsed] .home-rail-quote {
+  justify-content: center;
+  padding: 0;
+}
+
+.home-rail[data-collapsed] .home-rail-label {
+  position: absolute;
+  top: 50%;
+  left: calc(100% + 0.9rem);
+  padding: 0.35rem 0.65rem;
+  border-radius: 0.5rem;
+  background: #fff;
+  color: #200b38;
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: 0 6px 18px rgb(32 11 56 / 0.14);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-0.25rem, -50%);
+  transition:
+    opacity 150ms ease,
+    transform 200ms ease;
+}
+
+.home-rail[data-collapsed] a:hover .home-rail-label,
+.home-rail[data-collapsed] a:focus-visible .home-rail-label {
+  opacity: 1;
+  transform: translate(0, -50%);
+}
+
+/* Leave room beside the content for the sidebar on wide screens. */
+@media (min-width: 1280px) {
+  .home-rail-content {
+    padding-left: 15rem;
+    transition: padding-left 300ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  :root[data-rail-collapsed] .home-rail-content {
+    padding-left: 5.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-rail,
+  .home-rail-card,
+  .home-rail-active,
+  .home-rail-content {
+    transition: none;
+  }
+}
