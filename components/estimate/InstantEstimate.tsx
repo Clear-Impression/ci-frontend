@@ -95,6 +95,12 @@ export default function InstantEstimate() {
       if (saved) setState({ ...emptyState, ...JSON.parse(saved) });
     } catch {}
     setLoaded(true);
+    // Coming from the quote popup's "Start instant estimate": open the builder right away.
+    if (new URLSearchParams(window.location.search).has('start')) {
+      setState((current) => ({ ...current, open: true }));
+      window.history.replaceState(null, '', window.location.pathname);
+      window.setTimeout(() => builderRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
+    }
   }, []);
 
   useEffect(() => {

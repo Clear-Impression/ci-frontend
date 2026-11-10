@@ -1,0 +1,621 @@
+/* The quote chooser popup. */
+
+.dialog {
+  margin: auto;
+  max-width: min(56rem, calc(100vw - 1.5rem));
+  max-height: calc(100svh - 1.5rem);
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+.dialog::backdrop {
+  background: rgb(20 6 36 / 0.6);
+  backdrop-filter: blur(6px);
+  animation: fade 0.3s ease both;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
+.card {
+  position: relative;
+  max-height: calc(100svh - 1.5rem);
+  overflow: auto;
+  border-radius: 2rem;
+  background:
+    radial-gradient(60% 50% at 100% 0%, rgb(239 181 43 / 0.14), transparent 70%),
+    radial-gradient(60% 50% at 0% 100%, rgb(108 63 184 / 0.1), transparent 70%),
+    #fbf8f3;
+  color: #200b38;
+  box-shadow: 0 50px 100px -40px rgb(20 6 36 / 0.7);
+  animation: pop-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+}
+
+.close {
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  color: rgb(32 11 56 / 0.6);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    rotate 0.3s ease;
+}
+
+.close:hover {
+  background: rgb(32 11 56 / 0.06);
+  color: #200b38;
+  rotate: 90deg;
+}
+
+.close:focus-visible {
+  outline: 2px solid #6c3fb8;
+  outline-offset: 2px;
+}
+
+/* ---------- The wrapping: foggy glass and a squeegee ---------- */
+.fog {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  border-radius: inherit;
+  overflow: hidden;
+  cursor: pointer;
+  background:
+    radial-gradient(30% 25% at 20% 30%, rgb(255 255 255 / 0.65), transparent 70%),
+    radial-gradient(25% 20% at 75% 65%, rgb(255 255 255 / 0.5), transparent 70%),
+    radial-gradient(2px 2px at 30% 70%, #fff, transparent),
+    radial-gradient(2px 2px at 62% 22%, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 84% 40%, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 14% 82%, #fff, transparent),
+    linear-gradient(150deg, rgb(226 216 240 / 0.96), rgb(246 238 226 / 0.96));
+  backdrop-filter: blur(14px);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, transparent 0%, #000 0%);
+  mask-image: linear-gradient(90deg, transparent 0%, transparent 0%, #000 0%);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
+
+.fog:focus-visible {
+  outline: 2px solid #6c3fb8;
+  outline-offset: -6px;
+}
+
+/* A gentle breathing shimmer while it waits to be wiped. */
+.fogText {
+  display: grid;
+  gap: 0.5rem;
+  text-align: center;
+  animation: breathe 1.6s ease-in-out infinite;
+}
+
+.fogTitle {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: rgb(32 11 56 / 0.75);
+}
+
+.fogHint {
+  font-size: 0.95rem;
+  color: rgb(32 11 56 / 0.5);
+}
+
+@keyframes breathe {
+  50% {
+    opacity: 0.7;
+    transform: scale(0.99);
+  }
+}
+
+/* The squeegee blade waits at the left edge, then sweeps across. */
+.blade {
+  position: absolute;
+  top: -5%;
+  bottom: -5%;
+  left: -3%;
+  width: 10px;
+  border-radius: 9999px;
+  background: linear-gradient(180deg, #f6c95b, #efb52b 50%, #d19a14);
+  box-shadow:
+    0 0 24px rgb(239 181 43 / 0.9),
+    -30px 0 40px rgb(255 255 255 / 0.6);
+  opacity: 0;
+}
+
+.fog[data-wiping] {
+  animation: wipe 1.05s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+.fog[data-wiping] .blade {
+  opacity: 1;
+  animation: sweep 1.05s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+.fog[data-wiping] .fogText {
+  animation: none;
+}
+
+@property --wipe {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 0%;
+}
+
+@keyframes wipe {
+  from {
+    --wipe: 0%;
+  }
+  to {
+    --wipe: 104%;
+  }
+}
+
+.fog[data-wiping] {
+  -webkit-mask-image: linear-gradient(90deg, transparent calc(var(--wipe) - 1%), #000 calc(var(--wipe) + 1%));
+  mask-image: linear-gradient(90deg, transparent calc(var(--wipe) - 1%), #000 calc(var(--wipe) + 1%));
+}
+
+@keyframes sweep {
+  from {
+    left: -3%;
+  }
+  to {
+    left: 103%;
+  }
+}
+
+/* ---------- The gift inside ---------- */
+.inner {
+  padding: 2.5rem 1.5rem 1.5rem;
+}
+
+@media (min-width: 40rem) {
+  .inner {
+    padding: 3rem 3rem 2.5rem;
+  }
+}
+
+.title {
+  max-width: 38rem;
+  padding-right: 2rem;
+  font-size: clamp(1.9rem, 4vw, 2.6rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.lead {
+  margin-top: 0.75rem;
+  max-width: 34rem;
+  color: rgb(32 11 56 / 0.65);
+  line-height: 1.6;
+}
+
+.options {
+  margin-top: 2rem;
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 44rem) {
+  .options {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.option {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  transition:
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.4s ease;
+}
+
+.option:focus-visible {
+  outline: 3px solid #6c3fb8;
+  outline-offset: 3px;
+}
+
+@media (hover: hover) {
+  .option:hover {
+    transform: translateY(-4px);
+  }
+}
+
+.optionDark {
+  background: #200b38;
+  color: #fff;
+  box-shadow: 0 30px 50px -30px rgb(32 11 56 / 0.8);
+}
+
+.optionLight {
+  background: #fff;
+  box-shadow:
+    inset 0 0 0 1px rgb(32 11 56 / 0.1),
+    0 24px 40px -32px rgb(32 11 56 / 0.5);
+}
+
+/* Each piece of the gift is revealed in turn once the glass is clean. */
+.title,
+.lead,
+.option,
+.live {
+  opacity: 0;
+  transform: translateY(18px);
+}
+
+.inner[data-shown] .title,
+.inner[data-shown] .lead,
+.inner[data-shown] .option,
+.inner[data-shown] .live {
+  animation: reveal 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.inner[data-shown] .title {
+  animation-delay: 0.35s;
+}
+
+.inner[data-shown] .lead {
+  animation-delay: 0.45s;
+}
+
+.inner[data-shown] .option {
+  animation-delay: calc(0.6s + var(--n, 0) * 0.15s);
+}
+
+.inner[data-shown] .live {
+  animation-delay: 0.95s;
+}
+
+/* When there's no wipe (second visit, or less motion), come in quicker. */
+.card[data-stage='open'] .inner[data-shown] .title,
+.card[data-stage='open'] .inner[data-shown] .lead {
+  animation-delay: 0.05s;
+}
+
+.card[data-stage='open'] .inner[data-shown] .option {
+  animation-delay: calc(0.12s + var(--n, 0) * 0.1s);
+}
+
+.card[data-stage='open'] .inner[data-shown] .live {
+  animation-delay: 0.3s;
+}
+
+@keyframes reveal {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.badgeGold,
+.badgeViolet {
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.badgeGold {
+  background: #efb52b;
+  color: #200b38;
+}
+
+.badgeViolet {
+  background: rgb(108 63 184 / 0.1);
+  color: #6c3fb8;
+}
+
+.optionTitle {
+  margin-top: 1rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* Little demos so people can see the difference at a glance. */
+.demo {
+  margin-top: 1rem;
+  width: 100%;
+  border-radius: 1rem;
+  background: rgb(255 255 255 / 0.07);
+  padding: 0.9rem 1rem;
+  font-size: 0.8rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.demoLight {
+  background: #f7f3fb;
+}
+
+.demoRow,
+.demoPrice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: rgb(255 255 255 / 0.7);
+}
+
+
+.demoTrack {
+  position: relative;
+  height: 6px;
+  border-radius: 9999px;
+  background: rgb(255 255 255 / 0.15);
+  overflow: hidden;
+}
+
+.demoFill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 30%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #9b6ce0, #efb52b);
+  animation: slide 3.6s ease-in-out infinite;
+}
+
+@keyframes slide {
+  0%,
+  10% {
+    width: 30%;
+  }
+  40%,
+  60% {
+    width: 55%;
+  }
+  85%,
+  100% {
+    width: 78%;
+  }
+}
+
+.demoTicker,
+.demoSize {
+  position: relative;
+  height: 1.4rem;
+  overflow: hidden;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #efb52b;
+}
+
+.demoSize {
+  height: 1.2rem;
+  font-size: 0.8rem;
+  color: #fff;
+}
+
+.demoSize > span {
+  display: block;
+  height: 1.2rem;
+  line-height: 1.2rem;
+  text-align: right;
+  animation: tick 3.6s ease-in-out infinite;
+}
+
+.demoTicker > span {
+  display: block;
+  height: 1.4rem;
+  line-height: 1.4rem;
+  text-align: right;
+  animation: tick 3.6s ease-in-out infinite;
+}
+
+@keyframes tick {
+  0%,
+  10% {
+    transform: translateY(0);
+  }
+  40%,
+  60% {
+    transform: translateY(-100%);
+  }
+  85%,
+  100% {
+    transform: translateY(-200%);
+  }
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: rgb(32 11 56 / 0.75);
+}
+
+.check::before {
+  content: '✓';
+  display: grid;
+  place-items: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  background: #6c3fb8;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  transform: scale(0);
+  animation: tick-in 3.6s ease infinite;
+}
+
+.check:nth-child(2)::before {
+  animation-delay: 0.5s;
+}
+
+.check:nth-child(3)::before {
+  animation-delay: 1s;
+}
+
+@keyframes tick-in {
+  0% {
+    transform: scale(0);
+  }
+  12%,
+  85% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0);
+  }
+}
+
+.points {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.92rem;
+  opacity: 0.8;
+  flex: 1;
+}
+
+.points > span::before {
+  content: '•';
+  margin-right: 0.5rem;
+  color: #efb52b;
+}
+
+.optionLight .points > span::before {
+  color: #6c3fb8;
+}
+
+.ctaGold,
+.ctaDark {
+  margin-top: 1.5rem;
+  display: inline-flex;
+  min-height: 3rem;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 0 1.4rem;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.ctaGold {
+  background: #efb52b;
+  color: #200b38;
+}
+
+.ctaDark {
+  background: #200b38;
+  color: #fff;
+}
+
+.optionDark:hover .ctaGold {
+  background: #f6c95b;
+}
+
+.optionLight:hover .ctaDark {
+  background: #33195a;
+}
+
+/* The big "talk to a person" button. */
+.live {
+  /* Stays in view at the bottom of the popup on small screens. */
+  position: sticky;
+  bottom: 0.75rem;
+  z-index: 5;
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-radius: 1.5rem;
+  padding: 1rem 1.25rem;
+  background: #fbefcd;
+  box-shadow: 0 16px 30px -20px rgb(32 11 56 / 0.5);
+  transition: background-color 0.2s ease;
+}
+
+.live:hover {
+  background: #f8e4ad;
+}
+
+.live:focus-visible {
+  outline: 3px solid #6c3fb8;
+  outline-offset: 3px;
+}
+
+.liveIcon {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  background: #200b38;
+  color: #efb52b;
+}
+
+.liveIcon svg {
+  width: 1.3rem;
+  height: 1.3rem;
+}
+
+.liveText {
+  display: grid;
+}
+
+.liveTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.liveSub {
+  color: rgb(32 11 56 / 0.65);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dialog::backdrop,
+  .card,
+  .fogText,
+  .demoFill,
+  .demoTicker > span,
+  .demoSize > span,
+  .check::before {
+    animation: none;
+  }
+
+  .check::before {
+    transform: none;
+  }
+
+  .title,
+  .lead,
+  .option,
+  .live,
+  .inner[data-shown] .title,
+  .inner[data-shown] .lead,
+  .inner[data-shown] .option,
+  .inner[data-shown] .live {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
