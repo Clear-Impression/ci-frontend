@@ -111,11 +111,7 @@ export default async function FeedbackPage() {
           <div
             className={styles.rise}
             style={{ '--delay': '300ms' } as React.CSSProperties}>
-            <FeedbackForm
-              phone={company.phone}
-              phoneHref={company.phoneHref}
-              formUrl={company.feedbackFormUrl}
-            />
+            <FeedbackForm phone={company.phone} phoneHref={company.phoneHref} />
           </div>
         </div>
       </section>

@@ -7,8 +7,9 @@ import {
 } from '@/data/feedback';
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const uuidPattern = /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
 
-function readText(formData: FormData, field: FeedbackField | 'website') {
+function readText(formData: FormData, field: FeedbackField | 'website' | 'submissionKey') {
   const value = formData.get(field);
   return typeof value === 'string' ? value.trim() : '';
 }
@@ -47,6 +48,10 @@ export async function submitFeedback(
     return { status: 'invalid', errors, values };
   }
 
+  // The form makes this key once per message, so a retry is never saved twice.
+  const submissionKey = readText(formData, 'submissionKey');
+  if (!uuidPattern.test(submissionKey)) return { status: 'error', values };
+
   // Same backend address the FAQ page uses. It stays on the server.
   const baseUrl = (process.env.API_BASE_URL || 'http://127.0.0.1:8000').replace(/\/$/, '');
 
@@ -54,15 +59,16 @@ export async function submitFeedback(
     const response = await fetch(`${baseUrl}/api/v1/feedback`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(values),
+      body: JSON.stringify({ submission_key: submissionKey, ...values }),
       cache: 'no-store',
       signal: AbortSignal.timeout(10_000),
     });
 
-    if (response.ok) return { status: 'success' };
+    // 201 is new feedback, 200 is a retry the backend already saved.
+    if (response.status === 200 || response.status === 201) return { status: 'success' };
 
-    // 404 means the backend endpoint has not been built yet.
-    if (response.status === 404) return { status: 'unavailable', values };
+    // 404 (older backend) or 503 (database not set up) means it can't be saved right now.
+    if (response.status === 404 || response.status === 503) return { status: 'unavailable', values };
 
     return { status: 'error', values };
   } catch {

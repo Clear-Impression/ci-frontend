@@ -12,8 +12,6 @@ export const company = {
   // Wide version of the logo for the header bar.
   logoHorizontal: '/logos/logo-horizontal.png',
   quoteFormUrl: '/quote',
-  feedbackFormUrl:
-    'https://docs.google.com/forms/d/e/1FAIpQLSevEVD-eUzXwsID7ZJc0XC7KFT5cKhLwyUU9Ifvm2ILNu9F1A/viewform',
 } as const;
 
 export type NavigationItem = {
