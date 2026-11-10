@@ -1,12 +1,13 @@
-import { services } from '@/data/company';
-
-// Keep the options outside the form so they can come from a CMS later.
 export const quoteOptions = {
-  services,
+  services: [
+    { id: 'window-cleaning', label: 'Window cleaning' },
+    { id: 'solar-panel-cleaning', label: 'Solar panel cleaning' },
+    { id: 'screen-cleaning', label: 'Screen cleaning' },
+  ],
   propertyTypes: ['Residential', 'Commercial'],
 } as const;
 
 export type QuoteOptions = {
-  services: readonly string[];
+  services: readonly { id: string; label: string }[];
   propertyTypes: readonly string[];
 };

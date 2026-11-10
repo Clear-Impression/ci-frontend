@@ -10,10 +10,11 @@
     "fetch:boundaries": "node scripts/fetch-city-boundaries.mjs"
   },
   "dependencies": {
+    "@sanity/client": "7.28.0",
+    "groq": "6.22.0",
     "jspdf": "^4.2.1",
     "leaflet": "^1.9.4",
-    "next": "16.3.8",
-    "next-sanity": "^13.4.0",
+    "next": "^16.4.6",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
@@ -24,8 +25,13 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.3.8",
+    "eslint-config-next": "16.4.6",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "overrides": {
+    "@typescript-eslint/typescript-estree": {
+      "minimatch": "11.0.5"
+    }
   }
 }

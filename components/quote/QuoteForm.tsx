@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import type { FormEvent, HTMLInputTypeAttribute } from 'react';
+import { submitQuote } from '@/app/quote/actions';
 import type { QuoteOptions } from '@/data/quote';
 
 type QuoteFormProps = {
@@ -16,12 +17,16 @@ type FieldProps = {
   autoComplete: string;
   type?: HTMLInputTypeAttribute;
   fullWidth?: boolean;
+  maxLength?: number;
+  pattern?: string;
+  title?: string;
 };
 
 const inputClass =
   'mt-2 w-full rounded-lg border border-[#200b38]/20 bg-white px-4 py-3 text-base text-[#200b38] outline-none transition focus:border-[#6c3fb8] focus:ring-2 focus:ring-[#6c3fb8]/20';
 const choiceClass =
   'flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border border-[#200b38]/15 px-4 py-3 text-sm text-[#200b38] transition hover:border-[#6c3fb8] has-checked:border-[#6c3fb8] has-checked:bg-[#f5f0fb] has-focus-visible:ring-2 has-focus-visible:ring-[#6c3fb8]';
+const phonePattern = String.raw`\+?(?:[\(\). \-]*[0-9]){7,15}[\(\). \-]*`;
 
 // Use the same labels, spacing, and browser autofill support for contact fields.
 function QuoteField({
@@ -30,6 +35,9 @@ function QuoteField({
   autoComplete,
   type = 'text',
   fullWidth,
+  maxLength = 100,
+  pattern,
+  title,
 }: FieldProps) {
   return (
     <label
@@ -45,7 +53,9 @@ function QuoteField({
         type={type}
         autoComplete={autoComplete}
         required
-        maxLength={name === 'address' ? 200 : 100}
+        maxLength={maxLength}
+        pattern={pattern}
+        title={title}
         className={inputClass}
       />
     </label>
@@ -57,11 +67,15 @@ export default function QuoteForm({
   phoneHref,
   phone,
 }: QuoteFormProps) {
-  const [checked, setChecked] = useState(false);
+  const [result, setResult] = useState<Awaited<ReturnType<typeof submitQuote>> | null>(null);
+  const [pending, setPending] = useState(false);
   const [serviceError, setServiceError] = useState(false);
+  const inFlight = useRef(false);
+  const lastSubmission = useRef<{ fingerprint: string; key: string } | null>(null);
 
-  function reviewRequest(event: FormEvent<HTMLFormElement>) {
+  async function sendRequest(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (inFlight.current) return;
     const form = event.currentTarget;
     const values = new FormData(form);
 
@@ -73,8 +87,30 @@ export default function QuoteForm({
     }
 
     setServiceError(false);
-    // This is a local preview. Keep the fields filled and never send their values.
-    setChecked(true);
+    inFlight.current = true;
+    setPending(true);
+    setResult(null);
+
+    try {
+      // Reuse the key when retrying the same details after a failed request.
+      const fingerprint = JSON.stringify([...values.entries()]);
+      if (lastSubmission.current?.fingerprint !== fingerprint) {
+        lastSubmission.current = { fingerprint, key: crypto.randomUUID() };
+      }
+      values.set('submissionKey', lastSubmission.current.key);
+
+      const outcome = await submitQuote(values);
+      setResult(outcome);
+      if (outcome.status === 'saved') {
+        form.reset();
+        lastSubmission.current = null;
+      }
+    } catch {
+      setResult({ status: 'unavailable' });
+    } finally {
+      inFlight.current = false;
+      setPending(false);
+    }
   }
 
   return (
@@ -94,10 +130,11 @@ export default function QuoteForm({
 
       {/* Native validation handles missing fields and invalid email addresses. */}
       <form
-        onSubmit={reviewRequest}
-        onChange={() => setChecked(false)}
-        aria-describedby='quote-preview-note'>
-        <fieldset>
+        method='post'
+        onSubmit={sendRequest}
+        onChange={() => setResult(null)}
+        aria-busy={pending}>
+        <fieldset disabled={pending}>
           <legend className='text-sm font-semibold text-[#200b38]'>
             01 <span className='ml-2'>Your details</span>
           </legend>
@@ -117,29 +154,41 @@ export default function QuoteForm({
               label='Email'
               type='email'
               autoComplete='email'
+              maxLength={254}
             />
             <QuoteField
               name='phone'
               label='Phone'
               type='tel'
               autoComplete='tel'
+              maxLength={32}
+              pattern={phonePattern}
+              title='Enter a phone number with 7 to 15 digits.'
             />
             <QuoteField
               name='address'
               label='Street address'
               autoComplete='street-address'
               fullWidth
+              maxLength={200}
             />
             <QuoteField
               name='city'
               label='City'
               autoComplete='address-level2'
-              fullWidth
+            />
+            <QuoteField
+              name='postalCode'
+              label='ZIP code'
+              autoComplete='postal-code'
+              maxLength={10}
+              pattern='[0-9]{5}(-[0-9]{4})?'
+              title='Enter a 5-digit ZIP code or ZIP+4.'
             />
           </div>
         </fieldset>
 
-        <fieldset className='mt-8'>
+        <fieldset className='mt-8' disabled={pending}>
           <legend className='text-sm font-semibold text-[#200b38]'>
             02 <span className='ml-2'>Your property</span>{' '}
             <span
@@ -168,6 +217,7 @@ export default function QuoteForm({
 
         <fieldset
           className='mt-8'
+          disabled={pending}
           aria-describedby={
             serviceError ? 'service-help service-error' : 'service-help'
           }>
@@ -187,18 +237,18 @@ export default function QuoteForm({
           <div className='mt-4 grid gap-3'>
             {options.services.map((service) => (
               <label
-                key={service}
+                key={service.id}
                 className={choiceClass}>
                 <input
                   type='checkbox'
                   name='services'
-                  value={service}
+                  value={service.id}
                   aria-invalid={serviceError || undefined}
                   aria-describedby={serviceError ? 'service-error' : undefined}
                   onChange={() => setServiceError(false)}
                   className='h-4 w-4 shrink-0 accent-[#6c3fb8]'
                 />
-                {service}
+                {service.label}
               </label>
             ))}
           </div>
@@ -219,40 +269,39 @@ export default function QuoteForm({
             name='details'
             rows={3}
             maxLength={2000}
+            disabled={pending}
             placeholder='Number of windows, stories, or anything you would like us to know.'
             className={`${inputClass} resize-y`}
           />
         </label>
 
-        {/* Keep this notice next to the button so nobody expects a sent request. */}
-        <div
-          id='quote-preview-note'
-          className='mt-6 rounded-lg border border-[#efb52b]/40 bg-[#fffaf0] px-4 py-3 text-sm leading-6 text-[#59441c]'>
-          <strong className='font-semibold'>Form preview.</strong> Requests are
-          not sent yet. To get a quote now,{' '}
-          <a
-            href={phoneHref}
-            className='font-semibold underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2'>
-            call {phone}
-          </a>{' '}
-          or send us a text.
-        </div>
         <button
           type='submit'
+          disabled={pending}
           className='mt-5 flex min-h-12 w-full items-center justify-center gap-3 rounded-lg bg-[#200b38] px-6 py-3 text-sm font-semibold cursor-pointer
-                    text-white transition hover:bg-[#432462] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6c3fb8]'>
-          Review request <span aria-hidden='true'>→</span>
+                    text-white transition hover:bg-[#432462] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6c3fb8] disabled:cursor-wait disabled:bg-[#432462]'>
+          {pending ? 'Sending request…' : 'Send quote request'}
         </button>
         <div
           role='status'
           aria-live='polite'>
-          {checked && (
-            <p className='mt-4 rounded-lg bg-[#f5f0fb] p-4 text-sm leading-6 text-[#200b38]'>
-              Your details have been checked. Nothing has been sent or saved.
-              Please call or text us to request your quote.
-            </p>
+          {result?.status === 'saved' && (
+            <div className='mt-4 rounded-lg bg-[#f5f0fb] p-4 text-sm leading-6 text-[#200b38]'>
+              <p className='font-semibold'>Your quote request was received.</p>
+              <p className='break-all'>Reference: {result.id}</p>
+            </div>
           )}
         </div>
+        {result && result.status !== 'saved' && (
+          <p role='alert' className='mt-4 rounded-lg bg-[#fffaf0] p-4 text-sm leading-6 text-[#59441c]'>
+            {result.status === 'invalid'
+              ? 'Check your contact details, address, and selected services, then try again.'
+              : result.status === 'conflict'
+                ? 'This request reference was already used. Call us to check your request.'
+                : 'We couldn’t confirm your request. Try sending the same details again, or call us.'}{' '}
+            <a href={phoneHref} className='font-semibold underline underline-offset-4'>{phone}</a>
+          </p>
+        )}
       </form>
     </section>
   );

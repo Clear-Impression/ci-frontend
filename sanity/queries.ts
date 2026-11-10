@@ -1,4 +1,4 @@
-import {defineQuery} from 'next-sanity'
+import {defineQuery} from 'groq'
 
 export const PAGE_HEADER_QUERY = defineQuery(`
   *[_type == "pageHeader" && _id == $id][0] {title, subtitle}
