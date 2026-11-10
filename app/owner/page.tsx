@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { ownerBackendUrl } from '@/lib/ownerAuth';
+import OwnerLogoutButton from '@/components/owner/OwnerLogoutButton';
 
-// Check access on every request instead of generating a public dashboard.
+// Verify the session on every dashboard request.
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
@@ -10,10 +12,8 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-// links to just the local sanity server for now
 const studioUrl = process.env.NEXT_PUBLIC_SANITY_STUDIO_URL || 'http://localhost:3333';
 
-// sections of the dashboard
 const sections = [
   {
     title: 'FAQs',
@@ -55,8 +55,7 @@ export default async function OwnerDashboardPage() {
   let status = 503;
 
   try {
-    const backend = process.env.OWNER_API_URL || process.env.API_BASE_URL || 'http://127.0.0.1:8000';
-    const response = await fetch(new URL('/auth/me', backend), {
+    const response = await fetch(ownerBackendUrl('/auth/me'), {
       headers: { Cookie: `owner_session=${token}` },
       cache: 'no-store',
       redirect: 'error',
@@ -64,7 +63,7 @@ export default async function OwnerDashboardPage() {
     });
     status = response.status;
   } catch {
-    // Keep dashboard content hidden if verification is unavailable.
+    // A backend outage must not expose the dashboard.
     status = 503;
   }
 
@@ -102,6 +101,7 @@ export default async function OwnerDashboardPage() {
         <p className='mt-4 max-w-2xl leading-7 text-[#686170]'>
           Manage your website content and access your business tools.
         </p>
+        <OwnerLogoutButton />
 
         <div className='mt-10 grid gap-6 md:grid-cols-3'>
           {sections.map((section) => (
@@ -115,7 +115,6 @@ export default async function OwnerDashboardPage() {
               <p className='mt-6 text-xs font-medium text-[#686170]'>
                 {section.available ? 'Opens Sanity Studio' : 'Coming soon'}
               </p>
-              {/* no keyboard navigation yet. */}
               <a
                 href={section.href}
                 aria-disabled={section.available ? undefined : true}
