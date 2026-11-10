@@ -1,4 +1,4 @@
-import {defineQuery} from 'next-sanity'
+import {defineQuery} from 'groq'
 
 // Get FAQs in display order using the fields our accordion expects.
 export const FAQ_QUERY = defineQuery(`

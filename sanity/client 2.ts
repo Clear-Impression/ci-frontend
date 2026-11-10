@@ -1,4 +1,4 @@
-import {createClient} from 'next-sanity'
+import {createClient} from '@sanity/client'
 
 // Connect the website to your Sanity project.
 export const client = createClient({

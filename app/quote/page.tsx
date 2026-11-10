@@ -7,6 +7,8 @@ import { quoteOptions } from '@/data/quote';
 const title = 'Request a Quote | Clear Impression Services';
 const description = 'Plan your window, solar panel, or screen cleaning in the Phoenix metro area. Tell Clear Impression about your home or business.';
 
+export const maxDuration = 75;
+
 export const metadata: Metadata = {
   title,
   description,
@@ -30,13 +32,14 @@ export default async function QuotePage() {
           <h1 id='quote-heading' className='mt-4 max-w-md text-4xl font-semibold leading-tight tracking-tight text-[#200b38] sm:text-5xl lg:text-6xl'>
             {header.title.endsWith('.') ? <>{header.title.slice(0, -1)}<span className='text-[#6c3fb8]'>.</span></> : header.title}
           </h1>
-          <p className='mt-6 max-w-md text-base leading-8 text-[#686170]'>{header.subtitle}</p>
+          <p className='mt-6 max-w-md text-base leading-8 text-[#686170]'>
+            {header.subtitle} We’ll use your contact details to follow up about your quote.
+          </p>
           <div className='mt-8 flex flex-wrap gap-2 text-xs font-medium text-[#542d90]'>
             <span className='rounded-full border border-[#6c3fb8]/15 bg-white px-3 py-2'>Residential &amp; commercial</span>
             <span className='rounded-full border border-[#6c3fb8]/15 bg-white px-3 py-2'>Phoenix metro</span>
           </div>
 
-          {/* Phone and text still work while the quote form is a preview. */}
           <div className='mt-10 max-w-md border-t border-[#200b38]/10 pt-8'>
             <h2 className='text-lg font-semibold text-[#200b38]'>Rather talk it through?</h2>
             <p className='mt-2 text-sm leading-7 text-[#686170]'>Call or text us to ask a question or request your quote directly.</p>
