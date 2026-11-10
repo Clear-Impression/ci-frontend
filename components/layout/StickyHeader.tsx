@@ -7,6 +7,9 @@ type StickyHeaderProps = {
   className?: string;
 };
 
+const collapseAfter = 112;
+const expandAt = 1;
+
 // The header stays pinned to the top. Once the page is scrolled,
 // it gets more compact so it covers less of the content.
 export default function StickyHeader({ children, className = '' }: StickyHeaderProps) {
@@ -18,7 +21,10 @@ export default function StickyHeader({ children, className = '' }: StickyHeaderP
     let frame = 0;
     const update = () => {
       frame = 0;
-      header.toggleAttribute('data-scrolled', window.scrollY > 24);
+      // Leave room for the header to resize without crossing both thresholds.
+      const compact = header.hasAttribute('data-scrolled');
+      const threshold = compact ? expandAt : collapseAfter;
+      header.toggleAttribute('data-scrolled', window.scrollY > threshold);
     };
     const onScroll = () => {
       if (!frame) frame = requestAnimationFrame(update);

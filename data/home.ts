@@ -141,7 +141,7 @@ export const homeAreas = {
 };
 
 export const homeClosing = {
-  quoteHref,
+  quoteHref: '/estimate',
   heading: 'Unlock the beauty beyond the glass.',
   text: 'Tell us about your home or business and we’ll get back to you with a free quote, no surprises. Rather talk it through? Call or text us any time.',
   stepsLabel: 'What happens after I ask for a quote?',
