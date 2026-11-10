@@ -13,7 +13,6 @@ import {
 type FeedbackFormProps = {
   phone: string;
   phoneHref: string;
-  formUrl: string;
 };
 
 const initialState: FeedbackState = { status: 'idle' };
@@ -94,8 +93,11 @@ function IconInput({ field, label, type, autoComplete, placeholder, defaultValue
   );
 }
 
-export default function FeedbackForm({ phone, phoneHref, formUrl }: FeedbackFormProps) {
-  const [state, formAction] = useActionState(submitFeedback, initialState);
+export default function FeedbackForm({ phone, phoneHref }: FeedbackFormProps) {
+  const [state, formAction, pending] = useActionState(submitFeedback, initialState);
+  // One key per message. Sending the same words again reuses it, so a retry
+  // after a dropped connection never saves the feedback twice.
+  const lastSubmission = useRef<{ fingerprint: string; key: string } | null>(null);
   const [clientErrors, setClientErrors] = useState<Partial<Record<FeedbackField, string>>>({});
   const [messageLength, setMessageLength] = useState(state.values?.message?.length ?? 0);
   const resultRef = useRef<HTMLDivElement>(null);
@@ -114,6 +116,17 @@ export default function FeedbackForm({ phone, phoneHref, formUrl }: FeedbackForm
   // Check a field when someone leaves it, and clear the error once it is fixed.
   function validate(field: FeedbackField, value: string) {
     setClientErrors((current) => ({ ...current, [field]: checkField(field, value) || undefined }));
+  }
+
+  function send(formData: FormData) {
+    const fingerprint = JSON.stringify(
+      (['name', 'email', 'message'] as const).map((field) => String(formData.get(field) ?? '').trim()),
+    );
+    if (lastSubmission.current?.fingerprint !== fingerprint) {
+      lastSubmission.current = { fingerprint, key: crypto.randomUUID() };
+    }
+    formData.set('submissionKey', lastSubmission.current.key);
+    return formAction(formData);
   }
 
   // Stop the send and point to the first problem if anything is still wrong.
@@ -169,7 +182,8 @@ export default function FeedbackForm({ phone, phoneHref, formUrl }: FeedbackForm
 
         <form
           key={JSON.stringify(values)}
-          action={formAction}
+          action={send}
+          aria-busy={pending || undefined}
           data-settled={state.status === 'idle' ? undefined : ''}
           onSubmit={checkBeforeSend}
           noValidate
@@ -255,15 +269,15 @@ export default function FeedbackForm({ phone, phoneHref, formUrl }: FeedbackForm
             <p className='text-xs leading-5 text-gray-500'>
               We only use your email to follow up on your feedback.
             </p>
-            {/* Open the Google Form in a new tab, so anything typed here stays put. */}
-            <a
-              href={formUrl}
-              target='_blank'
-              rel='noopener noreferrer'
-              className='inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-[#200b38] px-7 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#33195a] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6c3fb8] active:scale-[0.98]'>
-              Send feedback
-              <span className='sr-only'> (opens in a new tab)</span>
-            </a>
+            <button
+              type='submit'
+              disabled={pending}
+              className='inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-[#200b38] px-7 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#33195a] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6c3fb8] active:scale-[0.98] disabled:cursor-wait disabled:opacity-70'>
+              {pending && (
+                <span aria-hidden='true' className='size-4 animate-spin rounded-full border-2 border-white/40 border-t-white' />
+              )}
+              {pending ? 'Sending…' : 'Send feedback'}
+            </button>
           </div>
         </form>
       </div>
