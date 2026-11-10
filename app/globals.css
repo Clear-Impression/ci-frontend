@@ -47,6 +47,18 @@ html {
   scroll-padding-top: 6rem;
 }
 
+/* Holds the page below the floating header. These match the full-size header
+   so nothing jumps before the page script measures it exactly. */
+.site-header-spacer {
+  height: 129px;
+}
+
+@media (min-width: 40rem) {
+  .site-header-spacer {
+    height: 149px;
+  }
+}
+
 .header-strip {
   max-height: 4rem;
   overflow: hidden;

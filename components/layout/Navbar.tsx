@@ -13,7 +13,7 @@ export default function Navbar() {
   return (
     // Pinned to the top of the screen. The top strip tucks away and the logo
     // shrinks after scrolling, then both come back at the top of the page.
-    <StickyHeader className='site-header sticky top-0 z-50 bg-[#200b38] text-white'>
+    <StickyHeader className='site-header fixed inset-x-0 top-0 z-50 bg-[#200b38] text-white'>
       {/* Keep the service area and phone number easy to find. */}
       <div className='header-strip border-b border-white/15'>
         <div className='mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-6 py-3 text-xs sm:px-8 sm:text-sm'>
