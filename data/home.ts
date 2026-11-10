@@ -1,6 +1,5 @@
 import { company } from './company';
 
-// Send quote requests to the Google Form until the new form can submit them.
 const quoteHref = company.quoteFormUrl;
 
 // Keep the homepage copy separate so it can move to a CMS later.

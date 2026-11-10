@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import ServiceIcon from '@/components/services/ServiceIcon';
 import { company } from '@/data/company';
@@ -206,10 +207,8 @@ export default function InstantEstimate() {
             </span>
           </button>
 
-          <a
+          <Link
             href={company.quoteFormUrl}
-            target='_blank'
-            rel='noopener noreferrer'
             className={`${styles.optionSoft} group relative flex flex-col justify-between overflow-hidden rounded-[2rem] p-8 text-[#200b38] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6c3fb8] sm:p-10`}>
             <span>
               <span className='inline-flex rounded-full bg-[#6c3fb8]/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-[#6c3fb8]'>
@@ -225,9 +224,8 @@ export default function InstantEstimate() {
             <span className='mt-8 inline-flex items-center gap-2 font-semibold text-[#6c3fb8]'>
               Open the quote form
               <span aria-hidden='true' className={styles.arrowSlide}>↗</span>
-              <span className='sr-only'>(opens in a new tab)</span>
             </span>
-          </a>
+          </Link>
         </div>
       </section>
 

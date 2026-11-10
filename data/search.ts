@@ -64,7 +64,6 @@ const quoteEntry: SearchEntry = {
   type: 'page',
   title: 'Get a free quote',
   href: company.quoteFormUrl,
-  external: true,
   description: 'Tell us about your property and get a free quote.',
   keywords: ['quote', 'price', 'cost', 'estimate', 'book', 'schedule', 'appointment', 'how much'],
   boost: 0.5,
