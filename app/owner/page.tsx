@@ -30,6 +30,14 @@ const sections = [
     available: true,
   },
   {
+    title: 'Locations',
+    description: 'Add or hide cities, change each city’s photo or video, and edit the Locations page text.',
+    label: 'Edit locations',
+    // Opens Studio straight to the Locations section.
+    href: `${studioUrl.replace(/\/$/, '')}/structure/locations`,
+    available: true,
+  },
+  {
     title: 'Leads',
     description: 'View quote requests and customer inquiries.',
     label: 'View leads',

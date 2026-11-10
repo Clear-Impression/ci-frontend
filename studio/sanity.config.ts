@@ -39,10 +39,21 @@ export default defineConfig({
     ],
   },
   document: {
-    actions: (actions, context) => context.schemaType === 'pageHeader'
-      ? actions.filter((action) => action.action !== 'duplicate') : actions,
+    actions: (actions, context) => {
+      if (context.schemaType === 'pageHeader') {
+        return actions.filter((action) => action.action !== 'duplicate')
+      }
+      // There is only one Locations page, so it can't be copied, unpublished, or deleted.
+      if (context.schemaType === 'locationsPage') {
+        return actions.filter((action) =>
+          !['duplicate', 'unpublish', 'delete'].includes(action.action ?? ''),
+        )
+      }
+      return actions
+    },
     newDocumentOptions: (options, {creationContext}) => options.filter((option) =>
       option.templateId !== 'page-header' &&
+      option.templateId !== 'locationsPage' &&
       (option.templateId !== 'service-category' || creationContext.type !== 'global'),
     ),
   },

@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import ServiceIcon from '@/components/services/ServiceIcon';
-import { serviceAreas } from '@/data/company';
-import { cityRegions, locationPages } from '@/data/locations';
+import { getLocations } from '@/lib/locations';
 import { getServices } from '@/lib/services';
 
 const pin = [
@@ -104,11 +103,13 @@ export async function ServicesPreview() {
 }
 
 // Every city we serve, with the part of the Valley it is in.
-export function LocationsPreview() {
+export async function LocationsPreview() {
+  const { cities } = await getLocations();
+
   return (
     <div className='w-[min(36rem,calc(100vw-3rem))]'>
       <ul className='grid grid-cols-2 gap-1 p-3'>
-        {locationPages.map((city, index) => (
+        {cities.map((city, index) => (
           <li
             key={city.slug}
             className='nav-stagger'
@@ -127,7 +128,7 @@ export function LocationsPreview() {
               <span>
                 <span className='block font-semibold leading-snug'>{city.name}</span>
                 <span className='mt-0.5 block text-sm leading-5 text-gray-600'>
-                  {cityRegions[city.name] ?? 'Phoenix metro'}
+                  {city.region}
                 </span>
               </span>
             </Link>
@@ -135,7 +136,7 @@ export function LocationsPreview() {
         ))}
       </ul>
       <PanelFooter
-        note={`${serviceAreas.length} cities across the Phoenix metro`}
+        note={`${cities.length} cities across the Phoenix metro`}
         href='/locations'
         label='All locations'
       />

@@ -34,11 +34,18 @@ export const structure: StructureResolver = (S) => {
       services('core', 'Core services'),
       services('specialized', 'Specialized services'),
     ])),
+    // Each city's heading and intro now live in its City document.
     S.listItem().id('locations').title('Locations').child(S.list().title('Locations').items([
       header('locations'),
-      ...Object.entries(pageHeaders)
-        .filter(([pageId]) => pageId.startsWith('location-'))
-        .map(([pageId, page]) => header(pageId, page.label)),
+      S.listItem().id('locations-page').title('Locations page').child(S.document()
+        .schemaType('locationsPage')
+        .documentId('locationsPage')
+        .title('Locations page')),
+      S.listItem().id('cities').title('Cities').schemaType('city').child(S.documentTypeList('city')
+        .id('cities')
+        .title('Cities')
+        .apiVersion('2026-10-19')
+        .defaultOrdering([{field: 'displayOrder', direction: 'asc'}, {field: 'name', direction: 'asc'}])),
     ])),
     ...['home', 'about', 'reviews', 'feedback', 'quote', 'terms'].map((pageId) =>
       S.listItem().id(pageId).title(pageHeaders[pageId].label)

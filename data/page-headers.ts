@@ -1,7 +1,7 @@
 import { aboutIntro } from './about';
 import { feedbackPage } from './feedback';
 import { homeHero } from './home';
-import { locationPages, locationsPageContent } from './locations';
+import { locationsPageContent } from './locations';
 import { termsEffectiveDate } from './terms';
 
 export type PageHeader = {
@@ -58,8 +58,4 @@ export const pageHeaders: Record<string, PageHeaderSettings> = {
     title: 'Appointment, Cancellation,\nand Service Terms.',
     subtitle: termsEffectiveDate,
   },
-  ...Object.fromEntries(locationPages.map((location) => [
-    `location-${location.slug}`,
-    { label: location.name, title: location.title, subtitle: location.intro },
-  ])),
 };

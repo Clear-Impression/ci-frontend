@@ -63,6 +63,7 @@ export default function SiteSearch({ children }: SiteSearchProps) {
   const [siteEntries, setSiteEntries] = useState<SearchEntry[]>([]);
   const [popular, setPopular] = useState<SearchEntry[]>([]);
   const [faqEntries, setFaqEntries] = useState<SearchEntry[]>([]);
+  const [cityEntries, setCityEntries] = useState<SearchEntry[]>([]);
   const loadStarted = useRef(false);
   // Set when closing should put focus back on the search button.
   const refocus = useRef(false);
@@ -83,8 +84,8 @@ export default function SiteSearch({ children }: SiteSearchProps) {
     setClosing(false);
   }
 
-  // The site's pages come with the site. FAQ questions come from the backend,
-  // and search still works without them.
+  // The site's pages come with the site. FAQ questions come from the backend
+  // and city pages from Sanity, and search still works without them.
   const load = () => {
     if (loadStarted.current) return;
     loadStarted.current = true;
@@ -100,6 +101,10 @@ export default function SiteSearch({ children }: SiteSearchProps) {
     fetch('/api/search/faqs')
       .then((response) => (response.ok ? response.json() : []))
       .then((entries: SearchEntry[]) => setFaqEntries(entries))
+      .catch(() => {});
+    fetch('/api/search/locations')
+      .then((response) => (response.ok ? response.json() : []))
+      .then((entries: SearchEntry[]) => setCityEntries(entries))
       .catch(() => {});
   };
 
@@ -141,7 +146,10 @@ export default function SiteSearch({ children }: SiteSearchProps) {
     else router.push(entry.href);
   };
 
-  const search = useMemo(() => createSearch([...siteEntries, ...faqEntries]), [siteEntries, faqEntries]);
+  const search = useMemo(
+    () => createSearch([...siteEntries, ...cityEntries, ...faqEntries]),
+    [siteEntries, cityEntries, faqEntries],
+  );
   const trimmed = query.trim();
 
   // Before typing, show popular pages. After, show matches under headings.

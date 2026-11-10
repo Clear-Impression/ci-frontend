@@ -1,5 +1,3 @@
-import { serviceAreas } from '@/data/company';
-
 // Instant estimate settings.
 //
 // PLACEHOLDER PRICES: every number below is a stand-in until Niels confirms
@@ -180,8 +178,6 @@ export const estimateServices: readonly EstimateService[] = [
     minimum: 59,
   },
 ];
-
-export const estimateCities = [...serviceAreas, 'Other'] as const;
 
 // What the visitor picked for one service.
 export type CartItem = {

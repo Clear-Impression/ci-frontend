@@ -22,7 +22,7 @@ export const pageHeader = defineType({
       title: 'Subtitle',
       type: 'text',
       rows: 3,
-      description: 'The text below the heading. On Service terms, this is the effective date.',
+      description: 'The text below the heading. On Service terms, this is the effective date. On Locations, type {count} where the number of cities should go.',
     }),
   ],
   preview: {

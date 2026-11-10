@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import InstantEstimate from '@/components/estimate/InstantEstimate';
 import { company } from '@/data/company';
+import { getLocations } from '@/lib/locations';
 import { getPageHeader } from '@/lib/page-headers';
 
 const title = 'Get a Free Quote | Clear Impression Services';
@@ -15,6 +16,7 @@ export const metadata: Metadata = {
 
 export default async function EstimatePage() {
   const header = await getPageHeader('estimate');
+  const { cities } = await getLocations();
 
   return (
     // The shared layout already supplies the website's header and footer.
@@ -34,7 +36,7 @@ export default async function EstimatePage() {
         </div>
       </section>
 
-      <InstantEstimate />
+      <InstantEstimate cities={cities.map((city) => city.name)} />
     </main>
   );
 }

@@ -136,7 +136,8 @@ export const homeAreas = {
   eyebrow: 'Where we work',
   title: 'Do we serve your area?',
   // Name the service and the region, so this short section still helps search.
-  lead: `Window cleaning in ${serviceCities.length} cities across the Phoenix metro. Pick yours to see what we do there.`,
+  // {count} becomes the number of cities shown on the website.
+  lead: 'Window cleaning in {count} cities across the Phoenix metro. Pick yours to see what we do there.',
   cityPagesLabel: 'See the page for your city',
 };
 

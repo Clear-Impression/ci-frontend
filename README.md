@@ -77,11 +77,56 @@ code change.
 ## Page headers in Sanity
 
 Open a page in Studio and choose Page header to edit its title and subtitle.
-Under FAQ, Questions still holds the individual questions and answers. Locations
-has a header for each city. Service pages use their existing service records.
+Under FAQ, Questions still holds the individual questions and answers. Each
+city's heading and intro are in its City document (see below). Service pages
+use their existing service records. On Locations, `{count}` in the subtitle
+becomes the number of cities shown on the website.
 
 Headers start with the current text. Publish your edits to show them on the
 website after about a minute. Until then, the website keeps its current wording.
+
+## Locations in Sanity
+
+Studio's Locations section has three parts:
+
+- **Page header**: the Locations page title and subtitle.
+- **Locations page**: the rest of the Locations page text, plus what every city
+  page shares: the shared photo or video, section text, and service summaries.
+- **Cities**: one document per city, with its name, page link, heading, intro,
+  description, photo or video, header-menu region, map pin, position in lists,
+  and a switch to hide it from the website.
+
+Each published city appears on the Locations page and its map, in the header's
+Locations menu, the footer, the homepage, the About page, and search, and gets
+its own page at `/locations/<page link>`. A new city's page works on its first
+visit without a rebuild. Hidden cities disappear everywhere and their page
+returns a 404. Changes appear after the website's 60-second cache expires.
+
+A city's photo or video is optional; without one, the city uses the shared one
+from Locations page. Photos are served from Sanity's image CDN and videos play
+silently on a loop with a pause button. Videos must be MP4 or WebM, under 50 MB.
+
+### Copying the current cities into Sanity
+
+`data/locations.ts` stays as the fallback until cities exist in Sanity. To copy
+the current ten cities, the Locations page text, and today's city page photo
+into Sanity once, run this from the repository root while signed in to Sanity
+(`npx sanity login` in `studio/` if needed):
+
+```bash
+cd studio
+npm run seed:locations
+```
+
+It keeps any heading or intro already typed into the old city page headers, and
+skips cities and the Locations page if they already exist, so running it again
+is safe.
+
+City boundary outlines on the map still come from
+`data/geojson/service-city-boundaries.json`. A new city shows its pin right
+away; add its outline by putting its name in `scripts/fetch-city-boundaries.mjs`
+and running `npm run fetch:boundaries`. The animated route in the Locations
+header uses a fixed set of cities in `components/locations/ValleyRoute.tsx`.
 
 ## Owner login in local development
 
@@ -140,7 +185,8 @@ They have separate Git histories, branches, and commits.
 ## Current state and scope
 
 The public frontend includes shared layout components and business pages. The
-FAQ page reads Sanity content through FastAPI; other content uses local data files.
+FAQ page reads Sanity content through FastAPI. Services, page headers, and
+Locations read Sanity directly; other content uses local data files.
 Google review API integration and real form submission are not implemented.
 
 Vercel is the planned deployment target. The existing Hostinger website remains live and unchanged.
