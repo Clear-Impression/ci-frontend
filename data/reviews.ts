@@ -8,6 +8,12 @@ export type Review = {
 export const googleReviewsUrl =
   'https://www.google.com/maps/place/Clear+Impression/@33.518397,-112.2247357,10z/data=!4m14!1m7!3m6!1s0x88ea73417cd69627:0xaeaf3e7753765f64!2sClear+Impression!8m2!3d33.518261!4d-111.8950935!16s%2Fg%2F11zb4n8t1_!3m5!1s0x88ea73417cd69627:0xaeaf3e7753765f64!8m2!3d33.518261!4d-111.8950935!16s%2Fg%2F11zb4n8t1_';
 
+// Where customers go to leave a Google review.
+// Replace this with the "Ask for reviews" link from Clear Impression's Google
+// Business Profile (it looks like https://g.page/r/.../review) so the review
+// box opens right away. Until then it opens the business on Google Maps.
+export const googleWriteReviewUrl = googleReviewsUrl;
+
 // These short excerpts were checked on Google Maps on October 7, 2026.
 // Update them by hand when we choose new reviews.
 export const reviews: readonly Review[] = [
