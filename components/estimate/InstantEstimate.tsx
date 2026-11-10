@@ -21,6 +21,7 @@ import { downloadEstimatePdf, type EstimateDetails } from './estimatePdf';
 import HelpBubble from './HelpBubble';
 import Odometer from './Odometer';
 import Segmented from './Segmented';
+import SizeInput from './SizeInput';
 import styles from '@/app/estimate/estimate.module.css';
 
 type Saved = {
@@ -331,18 +332,22 @@ export default function InstantEstimate() {
                           <div className='mt-7'>
                             <div className='flex items-end justify-between gap-4'>
                               <label
-                                htmlFor={inputId}
+                                htmlFor={`${inputId}-typed`}
                                 className='text-sm font-medium text-[#200b38]'>
                                 {service.measure.label}
+                                <span className='block text-xs font-normal text-gray-500'>Type it in or use the slider</span>
                               </label>
-                              <p className='text-3xl font-semibold tracking-tight text-[#200b38]'>
-                                <Odometer text={item.amount.toLocaleString('en-US')} />
-                                <span className='ml-1.5 text-sm font-medium text-gray-500'>{service.measure.unit}</span>
-                              </p>
+                              <SizeInput
+                                id={`${inputId}-typed`}
+                                measure={service.measure}
+                                value={item.amount}
+                                onChange={(amount) => updateItem(item.slug, { amount })}
+                              />
                             </div>
                             <input
                               id={inputId}
                               type='range'
+                              aria-label={`${service.measure.label} slider`}
                               min={service.measure.min}
                               max={service.measure.max}
                               step={service.measure.step}
