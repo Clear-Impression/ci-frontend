@@ -4,6 +4,7 @@ import FeedbackForm from '@/components/feedback/FeedbackForm';
 import { company } from '@/data/company';
 import QuoteActions from '@/components/ui/QuoteActions';
 import { feedbackClosing, feedbackPage } from '@/data/feedback';
+import { googleRating, googleWriteReviewUrl } from '@/data/reviews';
 import styles from './feedback.module.css';
 
 const title = 'Feedback | Clear Impression Services';
@@ -94,9 +95,48 @@ export default async function FeedbackPage() {
                 </li>
               ))}
             </ul>
+            {/* Happy customers can share it publicly on Google. */}
+            <a
+              href={googleWriteReviewUrl}
+              target='_blank'
+              rel='noopener noreferrer'
+              className={`${styles.enter} ${styles.review} group mt-10 flex flex-wrap items-center gap-4 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-200 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6c3fb8]`}
+              style={{ '--delay': '700ms' } as React.CSSProperties}>
+              <span className='grid size-12 shrink-0 place-items-center rounded-full bg-white shadow-sm ring-1 ring-gray-200'>
+                {/* Google's four-color G. */}
+                <svg aria-hidden='true' viewBox='0 0 24 24' className='size-6'>
+                  <path fill='#4285F4' d='M22.5 12.3c0-.8-.1-1.5-.2-2.2H12v4.2h5.9a5 5 0 0 1-2.2 3.3v2.7h3.5c2.1-1.9 3.3-4.7 3.3-8z' />
+                  <path fill='#34A853' d='M12 23c3 0 5.5-1 7.3-2.7l-3.5-2.7c-1 .7-2.3 1.1-3.8 1.1-2.9 0-5.4-2-6.3-4.6H2v2.8A11 11 0 0 0 12 23z' />
+                  <path fill='#FBBC05' d='M5.7 14.1a6.6 6.6 0 0 1 0-4.2V7.1H2a11 11 0 0 0 0 9.8l3.7-2.8z' />
+                  <path fill='#EA4335' d='M12 5.4c1.6 0 3.1.6 4.2 1.7l3.1-3.1A11 11 0 0 0 2 7.1l3.7 2.8C6.6 7.3 9.1 5.4 12 5.4z' />
+                </svg>
+              </span>
+              <span className='min-w-0 flex-1 basis-48'>
+                <span className='block font-semibold text-[#200b38]'>Happy with your clean?</span>
+                <span className='mt-0.5 block text-sm leading-6 text-gray-600'>
+                  Leave us a Google review. It helps neighbors find us.
+                </span>
+                <span
+                  aria-hidden='true'
+                  className={`${styles.stars} mt-1 flex gap-0.5 text-[#efb52b]`}>
+                  {[0, 1, 2, 3, 4].map((star) => (
+                    <span
+                      key={star}
+                      style={{ '--s': star } as React.CSSProperties}>
+                      ★
+                    </span>
+                  ))}
+                </span>
+              </span>
+              <span className='w-full shrink-0 rounded-full bg-[#200b38] px-4 py-2.5 text-center text-sm font-semibold text-white transition group-hover:bg-[#33195a] sm:w-auto'>
+                Write a review
+                <span className='sr-only'> on Google (opens in a new tab). We have {googleRating.count} reviews so far.</span>
+              </span>
+            </a>
+
             {/* Urgent issues go straight to a person. */}
             <div
-              className={`${styles.enter} ${styles.shine} relative mt-10 overflow-hidden rounded-2xl bg-[#200b38] p-6 text-white`}
+              className={`${styles.enter} ${styles.shine} relative mt-4 overflow-hidden rounded-2xl bg-[#200b38] p-6 text-white`}
               style={{ '--delay': '780ms' } as React.CSSProperties}>
               <p className='text-sm text-white/70'>Need something fixed after a recent clean?</p>
               <a

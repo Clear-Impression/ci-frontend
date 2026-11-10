@@ -4,6 +4,7 @@ import { useActionState, useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { submitFeedback } from '@/app/feedback/actions';
 import styles from '@/app/feedback/feedback.module.css';
+import { googleWriteReviewUrl } from '@/data/reviews';
 import {
   feedbackLimits,
   type FeedbackField,
@@ -149,6 +150,17 @@ export default function FeedbackForm({ phone, phoneHref, formUrl }: FeedbackForm
         <p className='mt-3 max-w-sm leading-relaxed text-gray-600'>
           We appreciate you taking the time to help us improve.
         </p>
+        {/* A good moment to ask for a public review. */}
+        <a
+          href={googleWriteReviewUrl}
+          target='_blank'
+          rel='noopener noreferrer'
+          className='mt-8 inline-flex min-h-12 items-center gap-2 rounded-full bg-[#efb52b] px-6 py-3 text-sm font-semibold text-[#200b38] transition hover:bg-[#f6c95b] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6c3fb8]'>
+          <span aria-hidden='true'>★</span>
+          Leave us a Google review
+          <span className='sr-only'> (opens in a new tab)</span>
+        </a>
+        <p className='mt-3 text-sm text-gray-500'>Loved your clean? It only takes a minute.</p>
       </div>
     );
   }
