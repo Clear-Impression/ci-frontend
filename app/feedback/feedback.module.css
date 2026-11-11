@@ -164,3 +164,41 @@
     stroke-dashoffset: 0;
   }
 }
+
+/* Google review card: lifts on hover and the stars twinkle in turn. */
+.review {
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s ease;
+}
+
+@media (hover: hover) {
+  .review:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 18px 30px -20px rgb(32 11 56 / 0.4);
+  }
+
+  .review:hover .stars > span {
+    animation: star-pop 0.5s calc(var(--s) * 70ms) cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+}
+
+.stars > span {
+  display: inline-block;
+}
+
+@keyframes star-pop {
+  50% {
+    transform: scale(1.35) rotate(-10deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .review {
+    transition: none;
+  }
+
+  .review:hover .stars > span {
+    animation: none;
+  }
+}
