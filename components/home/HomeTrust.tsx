@@ -1,6 +1,8 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
+import HxIcon from '@/components/home/HxIcon';
 
 type HomeTrustProps = {
   score: number;
@@ -57,43 +59,59 @@ export default function HomeTrust({
     };
   }, []);
 
-  const itemStyle = 'bg-white px-6 py-6 sm:px-8 sm:py-7';
-  const numberStyle =
-    'text-3xl font-semibold tracking-tight text-[#200b38] tabular-nums sm:text-4xl';
-  const labelStyle = 'mt-2 text-sm leading-6 text-[#686170]';
+  const stats = [
+    {
+      href: '/reviews',
+      label: `Rated ${score.toFixed(1)} out of 5 from ${count} Google reviews. Read our reviews`,
+      value: (score * progress).toFixed(1),
+      title: 'Google rating',
+      note: `${Math.round(count * progress)} Google reviews`,
+    },
+    {
+      href: '/about',
+      label: `Serving the Valley since ${since}. About us`,
+      // Count the year up from a little earlier, so it reads as a year.
+      value: String(Math.round(since - 8 + 8 * progress)),
+      title: 'Serving since',
+      note: 'Proudly local to the Valley',
+    },
+    {
+      href: '/locations',
+      label: `${cityCount} cities served across the Phoenix metro. See our locations`,
+      value: String(Math.round(cityCount * progress)),
+      title: 'Cities served',
+      note: 'Across the Phoenix metro',
+    },
+  ];
 
   return (
     <section
       aria-label='Why customers choose us'
-      className='relative z-10 mx-auto -mt-16 max-w-7xl px-6 sm:px-8'>
+      className='hx-stats-strip'>
+      {/* Each figure links to the page that backs it up. */}
       <ul
         ref={listRef}
-        className='grid grid-cols-1 gap-px overflow-hidden rounded-2xl bg-[#ebe6f2] shadow-xl shadow-[#200b38]/10 ring-1 ring-[#200b38]/10 sm:grid-cols-3'>
-        <li className={itemStyle}>
-          {/* Announce the final rating once instead of every animation frame. */}
-          <p className='sr-only'>
-            Rated {score.toFixed(1)} out of 5 from {count} Google reviews.
-          </p>
-          <div aria-hidden='true'>
-            <p className={`${numberStyle} flex flex-wrap items-baseline gap-x-2`}>
-              {(score * progress).toFixed(1)}
-              <span className='text-base tracking-widest text-[#efb52b]'>
-                ★★★★★
+        className='hx-container hx-stats'>
+        {stats.map((stat) => (
+          <li key={stat.href}>
+            <Link
+              href={stat.href}
+              aria-label={stat.label}
+              className='hx-stat'>
+              <b aria-hidden='true'>{stat.value}</b>
+              <span aria-hidden='true'>
+                <strong>
+                  {stat.title}
+                  <HxIcon
+                    name='arrow'
+                    size={14}
+                  />
+                </strong>
+                <small>{stat.note}</small>
               </span>
-            </p>
-            <p className={labelStyle}>
-              {Math.round(count * progress)} Google reviews
-            </p>
-          </div>
-        </li>
-        <li className={itemStyle}>
-          <p className={numberStyle}>{since}</p>
-          <p className={labelStyle}>Serving the Valley since</p>
-        </li>
-        <li className={itemStyle}>
-          <p className={numberStyle}>{cityCount}</p>
-          <p className={labelStyle}>Cities across the Phoenix metro</p>
-        </li>
+            </Link>
+          </li>
+        ))}
       </ul>
     </section>
   );

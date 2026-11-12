@@ -68,8 +68,9 @@ export type HomeServiceCard = {
 
 // Use existing service slugs so the cards link to the right pages.
 export const homeServices = {
-  eyebrow: 'What we do',
+  eyebrow: 'What we clean',
   title: 'Built for Arizona glass.',
+  lead: 'From a single stubborn pane to every window on the property, we leave the glass looking like it isn’t there.',
   cards: [
     {
       slug: 'residential-window-washing',
@@ -145,5 +146,9 @@ export const homeClosing = {
   quoteHref: '/estimate',
   heading: 'Unlock the beauty beyond the glass.',
   text: 'Tell us about your home or business and we’ll get back to you with a free quote, no surprises. Rather talk it through? Call or text us any time.',
-  stepsLabel: 'What happens after I ask for a quote?',
+  stepsLabel: 'What happens next?',
+  // Free Unsplash photo (unsplash.com/license). Swap in one of our own job photos any time.
+  image:
+    'https://images.unsplash.com/photo-1706403222567-06fe8d8dc93e?auto=format&fit=crop&w=2000&q=80',
+  imageAlt: 'The Phoenix valley and mountains at golden hour',
 };

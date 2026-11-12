@@ -1,4 +1,7 @@
-import Reveal from '@/components/services/Reveal';
+import Image from 'next/image';
+import Bubbles from '@/components/home/Bubbles';
+import HxIcon from '@/components/home/HxIcon';
+import QuoteButton from '@/components/quote/QuoteButton';
 import { company } from '@/data/company';
 import type { HomeStep } from '@/data/home';
 
@@ -8,79 +11,116 @@ type HomeClosingProps = {
   quoteHref: string;
   stepsLabel: string;
   steps: readonly HomeStep[];
+  image: string;
+  imageAlt: string;
 };
 
-export default function HomeClosing({
-  heading,
-  text,
-  quoteHref,
-  stepsLabel,
-  steps,
-}: HomeClosingProps) {
+// The last call to action on the homepage. A golden-hour photo of the Valley
+// starts out dusty; when the section scrolls into view a squeegee wipes
+// across it to reveal the clear view, then the photo slowly drifts.
+export default function HomeClosing({ heading, text, stepsLabel, steps, image, imageAlt }: HomeClosingProps) {
+  // "Unlock the beauty beyond the glass." -> the second half in gold.
+  const split = heading.indexOf(' beyond ');
+  const first = split >= 0 ? heading.slice(0, split) : heading;
+  const second = split >= 0 ? heading.slice(split + 1) : '';
+
   return (
     <section
       aria-labelledby='home-closing-heading'
-      className='mx-auto max-w-7xl px-6 pb-16 sm:px-8 sm:pb-20'>
-      <Reveal className='cta-reveal rounded-2xl bg-[#200b38] px-8 py-12 text-white sm:px-12'>
-        <div className='flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between'>
-          <div>
-            <h2
-              id='home-closing-heading'
-              className='text-2xl font-semibold sm:text-3xl'>
-              {heading}
-            </h2>
-            <p className='mt-4 max-w-2xl text-white/80'>{text}</p>
-          </div>
-          <div className='flex shrink-0 flex-wrap gap-3'>
-            <a
-              href={quoteHref}
-              className='inline-flex min-h-11 items-center rounded-lg bg-[#efb52b] px-5 py-3 text-sm font-semibold text-[#200b38] hover:bg-[#f6c95b] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white'>
-              Get a free quote
-            </a>
-            <a
-              href={company.phoneHref}
-              className='inline-flex min-h-11 items-center rounded-lg border border-white/30 px-5 py-3 text-sm font-semibold text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white'>
-              Call {company.phone}
-            </a>
-          </div>
+      className='hx-closing hx-section hx-on-dark'>
+      <div className='hx-closing-photo'>
+        <Image
+          src={image}
+          alt={imageAlt}
+          fill
+          sizes='100vw'
+        />
+      </div>
+      {/* The same photo, dusty. The big squeegee wipes it away. */}
+      <div
+        aria-hidden='true'
+        className='hx-closing-photo hx-closing-dirty'>
+        <Image
+          src={image}
+          alt=''
+          fill
+          sizes='100vw'
+        />
+      </div>
+      <div
+        aria-hidden='true'
+        className='hx-closing-squeegee'>
+        <span />
+      </div>
+      <div
+        aria-hidden='true'
+        className='hx-closing-overlay'
+      />
+      <span
+        aria-hidden='true'
+        className='hx-closing-sun'
+      />
+      <div
+        aria-hidden='true'
+        className='hx-closing-sparkles'>
+        {[0, 1, 2, 3].map((i) => (
+          <svg
+            key={i}
+            viewBox='0 0 24 24'
+            style={{ '--i': i } as React.CSSProperties}>
+            <path
+              d='M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z'
+              fill='currentColor'
+            />
+          </svg>
+        ))}
+      </div>
+      <Bubbles count={8} />
+      <div className='hx-container hx-closing-content'>
+        <p className='hx-eyebrow hx-eyebrow-light hx-reveal'>Ready when you are</p>
+        <h2
+          id='home-closing-heading'
+          className='hx-h2'>
+          <span className='line-mask'>
+            <span className='line-rise'>{first}</span>
+          </span>{' '}
+          {second && (
+            <span className='line-mask'>
+              <span
+                className='line-rise'
+                style={{ '--i': 1 } as React.CSSProperties}>
+                <em>{second}</em>
+              </span>
+            </span>
+          )}
+        </h2>
+        <p className='hx-closing-text hx-reveal'>{text}</p>
+        <div className='hx-button-row hx-reveal'>
+          <QuoteButton className='hx-btn'>
+            Get my free quote <HxIcon name='arrow' />
+          </QuoteButton>
+          <a
+            href={company.phoneHref}
+            className='hx-call'>
+            <HxIcon name='phone' /> {company.phone}
+          </a>
         </div>
 
-        {/* How it works, folded away until someone wants it. The steps stay in
-            the page, so search engines still read them. */}
-        <details className='group mt-10 rounded-xl border border-white/15 bg-white/5'>
-          <summary className='flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 rounded-xl px-5 font-semibold hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#efb52b] [&::-webkit-details-marker]:hidden'>
-            {stepsLabel}
-            <svg
-              aria-hidden='true'
-              viewBox='0 0 24 24'
-              fill='none'
-              stroke='currentColor'
-              strokeWidth='2'
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              className='size-5 shrink-0 motion-safe:transition-transform group-open:rotate-180'>
-              <path d='M6 9l6 6 6-6' />
-            </svg>
-          </summary>
-          <ol className='grid gap-6 px-5 pb-6 pt-2 sm:grid-cols-2'>
+        {/* What happens after someone asks for a quote. */}
+        <div className='hx-next hx-reveal'>
+          <strong>{stepsLabel.toUpperCase()}</strong>
+          <ol className='contents'>
             {steps.map((step, index) => (
               <li
                 key={step.title}
-                className='flex gap-4'>
-                <span
-                  aria-hidden='true'
-                  className='grid size-9 shrink-0 place-items-center rounded-full bg-[#efb52b] text-sm font-semibold text-[#200b38]'>
-                  {index + 1}
-                </span>
-                <div>
-                  <h3 className='font-semibold'>{step.title}</h3>
-                  <p className='mt-1 text-sm leading-relaxed text-white/75'>{step.text}</p>
-                </div>
+                title={step.text}>
+                <b aria-hidden='true'>{index + 1}</b>
+                {step.title}
               </li>
             ))}
           </ol>
-        </details>
-      </Reveal>
+        </div>
+      </div>
     </section>
   );
 }

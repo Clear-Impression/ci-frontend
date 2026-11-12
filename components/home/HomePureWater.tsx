@@ -2,9 +2,9 @@
 
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import Reveal from '@/components/services/Reveal';
+import Bubbles from '@/components/home/Bubbles';
+import HxIcon from '@/components/home/HxIcon';
 import type { PureWaterStep } from '@/data/home';
-import styles from '@/app/home.module.css';
 
 type HomePureWaterProps = {
   eyebrow: string;
@@ -55,121 +55,91 @@ export default function HomePureWater({
     };
   }, [selected, hovered, focused, steps.length]);
 
+  // "Easy as 1, 2, 3." -> the numbers in gold.
+  const split = title.indexOf(' as ');
+  const titleStart = split >= 0 ? title.slice(0, split + 4) : title;
+  const titleEnd = split >= 0 ? title.slice(split + 4) : '';
+  const stepIcons = ['grid', 'drop', 'sparkle'] as const;
+
   return (
     <section
       aria-labelledby='pure-water-heading'
-      className='mx-auto max-w-7xl px-6 py-20 sm:px-8 sm:py-24'>
-      <Reveal className='max-w-2xl'>
-        <p className='text-sm font-semibold uppercase tracking-widest text-[#6c3fb8]'>
-          {eyebrow}
-        </p>
-        <h2
-          id='pure-water-heading'
-          className='mt-3 text-3xl font-semibold tracking-tight sm:text-4xl'>
-          <span className='line-mask'>
-            <span className='line-rise'>{title}</span>
+      className='hx-section hx-tech'>
+      <Bubbles count={5} />
+      <div className='hx-container hx-tech-grid'>
+        <figure className='hx-tech-image hx-reveal'>
+          <div>
+            <Image
+              src={image}
+              alt={imageAlt}
+              fill
+              sizes='(min-width: 760px) 50vw, 100vw'
+            />
+          </div>
+          <figcaption className='sr-only'>{caption}</figcaption>
+          <span
+            aria-hidden='true'
+            className='hx-tech-sticker'>
+            <HxIcon name='drop' />
+            <strong>100%</strong>
+            <small>PURE WATER</small>
           </span>
-        </h2>
-        <p className='fade-up mt-4 text-lg leading-relaxed text-gray-600'>
-          {lead}
-        </p>
-      </Reveal>
+        </figure>
 
-      <div className='mt-12 grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16'>
-        <Reveal className={styles.rise}>
-          <div
+        <div className='hx-tech-copy'>
+          <p className='hx-eyebrow hx-reveal'>{eyebrow}</p>
+          <h2
+            id='pure-water-heading'
+            className='hx-h2'>
+            <span className='line-mask'>
+              <span className='line-rise'>
+                {titleStart}
+                {titleEnd && <em>{titleEnd}</em>}
+              </span>
+            </span>
+          </h2>
+          <p className='hx-lead hx-reveal'>{lead}</p>
+
+          {/* The three filter stages light up in turn. Pick one to stop on it. */}
+          <ol
+            className='hx-steps'
             onPointerEnter={() => setHovered(true)}
             onPointerLeave={() => setHovered(false)}
             onFocus={() => setFocused(true)}
             onBlur={(event) => {
               // Moving between stage buttons keeps keyboard focus inside.
-              if (!event.currentTarget.contains(event.relatedTarget)) {
-                setFocused(false);
-              }
+              if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false);
             }}>
-            <div className='relative grid grid-cols-3 gap-4'>
-              <span
-                aria-hidden='true'
-                className={`${styles.pipe} absolute left-[16.66%] right-[16.66%] top-[30px] h-1 sm:top-[42px]`}
-              />
-              {steps.map((step, index) => (
+            {steps.map((step, index) => (
+              <li key={step.label}>
                 <button
-                  key={step.label}
                   type='button'
                   aria-pressed={index === active}
-                  aria-controls='pure-water-step'
+                  data-done={index < active || undefined}
                   onClick={() => {
                     setActive(index);
-                    // Keep a chosen stage visible while the visitor reads it.
+                    // Keep a chosen stage lit while the visitor reads it.
                     setSelected(true);
                   }}
-                  className='group relative flex flex-col items-center gap-3 rounded-xl pb-2 text-center focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6c3fb8]'>
-                  <span className='grid size-16 place-items-center rounded-full border-2 border-[#e2d8f0] bg-white text-xl font-semibold sm:size-[88px] sm:text-2xl text-[#6c3fb8] motion-safe:transition motion-safe:duration-300 group-hover:border-[#6c3fb8] motion-safe:group-aria-pressed:scale-105 group-aria-pressed:border-[#200b38] group-aria-pressed:bg-[#200b38] group-aria-pressed:text-[#efb52b] group-aria-pressed:shadow-lg group-aria-pressed:shadow-[#200b38]/30'>
-                    {index + 1}
+                  className='hx-step'>
+                  <b>{String(index + 1).padStart(2, '0')}</b>
+                  <span className='hx-step-icon'>
+                    <HxIcon name={stepIcons[index % stepIcons.length]} />
                   </span>
-                  <span className='text-sm font-semibold text-[#200b38] sm:text-base'>
-                    {step.label}
+                  <span>
+                    <span className='hx-step-title'>{step.label}</span>
+                    <span className='hx-step-detail'>{step.detail}</span>
                   </span>
                 </button>
-              ))}
-            </div>
+              </li>
+            ))}
+          </ol>
 
-            <div
-              id='pure-water-step'
-              className='mt-6 grid rounded-2xl bg-[#f7f4fb] px-7 py-6 sm:px-8'>
-              {/* Stack every stage in the same spot so the box always fits the
-                  longest one and keeps its size when the stage changes. Only the
-                  selected stage is shown, and it fades in each time it's picked. */}
-              {steps.map((step, index) => (
-                <div
-                  key={step.label}
-                  className={`col-start-1 row-start-1 ${
-                    index === active ? styles.stepIn : 'invisible'
-                  }`}>
-                  <h3 className='text-xl font-semibold text-[#200b38]'>
-                    {step.label}
-                  </h3>
-                  <p className='mt-2 leading-relaxed text-gray-700'>
-                    {step.detail}
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            <p className='mt-5 flex items-start gap-3 leading-relaxed text-gray-700'>
-              <svg
-                aria-hidden='true'
-                viewBox='0 0 24 24'
-                fill='none'
-                stroke='#6c3fb8'
-                strokeWidth='1.6'
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                className='mt-0.5 size-6 shrink-0'>
-                <path d='M12 3.5c3.5 4.2 6 7.4 6 10.5a6 6 0 0 1-12 0c0-3.1 2.5-6.3 6-10.5z' />
-                <path d='M9.5 14.3l1.8 1.8 3.2-3.6' />
-              </svg>
-              {result}
-            </p>
+          <div className='hx-spotfree hx-reveal'>
+            <HxIcon name='check' />
+            <p>{result}</p>
           </div>
-        </Reveal>
-
-        <Reveal
-          className={styles.rise}
-          delay={150}>
-          <figure className='relative h-96 overflow-hidden rounded-2xl sm:h-120'>
-            <Image
-              src={image}
-              alt={imageAlt}
-              fill
-              sizes='(min-width: 1280px) 520px, (min-width: 1024px) 40vw, 100vw'
-              className='object-cover'
-            />
-            <figcaption className='absolute inset-x-4 bottom-4 rounded-xl bg-white/90 px-4 py-3 text-sm text-gray-700 backdrop-blur-sm'>
-              {caption}
-            </figcaption>
-          </figure>
-        </Reveal>
+        </div>
       </div>
     </section>
   );
