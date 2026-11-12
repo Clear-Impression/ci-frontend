@@ -22,18 +22,19 @@ export type NavigationItem = {
   href: string;
   available: boolean;
   // Show a preview panel when this tab is hovered or focused.
-  preview?: 'services' | 'locations';
+  preview?: 'services' | 'locations' | 'about';
 };
 
 // Set available to true only when the page exists.
 export const navigation: readonly NavigationItem[] = [
   { label: 'Home', href: '/', available: true },
-  { label: 'Locations', href: '/locations', available: true, preview: 'locations' },
   { label: 'Services', href: '/services', available: true, preview: 'services' },
-  { label: 'About', href: '/about', available: true },
+  { label: 'Locations', href: '/locations', available: true, preview: 'locations' },
   { label: 'Reviews', href: '/reviews', available: true },
+  { label: 'About', href: '/about', available: true, preview: 'about' },
   { label: 'FAQ', href: '/faq', available: true },
   { label: 'Feedback', href: '/feedback', available: true },
+
 ];
 
 // These lists are display text for now, not links to unfinished pages.

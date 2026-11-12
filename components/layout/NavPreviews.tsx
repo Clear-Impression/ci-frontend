@@ -2,6 +2,8 @@ import Link from 'next/link';
 import ServiceIcon from '@/components/services/ServiceIcon';
 import { getLocations } from '@/lib/locations';
 import { getServices } from '@/lib/services';
+import { aboutIntro } from '@/data/about';
+import { blogIntro } from '@/data/blog';
 
 const pin = [
   'M12 21s-6-5.6-6-11a6 6 0 0 1 12 0c0 5.4-6 11-6 11z',
@@ -10,6 +12,35 @@ const pin = [
 
 const itemClass =
   'nav-item flex items-start gap-3 rounded-xl p-3 hover:bg-[#f7f4fb] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#6c3fb8]';
+
+export function AboutPreview() {
+  return (
+    <div className='w-[min(22rem,calc(100vw-3rem))]'>
+      <ul className='p-3'>
+        <li className='nav-stagger' style={{ '--n': 0 } as React.CSSProperties}>
+          <Link href='/about' className={itemClass}>
+            <span>
+              <span className='block font-semibold leading-snug'>About</span>
+              <span className='mt-0.5 block text-sm leading-5 text-gray-600'>
+                {aboutIntro.title}
+              </span>
+            </span>
+          </Link>
+        </li>
+        <li className='nav-stagger' style={{ '--n': 1 } as React.CSSProperties}>
+          <Link href='/blog' className={itemClass}>
+            <span>
+              <span className='block font-semibold leading-snug'>Blog</span>
+              <span className='mt-0.5 block text-sm leading-5 text-gray-600'>
+                {blogIntro.title}
+              </span>
+            </span>
+          </Link>
+        </li>
+      </ul>
+    </div>
+  );
+}
 
 // The footer strip shared by both previews.
 function PanelFooter({ note, href, label }: { note: string; href: string; label: string }) {
