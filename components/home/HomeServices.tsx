@@ -1,13 +1,13 @@
 import Link from 'next/link';
-import Reveal from '@/components/services/Reveal';
+import HxIcon from '@/components/home/HxIcon';
 import ServiceIcon from '@/components/services/ServiceIcon';
 import type { HomeServiceCard } from '@/data/home';
 import { getServices } from '@/lib/services';
-import styles from '@/app/home.module.css';
 
 type HomeServicesProps = {
   eyebrow: string;
   title: string;
+  lead: string;
   cards: readonly HomeServiceCard[];
 };
 
@@ -45,6 +45,7 @@ const homeIcons: Record<string, string[]> = {
 export default async function HomeServices({
   eyebrow,
   title,
+  lead,
   cards,
 }: HomeServicesProps) {
   const services = await getServices();
@@ -58,65 +59,57 @@ export default async function HomeServices({
     <section
       id='home-services'
       aria-labelledby='home-services-heading'
-      className='scroll-mt-6 bg-[#f7f4fb]'>
-      <div className='mx-auto max-w-7xl px-6 py-20 sm:px-8 sm:py-24'>
-        <div className='flex flex-wrap items-end justify-between gap-6'>
-          <Reveal className='max-w-2xl'>
-            <p className='text-sm font-semibold uppercase tracking-widest text-[#6c3fb8]'>
-              {eyebrow}
-            </p>
+      className='hx-section hx-services scroll-mt-6'>
+      <div className='hx-container'>
+        <div className='hx-heading-row'>
+          <div>
+            <p className='hx-eyebrow hx-reveal'>{eyebrow}</p>
             <h2
               id='home-services-heading'
-              className='mt-3 text-3xl font-semibold tracking-tight sm:text-4xl'>
+              className='hx-h2'>
               <span className='line-mask'>
                 <span className='line-rise'>{title}</span>
               </span>
             </h2>
-          </Reveal>
-          <Link
-            href='/services'
-            className='draw-link rounded-sm py-1 font-semibold text-[#6c3fb8] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6c3fb8]'>
-            See all services
-          </Link>
+          </div>
+          <div className='hx-reveal'>
+            <p className='hx-lead max-w-md'>{lead}</p>
+            <Link
+              href='/services'
+              className='hx-link mt-5'>
+              See all services <HxIcon name='arrow' />
+            </Link>
+          </div>
         </div>
 
-        <ul className='mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
+        <ul className='hx-service-grid'>
           {items.map((item, index) => (
-            <Reveal
+            <li
               key={item.slug}
-              as='li'
-              delay={(index % 3) * 90}
-              className={`${styles.rise} h-full`}>
+              className='hx-reveal'
+              style={{ '--d': `${(index % 3) * 70}ms` } as React.CSSProperties}>
               <Link
                 href={`/services/${item.slug}`}
                 aria-labelledby={`home-service-${item.slug}`}
-                className={`${styles.serviceCard} group relative grid h-full grid-cols-[auto_minmax(0,1fr)] grid-rows-[auto_1fr_auto] gap-x-4 overflow-hidden rounded-2xl bg-white p-5 ring-1 ring-[#200b38]/10 hover:shadow-xl hover:shadow-[#200b38]/10 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6c3fb8] motion-safe:transition motion-safe:duration-300 motion-safe:hover:-translate-y-1 sm:p-6`}>
-                {/* The icon sits beside the name to keep each card short. */}
-                <span className='row-span-3 grid size-11 place-items-center rounded-xl bg-[#efb52b]/15'>
+                className='hx-service-card'>
+                <span className='hx-service-icon'>
                   <ServiceIcon
                     slug={item.slug}
                     paths={homeIcons[item.slug]}
-                    className='size-6 text-[#200b38]'
+                    className='size-6'
                   />
                 </span>
-                <h3
-                  id={`home-service-${item.slug}`}
-                  className='mt-2 text-lg font-semibold tracking-tight text-[#200b38]'>
-                  {item.title}
-                </h3>
-                <p className='mt-1.5 leading-relaxed text-gray-600'>
-                  {item.blurb}
-                </p>
-                <p
+                <span>
+                  <h3 id={`home-service-${item.slug}`}>{item.title}</h3>
+                  <p>{item.blurb}</p>
+                </span>
+                <span
                   aria-hidden='true'
-                  className='mt-3 text-sm font-semibold text-[#6c3fb8]'>
-                  Explore{' '}
-                  <span className='inline-block motion-safe:transition-transform motion-safe:group-hover:translate-x-1'>
-                    →
-                  </span>
-                </p>
+                  className='hx-card-arrow'>
+                  <HxIcon name='arrow' />
+                </span>
               </Link>
-            </Reveal>
+            </li>
           ))}
         </ul>
       </div>

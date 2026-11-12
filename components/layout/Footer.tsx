@@ -13,7 +13,7 @@ export default async function Footer() {
   const { cities } = await getLocations();
 
   return (
-    <footer className='bg-[#200b38] text-white'>
+    <footer className='bg-[#200b38] pb-24 text-white'>
       <div className='h-1 bg-[#55ab68]' />
       {/* Four columns on wide screens. Below that, two by two, so the city list has room for its two columns. */}
       <div className='mx-auto grid max-w-7xl gap-6 px-6 py-6 sm:grid-cols-2 sm:px-8 xl:grid-cols-[1.5fr_1fr_1.25fr_1.25fr]'>

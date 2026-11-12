@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import EstimateBar from "@/components/layout/EstimateBar";
 import "./globals.css";
 
 // Load the font here so every page uses the same one.
@@ -26,6 +27,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {/* Each route adds its own page content here. */}
         {children}
         <Footer />
+        {/* The instant estimate total, floating at the bottom of every page. */}
+        <EstimateBar />
       </body>
     </html>
   );
