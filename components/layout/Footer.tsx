@@ -110,6 +110,19 @@ export default async function Footer() {
                 </a>
               </p>
             </div>
+            <p className='mt-3'>
+              <a 
+                  href={company.bbbHref}
+                  className={`wrap-break-word ${linkStyle}`}
+                  target='_blank'>
+                  <Image
+                    src='/icons/bbbAccredited.png'
+                    alt='BBB accrediation link'
+                    width={150}
+                    height={150}
+                    />
+              </a>
+            </p>
           </address>
         </div>
       </div>
