@@ -83,17 +83,11 @@ export default async function Footer() {
               </a>
             </p>
             {/* Begin social elements */}
-            <div className='flex flex-row mt-2'>
+            <div className='flex flex-row mt-3'>
               {/* Google */}
               <p className='mr-3'>
                 <a href={company.googleHref} className={`wrap-break-word ${linkStyle}`} target='_blank'>
                   <Image src='/icons/googleMonochrome.svg' alt='Google business link' width={28} height={28} style={{filter:'invert(1)'}}/>
-                </a>
-              </p>
-              {/* HomeAdvisor */}
-              <p className='mr-3'>
-                <a href={company.homeAdvisorHref} className={`wrap-break-word ${linkStyle}`} target='_blank'>
-                  <Image src='/icons/homeAdvisorMonochrome.svg' alt='HomeAdvisor link' width={28} height={28} style={{filter:'invert(1)'}}/>
                 </a>
               </p>
               {/* Instagram */}
@@ -124,21 +118,42 @@ export default async function Footer() {
                     style={{filter:'invert(1)'}}/>
                 </a>
               </p>
+              {/* HomeAdvisor */}
+              <p className='mr-3'>
+                <a href={company.homeAdvisorHref} className={`wrap-break-word ${linkStyle}`} target='_blank'>
+                  <Image src='/icons/homeAdvisorMonochrome.svg' alt='HomeAdvisor link' width={28} height={28} style={{filter:'invert(1)'}}/>
+                </a>
+              </p>
             </div>
             {/* End social elements, begin BBB accredited */}
-            <p className='mt-3'>
-              <a 
-                  href={company.bbbHref}
-                  className={`wrap-break-word ${linkStyle}`}
-                  target='_blank'>
-                  <Image
-                    src='/icons/bbbAccredited.png'
-                    alt='BBB accrediation link'
-                    width={150}
-                    height={150}
-                    />
-              </a>
-            </p>
+            <div className='flex flex-row items-center mt-3'>
+              <p className='mr-3'>
+                <a 
+                    href={company.bbbHref}
+                    className={`wrap-break-word ${linkStyle}`}
+                    target='_blank'>
+                    <Image
+                      src='/icons/bbbAccredited.png'
+                      alt='BBB accrediation link'
+                      width={150}
+                      height={150}
+                      />
+                </a>
+              </p>
+              <p className='mr-3'>
+                <a 
+                    href={company.homeAdvisorHref}
+                    className={`wrap-break-word ${linkStyle}`}
+                    target='_blank'>
+                    <Image
+                      src='/icons/angiApproved.png'
+                      alt='Angi approved logo and link'
+                      width={150}
+                      height={150}
+                      />
+                </a>
+              </p>
+            </div>
           </address>
         </div>
       </div>
