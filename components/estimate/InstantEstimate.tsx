@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
+import { estimateChangeEvent, estimateStorageKey } from '@/lib/estimateStore';
 import ServiceIcon from '@/components/services/ServiceIcon';
 import { company } from '@/data/company';
 import {
@@ -31,7 +32,7 @@ type Saved = {
   downloaded: boolean;
 };
 
-const storageKey = 'ci-instant-estimate-v2';
+const storageKey = estimateStorageKey;
 const emptyState: Saved = {
   open: false,
   details: { name: '', address: '', city: '' },
@@ -109,6 +110,8 @@ export default function InstantEstimate({ cities }: { cities: string[] }) {
     try {
       window.sessionStorage.setItem(storageKey, JSON.stringify(state));
     } catch {}
+    // Let the floating estimate bar know the total changed.
+    window.dispatchEvent(new Event(estimateChangeEvent));
   }, [state, loaded]);
 
   const total = totalFor(state.cart);

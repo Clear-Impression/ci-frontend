@@ -1155,214 +1155,227 @@ html {
   border-radius: 0.5rem;
 }
 
-/* Homepage sidebar: a small floating card listing the page's sections. */
-.home-rail {
-  top: calc(50% + 2.5rem);
+/* 3D tilt: content leans toward the pointer, with a soft light following it. */
+.tilt {
+  position: relative;
+  transform: perspective(900px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+  transform-style: preserve-3d;
+  transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.tilt[data-tilting] {
+  transition: transform 120ms ease-out;
+}
+
+.tilt-glare {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle at var(--glare-x, 50%) var(--glare-y, 50%),
+    rgb(255 255 255 / 0.22),
+    transparent 55%
+  );
   opacity: 0;
-  transform: translate(-0.75rem, -50%);
-  transition:
-    opacity 300ms ease,
-    transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: opacity 300ms ease;
 }
 
-.home-rail[data-shown] {
+.tilt[data-tilting] .tilt-glare {
   opacity: 1;
-  transform: translate(0, -50%);
 }
 
-.home-rail-card {
-  display: flex;
-  width: 13.5rem;
-  flex-direction: column;
-  gap: 0.75rem;
-  padding: 0.75rem;
-  border-radius: 1.25rem;
-  background: #200b38;
-  box-shadow: 0 12px 32px rgb(32 11 56 / 0.18);
-  transition: width 300ms cubic-bezier(0.22, 1, 0.36, 1);
+/* Before/after slider. */
+.ba-before {
+  clip-path: inset(0 calc(100% - var(--pos)) 0 0);
 }
 
-.home-rail[data-collapsed] .home-rail-card {
-  width: 4rem;
+/* Placeholder only: makes the "before" side look dusty until real photos arrive. */
+.ba-dull {
+  filter: saturate(0.7) brightness(0.9) contrast(0.85) sepia(0.15);
 }
 
-.home-rail-head {
-  display: flex;
-  height: 2.25rem;
-  align-items: center;
-  justify-content: space-between;
-  padding-left: 0.6rem;
+.ba-grime {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 30%, rgb(255 255 255 / 0.35) 0 1.5px, transparent 2.5px) 0 0 / 38px 41px,
+    radial-gradient(circle at 70% 60%, rgb(255 255 255 / 0.28) 0 2px, transparent 3px) 0 0 / 53px 47px,
+    radial-gradient(circle at 40% 80%, rgb(235 225 205 / 0.35) 0 1px, transparent 2px) 0 0 / 23px 29px,
+    linear-gradient(115deg, transparent 30%, rgb(255 255 255 / 0.12) 45%, transparent 60%),
+    linear-gradient(to bottom, rgb(196 178 150 / 0.28), rgb(160 140 110 / 0.18));
 }
 
-.home-rail-title {
-  color: rgb(255 255 255 / 0.5);
+.ba-chip {
+  position: absolute;
+  top: 1rem;
+  z-index: 1;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  white-space: nowrap;
-  transition: opacity 150ms ease;
-}
-
-.home-rail-toggle {
-  display: grid;
-  width: 2.25rem;
-  height: 2.25rem;
-  flex-shrink: 0;
-  place-items: center;
-  border-radius: 0.65rem;
-  color: rgb(255 255 255 / 0.6);
-  transition:
-    background-color 150ms ease,
-    color 150ms ease;
-}
-
-.home-rail-toggle svg {
-  transition: transform 300ms ease;
-}
-
-.home-rail[data-collapsed] .home-rail-toggle svg {
-  transform: scaleX(-1);
-}
-
-.home-rail-toggle:hover {
-  background: rgb(255 255 255 / 0.08);
-  color: #fff;
-}
-
-.home-rail[data-collapsed] .home-rail-head {
-  padding-left: 0;
-}
-
-.home-rail[data-collapsed] .home-rail-title {
-  position: absolute;
-  opacity: 0;
+  backdrop-filter: blur(6px);
   pointer-events: none;
 }
 
-/* The white highlight slides to the current row. */
-.home-rail-active {
+.ba-line {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2.5rem;
-  border-radius: 0.65rem;
+  inset-block: 0;
+  left: var(--pos);
+  width: 2px;
+  margin-left: -1px;
   background: #fff;
-  transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 0 12px rgb(32 11 56 / 0.25);
+  pointer-events: none;
 }
 
-.home-rail-link,
-.home-rail-quote {
-  position: relative;
-  display: flex;
-  height: 2.5rem;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0 0.6rem 0 0.7rem;
-  border-radius: 0.65rem;
-  font-size: 14px;
-  white-space: nowrap;
-}
-
-.home-rail-link {
-  color: rgb(255 255 255 / 0.7);
-  transition:
-    color 200ms ease,
-    background-color 150ms ease;
-}
-
-.home-rail-link:hover:not([aria-current]) {
-  background: rgb(255 255 255 / 0.06);
-  color: #fff;
-}
-
-.home-rail-link[aria-current] {
-  color: #200b38;
-  font-weight: 600;
-}
-
-.home-rail-link[aria-current] svg {
-  color: #6c3fb8;
-}
-
-.home-rail-link:focus-visible,
-.home-rail-toggle:focus-visible,
-.home-rail-quote:focus-visible {
-  outline: 2px solid #efb52b;
-  outline-offset: 2px;
-}
-
-.home-rail-label {
-  transition: opacity 150ms ease;
-}
-
-.home-rail-foot {
-  padding-top: 0.75rem;
-  border-top: 1px solid rgb(255 255 255 / 0.08);
-}
-
-.home-rail-quote {
-  justify-content: center;
-  background: #efb52b;
-  color: #200b38;
-  font-weight: 600;
-  transition: background-color 150ms ease;
-}
-
-.home-rail-quote:hover {
-  background: #f6c64f;
-}
-
-/* Collapsed: icons only, and each name shows as a small tooltip on hover. */
-.home-rail[data-collapsed] .home-rail-link,
-.home-rail[data-collapsed] .home-rail-quote {
-  justify-content: center;
-  padding: 0;
-}
-
-.home-rail[data-collapsed] .home-rail-label {
+.ba-handle {
   position: absolute;
   top: 50%;
-  left: calc(100% + 0.9rem);
-  padding: 0.35rem 0.65rem;
-  border-radius: 0.5rem;
+  left: var(--pos);
+  display: grid;
+  width: 3rem;
+  height: 3rem;
+  place-items: center;
+  border-radius: 999px;
   background: #fff;
   color: #200b38;
-  font-size: 13px;
-  font-weight: 500;
-  box-shadow: 0 6px 18px rgb(32 11 56 / 0.14);
+  box-shadow: 0 8px 24px rgb(32 11 56 / 0.25);
+  transform: translate(-50%, -50%) translateZ(30px);
+  transition:
+    transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    background-color 200ms ease,
+    color 200ms ease;
+  pointer-events: none;
+}
+
+.ba-frame:hover .ba-handle,
+.ba-frame[data-dragging] .ba-handle,
+.ba-frame:has(.ba-input:focus-visible) .ba-handle {
+  transform: translate(-50%, -50%) translateZ(30px) scale(1.12);
+  background: #efb52b;
+}
+
+.ba-frame:has(.ba-input:focus-visible) .ba-handle {
+  outline: 3px solid #6c3fb8;
+  outline-offset: 3px;
+}
+
+/* The range input is invisible but still takes keyboard focus. */
+.ba-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
   opacity: 0;
   pointer-events: none;
-  transform: translate(-0.25rem, -50%);
-  transition:
-    opacity 150ms ease,
-    transform 200ms ease;
 }
 
-.home-rail[data-collapsed] a:hover .home-rail-label,
-.home-rail[data-collapsed] a:focus-visible .home-rail-label {
-  opacity: 1;
-  transform: translate(0, -50%);
+/* Cards float up into place one after another. */
+.ba-card {
+  animation: ba-rise 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--i) * 120ms);
+  animation-timeline: view();
+  animation-range: entry 0% entry 60%;
 }
 
-/* Leave room beside the content for the sidebar on wide screens. */
-@media (min-width: 1280px) {
-  .home-rail-content {
-    padding-left: 15rem;
-    transition: padding-left 300ms cubic-bezier(0.22, 1, 0.36, 1);
+@keyframes ba-rise {
+  from {
+    opacity: 0;
+    transform: perspective(900px) translateY(48px) rotateX(12deg);
   }
-
-  :root[data-rail-collapsed] .home-rail-content {
-    padding-left: 5.5rem;
+  to {
+    opacity: 1;
+    transform: none;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .home-rail,
-  .home-rail-card,
-  .home-rail-active,
-  .home-rail-content {
+  .tilt,
+  .ba-handle {
     transition: none;
+  }
+
+  .ba-card {
+    animation: none;
+  }
+}
+
+/* The Clear Impression Promise panel. */
+.promise-panel {
+  background:
+    radial-gradient(60% 70% at 100% 0%, rgb(108 63 184 / 0.55), transparent 70%),
+    radial-gradient(50% 60% at 0% 100%, rgb(239 181 43 / 0.12), transparent 70%),
+    #200b38;
+}
+
+.promise-card {
+  transition:
+    background-color 300ms ease,
+    box-shadow 300ms ease,
+    transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
+  animation: promise-rise 800ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--i) * 100ms);
+  animation-timeline: view();
+  animation-range: entry 0% entry 70%;
+}
+
+.promise-card:hover {
+  transform: translateY(-6px);
+}
+
+@keyframes promise-rise {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Floating estimate bar. */
+.estimate-bar {
+  opacity: 0;
+  transform: translateY(1.5rem);
+  transition:
+    opacity 300ms ease,
+    transform 500ms cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+.estimate-bar[data-shown] {
+  opacity: 1;
+  transform: none;
+}
+
+.estimate-bar-total {
+  animation: estimate-pop 450ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes estimate-pop {
+  from {
+    opacity: 0.4;
+    transform: translateY(6px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .promise-card,
+  .estimate-bar {
+    transition: none;
+    animation: none;
+  }
+
+  .estimate-bar-total {
+    animation: none;
   }
 }

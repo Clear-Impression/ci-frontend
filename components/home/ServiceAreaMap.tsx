@@ -19,6 +19,8 @@ type ServiceAreaMapProps = {
   // A shorter map for the homepage.
   compact?: boolean;
   showBoundaries?: boolean;
+  // Leave out the city buttons when the page already lists the cities.
+  cityButtons?: boolean;
 };
 
 export default function ServiceAreaMap({
@@ -26,6 +28,7 @@ export default function ServiceAreaMap({
   large = false,
   compact = false,
   showBoundaries = false,
+  cityButtons = true,
 }: ServiceAreaMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<LeafletMap | null>(null);
@@ -198,6 +201,7 @@ export default function ServiceAreaMap({
       </div>
       <div className='px-5 py-4'>
         {/* These buttons provide another way to select cities without dragging. */}
+        {cityButtons && (
         <ul
           className='flex flex-wrap gap-2'
           aria-label='Service cities'>
@@ -214,7 +218,8 @@ export default function ServiceAreaMap({
             </li>
           ))}
         </ul>
-        <p className='mt-3 text-xs leading-5 text-[#686170]'>
+        )}
+        <p className={`${cityButtons ? 'mt-3' : ''} text-xs leading-5 text-[#686170]`}>
           Shaded outlines show city boundaries; pins mark the city centers.
           Call to confirm service at your address.
         </p>

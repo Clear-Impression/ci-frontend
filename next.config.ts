@@ -27,6 +27,8 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "cdn.sanity.io", pathname: "/images/**" },
+      // Free Unsplash photos (unsplash.com/license) used on the homepage.
+      { protocol: "https", hostname: "images.unsplash.com" },
     ],
   },
 };

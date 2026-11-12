@@ -1,6 +1,9 @@
 import { getPageHeader } from '@/lib/page-headers';
 import type { Metadata } from 'next';
 import { createPageMetadata } from '@/lib/seo';
+import './home-redesign.css';
+import { manrope } from './fonts';
+import HomeMotion from '@/components/home/HomeMotion';
 import HomeHero from '@/components/home/HomeHero';
 import HomeTrust from '@/components/home/HomeTrust';
 import HomePureWater from '@/components/home/HomePureWater';
@@ -8,6 +11,10 @@ import HomeServices from '@/components/home/HomeServices';
 import HomeReviews from '@/components/home/HomeReviews';
 import HomeServiceArea from '@/components/home/HomeServiceArea';
 import HomeClosing from '@/components/home/HomeClosing';
+import HomeBeforeAfter from '@/components/home/HomeBeforeAfter';
+import { beforeAfter } from '@/data/beforeAfter';
+import HomePromise from '@/components/home/HomePromise';
+import { promise } from '@/data/promise';
 import SectionRail, { type RailSection } from '@/components/home/SectionRail';
 import {
   homeAreas,
@@ -36,65 +43,77 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-// The sections listed in the left-hand panel, top to bottom. Each id wraps one section below.
+// The sections listed in the "On this page" guide, top to bottom. Each id wraps one section below.
 const railSections = [
-  { id: 'top', label: 'Welcome', icon: 'home' },
-  { id: 'why-us', label: 'Why Us', icon: 'sparkles' },
-  { id: 'service-area', label: 'Where We Work', icon: 'pin' },
-  { id: 'services', label: 'Services', icon: 'grid' },
-  { id: 'pure-water', label: 'Our Technology', icon: 'droplet' },
-  { id: 'reviews', label: 'Reviews', icon: 'review' },
-  { id: 'get-started', label: 'Get Started', icon: 'send' },
+  { id: 'top', label: 'Welcome' },
+  { id: 'why-us', label: 'Why Us' },
+  { id: 'service-area', label: 'Where We Work' },
+  { id: 'services', label: 'Services' },
+  { id: 'results', label: 'Before & After' },
+  { id: 'pure-water', label: 'Our Technology' },
+  { id: 'promise', label: 'Our Promise' },
+  { id: 'reviews', label: 'Reviews' },
+  { id: 'get-started', label: 'Get Started' },
 ] satisfies RailSection[];
 
 export default async function Home() {
   const header = await getPageHeader('home');
   const { cities } = await getLocations();
   return (
-    <main className='flex-1 bg-white text-[#200b38]'>
+    <main className={`hx ${manrope.variable} flex-1`}>
+      <HomeMotion />
       <SectionRail sections={railSections} />
       {/* Build the page from sections so their content can change independently. */}
       <div id='top'>
-        <HomeHero {...homeHero} titleLines={header.title.split('\n')} subtitle={header.subtitle} rating={googleRating.score} />
+        <HomeHero
+          {...homeHero}
+          titleLines={header.title.split('\n')}
+          subtitle={header.subtitle}
+          rating={googleRating.score}
+          reviewCount={googleRating.count}
+        />
       </div>
-      {/* On wide screens, everything after the hero leaves room for the panel. */}
-      <div className='home-rail-content'>
-        <div id='why-us'>
-          <HomeTrust
-            score={googleRating.score}
-            count={googleRating.count}
-            since={servingSince}
-            cityCount={cities.length}
-          />
-        </div>
-        {/* Follow the path visitors take: find their city, pick a service, get a quote. */}
-        <div id='service-area'>
-          <HomeServiceArea
-            {...homeAreas}
-            lead={withCityCount(homeAreas.lead, cities.length)}
-            cities={cities.map(({ name, coordinates }) => ({ name, coordinates }))}
-            cityPages={cities}
-          />
-        </div>
-        <div id='services'>
-          <HomeServices {...homeServices} />
-        </div>
-        <div id='pure-water'>
-          <HomePureWater {...pureWater} />
-        </div>
-        <div id='reviews'>
-          <HomeReviews
-            reviews={homeReviews}
-            score={googleRating.score}
-            count={googleRating.count}
-          />
-        </div>
-        <div id='get-started'>
-          <HomeClosing
-            {...homeClosing}
-            steps={homeSteps.steps}
-          />
-        </div>
+      <div id='why-us'>
+        <HomeTrust
+          score={googleRating.score}
+          count={googleRating.count}
+          since={servingSince}
+          cityCount={cities.length}
+        />
+      </div>
+      {/* Follow the path visitors take: find their city, pick a service, get a quote. */}
+      <div id='service-area'>
+        <HomeServiceArea
+          {...homeAreas}
+          lead={withCityCount(homeAreas.lead, cities.length)}
+          cities={cities.map(({ name, coordinates }) => ({ name, coordinates }))}
+          cityPages={cities}
+        />
+      </div>
+      <div id='services'>
+        <HomeServices {...homeServices} />
+      </div>
+      <div id='results'>
+        <HomeBeforeAfter {...beforeAfter} />
+      </div>
+      <div id='pure-water'>
+        <HomePureWater {...pureWater} />
+      </div>
+      <div id='promise'>
+        <HomePromise {...promise} />
+      </div>
+      <div id='reviews'>
+        <HomeReviews
+          reviews={homeReviews}
+          score={googleRating.score}
+          count={googleRating.count}
+        />
+      </div>
+      <div id='get-started'>
+        <HomeClosing
+          {...homeClosing}
+          steps={homeSteps.steps}
+        />
       </div>
     </main>
   );
