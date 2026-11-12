@@ -1,5 +1,5 @@
 import { getPageHeader } from '@/lib/page-headers';
-import type { Metadata } from 'next';
+import { createPageMetadata } from '@/lib/seo';
 import TermsContent from '@/components/terms/TermsContent';
 import { company } from '@/data/company';
 import { termsIntroduction, termsNavigation, termsSections } from '@/data/terms';
@@ -7,17 +7,11 @@ import { termsIntroduction, termsNavigation, termsSections } from '@/data/terms'
 const title = 'Appointment, Cancellation, and Service Terms | Clear Impression';
 const description = 'Read Clear Impression’s appointment, cancellation, rescheduling, weather, payment, property access, and service terms.';
 
-export const metadata: Metadata = {
+export const metadata = createPageMetadata({
+  path: '/terms-and-conditions',
   title,
   description,
-  alternates: { canonical: `${company.website}terms-and-conditions` },
-  openGraph: {
-    title,
-    description,
-    url: `${company.website}terms-and-conditions`,
-    images: [{ url: `${company.website}images/home/window-cleaning.webp`, alt: 'Window cleaning for an Arizona home' }],
-  },
-};
+});
 
 export default async function TermsPage() {
   const header = await getPageHeader('terms');

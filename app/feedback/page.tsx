@@ -1,5 +1,5 @@
 import { getPageHeader } from '@/lib/page-headers';
-import type { Metadata } from 'next';
+import { createPageMetadata } from '@/lib/seo';
 import FeedbackForm from '@/components/feedback/FeedbackForm';
 import { company } from '@/data/company';
 import QuoteActions from '@/components/ui/QuoteActions';
@@ -11,11 +11,11 @@ const title = 'Feedback | Clear Impression Services';
 const description =
   'Share feedback about your window cleaning service with Clear Impression. Tell us what went well and what we can improve.';
 
-export const metadata: Metadata = {
+export const metadata = createPageMetadata({
+  path: '/feedback',
   title,
   description,
-  alternates: { canonical: `${company.website}feedback` },
-};
+});
 
 // Short points beside the form about how feedback is handled.
 const highlights = [

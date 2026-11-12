@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { createPageMetadata } from '@/lib/seo';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import QuoteActions from '@/components/ui/QuoteActions';
@@ -23,10 +24,11 @@ export async function generateMetadata({
   const service = (await getServices()).find((item) => item.slug === slug);
   if (!service) notFound();
 
-  return {
+  return createPageMetadata({
+    path: '/services/' + service.slug,
     title: `${service.title} | ${company.name}`,
     description: service.largeDescription,
-  };
+  });
 }
 
 export default async function ServicePage({ params }: ServicePageProps) {

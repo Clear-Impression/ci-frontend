@@ -1,5 +1,5 @@
 import { getPageHeader } from '@/lib/page-headers';
-import type { Metadata } from 'next';
+import { createPageMetadata } from '@/lib/seo';
 import Link from 'next/link';
 import { aboutClosing } from '@/data/about';
 import { coreServices, howWeDoIt, specializedServices } from '@/data/services';
@@ -8,11 +8,12 @@ import QuoteActions from '@/components/ui/QuoteActions';
 import ServiceIndex from './ServiceIndex';
 
 // Describe the page for search engines and link previews.
-export const metadata: Metadata = {
+export const metadata = createPageMetadata({
+  path: '/services',
   title: 'Services | Clear Impression Services',
   description:
     'Window cleaning with traditional tools or 100% pure water, plus hard water stain removal, screen cleaning, and more across Mesa and the Phoenix metro.',
-};
+});
 
 // The two cleaning methods, linked from the Core Services intro.
 const [traditional, pureWater] = howWeDoIt;

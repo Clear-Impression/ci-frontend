@@ -1,5 +1,5 @@
 import { getPageHeader } from '@/lib/page-headers';
-import type { Metadata } from 'next';
+import { createPageMetadata } from '@/lib/seo';
 import { aboutClosing } from '@/data/about';
 import RatingSummary from '@/components/reviews/RatingSummary';
 import ReviewWall from '@/components/reviews/ReviewWall';
@@ -8,11 +8,12 @@ import { googleRating, googleReviews, googleReviewsUrl } from '@/data/reviews';
 import styles from './reviews.module.css';
 
 // Give the Reviews page its own title and search description.
-export const metadata: Metadata = {
+export const metadata = createPageMetadata({
+  path: '/reviews',
   title: 'Reviews | Clear Impression Services',
   description:
     'Rated 5.0 on Google. Read what homeowners and businesses across Mesa and the Phoenix metro say about Clear Impression window cleaning.',
-};
+});
 
 // Where the small gold sparkles sit in the header, and when each one twinkles.
 const sparkles = [

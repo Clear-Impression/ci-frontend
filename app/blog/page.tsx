@@ -1,12 +1,13 @@
-import type { Metadata } from 'next';
+import { createPageMetadata } from '@/lib/seo';
 import HomeClosing from '@/components/home/HomeClosing';
 import { homeClosing, homeSteps } from '@/data/home';
 import { blogIntro } from '@/data/blog';
 
-export const metadata: Metadata = {
+export const metadata = createPageMetadata({
+  path: '/blog',
   title: 'Blog | Clear Impression Services',
   description: 'Tips and insights from Clear Impression.',
-};
+});
 
 function Words({ text, className }: { text: string; className: string }) {
   return text.split(' ').map((word, index, words) => (

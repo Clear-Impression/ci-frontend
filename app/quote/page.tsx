@@ -1,5 +1,5 @@
 import { getPageHeader } from '@/lib/page-headers';
-import type { Metadata } from 'next';
+import { createPageMetadata } from '@/lib/seo';
 import QuoteForm from '@/components/quote/QuoteForm';
 import { company } from '@/data/company';
 import { quoteOptions } from '@/data/quote';
@@ -9,17 +9,11 @@ const description = 'Plan your window, solar panel, or screen cleaning in the Ph
 
 export const maxDuration = 75;
 
-export const metadata: Metadata = {
+export const metadata = createPageMetadata({
+  path: '/quote',
   title,
   description,
-  alternates: { canonical: `${company.website}quote` },
-  openGraph: {
-    title,
-    description,
-    url: `${company.website}quote`,
-    images: [{ url: `${company.website}images/home/window-cleaning.webp`, alt: 'Window cleaning for an Arizona home' }],
-  },
-};
+});
 
 export default async function QuotePage() {
   const header = await getPageHeader('quote');

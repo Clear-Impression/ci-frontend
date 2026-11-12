@@ -1,5 +1,6 @@
 import { getPageHeader } from '@/lib/page-headers';
 import type { Metadata } from 'next';
+import { createPageMetadata } from '@/lib/seo';
 import Link from 'next/link';
 import ServiceAreaMap from '@/components/home/ServiceAreaMap';
 //import HomeContact from '@/components/home/HomeContact';
@@ -18,10 +19,11 @@ export async function generateMetadata(): Promise<Metadata> {
     type: 'conjunction',
   }).format(cities.map((location) => location.name));
 
-  return {
+  return createPageMetadata({
+    path: '/locations',
     title: 'Window Cleaning Service Areas | Clear Impression Services',
     description: `Residential and commercial window cleaning in ${cityList}. Find your city and see what we do there.`,
-  };
+  });
 }
 
 export default async function LocationsPage() {
