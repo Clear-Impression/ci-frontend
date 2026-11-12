@@ -82,7 +82,15 @@ export default async function Footer() {
                 {company.email}
               </a>
             </p>
-            <div className='flex flex-row mt-2'>
+            {/* Begin social elements */}
+            <div className='flex flex-row mt-3'>
+              {/* Google */}
+              <p className='mr-3'>
+                <a href={company.googleHref} className={`wrap-break-word ${linkStyle}`} target='_blank'>
+                  <Image src='/icons/googleMonochrome.svg' alt='Google business link' width={28} height={28} style={{filter:'invert(1)'}}/>
+                </a>
+              </p>
+              {/* Instagram */}
               <p className='mr-3'>
                 <a
                   href={company.instagramHref}
@@ -90,12 +98,13 @@ export default async function Footer() {
                   target='_blank'>
                   <Image
                     src='/icons/instagramMonochrome.png'
-                    alt='Instagram logo link'
+                    alt='Instagram link'
                     width={28}
                     height={28}
                     style={{filter:'invert(1)'}}/>
                 </a>
               </p>
+              {/* Facebook */}
               <p className='mr-3'>
                 <a
                   href={company.facebookHref}
@@ -103,26 +112,48 @@ export default async function Footer() {
                   target='_blank'>
                   <Image
                     src='/icons/facebookMonochrome.png'
-                    alt='Facebook logo link'
+                    alt='Facebook link'
                     width={28}
                     height={28}
                     style={{filter:'invert(1)'}}/>
                 </a>
               </p>
+              {/* HomeAdvisor */}
+              <p className='mr-3'>
+                <a href={company.homeAdvisorHref} className={`wrap-break-word ${linkStyle}`} target='_blank'>
+                  <Image src='/icons/homeAdvisorMonochrome.svg' alt='HomeAdvisor link' width={28} height={28} style={{filter:'invert(1)'}}/>
+                </a>
+              </p>
             </div>
-            <p className='mt-3'>
-              <a 
-                  href={company.bbbHref}
-                  className={`wrap-break-word ${linkStyle}`}
-                  target='_blank'>
-                  <Image
-                    src='/icons/bbbAccredited.png'
-                    alt='BBB accrediation link'
-                    width={150}
-                    height={150}
-                    />
-              </a>
-            </p>
+            {/* End social elements, begin BBB accredited */}
+            <div className='flex flex-row items-center mt-3'>
+              <p className='mr-3'>
+                <a 
+                    href={company.bbbHref}
+                    className={`wrap-break-word ${linkStyle}`}
+                    target='_blank'>
+                    <Image
+                      src='/icons/bbbAccredited.png'
+                      alt='BBB accrediation link'
+                      width={150}
+                      height={150}
+                      />
+                </a>
+              </p>
+              <p className='mr-3'>
+                <a 
+                    href={company.homeAdvisorHref}
+                    className={`wrap-break-word ${linkStyle}`}
+                    target='_blank'>
+                    <Image
+                      src='/icons/angiApproved.png'
+                      alt='Angi approved logo and link'
+                      width={150}
+                      height={150}
+                      />
+                </a>
+              </p>
+            </div>
           </address>
         </div>
       </div>
