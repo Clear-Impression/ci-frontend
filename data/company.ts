@@ -7,6 +7,9 @@ export const company = {
   phoneHref: 'tel:+14806220622',
   email: 'info@clearimpressionservices.com',
   emailHref: 'mailto:info@clearimpressionservices.com',
+  instagramHref: 'https://www.instagram.com/clearimpressionwindowcleaning/',
+  facebookHref: 'https://www.facebook.com/profile.php?id=61590409861022',
+  bbbHref: 'https://www.bbb.org/us/az/mesa/profile/window-cleaning/clear-impression-llc-1126-1000184565',
   website: 'https://clearimpressionservices.com/',
   logo: '/logos/logo.png',
   // Wide version of the logo for the header bar.

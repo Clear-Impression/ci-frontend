@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { company } from '@/data/company';
 import { services as servicePages } from '@/data/services';
 import { getLocations } from '@/lib/locations';
+import { link } from 'fs';
 
 // Keep hover and keyboard focus styles the same for footer links.
 const linkStyle =
@@ -79,6 +80,47 @@ export default async function Footer() {
                 href={company.emailHref}
                 className={`wrap-break-word ${linkStyle}`}>
                 {company.email}
+              </a>
+            </p>
+            <div className='flex flex-row mt-2'>
+              <p className='mr-3'>
+                <a
+                  href={company.instagramHref}
+                  className={`wrap-break-word ${linkStyle}`} 
+                  target='_blank'>
+                  <Image
+                    src='/icons/instagramMonochrome.png'
+                    alt='Instagram logo link'
+                    width={28}
+                    height={28}
+                    style={{filter:'invert(1)'}}/>
+                </a>
+              </p>
+              <p className='mr-3'>
+                <a
+                  href={company.facebookHref}
+                  className={`wrap-break-word ${linkStyle}`}
+                  target='_blank'>
+                  <Image
+                    src='/icons/facebookMonochrome.png'
+                    alt='Facebook logo link'
+                    width={28}
+                    height={28}
+                    style={{filter:'invert(1)'}}/>
+                </a>
+              </p>
+            </div>
+            <p className='mt-3'>
+              <a 
+                  href={company.bbbHref}
+                  className={`wrap-break-word ${linkStyle}`}
+                  target='_blank'>
+                  <Image
+                    src='/icons/bbbAccredited.png'
+                    alt='BBB accrediation link'
+                    width={150}
+                    height={150}
+                    />
               </a>
             </p>
           </address>
