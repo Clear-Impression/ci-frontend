@@ -1,7 +1,7 @@
 // Keep About page copy here so it can move to a CMS later.
 export const aboutIntro = {
   eyebrow: 'Our Story',
-  title: 'From college roots to Mesa’s trusted choice',
+  title: 'From college roots to Mesa’s trusted choice.',
   lead: 'At Clear Impression, we believe a clear view can change your whole perspective.',
 } as const;
 

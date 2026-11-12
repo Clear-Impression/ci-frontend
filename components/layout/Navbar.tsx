@@ -7,7 +7,7 @@ import NavDropdown from './NavDropdown';
 import NavLink from './NavLink';
 import QuoteButton from '@/components/quote/QuoteButton';
 import QuoteChooser from '@/components/quote/QuoteChooser';
-import { LocationsPreview, ServicesPreview } from './NavPreviews';
+import { AboutPreview, LocationsPreview, ServicesPreview } from './NavPreviews';
 import SiteSearch from './SiteSearch';
 import StickyHeader from './StickyHeader';
 
@@ -54,12 +54,18 @@ export default function Navbar() {
             <ul className='flex items-center gap-5 text-sm font-medium xl:gap-6'>
               {navigation.map((item) =>
                 item.available && item.preview ? (
-                  // Services and Locations show a preview of every page under them.
+                  // Services, Locations, and About show their related pages.
                   <NavDropdown
                     key={item.href}
                     label={item.label}
                     href={item.href}>
-                    {item.preview === 'services' ? <ServicesPreview /> : <LocationsPreview />}
+                    {item.preview === 'services' ? (
+                      <ServicesPreview />
+                    ) : item.preview === 'locations' ? (
+                      <LocationsPreview />
+                    ) : (
+                      <AboutPreview />
+                    )}
                   </NavDropdown>
                 ) : (
                   <li key={item.href}>
