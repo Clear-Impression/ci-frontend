@@ -1,5 +1,5 @@
-/* The closing "Let's make your windows shine." card on the inner pages. It
-   uses the homepage's Manrope font and brand colors. */
+/* The closing "Let's make your windows shine." card on the inner pages, in
+   the site's own font and brand colors. */
 .cv {
   --cv-purple: #200b38;
   --cv-purple-2: #351351;
@@ -17,10 +17,9 @@
   align-items: center;
   overflow: hidden;
   padding: 44px 28px;
-  border-radius: 22px;
+  border-radius: 14px;
   background: var(--cv-purple);
   color: #fff;
-  font-family: var(--font-manrope), var(--font-geist-sans), system-ui, sans-serif;
   box-shadow: 0 30px 70px -34px rgb(32 11 56 / 0.6);
   touch-action: pan-y;
 }
@@ -97,7 +96,7 @@
   gap: 8px;
   color: var(--cv-gold);
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
 }
@@ -114,7 +113,7 @@
 .cv-title {
   margin-top: 16px;
   font-size: clamp(38px, 4.6vw, 60px);
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1.04;
   letter-spacing: -0.02em;
 }
@@ -176,11 +175,11 @@
   min-height: 54px;
   overflow: hidden;
   padding: 0 26px;
-  border-radius: 12px;
+  border-radius: 8px;
   background: var(--cv-gold);
   color: var(--cv-purple);
   font-size: 16px;
-  font-weight: 800;
+  font-weight: 600;
   box-shadow: 0 12px 26px -12px rgb(239 181 43 / 0.7);
   transition: transform 0.25s var(--cv-ease), background 0.25s, box-shadow 0.25s;
 }
@@ -223,7 +222,7 @@
   min-height: 44px;
   color: #fff;
   font-size: 17px;
-  font-weight: 700;
+  font-weight: 600;
 }
 .cv-call svg {
   width: 18px;
@@ -246,7 +245,7 @@
   margin-top: 18px;
   color: var(--cv-gold);
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 600;
 }
 .cv[data-phase='clean'] .cv-done {
   animation: cv-pop 0.6s cubic-bezier(0.2, 1.4, 0.4, 1) both;
@@ -280,7 +279,7 @@
   position: relative;
   aspect-ratio: 16 / 10;
   overflow: hidden;
-  border-radius: 18px;
+  border-radius: 10px;
   box-shadow: 0 30px 50px -24px rgb(0 0 0 / 0.55), 0 0 0 1px rgb(255 255 255 / 0.08);
   transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
   transition: transform 0.4s var(--cv-ease);
@@ -362,14 +361,14 @@
 .cv-hint {
   position: absolute;
   left: 50%;
-  bottom: 16px;
+  top: 16px;
   z-index: 2;
   padding: 8px 14px;
   border-radius: 999px;
   background: rgb(255 255 255 / 0.94);
   color: var(--cv-purple);
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
   white-space: nowrap;
   pointer-events: none;
   box-shadow: 0 10px 24px rgb(0 0 0 / 0.25);
@@ -418,11 +417,11 @@
   align-items: center;
   gap: 8px;
   padding: 10px 16px;
-  border-radius: 12px;
+  border-radius: 8px;
   background: #fff;
   color: var(--cv-purple);
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 600;
   box-shadow: 0 16px 30px -12px rgb(0 0 0 / 0.45);
   animation: cv-bob 4s ease-in-out infinite;
 }

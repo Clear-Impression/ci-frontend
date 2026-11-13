@@ -52,7 +52,7 @@ export default function ReviewsHero({ title, subtitle, featured, googleUrl, writ
       className={`${styles.hero} relative isolate overflow-hidden bg-[#200b38] text-white`}>
       <div className='mx-auto grid max-w-7xl items-center gap-14 px-6 pb-28 pt-14 sm:px-8 lg:grid-cols-[1.1fr_1fr] lg:pb-32 lg:pt-12'>
         <div>
-          <p className={`${styles.lift} inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.16em] text-[#efb52b]`}>
+          <p className={`${styles.lift} inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-[#efb52b]`}>
             <span
               aria-hidden='true'
               className={styles.googleG}>
@@ -125,7 +125,7 @@ export default function ReviewsHero({ title, subtitle, featured, googleUrl, writ
                   </span>
                   <span className='sr-only'>{review.rating} out of 5 stars.</span>
                   <span className={styles.deckQuote}>“{review.quote}”</span>
-                  <span className={`${styles.deckName} flex items-center gap-3 pt-4 text-sm font-bold text-[#200b38]`}>
+                  <span className={`${styles.deckName} flex items-center gap-3 pt-4 text-sm font-semibold text-[#200b38]`}>
                     <span
                       aria-hidden='true'
                       className={styles.gridAvatar}>

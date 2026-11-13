@@ -62,45 +62,70 @@ export const pureWater = {
 };
 
 export type HomeServiceCard = {
+  // An existing service slug, so the card links to the right page.
   slug: string;
+  // A short label in the pill above the title.
+  badge: string;
   blurb: string;
+  // Three short points, taken from that service's page.
+  points: readonly [string, string, string];
+  cta: string;
+  // Used until the service has its own photo in Sanity.
+  image: string;
+  imageAlt: string;
+  // Which part of the photo stays in view in the tall card, e.g. '70% center'.
+  imagePosition?: string;
 };
 
-// Use existing service slugs so the cards link to the right pages.
+// The "What we clean" section: four tall photo cards for our main services.
 export const homeServices = {
   eyebrow: 'What we clean',
-  title: 'Built for Arizona glass.',
-  lead: 'From a single stubborn pane to every window on the property, we leave the glass looking like it isn’t there.',
+  titleLines: ['Homes. Storefronts.', 'Solar. Gutters.'],
+  lead: 'Our four most-booked services, for homes and businesses across Mesa and the Phoenix metro. Screens, tracks, hard water stains and more are on the services page.',
   cards: [
     {
       slug: 'residential-window-washing',
+      badge: 'Inside & out',
       blurb:
-        'Drop cloths and shoe covers inside, pure water outside. Fingerprints, dog smudges and monsoon splatter, gone.',
+        'Hand-detailed glass inside, pure water outside. Fingerprints, dog smudges and monsoon splatter, gone.',
+      points: ['Drop cloths & shoe covers', 'Water-fed pole outside', 'Dries spot-free'],
+      cta: 'See window cleaning',
+      // Our own photo of a clean home window.
+      image: '/images/home/home-window-card.jpg',
+      imageAlt: 'Spotless windows on a stucco home with palm trees reflected in the glass.',
     },
     {
       slug: 'commercial-office-glass',
+      badge: 'On your schedule',
       blurb:
-        'Storefronts, restaurants and offices on a weekly, bi-weekly or monthly schedule built around your hours.',
+        'Storefronts, restaurants and low-rise offices kept sharp, with minimal disruption to your staff and customers.',
+      points: ['Retail & restaurants', 'Weekly, bi-weekly or monthly', 'No lifts or ladders upstairs'],
+      cta: 'See commercial glass',
+      image: '/images/home/commercial-glass-card.jpg',
+      imageAlt: 'A window cleaner using a water-fed pole on the glass front of an office building.',
+      imagePosition: '72% center',
     },
     {
       slug: 'solar-panel-cleaning',
+      badge: 'Warranty-safe',
       blurb:
-        'Dusty panels make less power. We never use tap water or harsh soap that can etch the coating.',
+        'Desert dust blocks the sun your panels need. We rinse it off without anything that can etch the coating.',
+      points: ['100% pure, deionized water', 'Soft, scratch-free brushes', 'No tap water or harsh soap'],
+      cta: 'See solar cleaning',
+      image: '/images/home/solar-card.jpg',
+      imageAlt: 'Workers cleaning rows of solar panels with long brushes and a hose.',
+      imagePosition: '55% center',
     },
     {
-      slug: 'hard-water-stain-removal',
+      slug: 'gutter-roof-care',
+      badge: 'Monsoon ready',
       blurb:
-        'Valley water bakes mineral deposits onto glass. We assess it first, then bring back the shine safely.',
-    },
-    {
-      slug: 'screen-deep-cleaning',
-      blurb:
-        'Dust, pollen and debris out of your screens, for cleaner airflow and brighter natural light.',
-    },
-    {
-      slug: 'track-detailing',
-      blurb:
-        'Packed-in dirt, dead bugs and mud vacuumed and scrubbed out, so your windows glide again.',
+        'Clogged gutters overflow in a monsoon. We clear them by hand, then flush every downspout so water flows away.',
+      points: ['Debris scooped & bagged', 'Downspouts flushed', 'Loose brackets flagged'],
+      cta: 'See gutter care',
+      image: '/images/home/roof-card.jpg',
+      imageAlt: 'A worker on a tiled roof spraying away built-up grime.',
+      imagePosition: '72% center',
     },
   ] as readonly HomeServiceCard[],
 };

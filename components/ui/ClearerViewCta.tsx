@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import QuoteButton from '@/components/quote/QuoteButton';
-import { manrope } from '@/app/fonts';
 import { company } from '@/data/company';
 import { clearerViewCta } from '@/data/about';
 import './clearer-view.css';
@@ -277,7 +276,7 @@ export default function ClearerViewCta() {
       data-in={seen || undefined}
       data-phase={phase}
       onPointerMove={onCardMove}
-      className={`cv ${manrope.variable}`}>
+      className='cv'>
       <span
         aria-hidden='true'
         className='cv-light'

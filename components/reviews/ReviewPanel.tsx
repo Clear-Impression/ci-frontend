@@ -59,7 +59,7 @@ export default function ReviewPanel({ review, fallbackUrl, onClose }: ReviewPane
             <div>
               <p
                 id='review-panel-name'
-                className='text-lg font-extrabold text-[#200b38]'>
+                className='text-lg font-semibold text-[#200b38]'>
                 {review.name}
               </p>
               <p className='flex items-center gap-2 text-sm text-gray-500'>

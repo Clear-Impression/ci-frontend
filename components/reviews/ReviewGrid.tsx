@@ -76,7 +76,7 @@ export default function ReviewGrid({ reviews, googleUrl }: ReviewGridProps) {
                   {review.name.charAt(0)}
                 </span>
                 <span className='text-left'>
-                  <span className='block font-extrabold text-[#200b38]'>{review.name}</span>
+                  <span className='block font-semibold text-[#200b38]'>{review.name}</span>
                   <span
                     aria-hidden='true'
                     className='block text-sm tracking-widest text-[#efb52b]'>

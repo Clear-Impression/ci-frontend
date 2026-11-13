@@ -4,7 +4,6 @@ import RatingSummary from '@/components/reviews/RatingSummary';
 import ReviewGrid from '@/components/reviews/ReviewGrid';
 import { googleRating, googleReviews, googleReviewsUrl, googleWriteReviewUrl } from '@/data/reviews';
 import ReviewsHero from '@/components/reviews/ReviewsHero';
-import { manrope } from '@/app/fonts';
 import styles from './reviews.module.css';
 import ClearerViewCta from '@/components/ui/ClearerViewCta';
 
@@ -23,7 +22,7 @@ export default async function ReviewsPage() {
   const header = await getPageHeader('reviews');
   return (
     // The shared layout already supplies the website's header and footer.
-    <main className={`${manrope.variable} flex-1 bg-white text-[#200b38]`}>
+    <main className='flex-1 bg-white text-[#200b38]'>
       {/* Big words on the left, a fanned stack of real reviews on the right. */}
       <ReviewsHero
         title={header.title}
@@ -33,12 +32,14 @@ export default async function ReviewsPage() {
         writeReviewUrl={googleWriteReviewUrl}
       />
 
-      {/* The overall rating, counting up as it comes into view. */}
+      {/* The overall rating, counting up as it flips into view. */}
       <section className='relative z-10 mx-auto -mt-10 max-w-7xl px-6 sm:px-8'>
         <RatingSummary
           score={googleRating.score}
           count={googleRating.count}
           sourceUrl={googleReviewsUrl}
+          writeReviewUrl={googleWriteReviewUrl}
+          reviewers={googleReviews.map((review) => review.name)}
         />
       </section>
 
