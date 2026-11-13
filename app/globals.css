@@ -48,7 +48,8 @@ html {
 }
 
 .header-strip {
-  max-height: 4rem;
+  /* Room for two lines on phones, where the call button wraps under the service area. */
+  max-height: 6rem;
   overflow: hidden;
   transition:
     max-height 0.3s ease,
@@ -114,17 +115,6 @@ html {
   .site-header:not([data-scrolled]) .search-icon {
     display: none;
   }
-}
-
-/* The big phone button gets a little smaller with the rest of the header. */
-.site-header[data-scrolled] .phone-label {
-  display: none;
-}
-
-.site-header[data-scrolled] .phone-badge {
-  width: 2rem;
-  height: 2rem;
-  padding: 0.4375rem;
 }
 
 /* On phones and tablets the open search box covers the whole header row,
@@ -1421,5 +1411,138 @@ html {
 
   .estimate-bar-total {
     animation: none;
+  }
+}
+
+/* ------------------------------------------------------------------
+   The logo's green. Gold is for things to do (buttons, the current tab,
+   stars) and green is for "you're covered": included, served, done.
+   ------------------------------------------------------------------ */
+
+:root {
+  --green: #55ab68;
+  --green-light: #72c587;
+  --green-text: #2a7340;
+  --green-pale: #eaf6ed;
+}
+
+/* Selected text, like a phone number being copied. */
+::selection {
+  background: #c9ead2;
+  color: #200b38;
+}
+
+/* The page scrollbar on computers. Phones keep their own. */
+@media (pointer: fine) {
+  html {
+    scrollbar-color: var(--green) var(--green-pale);
+  }
+}
+
+/* A thin green edge under each purple page header, like the one on top of the footer. */
+.page-hero {
+  border-bottom: 4px solid var(--green);
+}
+
+/* Cards: a green edge wipes across the bottom on hover, like a squeegee. */
+.card-edge {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-edge::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 4px;
+  background: var(--green);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.card-edge:hover::after,
+.card-edge:focus-within::after {
+  transform: scaleX(1);
+}
+
+/* Form fields filled in correctly get a green edge and check, once the
+   visitor has typed in them. Empty optional fields stay plain. */
+form input:is([type='text'], [type='email'], [type='tel']):user-valid:not(:placeholder-shown) {
+  border-color: var(--green);
+  padding-right: 2.75rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='11' fill='%232a7340'/%3E%3Cpath d='m7 12.5 3.2 3.2L17 9' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-position: right 0.85rem center;
+  background-repeat: no-repeat;
+  background-size: 1.15rem;
+}
+
+/* A small spinner for buttons and lists that are loading. */
+.spinner {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  flex: none;
+  border: 2px solid rgb(114 197 135 / 0.35);
+  border-top-color: var(--green-light);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.spinner-on-light {
+  border-color: rgb(42 115 64 / 0.25);
+  border-top-color: var(--green-text);
+}
+
+@keyframes spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+/* Footer social icons sit in a green circle on hover. */
+.social-link {
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  margin: -0.5rem;
+  place-items: center;
+  border-radius: 9999px;
+  transition: background-color 0.2s ease;
+}
+
+.social-link:hover,
+.social-link:focus-visible {
+  background: var(--green-light);
+}
+
+.social-link:hover img,
+.social-link:focus-visible img {
+  filter: none !important;
+}
+
+/* How far down a long page the visitor has read. */
+.reading-progress {
+  position: absolute;
+  inset: auto 0 0;
+  height: 3px;
+  pointer-events: none;
+}
+
+.reading-progress > span {
+  display: block;
+  height: 100%;
+  background: var(--green);
+  transform-origin: left;
+  transform: scaleX(var(--read, 0));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-edge::after {
+    transition: none;
+  }
+
+  .spinner {
+    animation-duration: 2.4s;
   }
 }

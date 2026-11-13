@@ -41,7 +41,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
 
   return (
     <main className='flex-1 border-0 bg-white text-[#200b38]'>
-      <section className='bg-[#200b38] text-white'>
+      <section className='page-hero bg-[#200b38] text-white'>
         <div className='mx-auto max-w-7xl px-6 py-14 sm:px-8 sm:py-20'>
           <Link
             href='/services'
@@ -126,7 +126,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
                   <h2 className='text-lg font-semibold'>At a glance</h2>
                   {service.bestFor && (
                     <div className='mt-4'>
-                      <h3 className='text-xs font-semibold uppercase tracking-widest text-[#efb52b]'>
+                      <h3 className='text-xs font-semibold uppercase tracking-widest text-[#72c587]'>
                         Best for
                       </h3>
                       <p className='mt-2 text-sm leading-6 text-white/80'>
@@ -136,14 +136,18 @@ export default async function ServicePage({ params }: ServicePageProps) {
                   )}
                   {service.benefits?.length ? (
                     <div className='mt-5'>
-                      <h3 className='text-xs font-semibold uppercase tracking-widest text-[#efb52b]'>
+                      <h3 className='text-xs font-semibold uppercase tracking-widest text-[#72c587]'>
                         Benefits
                       </h3>
                       <ul className='mt-2 space-y-2 text-sm leading-6 text-white/80'>
                         {service.benefits.map((benefit) => (
                           <li key={benefit} className='flex gap-2'>
-                            <span className='text-[#efb52b]' aria-hidden='true'>
-                              ✓
+                            <span
+                              aria-hidden='true'
+                              className='mt-0.75 grid size-4.5 shrink-0 place-items-center rounded-full bg-[#72c587] text-[#200b38]'>
+                              <svg viewBox='0 0 24 24' className='size-2.75' fill='none' stroke='currentColor' strokeWidth='3.5' strokeLinecap='round' strokeLinejoin='round'>
+                                <path d='m5 12.5 4.5 4.5L19 7.5' />
+                              </svg>
                             </span>
                             <span>{benefit}</span>
                           </li>

@@ -193,12 +193,12 @@ export async function LocationsPreview() {
             <Link
               href={city.href}
               className={itemClass}>
-              <span className='nav-icon grid size-10 shrink-0 place-items-center rounded-lg bg-[#6c3fb8]/10'>
+              <span className='nav-icon grid size-10 shrink-0 place-items-center rounded-lg bg-[#eaf6ed]'>
                 <ServiceIcon
                   slug='pin'
                   paths={pin}
                   draw='none'
-                  className='size-5 text-[#6c3fb8]'
+                  className='size-5 text-[#2a7340]'
                 />
               </span>
               <span>

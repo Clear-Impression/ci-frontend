@@ -160,8 +160,8 @@
 /* Outlined step numbers that fill with gold. */
 .stepNumber {
   color: transparent;
-  -webkit-text-stroke: 1.5px rgb(42 115 64 / 0.45);
-  background: linear-gradient(180deg, #55ab68, #55ab68) no-repeat bottom / 100% 0%;
+  -webkit-text-stroke: 1.5px rgb(108 63 184 / 0.45);
+  background: linear-gradient(180deg, #efb52b, #efb52b) no-repeat bottom / 100% 0%;
   -webkit-background-clip: text;
   background-clip: text;
   animation: number-fill 1.2s 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;

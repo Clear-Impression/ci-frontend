@@ -1,13 +1,13 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { company, navigation, type NavigationItem } from '@/data/company';
-import { googleRating } from '@/data/reviews';
 import BackButton from './BackButton';
 import MobileMenu from './MobileMenu';
 import NavDropdown from './NavDropdown';
 import NavLink from './NavLink';
 import QuoteButton from '@/components/quote/QuoteButton';
 import QuoteChooser from '@/components/quote/QuoteChooser';
+import ReadingProgress from './ReadingProgress';
 import { AboutPreview, HelpPreview, LocationsPreview, ServicesPreview } from './NavPreviews';
 import SiteSearch from './SiteSearch';
 import StickyHeader from './StickyHeader';
@@ -42,9 +42,10 @@ export default function Navbar() {
     // Pinned to the top of the screen. The top strip tucks away and the logo
     // shrinks after scrolling, then both come back at the top of the page.
     <StickyHeader className='site-header sticky top-0 z-50 bg-[#200b38] text-white'>
-      {/* Keep the service area and phone number easy to find. */}
+      {/* Keep the service area and phone number easy to find. The header runs a bit
+          wider than the page so big screens don't leave a wide gap on each side. */}
       <div className='header-strip border-b border-white/15'>
-        <div className='mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-6 py-2.5 text-xs sm:px-8 sm:text-sm'>
+        <div className='mx-auto flex max-w-[96rem] flex-wrap items-center justify-between gap-x-6 gap-y-2 px-6 py-2.5 text-xs sm:px-8 sm:text-sm xl:py-1.5'>
           <span className='flex items-center gap-2 text-white/80'>
             <span
               aria-hidden='true'
@@ -52,27 +53,15 @@ export default function Navbar() {
             />
             Serving the Phoenix metro area
           </span>
-          {/* Wide screens show the phone in the row below, so they get the trust points here. */}
-          <ul className='hidden items-center gap-5 text-white/80 xl:flex'>
-            {[`${googleRating.score.toFixed(1)} on Google`, 'BBB Accredited', 'Angi Approved'].map((point) => (
-              <li
-                key={point}
-                className='flex items-center gap-1.5'>
-                <svg
-                  aria-hidden='true'
-                  viewBox='0 0 24 24'
-                  className='size-3.5 text-[#72c587]'
-                  fill='none'
-                  stroke='currentColor'
-                  strokeWidth='3'
-                  strokeLinecap='round'
-                  strokeLinejoin='round'>
-                  <path d='m5 12.5 4.5 4.5L19 7.5' />
-                </svg>
-                {point}
-              </li>
-            ))}
-          </ul>
+          {/* Wide screens get the call button here, kept to one line so the strip stays thin. */}
+          <a
+            href={company.phoneHref}
+            className='hidden items-center gap-2 rounded-full py-0.5 pl-0.5 pr-3.5 ring-1 ring-[#72c587]/55 hover:bg-[#72c587]/12 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#efb52b] xl:flex'>
+            <PhoneIcon className='size-6 p-1' />
+            <span className='text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-[#72c587]'>Call or text</span>
+            <span className='text-base font-bold tracking-tight text-white'>{company.phone}</span>
+          </a>
+          {/* Smaller screens get a simpler version. */}
           <a
             href={company.phoneHref}
             className='flex min-h-9 items-center gap-2 rounded-full bg-[#72c587]/12 py-1 pl-1 pr-3.5 font-semibold text-white ring-1 ring-[#72c587]/50 hover:bg-[#72c587]/22 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#efb52b] sm:text-base xl:hidden'>
@@ -81,7 +70,7 @@ export default function Navbar() {
           </a>
         </div>
       </div>
-      <div className='header-row relative mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-3 sm:px-8'>
+      <div className='header-row relative mx-auto flex max-w-[96rem] items-center justify-between gap-6 px-6 py-3 sm:px-8'>
         {/* The company logo takes visitors back to the homepage. */}
         <Link
           href='/'
@@ -140,19 +129,6 @@ export default function Navbar() {
             </ul>
           </nav>
         </SiteSearch>
-        {/* The phone number, big enough to spot from across the page. It stays
-            when the header shrinks. Smaller screens have it in the top strip. */}
-        <a
-          href={company.phoneHref}
-          className='hidden shrink-0 items-center gap-3 rounded-full py-1.5 pl-1.5 pr-4 ring-1 ring-[#72c587]/55 hover:bg-[#72c587]/12 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#efb52b] xl:flex'>
-          <PhoneIcon className='phone-badge size-10 p-2.5' />
-          <span className='leading-tight'>
-            <span className='phone-label block text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-[#72c587]'>
-              Call or text
-            </span>
-            <span className='block text-lg font-bold tracking-tight text-white'>{company.phone}</span>
-          </span>
-        </a>
         {/* Opens a popup explaining the instant estimate and the detailed quote. */}
         <QuoteButton className='hidden min-h-11 items-center rounded-lg bg-[#efb52b] px-5 py-3 text-sm font-semibold text-[#200b38] hover:bg-[#f6c95b] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white lg:inline-flex'>
           Get a free quote
@@ -160,6 +136,8 @@ export default function Navbar() {
         {/* Show the mobile menu below the desktop breakpoint. */}
         <MobileMenu items={navigation} />
       </div>
+      {/* A green line along the bottom of the header on long pages. */}
+      <ReadingProgress />
       {/* Floats just under the header on every page except the homepage. */}
       <BackButton />
       <QuoteChooser />

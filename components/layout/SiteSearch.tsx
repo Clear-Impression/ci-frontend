@@ -379,7 +379,13 @@ export default function SiteSearch({ children }: SiteSearchProps) {
           ))}
         </div>
         {loading ? (
-          <p className='px-3 py-4 text-sm text-gray-600'>Loading…</p>
+          <p className='flex items-center gap-2.5 px-3 py-4 text-sm text-gray-600'>
+            <span
+              aria-hidden='true'
+              className='spinner spinner-on-light'
+            />
+            Loading…
+          </p>
         ) : (
           trimmed &&
           shown.length === 0 && (

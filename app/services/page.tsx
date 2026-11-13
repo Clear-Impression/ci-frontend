@@ -25,7 +25,7 @@ export default async function Services() {
   return (
     <main className='flex-1 bg-white text-[#200b38]'>
       {/* The headline rises behind fogged glass, then a squeegee wipes it clear. */}
-      <section className='relative isolate overflow-hidden bg-[#200b38] text-white'>
+      <section className='page-hero relative isolate overflow-hidden bg-[#200b38] text-white'>
         <div aria-hidden='true' className='hero-glare absolute inset-0 -z-10' />
         {/* Same height, sizes, and spacing as the other page headers. */}
         <div className='hero-drift mx-auto flex min-h-88 max-w-7xl flex-col justify-center px-6 py-10 sm:min-h-80 sm:px-8 sm:py-12'>
@@ -66,8 +66,8 @@ export default async function Services() {
             <p className='fade-up mt-4 text-lg leading-relaxed text-gray-600'>
               Reliable property care for homes, businesses, and outdoor surfaces across the Phoenix Valley.
             </p>
-            {/* The methods moved to About. These links keep both method pages
-                one click from Services for visitors and search engines. */}
+            {/* These links keep both method pages one click from Services
+                for visitors and search engines. */}
             <p className='fade-up mt-3 leading-relaxed text-gray-600'>
               We clean with{' '}
               <Link
@@ -81,19 +81,14 @@ export default async function Services() {
                 className={methodLink}>
                 100% pure water
               </Link>
-              , or both, chosen for your glass.{' '}
-              <Link
-                href='/about#how-we-clean'
-                className='draw-link rounded-sm font-semibold text-[#200b38] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6c3fb8]'>
-                How we clean your windows
-              </Link>
+              , or both, chosen for your glass.
             </p>
           </Reveal>
           <div className='mt-12 grid gap-6 md:grid-cols-2'>
             {coreServices.map((service) => (
               <article
                 key={service.slug}
-                className='rounded-2xl border border-[#200b38]/10 bg-[#faf8fd] p-8 shadow-sm'>
+                className='card-edge rounded-2xl border border-[#200b38]/10 bg-[#faf8fd] p-8 shadow-sm'>
                 <h3 className='text-2xl font-semibold tracking-tight'>
                   {service.title}
                 </h3>

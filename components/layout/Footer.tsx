@@ -108,7 +108,7 @@ export default async function Footer() {
             <div className='flex flex-row mt-3'>
               {/* Google */}
               <p className='mr-3'>
-                <a href={company.googleHref} className={`wrap-break-word ${linkStyle}`} target='_blank'>
+                <a href={company.googleHref} className='social-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#efb52b]' target='_blank'>
                   <Image src='/icons/googleMonochrome.svg' alt='Google business link' width={28} height={28} style={{filter:'invert(1)'}}/>
                 </a>
               </p>
@@ -116,7 +116,7 @@ export default async function Footer() {
               <p className='mr-3'>
                 <a
                   href={company.instagramHref}
-                  className={`wrap-break-word ${linkStyle}`} 
+                  className='social-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#efb52b]'
                   target='_blank'>
                   <Image
                     src='/icons/instagramMonochrome.png'
@@ -130,7 +130,7 @@ export default async function Footer() {
               <p className='mr-3'>
                 <a
                   href={company.facebookHref}
-                  className={`wrap-break-word ${linkStyle}`}
+                  className='social-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#efb52b]'
                   target='_blank'>
                   <Image
                     src='/icons/facebookMonochrome.png'
@@ -142,7 +142,7 @@ export default async function Footer() {
               </p>
               {/* HomeAdvisor */}
               <p className='mr-3'>
-                <a href={company.homeAdvisorHref} className={`wrap-break-word ${linkStyle}`} target='_blank'>
+                <a href={company.homeAdvisorHref} className='social-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#efb52b]' target='_blank'>
                   <Image src='/icons/homeAdvisorMonochrome.svg' alt='HomeAdvisor link' width={28} height={28} style={{filter:'invert(1)'}}/>
                 </a>
               </p>

@@ -153,8 +153,8 @@ export default function FeedbackForm({ phone, phoneHref }: FeedbackFormProps) {
         tabIndex={-1}
         role='status'
         className={`${styles.success} flex flex-col items-center justify-center rounded-3xl bg-white px-8 py-14 text-center shadow-xl shadow-[#200b38]/5 ring-1 ring-gray-200 outline-none sm:px-12 sm:py-20`}>
-        <span className='grid size-16 place-items-center rounded-full bg-[#efb52b]/15'>
-          <svg aria-hidden='true' viewBox='0 0 24 24' className='size-8 text-[#200b38]' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'>
+        <span className='grid size-16 place-items-center rounded-full bg-[#55ab68] ring-8 ring-[#eaf6ed]'>
+          <svg aria-hidden='true' viewBox='0 0 24 24' className='size-8 text-white' fill='none' stroke='currentColor' strokeWidth='2.6' strokeLinecap='round' strokeLinejoin='round'>
             <path className={styles.check} d='M5 12.5l4.5 4.5L19 7.5' pathLength={1} />
           </svg>
         </span>
@@ -193,8 +193,8 @@ export default function FeedbackForm({ phone, phoneHref }: FeedbackFormProps) {
         </h2>
         <p className='mt-2 text-sm text-gray-600'>Takes about a minute. All fields are required.</p>
         {/* Good ideas get rewarded. */}
-        <p className='mt-5 flex items-start gap-3 rounded-xl bg-[#eaf6ed] px-4 py-3.5 text-sm leading-6 text-[#1f5a31]'>
-          <svg aria-hidden='true' viewBox='0 0 24 24' className='mt-0.5 size-5 shrink-0' fill='none' stroke='currentColor' strokeWidth='1.8' strokeLinecap='round' strokeLinejoin='round'>
+        <p className='mt-5 flex items-start gap-3 rounded-xl bg-[#fff6d8] px-4 py-3.5 text-sm leading-6 text-[#59441c] ring-1 ring-[#efb52b]/40'>
+          <svg aria-hidden='true' viewBox='0 0 24 24' className='mt-0.5 size-5 shrink-0 text-[#b47c00]' fill='none' stroke='currentColor' strokeWidth='1.8' strokeLinecap='round' strokeLinejoin='round'>
             <path d='M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.3 1 2.1h5c0-.8.4-1.6 1-2.1A6 6 0 0 0 12 3z' />
           </svg>
           <span>
@@ -296,7 +296,7 @@ export default function FeedbackForm({ phone, phoneHref }: FeedbackFormProps) {
               disabled={pending}
               className='inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-[#200b38] px-7 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#33195a] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6c3fb8] active:scale-[0.98] disabled:cursor-wait disabled:opacity-70'>
               {pending && (
-                <span aria-hidden='true' className='size-4 animate-spin rounded-full border-2 border-white/40 border-t-white' />
+                <span aria-hidden='true' className='spinner' />
               )}
               {pending ? 'Sending…' : 'Send feedback'}
             </button>

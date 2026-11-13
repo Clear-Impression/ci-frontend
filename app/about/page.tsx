@@ -43,7 +43,7 @@ export default async function AboutPage() {
     // Let the page fill the space between the header and footer.
     <main className='flex-1 bg-white text-gray-900'>
       {/* Same header as the other pages. The words come into focus one by one. */}
-      <section className='relative isolate overflow-hidden bg-[#200b38] text-white'>
+      <section className='page-hero relative isolate overflow-hidden bg-[#200b38] text-white'>
         <div aria-hidden='true' className='about-glow absolute inset-0 -z-10' />
         <div className='focus-out mx-auto flex min-h-88 max-w-7xl flex-col justify-center px-6 py-10 sm:min-h-80 sm:px-8 sm:py-12'>
           <p className='focus-in text-sm font-semibold uppercase tracking-widest text-[#efb52b]'>
@@ -62,12 +62,7 @@ export default async function AboutPage() {
       <section className='mx-auto max-w-7xl overflow-x-clip px-6 py-16 sm:px-8 sm:py-20'>
         <div className='grid items-start gap-14 lg:grid-cols-[22rem_minmax(0,1fr)] lg:gap-16'>
           <Reveal className='story-col from-left'>
-            <figure className='relative mx-auto max-w-sm pb-4 pr-4 lg:mx-0'>
-              {/* A block of the logo's green sits behind the photo. */}
-              <span
-                aria-hidden='true'
-                className='absolute inset-0 left-4 top-4 rounded-3xl bg-[#55ab68]'
-              />
+            <figure className='relative mx-auto max-w-sm lg:mx-0'>
               {aboutOwner.photo ? (
                 <Image
                   src={aboutOwner.photo}

@@ -42,7 +42,7 @@ export default async function FeedbackPage() {
     // The shared layout already supplies the website's header and footer.
     <main className='flex-1 bg-white text-[#200b38]'>
       {/* Same header height and sizes as the other pages. */}
-      <section className='relative isolate overflow-hidden bg-[#200b38] text-white'>
+      <section className='page-hero relative isolate overflow-hidden bg-[#200b38] text-white'>
         {/* A soft glow that drifts slowly behind the header. */}
         <div aria-hidden='true' className={`${styles.glow} absolute -z-10`} />
         <div className='mx-auto flex min-h-88 max-w-7xl flex-col justify-center px-6 py-10 sm:min-h-80 sm:px-8 sm:py-12'>

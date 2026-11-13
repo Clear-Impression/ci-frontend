@@ -14,6 +14,8 @@ import HomeClosing from '@/components/home/HomeClosing';
 import HomeBeforeAfter from '@/components/home/HomeBeforeAfter';
 import { beforeAfter } from '@/data/beforeAfter';
 import HomePromise from '@/components/home/HomePromise';
+import HomePerks from '@/components/home/HomePerks';
+import { homePerks } from '@/data/homePerks';
 import { promise } from '@/data/promise';
 import SectionRail, { type RailSection } from '@/components/home/SectionRail';
 import {
@@ -47,6 +49,7 @@ export async function generateMetadata(): Promise<Metadata> {
 const railSections = [
   { id: 'top', label: 'Welcome' },
   { id: 'why-us', label: 'Why Us' },
+  { id: 'booking', label: 'Booking' },
   { id: 'service-area', label: 'Where We Work' },
   { id: 'services', label: 'Services' },
   { id: 'results', label: 'Before & After' },
@@ -80,6 +83,10 @@ export default async function Home() {
           since={servingSince}
           cityCount={cities.length}
         />
+      </div>
+      {/* What booking is like, with a quick way to start a quote. */}
+      <div id='booking'>
+        <HomePerks {...homePerks} />
       </div>
       {/* Follow the path visitors take: find their city, pick a service, get a quote. */}
       <div id='service-area'>

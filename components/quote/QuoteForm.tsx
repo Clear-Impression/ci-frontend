@@ -5,10 +5,21 @@ import type { FormEvent, HTMLInputTypeAttribute } from 'react';
 import { submitQuote } from '@/app/quote/actions';
 import type { QuoteOptions } from '@/data/quote';
 
+// Details the visitor already typed on the homepage, if they came from there.
+export type QuoteStart = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  // They checked the box to get texts about seasonal offers.
+  texts: boolean;
+};
+
 type QuoteFormProps = {
   options: QuoteOptions;
   phoneHref: string;
   phone: string;
+  start?: QuoteStart;
 };
 
 type FieldProps = {
@@ -20,12 +31,13 @@ type FieldProps = {
   maxLength?: number;
   pattern?: string;
   title?: string;
+  defaultValue?: string;
 };
 
 const inputClass =
   'mt-2 w-full rounded-lg border border-[#200b38]/20 bg-white px-4 py-3 text-base text-[#200b38] outline-none transition focus:border-[#6c3fb8] focus:ring-2 focus:ring-[#6c3fb8]/20';
 const choiceClass =
-  'flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border border-[#200b38]/15 px-4 py-3 text-sm text-[#200b38] transition hover:border-[#6c3fb8] has-checked:border-[#6c3fb8] has-checked:bg-[#f5f0fb] has-focus-visible:ring-2 has-focus-visible:ring-[#6c3fb8]';
+  'flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border border-[#200b38]/15 px-4 py-3 text-sm text-[#200b38] transition hover:border-[#55ab68] has-checked:border-[#55ab68] has-checked:bg-[#eaf6ed] has-focus-visible:ring-2 has-focus-visible:ring-[#6c3fb8]';
 const phonePattern = String.raw`\+?(?:[\(\). \-]*[0-9]){7,15}[\(\). \-]*`;
 
 // Use the same labels, spacing, and browser autofill support for contact fields.
@@ -38,6 +50,7 @@ function QuoteField({
   maxLength = 100,
   pattern,
   title,
+  defaultValue,
 }: FieldProps) {
   return (
     <label
@@ -56,6 +69,7 @@ function QuoteField({
         maxLength={maxLength}
         pattern={pattern}
         title={title}
+        defaultValue={defaultValue}
         className={inputClass}
       />
     </label>
@@ -66,6 +80,7 @@ export default function QuoteForm({
   options,
   phoneHref,
   phone,
+  start,
 }: QuoteFormProps) {
   const [result, setResult] = useState<Awaited<ReturnType<typeof submitQuote>> | null>(null);
   const [pending, setPending] = useState(false);
@@ -138,16 +153,27 @@ export default function QuoteForm({
           <legend className='text-sm font-semibold text-[#200b38]'>
             01 <span className='ml-2'>Your details</span>
           </legend>
+          {/* Passed along with the request. The backend doesn't store it yet;
+              add smsOptIn to the payload in app/quote/actions.ts once texting is set up. */}
+          {start?.texts && (
+            <input
+              type='hidden'
+              name='smsOptIn'
+              value='yes'
+            />
+          )}
           <div className='mt-5 grid gap-5 sm:grid-cols-2'>
             <QuoteField
               name='firstName'
               label='First name'
               autoComplete='given-name'
+              defaultValue={start?.firstName}
             />
             <QuoteField
               name='lastName'
               label='Last name'
               autoComplete='family-name'
+              defaultValue={start?.lastName}
             />
             <QuoteField
               name='email'
@@ -155,6 +181,7 @@ export default function QuoteForm({
               type='email'
               autoComplete='email'
               maxLength={254}
+              defaultValue={start?.email}
             />
             <QuoteField
               name='phone'
@@ -164,6 +191,7 @@ export default function QuoteForm({
               maxLength={32}
               pattern={phonePattern}
               title='Enter a phone number with 7 to 15 digits.'
+              defaultValue={start?.phone}
             />
             <QuoteField
               name='address'
@@ -207,7 +235,7 @@ export default function QuoteForm({
                   name='propertyType'
                   value={type}
                   required
-                  className='h-4 w-4 shrink-0 accent-[#6c3fb8]'
+                  className='h-4 w-4 shrink-0 accent-[#2a7340]'
                 />
                 {type}
               </label>
@@ -246,7 +274,7 @@ export default function QuoteForm({
                   aria-invalid={serviceError || undefined}
                   aria-describedby={serviceError ? 'service-error' : undefined}
                   onChange={() => setServiceError(false)}
-                  className='h-4 w-4 shrink-0 accent-[#6c3fb8]'
+                  className='h-4 w-4 shrink-0 accent-[#2a7340]'
                 />
                 {service.label}
               </label>
@@ -280,15 +308,26 @@ export default function QuoteForm({
           disabled={pending}
           className='mt-5 flex min-h-12 w-full items-center justify-center gap-3 rounded-lg bg-[#200b38] px-6 py-3 text-sm font-semibold cursor-pointer
                     text-white transition hover:bg-[#432462] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6c3fb8] disabled:cursor-wait disabled:bg-[#432462]'>
+          {pending && (
+            <span
+              aria-hidden='true'
+              className='spinner'
+            />
+          )}
           {pending ? 'Sending request…' : 'Send quote request'}
         </button>
         <div
           role='status'
           aria-live='polite'>
           {result?.status === 'saved' && (
-            <div className='mt-4 rounded-lg bg-[#f5f0fb] p-4 text-sm leading-6 text-[#200b38]'>
-              <p className='font-semibold'>Your quote request was received.</p>
-              <p className='break-all'>Reference: {result.id}</p>
+            <div className='mt-4 flex gap-3 rounded-lg bg-[#eaf6ed] p-4 text-sm leading-6 text-[#1f5a31]'>
+              <svg aria-hidden='true' viewBox='0 0 24 24' className='mt-0.5 size-5 shrink-0' fill='none' stroke='currentColor' strokeWidth='2.5' strokeLinecap='round' strokeLinejoin='round'>
+                <path d='m5 12.5 4.5 4.5L19 7.5' />
+              </svg>
+              <div>
+                <p className='font-semibold'>Your quote request was received.</p>
+                <p className='break-all'>Reference: {result.id}</p>
+              </div>
             </div>
           )}
         </div>
