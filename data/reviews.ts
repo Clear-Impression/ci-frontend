@@ -3,6 +3,10 @@ export type Review = {
   name: string;
   rating: 1 | 2 | 3 | 4 | 5;
   quote: string;
+  // Optional link to this exact review on Google. On Google Maps, open the
+  // review, choose "Share review" and paste the link here. Without one, the
+  // "See Google review" button opens all our reviews on Google.
+  url?: string;
 };
 
 export const googleReviewsUrl =
