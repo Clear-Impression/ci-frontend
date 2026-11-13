@@ -1,11 +1,10 @@
 import { getPageHeader } from '@/lib/page-headers';
 import { createPageMetadata } from '@/lib/seo';
-import { aboutClosing } from '@/data/about';
 import RatingSummary from '@/components/reviews/RatingSummary';
 import ReviewWall from '@/components/reviews/ReviewWall';
-import QuoteActions from '@/components/ui/QuoteActions';
 import { googleRating, googleReviews, googleReviewsUrl } from '@/data/reviews';
 import styles from './reviews.module.css';
+import ClearerViewCta from '@/components/ui/ClearerViewCta';
 
 // Give the Reviews page its own title and search description.
 export const metadata = createPageMetadata({
@@ -96,15 +95,9 @@ export default async function ReviewsPage() {
         </div>
       </section>
 
-      {/* End with the same call to action as the other pages. */}
+      {/* End with the same wipe-the-window call to action as the other pages. */}
       <section className='mx-auto max-w-7xl px-6 py-16 sm:px-8 sm:py-20'>
-        <div className='rounded-2xl bg-[#200b38] px-8 py-12 text-white sm:px-12'>
-          <h2 className='text-2xl font-semibold sm:text-3xl'>
-            {aboutClosing.heading}
-          </h2>
-          <p className='mt-4 max-w-2xl text-white/80'>{aboutClosing.text}</p>
-          <QuoteActions />
-        </div>
+        <ClearerViewCta />
       </section>
     </main>
   );

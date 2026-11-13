@@ -1,9 +1,8 @@
 import { getPageHeader } from '@/lib/page-headers';
 import { createPageMetadata } from '@/lib/seo';
-import { company, services } from '@/data/company';
+import { services } from '@/data/company';
 import { getLocations } from '@/lib/locations';
 import {
-  aboutClosing,
   aboutIntro,
   aboutPromise,
   aboutStory,
@@ -13,6 +12,7 @@ import Reveal from '@/components/services/Reveal';
 import ServiceIcon from '@/components/services/ServiceIcon';
 import TiltCard from '@/components/about/TiltCard';
 import HowWeClean from '@/components/services/HowWeClean';
+import ClearerViewCta from '@/components/ui/ClearerViewCta';
 
 // Give the About page its own title and search description.
 export const metadata = createPageMetadata({
@@ -172,19 +172,9 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      {/* End with a way to get in touch. A band of light passes over it once. */}
+      {/* End with a window visitors can wipe clean, then a way to get in touch. */}
       <section className='mx-auto max-w-7xl px-6 py-16 sm:px-8 sm:py-20'>
-        <Reveal className='cta-shine relative overflow-hidden rounded-2xl bg-[#200b38] px-8 py-12 text-white sm:px-12'>
-          <h2 className='text-2xl font-semibold sm:text-3xl'>
-            {aboutClosing.heading}
-          </h2>
-          <p className='mt-4 max-w-2xl text-white/80'>{aboutClosing.text}</p>
-          <a
-            href={company.phoneHref}
-            className='relative mt-8 inline-flex min-h-11 items-center rounded-lg bg-[#efb52b] px-5 py-3 text-sm font-semibold text-[#200b38] hover:bg-[#f6c95b] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white'>
-            Call {company.phone} for a quote
-          </a>
-        </Reveal>
+        <ClearerViewCta />
       </section>
     </main>
   );
