@@ -1,6 +1,6 @@
 import { getPageHeader } from '@/lib/page-headers';
 import { createPageMetadata } from '@/lib/seo';
-import QuoteForm from '@/components/quote/QuoteForm';
+import QuoteForm, { type QuoteStart } from '@/components/quote/QuoteForm';
 import { company } from '@/data/company';
 import { quoteOptions } from '@/data/quote';
 
@@ -15,8 +15,29 @@ export const metadata = createPageMetadata({
   description,
 });
 
-export default async function QuotePage() {
+type QuotePageProps = {
+  // Filled in by the quick form on the homepage.
+  searchParams: Promise<{ name?: string | string[]; email?: string | string[]; phone?: string | string[]; texts?: string | string[] }>;
+};
+
+// One trimmed value from the address bar, kept to a sensible length.
+function param(value: string | string[] | undefined, limit: number) {
+  const text = Array.isArray(value) ? value[0] : value;
+  return (text ?? '').trim().slice(0, limit);
+}
+
+export default async function QuotePage({ searchParams }: QuotePageProps) {
   const header = await getPageHeader('quote');
+  const params = await searchParams;
+  // "Jane Smith" from the homepage goes into First name and Last name.
+  const [firstName = '', ...rest] = param(params.name, 200).split(/\s+/);
+  const start: QuoteStart = {
+    firstName: firstName.slice(0, 100),
+    lastName: rest.join(' ').slice(0, 100),
+    email: param(params.email, 254),
+    phone: param(params.phone, 32),
+    texts: param(params.texts, 3) === 'yes',
+  };
   return (
     <main className='flex-1 bg-[#faf8fd]'>
       <div className='mx-auto grid max-w-7xl items-start gap-10 px-6 py-12 sm:px-8 sm:py-16 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16'>
@@ -44,7 +65,7 @@ export default async function QuotePage() {
           </div>
         </section>
 
-        <QuoteForm options={quoteOptions} phoneHref={company.phoneHref} phone={company.phone} />
+        <QuoteForm options={quoteOptions} phoneHref={company.phoneHref} phone={company.phone} start={start} />
       </div>
     </main>
   );

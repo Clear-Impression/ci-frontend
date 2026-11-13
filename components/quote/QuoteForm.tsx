@@ -5,10 +5,21 @@ import type { FormEvent, HTMLInputTypeAttribute } from 'react';
 import { submitQuote } from '@/app/quote/actions';
 import type { QuoteOptions } from '@/data/quote';
 
+// Details the visitor already typed on the homepage, if they came from there.
+export type QuoteStart = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  // They checked the box to get texts about seasonal offers.
+  texts: boolean;
+};
+
 type QuoteFormProps = {
   options: QuoteOptions;
   phoneHref: string;
   phone: string;
+  start?: QuoteStart;
 };
 
 type FieldProps = {
@@ -20,6 +31,7 @@ type FieldProps = {
   maxLength?: number;
   pattern?: string;
   title?: string;
+  defaultValue?: string;
 };
 
 const inputClass =
@@ -38,6 +50,7 @@ function QuoteField({
   maxLength = 100,
   pattern,
   title,
+  defaultValue,
 }: FieldProps) {
   return (
     <label
@@ -56,6 +69,7 @@ function QuoteField({
         maxLength={maxLength}
         pattern={pattern}
         title={title}
+        defaultValue={defaultValue}
         className={inputClass}
       />
     </label>
@@ -66,6 +80,7 @@ export default function QuoteForm({
   options,
   phoneHref,
   phone,
+  start,
 }: QuoteFormProps) {
   const [result, setResult] = useState<Awaited<ReturnType<typeof submitQuote>> | null>(null);
   const [pending, setPending] = useState(false);
@@ -138,16 +153,27 @@ export default function QuoteForm({
           <legend className='text-sm font-semibold text-[#200b38]'>
             01 <span className='ml-2'>Your details</span>
           </legend>
+          {/* Passed along with the request. The backend doesn't store it yet;
+              add smsOptIn to the payload in app/quote/actions.ts once texting is set up. */}
+          {start?.texts && (
+            <input
+              type='hidden'
+              name='smsOptIn'
+              value='yes'
+            />
+          )}
           <div className='mt-5 grid gap-5 sm:grid-cols-2'>
             <QuoteField
               name='firstName'
               label='First name'
               autoComplete='given-name'
+              defaultValue={start?.firstName}
             />
             <QuoteField
               name='lastName'
               label='Last name'
               autoComplete='family-name'
+              defaultValue={start?.lastName}
             />
             <QuoteField
               name='email'
@@ -155,6 +181,7 @@ export default function QuoteForm({
               type='email'
               autoComplete='email'
               maxLength={254}
+              defaultValue={start?.email}
             />
             <QuoteField
               name='phone'
@@ -164,6 +191,7 @@ export default function QuoteForm({
               maxLength={32}
               pattern={phonePattern}
               title='Enter a phone number with 7 to 15 digits.'
+              defaultValue={start?.phone}
             />
             <QuoteField
               name='address'
