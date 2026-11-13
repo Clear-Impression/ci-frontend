@@ -1,0 +1,431 @@
+/* "Get your price": service tabs on top, questions on the left, a dark
+   price panel on the right. Kept in its own file so it never collides with
+   globals.css. */
+
+.shell {
+  overflow: hidden;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 40px 80px -50px rgb(32 11 56 / 0.45), 0 0 0 1px rgb(32 11 56 / 0.06);
+}
+
+.top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 22px 24px;
+  border-bottom: 1px solid #ece4f2;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: #f5f1f8;
+  color: #6c3fb8;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Service tabs. They scroll sideways on small screens. */
+.tabs {
+  display: flex;
+  max-width: 100%;
+  gap: 4px;
+  overflow-x: auto;
+  padding: 5px;
+  border-radius: 14px;
+  background: #f5f1f8;
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+.tab {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  border-radius: 10px;
+  color: #200b38;
+  transition: background 0.25s, color 0.25s, transform 0.25s;
+}
+.tab:hover {
+  background: rgb(255 255 255 / 0.7);
+}
+.tab[aria-selected='true'] {
+  background: #200b38;
+  color: #fff;
+  box-shadow: 0 10px 20px -12px rgb(32 11 56 / 0.7);
+}
+.tab:focus-visible {
+  outline: 2px solid #6c3fb8;
+  outline-offset: 2px;
+}
+.tabNote {
+  display: block;
+  margin-top: 1px;
+  color: #6e6871;
+  font-size: 12px;
+}
+.tab[aria-selected='true'] .tabNote {
+  color: rgb(255 255 255 / 0.65);
+}
+
+.body {
+  display: grid;
+  animation: body-in 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@media (min-width: 1024px) {
+  .body {
+    grid-template-columns: 1.35fr 1fr;
+  }
+}
+@keyframes body-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+.questions {
+  display: grid;
+  align-content: start;
+  gap: 34px;
+  padding: 34px 24px 40px;
+}
+@media (min-width: 640px) {
+  .questions {
+    padding: 40px 40px 44px;
+  }
+}
+
+/* Each question rises in, one after another, when a tab opens. */
+.questionRise {
+  animation: body-in 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: calc(var(--o, 0) * 70ms);
+}
+
+.stepNumber {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #200b38;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Slider with a filled purple track. */
+.range {
+  height: 8px;
+  appearance: none;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #6c3fb8 var(--fill), #ece4f2 var(--fill));
+  cursor: pointer;
+}
+.range::-webkit-slider-thumb {
+  width: 28px;
+  height: 28px;
+  appearance: none;
+  border: 5px solid #6c3fb8;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 4px 12px rgb(32 11 56 / 0.25);
+  transition: transform 0.2s;
+}
+.range::-webkit-slider-thumb:hover,
+.range:active::-webkit-slider-thumb {
+  transform: scale(1.15);
+}
+.range::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border: 5px solid #6c3fb8;
+  border-radius: 50%;
+  background: #fff;
+}
+.range:focus-visible {
+  outline: 2px solid #6c3fb8;
+  outline-offset: 6px;
+}
+
+/* A slim toggle with a dark pill that slides to the picked option. */
+.segmented {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--count), 1fr);
+  margin-top: 14px;
+  padding: 5px;
+  border-radius: 12px;
+  background: #f5f1f8;
+}
+.segmentedPill {
+  position: absolute;
+  top: 5px;
+  bottom: 5px;
+  left: 5px;
+  width: calc((100% - 10px) / var(--count));
+  border-radius: 9px;
+  background: #200b38;
+  box-shadow: 0 8px 18px -10px rgb(32 11 56 / 0.8);
+  transform: translateX(calc(var(--index) * 100%));
+  transition: transform 0.4s cubic-bezier(0.34, 1.3, 0.64, 1);
+}
+.segment {
+  position: relative;
+  min-height: 46px;
+  padding: 0 8px;
+  border-radius: 9px;
+  color: #200b38;
+  font-size: 15px;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+.segment[aria-checked='true'] {
+  color: #fff;
+  font-weight: 600;
+}
+.segment:focus-visible,
+.card:focus-visible {
+  outline: 2px solid #6c3fb8;
+  outline-offset: 2px;
+}
+
+/* Options with a short explanation under each. */
+.cards {
+  display: grid;
+  gap: 12px;
+  margin-top: 14px;
+}
+@media (min-width: 640px) {
+  .cards {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+}
+.card {
+  position: relative;
+  padding: 16px 18px;
+  border-radius: 12px;
+  background: #fff;
+  text-align: left;
+  box-shadow: 0 0 0 1px #e4dcec;
+  transition: box-shadow 0.25s, transform 0.25s, background 0.25s;
+}
+.card:hover {
+  transform: translateY(-2px);
+}
+.card[aria-checked='true'] {
+  background: #faf7fd;
+  box-shadow: 0 0 0 2px #6c3fb8;
+}
+.cardDot {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2px #d6cbe2;
+  transition: background 0.25s, box-shadow 0.25s, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.card[aria-checked='true'] .cardDot {
+  background: #6c3fb8;
+  box-shadow: 0 0 0 3px #ece4f2;
+  transform: scale(1.15);
+}
+
+/* Tick boxes for add-ons. */
+.addon {
+  display: flex;
+  min-height: 56px;
+  cursor: pointer;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  border-radius: 12px;
+  color: #200b38;
+  font-size: 15px;
+  box-shadow: 0 0 0 1px #e4dcec;
+  transition: box-shadow 0.25s, background 0.25s;
+}
+.addon[data-on] {
+  background: #faf7fd;
+  box-shadow: 0 0 0 2px #6c3fb8;
+}
+.addon:has(:focus-visible) {
+  outline: 2px solid #6c3fb8;
+  outline-offset: 2px;
+}
+.addonBox {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  place-items: center;
+  border-radius: 7px;
+  color: transparent;
+  box-shadow: inset 0 0 0 2px #d6cbe2;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.addon[data-on] .addonBox {
+  background: #6c3fb8;
+  color: #fff;
+  box-shadow: none;
+}
+
+/* Photo-quote tab. */
+.why {
+  padding: 22px 24px;
+  border-radius: 14px;
+  background: #f5f1f8;
+}
+.photoStep {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 18px;
+  border-radius: 12px;
+  box-shadow: 0 0 0 1px #e4dcec;
+  animation: body-in 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: calc(var(--o, 0) * 80ms);
+}
+.photoNumber {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  place-items: center;
+  border-radius: 10px;
+  background: #ece4f2;
+  color: #6c3fb8;
+  font-weight: 600;
+}
+
+/* The dark price panel, with a soft gold glow. */
+.panel {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: 36px 24px 40px;
+  background: #200b38;
+  color: #fff;
+}
+@media (min-width: 640px) {
+  .panel {
+    padding: 44px 40px;
+  }
+}
+.panel::before {
+  content: '';
+  position: absolute;
+  top: -120px;
+  right: -120px;
+  z-index: -1;
+  width: 340px;
+  height: 340px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(239 181 43 / 0.22), transparent 65%);
+  animation: glow 9s ease-in-out infinite alternate;
+}
+@keyframes glow {
+  to {
+    transform: translate(-60px, 50px) scale(1.2);
+  }
+}
+.panelEyebrow {
+  color: #efb52b;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.panelBig {
+  margin-top: 10px;
+  font-size: clamp(36px, 4.4vw, 52px);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+/* The price gives a small bounce each time it changes. */
+.pop {
+  animation: pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes pop {
+  from {
+    opacity: 0.4;
+    transform: translateY(6px) scale(0.97);
+  }
+}
+.panelPrimary,
+.panelSecondary {
+  display: flex;
+  min-height: 54px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-radius: 999px;
+  font-weight: 600;
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.25s;
+}
+.panelPrimary {
+  margin-top: 28px;
+  background: #efb52b;
+  color: #200b38;
+  box-shadow: 0 14px 30px -14px rgb(239 181 43 / 0.8);
+}
+.panelPrimary:hover {
+  background: #f7c64e;
+  transform: translateY(-2px);
+}
+.panelSecondary {
+  margin-top: 12px;
+  border: 1px solid rgb(255 255 255 / 0.28);
+  color: #fff;
+}
+.panelSecondary:hover {
+  background: rgb(255 255 255 / 0.08);
+}
+.panelPrimary:focus-visible,
+.panelSecondary:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+/* "Rather talk it through?" under the calculator. */
+.strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 28px;
+  margin-top: 18px;
+  padding: 20px 24px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgb(32 11 56 / 0.06);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .body,
+  .questionRise,
+  .photoStep,
+  .pop,
+  .panel::before {
+    animation: none;
+  }
+  .segmentedPill,
+  .card,
+  .tab {
+    transition: none;
+  }
+}
