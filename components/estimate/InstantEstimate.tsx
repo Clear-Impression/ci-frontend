@@ -9,6 +9,7 @@ import { company } from '@/data/company';
 import {
   describeItem,
   estimateNote,
+  estimateReward,
   estimateServices,
   formatAmount,
   formatMoney,
@@ -44,9 +45,9 @@ const emptyState: Saved = {
 function progressFor(state: Saved) {
   let value = 0;
   if (state.cart.length > 0) value += 35;
-  if (state.details.name.trim()) value += 20;
+  if (state.details.name.trim()) value += 15;
+  if (state.details.address.trim()) value += 10;
   if (state.details.city) value += 20;
-  if (state.details.address.trim()) value += 5;
   if (state.downloaded) value += 20;
   return value;
 }
@@ -55,6 +56,7 @@ function progressFor(state: Saved) {
 function nextStep(state: Saved) {
   if (state.cart.length === 0) return 'Pick a service to start';
   if (!state.details.name.trim()) return 'Add your name';
+  if (!state.details.address.trim()) return 'Add your street address';
   if (!state.details.city) return 'Choose your city';
   if (!state.downloaded) return 'Download your summary';
   return 'All set. Call us to book!';
@@ -116,7 +118,12 @@ export default function InstantEstimate({ cities }: { cities: string[] }) {
 
   const total = totalFor(state.cart);
   const progress = progressFor(state);
-  const ready = state.cart.length > 0 && Boolean(state.details.name.trim() && state.details.city);
+  const ready =
+    state.cart.length > 0 &&
+    Boolean(state.details.name.trim() && state.details.address.trim() && state.details.city);
+  // How far the total is from the reward, when Niels has set one.
+  const rewardOn = estimateReward.spend > 0 && estimateReward.reward.trim() !== '';
+  const rewardGap = Math.max(0, estimateReward.spend - total);
 
   const patch = (next: Partial<Saved>) => setState((current) => ({ ...current, ...next }));
 
@@ -418,12 +425,14 @@ export default function InstantEstimate({ cities }: { cities: string[] }) {
                     <input
                       id='est-address'
                       autoComplete='street-address'
+                      required
+                      aria-required='true'
                       placeholder=' '
                       value={state.details.address}
                       onChange={(event) => setDetail('address', event.target.value)}
                       className='peer'
                     />
-                    <label htmlFor='est-address'>Street address (optional)</label>
+                    <label htmlFor='est-address'>Street address</label>
                   </div>
                 </div>
                 <fieldset className='mt-8 min-w-0'>
@@ -506,24 +515,69 @@ export default function InstantEstimate({ cities }: { cities: string[] }) {
                 </p>
 
                 {state.cart.length > 0 && (
-                  <ul className='mt-6 space-y-3'>
+                  <ul className='mt-5 space-y-1'>
                     {state.cart.map((item) => {
                       const service = getEstimateService(item.slug);
                       if (!service) return null;
                       return (
                         <li
                           key={item.slug}
-                          className={styles.receiptLine}>
-                          <div className='flex items-baseline gap-2 text-sm'>
-                            <span className='font-medium'>{service.name}</span>
-                            <span aria-hidden='true' className={`${styles.leader} flex-1`} />
-                            <span className='font-semibold tabular-nums'>{formatMoney(priceFor(item))}</span>
+                          className={`${styles.receiptLine} flex items-center gap-2`}>
+                          {/* Take a service off without scrolling back to its tile. */}
+                          <button
+                            type='button'
+                            onClick={() => toggleService(item.slug)}
+                            aria-label={`Remove ${service.name}`}
+                            className='group -ml-2.5 grid size-11 shrink-0 place-items-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-[#efb52b]'>
+                            <span className='grid size-6.5 place-items-center rounded-full text-white/80 ring-1 ring-white/40 transition-colors group-hover:bg-[#72c587] group-hover:text-[#200b38] group-hover:ring-[#72c587]'>
+                              <svg aria-hidden='true' viewBox='0 0 24 24' className='size-3' fill='none' stroke='currentColor' strokeWidth='2.6' strokeLinecap='round'>
+                                <path d='M6 6l12 12M18 6 6 18' />
+                              </svg>
+                            </span>
+                          </button>
+                          <div className='min-w-0 flex-1'>
+                            <div className='flex items-baseline gap-2 text-sm'>
+                              <span className='font-medium'>{service.name}</span>
+                              <span aria-hidden='true' className={`${styles.leader} flex-1`} />
+                              <span className='font-semibold tabular-nums'>{formatMoney(priceFor(item))}</span>
+                            </div>
+                            <p className='mt-0.5 text-xs text-white/50'>{describeItem(item)}</p>
                           </div>
-                          <p className='mt-0.5 text-xs text-white/50'>{describeItem(item)}</p>
                         </li>
                       );
                     })}
                   </ul>
+                )}
+
+                {rewardOn && state.cart.length > 0 && (
+                  // Spend a little more, get something free.
+                  <div className='mt-6 rounded-2xl bg-[#72c587]/14 px-4 py-3.5 ring-1 ring-[#72c587]/45'>
+                    <p
+                      aria-live='polite'
+                      className='flex items-start gap-2 text-sm leading-snug'>
+                      <svg aria-hidden='true' viewBox='0 0 24 24' className='mt-px size-4.5 shrink-0 text-[#72c587]' fill='none' stroke='currentColor' strokeWidth='1.8' strokeLinecap='round' strokeLinejoin='round'>
+                        <path d='M4 10h16v10H4zM3 7h18v3H3zM12 7v13M12 7c-1.5-3-5-3-5-1s3 1 5 1zM12 7c1.5-3 5-3 5-1s-3 1-5 1z' />
+                      </svg>
+                      {rewardGap > 0 ? (
+                        <span>
+                          Add <strong className='text-[#72c587]'>{formatMoney(rewardGap)}</strong> more and get{' '}
+                          <strong className='text-[#72c587]'>{estimateReward.reward}</strong> free.
+                        </span>
+                      ) : (
+                        <span>
+                          You qualify for <strong className='text-[#72c587]'>{estimateReward.reward}</strong> free.
+                        </span>
+                      )}
+                    </p>
+                    <span
+                      aria-hidden='true'
+                      className='mt-2.5 block h-2 overflow-hidden rounded-full bg-white/15'>
+                      <span
+                        className='block h-full rounded-full bg-[#72c587] transition-[width] duration-500'
+                        style={{ width: `${Math.min(100, (total / estimateReward.spend) * 100)}%` }}
+                      />
+                    </span>
+                  </div>
                 )}
 
                 <div className='relative mt-7'>
@@ -552,7 +606,7 @@ export default function InstantEstimate({ cities }: { cities: string[] }) {
                   )}
                 </div>
                 {state.cart.length > 0 && !ready && (
-                  <p className='mt-3 text-center text-xs text-white/60'>Add your name and city in step 03 to download.</p>
+                  <p className='mt-3 text-center text-xs text-white/60'>Add your name, street address and city in step 03 to download.</p>
                 )}
                 {state.downloaded && (
                   <p

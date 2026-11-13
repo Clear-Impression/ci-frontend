@@ -238,5 +238,14 @@ export const formatMoney = (value: number) => money.format(value);
 export const formatAmount = (amount: number, unit: string) =>
   `${amount.toLocaleString('en-US')} ${amount === 1 && unit.endsWith('s') ? unit.slice(0, -1) : unit}`;
 
+// The "spend a little more" nudge above the PDF button. It stays hidden until
+// both are filled in, for example spend: 400 and reward: 'a screen rinse'.
+export const estimateReward = {
+  // The total that earns the reward, in dollars.
+  spend: 0,
+  // What they get free, written to follow "get": 'a screen rinse'.
+  reward: '',
+};
+
 export const estimateNote =
   'Ballpark only. Your final price is confirmed with a free on-site or photo quote, with no surprises.';

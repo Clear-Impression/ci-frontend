@@ -11,6 +11,8 @@ type NavDropdownProps = {
   children: React.ReactNode;
   // Line up the panel under the tab, or keep it from running off the right edge.
   align?: 'center' | 'start';
+  // Other pages that live under this tab, like Feedback under Help.
+  match?: readonly string[];
 };
 
 // How long the mouse has to rest on a tab before its panel opens.
@@ -26,7 +28,7 @@ let openPanel: { id: string; close: () => void } | null = null;
 
 // A main menu tab that shows a preview panel on hover or keyboard focus.
 // The tab itself still links to the full page.
-export default function NavDropdown({ label, href, children, align = 'center' }: NavDropdownProps) {
+export default function NavDropdown({ label, href, children, align = 'center', match = [] }: NavDropdownProps) {
   const [open, setOpen] = useState(false);
   const panelId = useId();
   const closeTimer = useRef(0);
@@ -38,7 +40,8 @@ export default function NavDropdown({ label, href, children, align = 'center' }:
   // How far to nudge the panel so it never runs off either side of the screen.
   const [shift, setShift] = useState(0);
   // Keep the tab gold on its own page and the pages under it.
-  const current = getCurrent(usePathname(), href);
+  const pathname = usePathname();
+  const current = getCurrent(pathname, href) ?? (match.some((page) => getCurrent(pathname, page)) ? 'true' : undefined);
 
   const close = () => {
     window.clearTimeout(openTimer.current);

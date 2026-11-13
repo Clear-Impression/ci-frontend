@@ -3,14 +3,36 @@ import Link from 'next/link';
 import { company } from '@/data/company';
 import { services as servicePages } from '@/data/services';
 import { getLocations } from '@/lib/locations';
-import { link } from 'fs';
 
 // Keep hover and keyboard focus styles the same for footer links.
 const linkStyle =
-  'rounded-sm underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#efb52b]';
+  'rounded-sm underline-offset-4 transition-colors hover:text-[#72c587] hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#efb52b]';
+
+// The bottom links are always underlined, so they read as links.
+const bottomLinkStyle =
+  'inline-flex min-h-11 items-center rounded-sm underline decoration-[#72c587] decoration-2 underline-offset-[6px] transition-colors hover:text-[#72c587] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#efb52b]';
+
+// The date of the latest deploy. next.config.ts sets it each time the site is
+// built, so it moves forward whenever a change is pushed and goes live.
+function lastUpdated() {
+  const builtAt = process.env.SITE_UPDATED_AT;
+  if (!builtAt) return null;
+  const date = new Date(builtAt);
+  if (Number.isNaN(date.getTime())) return null;
+  return {
+    iso: builtAt,
+    text: new Intl.DateTimeFormat('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      timeZone: 'America/Phoenix',
+    }).format(date),
+  };
+}
 
 export default async function Footer() {
   const { cities } = await getLocations();
+  const updated = lastUpdated();
 
   return (
     <footer className='bg-[#200b38] pb-24 text-white'>
@@ -163,12 +185,21 @@ export default async function Footer() {
           <p>
             © {new Date().getFullYear()} {company.name}. All rights reserved.
           </p>
+          {updated && (
+            <p className='flex items-center gap-2 text-white/80'>
+              <span
+                aria-hidden='true'
+                className='size-2 rounded-full bg-[#72c587]'
+              />
+              Website last updated: <time dateTime={updated.iso}>{updated.text}</time>
+            </p>
+          )}
           {/* Keep the full service terms available from every page. */}
           <nav aria-label='Footer links' className='flex flex-wrap items-center gap-x-5 gap-y-2'>
-            <Link href='/' className={`inline-flex min-h-11 items-center ${linkStyle}`}>
+            <Link href='/' className={bottomLinkStyle}>
               Home
             </Link>
-            <Link href='/terms-and-conditions' className={`inline-flex min-h-11 items-center ${linkStyle}`}>
+            <Link href='/terms-and-conditions' className={bottomLinkStyle}>
               Service terms
             </Link>
           </nav>

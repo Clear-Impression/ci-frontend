@@ -20,8 +20,8 @@ const pageDetails: Record<string, { description: string; keywords: string[] }> =
     keywords: ['all services', 'what we do', 'prices'],
   },
   '/about': {
-    description: 'Our story, how we clean, and the promise behind our work.',
-    keywords: ['company', 'story', 'team', 'owner', 'who', 'how we clean'],
+    description: 'Meet the owner, our story, and the promise behind our work.',
+    keywords: ['company', 'story', 'team', 'owner', 'who', 'niels', 'meet the owner'],
   },
   '/reviews': {
     description: 'What customers say about us on Google.',

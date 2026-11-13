@@ -7,6 +7,7 @@ import styles from '@/app/feedback/feedback.module.css';
 import { googleWriteReviewUrl } from '@/data/reviews';
 import {
   feedbackLimits,
+  suggestionReward,
   type FeedbackField,
   type FeedbackState,
 } from '@/data/feedback';
@@ -188,9 +189,18 @@ export default function FeedbackForm({ phone, phoneHref }: FeedbackFormProps) {
       <div aria-hidden='true' className={`${styles.stripe} h-1.5 bg-linear-to-r from-[#200b38] via-[#6c3fb8] to-[#efb52b]`} />
       <div className='p-6 sm:p-10'>
         <h2 id='feedback-form-heading' className='text-2xl font-semibold tracking-tight text-[#200b38]'>
-          Share your feedback
+          Share your feedback or suggestions
         </h2>
         <p className='mt-2 text-sm text-gray-600'>Takes about a minute. All fields are required.</p>
+        {/* Good ideas get rewarded. */}
+        <p className='mt-5 flex items-start gap-3 rounded-xl bg-[#eaf6ed] px-4 py-3.5 text-sm leading-6 text-[#1f5a31]'>
+          <svg aria-hidden='true' viewBox='0 0 24 24' className='mt-0.5 size-5 shrink-0' fill='none' stroke='currentColor' strokeWidth='1.8' strokeLinecap='round' strokeLinejoin='round'>
+            <path d='M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.3 1 2.1h5c0-.8.4-1.6 1-2.1A6 6 0 0 0 12 3z' />
+          </svg>
+          <span>
+            <strong className='font-semibold'>Have an idea?</strong> {suggestionReward}
+          </span>
+        </p>
 
         <form
           key={JSON.stringify(values)}
@@ -212,7 +222,7 @@ export default function FeedbackForm({ phone, phoneHref }: FeedbackFormProps) {
             style={{ '--delay': '620ms' } as React.CSSProperties}>
             <div className='flex items-baseline justify-between'>
               <label htmlFor='message' className='block text-sm font-medium text-[#200b38]'>
-                Your feedback
+                Your feedback or suggestion
               </label>
               <span
                 id='message-count'
@@ -233,7 +243,7 @@ export default function FeedbackForm({ phone, phoneHref }: FeedbackFormProps) {
                 if (errors.message) validate('message', event.target.value);
               }}
               onBlur={(event) => validate('message', event.target.value)}
-              placeholder='Tell us what went well and what we could do better.'
+              placeholder='Tell us what went well, what we could do better, or an idea you’d like to see.'
               aria-invalid={errors.message ? true : undefined}
               aria-describedby={errors.message ? 'message-error message-count' : 'message-count'}
               className={`${fieldClass} mt-2 resize-y px-4 py-3.5 leading-relaxed`}

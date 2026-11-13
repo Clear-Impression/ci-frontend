@@ -30,9 +30,9 @@ const highlights = [
     icon: 'M3 12s3.5-6 9-6 9 6 9 6-3.5 6-9 6-9-6-9-6zM12 14.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z',
   },
   {
-    title: 'Used to improve',
-    text: 'Your ideas help us decide what to do better on every visit.',
-    icon: 'M4 17l5-5 4 4 7-7M15 9h5v5',
+    title: 'Good ideas get rewarded',
+    text: 'Use one of your suggestions and we credit your next clean.',
+    icon: 'M4 10h16v10H4zM3 7h18v3H3zM12 7v13M12 7c-1.5-3-5-3-5-1s3 1 5 1zM12 7c1.5-3 5-3 5-1s-3 1-5 1z',
   },
 ];
 

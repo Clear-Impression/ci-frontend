@@ -1,9 +1,10 @@
 import { getPageHeader } from '@/lib/page-headers';
 import { createPageMetadata } from '@/lib/seo';
-import { services } from '@/data/company';
-import { getLocations } from '@/lib/locations';
+import Image from 'next/image';
+import { company } from '@/data/company';
 import {
   aboutIntro,
+  aboutOwner,
   aboutPromise,
   aboutStory,
   aboutValues,
@@ -11,15 +12,14 @@ import {
 import Reveal from '@/components/services/Reveal';
 import ServiceIcon from '@/components/services/ServiceIcon';
 import TiltCard from '@/components/about/TiltCard';
-import HowWeClean from '@/components/services/HowWeClean';
 import ClearerViewCta from '@/components/ui/ClearerViewCta';
 
 // Give the About page its own title and search description.
 export const metadata = createPageMetadata({
   path: '/about',
-  title: 'About Us | Clear Impression Services',
+  title: 'Meet the Owner | Clear Impression Services',
   description:
-    'Founded in 2018 in Mesa, Clear Impression delivers honest, detail-focused window and exterior cleaning across the Phoenix metro area.',
+    'Meet Niels, who founded Clear Impression in Mesa in 2018. Honest, detail-focused window and exterior cleaning across the Phoenix metro area.',
 });
 
 // Split text into words so each one can animate on its own.
@@ -39,7 +39,6 @@ function Words({ text, className }: { text: string; className: string }) {
 
 export default async function AboutPage() {
   const header = await getPageHeader('about');
-  const { cities } = await getLocations();
   return (
     // Let the page fill the space between the header and footer.
     <main className='flex-1 bg-white text-gray-900'>
@@ -59,14 +58,60 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      {/* The two halves of the story slide in from opposite sides. */}
+      {/* The owner's photo on one side, the story on the other. */}
       <section className='mx-auto max-w-7xl overflow-x-clip px-6 py-16 sm:px-8 sm:py-20'>
-        <div className='grid gap-12 lg:grid-cols-2'>
-          {aboutStory.map((section, index) => (
-            <Reveal
-              key={section.heading}
-              className={`story-col ${index === 0 ? 'from-left' : 'from-right'}`}>
-              <article>
+        <div className='grid items-start gap-14 lg:grid-cols-[22rem_minmax(0,1fr)] lg:gap-16'>
+          <Reveal className='story-col from-left'>
+            <figure className='relative mx-auto max-w-sm pb-4 pr-4 lg:mx-0'>
+              {/* A block of the logo's green sits behind the photo. */}
+              <span
+                aria-hidden='true'
+                className='absolute inset-0 left-4 top-4 rounded-3xl bg-[#55ab68]'
+              />
+              {aboutOwner.photo ? (
+                <Image
+                  src={aboutOwner.photo}
+                  alt={`${aboutOwner.name}, founder of ${company.name}`}
+                  width={704}
+                  height={880}
+                  sizes='(min-width: 1024px) 22rem, 90vw'
+                  className='relative aspect-4/5 w-full rounded-3xl object-cover'
+                />
+              ) : (
+                // Space saved for the headshot until the photo arrives.
+                <div className='relative grid aspect-4/5 w-full place-items-center rounded-3xl bg-[#f7f4fb] ring-2 ring-[#200b38]/15 ring-inset'>
+                  <div className='flex flex-col items-center gap-3 text-[#542d90]'>
+                    <svg
+                      aria-hidden='true'
+                      viewBox='0 0 24 24'
+                      className='size-16'
+                      fill='none'
+                      stroke='currentColor'
+                      strokeWidth='1.3'
+                      strokeLinecap='round'
+                      strokeLinejoin='round'>
+                      <circle cx='12' cy='8.5' r='3.5' />
+                      <path d='M5 20c.8-3.6 3.5-5.5 7-5.5s6.2 1.9 7 5.5' />
+                    </svg>
+                    <span className='text-sm font-medium'>Photo coming soon</span>
+                  </div>
+                </div>
+              )}
+              <figcaption className='relative -mt-8 mx-5 flex items-center gap-3 rounded-2xl bg-white px-5 py-4 shadow-lg shadow-[#200b38]/15 ring-1 ring-gray-200'>
+                <span
+                  aria-hidden='true'
+                  className='size-2.5 shrink-0 rounded-full bg-[#55ab68]'
+                />
+                <span>
+                  <span className='block text-lg font-semibold text-[#200b38]'>{aboutOwner.name}</span>
+                  <span className='block text-sm text-gray-600'>{aboutOwner.role}</span>
+                </span>
+              </figcaption>
+            </figure>
+          </Reveal>
+          <Reveal className='story-col from-right space-y-12'>
+            {aboutStory.map((section) => (
+              <article key={section.heading}>
                 <h2 className='text-2xl font-semibold text-[#200b38]'>
                   {section.heading}
                 </h2>
@@ -79,47 +124,10 @@ export default async function AboutPage() {
                   </p>
                 ))}
               </article>
-            </Reveal>
-          ))}
+            ))}
+          </Reveal>
         </div>
-
-        {/* Reuse the shared lists so services and areas stay in sync. */}
-        <Reveal className='tag-box mt-12 grid gap-8 rounded-2xl bg-gray-50 p-8 sm:grid-cols-2'>
-          <div>
-            <h3 className='text-sm font-semibold uppercase tracking-wider text-gray-500'>
-              What we do
-            </h3>
-            <ul className='mt-3 flex flex-wrap gap-2'>
-              {services.map((service, index) => (
-                <li
-                  key={service}
-                  style={{ '--i': index } as React.CSSProperties}
-                  className='tag-flip rounded-full bg-white px-4 py-2 text-sm font-medium text-[#200b38] ring-1 ring-gray-200'>
-                  {service}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h3 className='text-sm font-semibold uppercase tracking-wider text-gray-500'>
-              Where we work
-            </h3>
-            <ul className='mt-3 flex flex-wrap gap-2'>
-              {cities.map((city, index) => (
-                <li
-                  key={city.slug}
-                  style={{ '--i': index + 3 } as React.CSSProperties}
-                  className='tag-flip rounded-full bg-white px-4 py-2 text-sm font-medium text-[#200b38] ring-1 ring-gray-200'>
-                  {city.name}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </Reveal>
       </section>
-
-      {/* The two cleaning methods, moved here from the Services page. */}
-      <HowWeClean />
 
       {/* Highlight the company promise and the values behind it. */}
       <section className='bg-[#f7f4fb]'>

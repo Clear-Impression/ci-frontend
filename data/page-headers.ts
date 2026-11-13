@@ -27,7 +27,7 @@ export const pageHeaders: Record<string, PageHeaderSettings> = {
     title: 'Every pane,\ncleaned the right way.',
     subtitle: 'Window and exterior cleaning for homes and businesses across Mesa and the Phoenix metro.',
   },
-  about: { label: 'About', title: aboutIntro.title, subtitle: aboutIntro.lead },
+  about: { label: 'Meet the owner', title: aboutIntro.title, subtitle: aboutIntro.lead },
   locations: {
     label: 'Locations',
     title: locationsPageContent.title,
