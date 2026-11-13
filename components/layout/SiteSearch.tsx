@@ -47,12 +47,25 @@ function SearchIcon({ className }: { className: string }) {
   );
 }
 
-// A search icon at the end of the main menu. It opens a search box in the header
-// that finds services, cities, pages, and FAQ questions as you type.
+// Wide screens at the top of the page show the search box under the menu.
+// Once the header shrinks after scrolling, only the icon is left.
+function barShowing(box: HTMLElement | null) {
+  return (
+    window.matchMedia('(min-width: 64rem)').matches &&
+    !box?.closest('.site-header')?.hasAttribute('data-scrolled')
+  );
+}
+
+// Search in the header. It finds services, cities, pages, and FAQ questions as
+// you type. At the top of the page it's a box under the menu; after scrolling,
+// and on phones, it's an icon that opens the box in the menu's place.
 export default function SiteSearch({ children }: SiteSearchProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  // Opened from the box under the menu ('bar') or from the icon ('icon').
+  const [from, setFrom] = useState<'bar' | 'icon'>('icon');
+  const fromRef = useRef<'bar' | 'icon'>('icon');
   // Closing plays a short animation first. Once it's gone, the menu fades back in.
   const [closing, setClosing] = useState(false);
   const [justClosed, setJustClosed] = useState(false);
@@ -69,6 +82,7 @@ export default function SiteSearch({ children }: SiteSearchProps) {
   const refocus = useRef(false);
   const boxRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const barRef = useRef<HTMLButtonElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   // Set when the arrow keys move the highlight, so it can be scrolled into view.
@@ -111,8 +125,11 @@ export default function SiteSearch({ children }: SiteSearchProps) {
   const openSearch = () => {
     load();
     clearTimeout(closeTimer.current);
+    const place = barShowing(boxRef.current) ? 'bar' : 'icon';
+    fromRef.current = place;
     // Show the box and focus it in the same tap, so phones bring up the keyboard.
     flushSync(() => {
+      setFrom(place);
       setQuery('');
       setActive(0);
       setClosing(false);
@@ -130,7 +147,8 @@ export default function SiteSearch({ children }: SiteSearchProps) {
     const finish = () => {
       setClosing(false);
       setOpen(false);
-      setJustClosed(true);
+      // The menu only fades back in if the box had taken its place.
+      setJustClosed(fromRef.current === 'icon');
     };
     if (!animate || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       finish();
@@ -166,11 +184,11 @@ export default function SiteSearch({ children }: SiteSearchProps) {
   const activeId = current >= 0 ? optionId(current) : undefined;
   const loading = siteEntries.length === 0;
 
-  // Put focus back on the search button after Escape or the close button.
+  // Put focus back on whichever search button opened it, after Escape or the close button.
   useEffect(() => {
     if (!open && refocus.current) {
       refocus.current = false;
-      buttonRef.current?.focus();
+      (fromRef.current === 'bar' ? barRef : buttonRef).current?.focus();
     }
   }, [open]);
 
@@ -191,6 +209,8 @@ export default function SiteSearch({ children }: SiteSearchProps) {
       if (!shortcut && (event.key !== '/' || typing)) return;
       event.preventDefault();
       if (inputRef.current) inputRef.current.select();
+      // The icon may be hidden at the top of the page, but a click still opens
+      // search, in the box under the menu when that's showing.
       else buttonRef.current?.click();
     };
     document.addEventListener('keydown', onKeyDown);
@@ -207,13 +227,207 @@ export default function SiteSearch({ children }: SiteSearchProps) {
     return () => document.removeEventListener('pointerdown', onPointerDown);
   }, [open, close]);
 
+  // The search box and its results. It opens under the menu or in its place.
+  const field = (
+    <div className='relative w-full'>
+      <div className='search-field flex h-11.5 items-center gap-2 rounded-xl bg-white pl-3.5 pr-1.5 text-[#200b38] ring-3 ring-[#efb52b]/55'>
+        <SearchIcon className='size-4.75 shrink-0 text-[#6c3fb8]' />
+        <input
+          ref={inputRef}
+          type='text'
+          inputMode='search'
+          enterKeyHint='search'
+          role='combobox'
+          aria-label='Search the site'
+          aria-expanded='true'
+          aria-controls={listId}
+          aria-autocomplete='list'
+          aria-activedescendant={activeId}
+          autoComplete='off'
+          spellCheck={false}
+          placeholder='Search services and cities'
+          value={query}
+          onChange={(event) => {
+            setQuery(event.target.value);
+            setActive(0);
+            panelRef.current?.scrollTo({ top: 0 });
+          }}
+          onKeyDown={(event) => {
+            if (event.key === 'ArrowDown' && shown.length > 0) {
+              event.preventDefault();
+              keyboardMove.current = true;
+              setActive((current + 1) % shown.length);
+            } else if (event.key === 'ArrowUp' && shown.length > 0) {
+              event.preventDefault();
+              keyboardMove.current = true;
+              setActive((current - 1 + shown.length) % shown.length);
+            } else if (event.key === 'Enter' && shown[current]) {
+              event.preventDefault();
+              go(shown[current]);
+            }
+          }}
+          className='h-full min-w-0 flex-1 bg-transparent text-base text-[#200b38] outline-none placeholder:text-[#8a8394]'
+        />
+        <button
+          type='button'
+          aria-label='Close search'
+          onClick={() => close(true)}
+          className='grid size-9 shrink-0 place-items-center rounded-lg text-gray-600 hover:bg-[#f7f4fb] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[#6c3fb8]'>
+          <svg
+            aria-hidden='true'
+            viewBox='0 0 24 24'
+            className='size-4.5'
+            fill='none'
+            stroke='currentColor'
+            strokeWidth='2'
+            strokeLinecap='round'>
+            <path d='M6 6l12 12M18 6 6 18' />
+          </svg>
+        </button>
+      </div>
+      {/* Clicking inside the results keeps the cursor in the box. */}
+      <div
+        ref={panelRef}
+        onMouseDown={(event) => event.preventDefault()}
+        className='search-results absolute inset-x-0 top-[calc(100%+0.625rem)] max-h-[70vh] overflow-y-auto overscroll-contain rounded-2xl bg-white p-1.5 pb-2.5 text-[#200b38] shadow-2xl shadow-[#200b38]/25 ring-1 ring-[#200b38]/10 lg:max-h-[min(460px,62vh)]'>
+        <div
+          id={listId}
+          role='listbox'
+          aria-label='Search results'>
+          {groups.map((group) => (
+            <div
+              key={group.label}
+              role='group'
+              aria-labelledby={`${listId}-${group.label}`}>
+              <p
+                id={`${listId}-${group.label}`}
+                className='px-3 pb-1.5 pt-2.5 text-xs font-semibold uppercase tracking-widest text-gray-600'>
+                {group.label}
+              </p>
+              {group.entries.map((entry, offset) => {
+                const index = group.start + offset;
+                const selected = index === current;
+                const content = (
+                  <>
+                    <span className='grid size-9 place-items-center rounded-lg bg-[#6c3fb8]/10 text-[#6c3fb8]'>
+                      <svg
+                        aria-hidden='true'
+                        viewBox='0 0 24 24'
+                        className='size-4.5'
+                        fill='none'
+                        stroke='currentColor'
+                        strokeWidth='1.8'
+                        strokeLinecap='round'
+                        strokeLinejoin='round'>
+                        {entry.external ? icons.quote : icons[entry.type]}
+                      </svg>
+                    </span>
+                    <span className='min-w-0'>
+                      <span className='block font-semibold leading-snug'>
+                        {highlight(entry.title, trimmed).map((part, partIndex) =>
+                          part.marked ? (
+                            <mark
+                              key={partIndex}
+                              className='rounded-sm bg-[#efb52b]/35 px-px text-inherit'>
+                              {part.text}
+                            </mark>
+                          ) : (
+                            part.text
+                          ),
+                        )}
+                      </span>
+                      <span className='mt-0.5 block truncate text-sm text-gray-600'>{entry.short ?? entry.description}</span>
+                    </span>
+                    <span
+                      aria-hidden='true'
+                      className={selected ? 'text-[#6c3fb8]' : 'text-[#a49cb0]'}>
+                      {entry.external ? '↗' : '→'}
+                    </span>
+                  </>
+                );
+                const linkClass = `grid grid-cols-[2.25rem_minmax(0,1fr)_auto] items-center gap-3 rounded-[10px] px-3 py-2.5 ${selected ? 'bg-[#f7f4fb] shadow-[inset_3px_0_0_#6c3fb8]' : ''}`;
+                return (
+                  <div
+                    key={entry.href}
+                    id={optionId(index)}
+                    role='option'
+                    aria-selected={selected}
+                    onMouseMove={() => setActive(index)}>
+                    {/* Real links, so they can still open in a new tab. Arrow keys
+                        move through them instead of Tab. */}
+                    {entry.external ? (
+                      <a
+                        href={entry.href}
+                        tabIndex={-1}
+                        onClick={() => close(false, false)}
+                        className={linkClass}>
+                        {content}
+                      </a>
+                    ) : (
+                      <Link
+                        href={entry.href}
+                        tabIndex={-1}
+                        onClick={() => close(false, false)}
+                        className={linkClass}>
+                        {content}
+                      </Link>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+        {loading ? (
+          <p className='flex items-center gap-2.5 px-3 py-4 text-sm text-gray-600'>
+            <span
+              aria-hidden='true'
+              className='spinner spinner-on-light'
+            />
+            Loading…
+          </p>
+        ) : (
+          trimmed &&
+          shown.length === 0 && (
+            // Nothing matched. Offer a call or the quote form instead.
+            <div className='px-3.5 pb-4 pt-6 text-center text-gray-600'>
+              <p>
+                No results for <b className='font-semibold text-[#200b38]'>“{trimmed}”</b>.
+              </p>
+              <p>Try another word, or reach us directly.</p>
+              <div className='mt-3.5 flex flex-wrap justify-center gap-2'>
+                <a
+                  href={company.phoneHref}
+                  className='inline-flex min-h-11 items-center rounded-lg border border-[#200b38]/20 px-4 text-sm font-semibold text-[#200b38] hover:bg-[#f7f4fb] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#6c3fb8]'>
+                  Call {company.phone}
+                </a>
+                <a
+                  href={company.quoteFormUrl}
+                  className='inline-flex min-h-11 items-center rounded-lg bg-[#efb52b] px-4 text-sm font-semibold text-[#200b38] hover:bg-[#f6c95b] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#6c3fb8]'>
+                  Get a free quote
+                </a>
+              </div>
+            </div>
+          )
+        )}
+      </div>
+      {/* Tells screen readers how many results there are. */}
+      <p
+        aria-live='polite'
+        className='sr-only'>
+        {trimmed && !loading ? (shown.length > 0 ? `${shown.length} result${shown.length === 1 ? '' : 's'}` : 'No results') : ''}
+      </p>
+    </div>
+  );
+
   return (
     <div
       ref={boxRef}
       data-open={open ? '' : undefined}
       data-closing={closing ? '' : undefined}
       data-closed={justClosed ? '' : undefined}
-      className={`site-search flex items-center gap-5 max-lg:-mr-3 max-lg:ml-auto xl:gap-6 ${open ? 'lg:flex-1' : ''}`}
+      data-from={open ? from : undefined}
+      className='site-search flex items-center gap-x-5 gap-y-2.5 max-lg:-mr-3 max-lg:ml-auto lg:flex-1 lg:flex-wrap lg:justify-center xl:gap-x-6'
       onKeyDown={(event) => {
         if (event.key === 'Escape' && open) {
           event.preventDefault();
@@ -225,8 +439,9 @@ export default function SiteSearch({ children }: SiteSearchProps) {
         if (open && event.relatedTarget && !event.currentTarget.contains(event.relatedTarget)) close(false);
       }}>
       {/* The menu steps aside while the search box is open in its place. */}
-      <div className={open ? 'hidden' : 'contents'}>{children}</div>
-      {/* Looks like a menu item on wide screens and sits next to Menu on phones. */}
+      <div className={open && from === 'icon' ? 'hidden' : 'contents'}>{children}</div>
+      {/* Looks like a menu item on wide screens and sits next to Menu on phones.
+          Wide screens hide it at the top of the page, where the box shows instead. */}
       <button
         ref={buttonRef}
         type='button'
@@ -236,198 +451,40 @@ export default function SiteSearch({ children }: SiteSearchProps) {
         onClick={openSearch}
         onPointerEnter={load}
         onFocus={load}
-        className={`${open ? 'hidden' : 'flex'} min-h-11 min-w-11 items-center justify-center rounded-lg border border-white/30 text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#efb52b] lg:min-h-0 lg:min-w-0 lg:rounded-sm lg:border-0 lg:px-0.5 lg:py-3 lg:hover:bg-transparent lg:hover:text-[#efb52b]`}>
+        className={`search-icon ${open ? 'hidden' : 'flex'} min-h-11 min-w-11 items-center justify-center rounded-lg border border-white/30 text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#efb52b] lg:min-h-0 lg:min-w-0 lg:rounded-sm lg:border-0 lg:px-0.5 lg:py-3 lg:hover:bg-transparent lg:hover:text-[#efb52b]`}>
         <SearchIcon className='size-5' />
       </button>
-      {open && (
+      {open && from === 'icon' && (
         // On phones the box covers the whole header row. On wide screens it sits
         // between the logo and the quote button.
         <div className='absolute inset-x-6 inset-y-0 z-10 flex items-center sm:inset-x-8 lg:static lg:mx-auto lg:w-full lg:max-w-150'>
-          <div className='relative w-full'>
-            <div className='search-field flex h-11.5 items-center gap-2 rounded-xl bg-white pl-3.5 pr-1.5 text-[#200b38] ring-3 ring-[#efb52b]/55'>
-              <SearchIcon className='size-4.75 shrink-0 text-[#6c3fb8]' />
-              <input
-                ref={inputRef}
-                type='text'
-                inputMode='search'
-                enterKeyHint='search'
-                role='combobox'
-                aria-label='Search the site'
-                aria-expanded='true'
-                aria-controls={listId}
-                aria-autocomplete='list'
-                aria-activedescendant={activeId}
-                autoComplete='off'
-                spellCheck={false}
-                placeholder='Search services and cities'
-                value={query}
-                onChange={(event) => {
-                  setQuery(event.target.value);
-                  setActive(0);
-                  panelRef.current?.scrollTo({ top: 0 });
-                }}
-                onKeyDown={(event) => {
-                  if (event.key === 'ArrowDown' && shown.length > 0) {
-                    event.preventDefault();
-                    keyboardMove.current = true;
-                    setActive((current + 1) % shown.length);
-                  } else if (event.key === 'ArrowUp' && shown.length > 0) {
-                    event.preventDefault();
-                    keyboardMove.current = true;
-                    setActive((current - 1 + shown.length) % shown.length);
-                  } else if (event.key === 'Enter' && shown[current]) {
-                    event.preventDefault();
-                    go(shown[current]);
-                  }
-                }}
-                className='h-full min-w-0 flex-1 bg-transparent text-base text-[#200b38] outline-none placeholder:text-[#8a8394]'
-              />
-              <button
-                type='button'
-                aria-label='Close search'
-                onClick={() => close(true)}
-                className='grid size-9 shrink-0 place-items-center rounded-lg text-gray-600 hover:bg-[#f7f4fb] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[#6c3fb8]'>
-                <svg
-                  aria-hidden='true'
-                  viewBox='0 0 24 24'
-                  className='size-4.5'
-                  fill='none'
-                  stroke='currentColor'
-                  strokeWidth='2'
-                  strokeLinecap='round'>
-                  <path d='M6 6l12 12M18 6 6 18' />
-                </svg>
-              </button>
-            </div>
-            {/* Clicking inside the results keeps the cursor in the box. */}
-            <div
-              ref={panelRef}
-              onMouseDown={(event) => event.preventDefault()}
-              className='search-results absolute inset-x-0 top-[calc(100%+0.625rem)] max-h-[70vh] overflow-y-auto overscroll-contain rounded-2xl bg-white p-1.5 pb-2.5 text-[#200b38] shadow-2xl shadow-[#200b38]/25 ring-1 ring-[#200b38]/10 lg:max-h-[min(460px,62vh)]'>
-              <div
-                id={listId}
-                role='listbox'
-                aria-label='Search results'>
-                {groups.map((group) => (
-                  <div
-                    key={group.label}
-                    role='group'
-                    aria-labelledby={`${listId}-${group.label}`}>
-                    <p
-                      id={`${listId}-${group.label}`}
-                      className='px-3 pb-1.5 pt-2.5 text-xs font-semibold uppercase tracking-widest text-gray-600'>
-                      {group.label}
-                    </p>
-                    {group.entries.map((entry, offset) => {
-                      const index = group.start + offset;
-                      const selected = index === current;
-                      const content = (
-                        <>
-                          <span className='grid size-9 place-items-center rounded-lg bg-[#6c3fb8]/10 text-[#6c3fb8]'>
-                            <svg
-                              aria-hidden='true'
-                              viewBox='0 0 24 24'
-                              className='size-4.5'
-                              fill='none'
-                              stroke='currentColor'
-                              strokeWidth='1.8'
-                              strokeLinecap='round'
-                              strokeLinejoin='round'>
-                              {entry.external ? icons.quote : icons[entry.type]}
-                            </svg>
-                          </span>
-                          <span className='min-w-0'>
-                            <span className='block font-semibold leading-snug'>
-                              {highlight(entry.title, trimmed).map((part, partIndex) =>
-                                part.marked ? (
-                                  <mark
-                                    key={partIndex}
-                                    className='rounded-sm bg-[#efb52b]/35 px-px text-inherit'>
-                                    {part.text}
-                                  </mark>
-                                ) : (
-                                  part.text
-                                ),
-                              )}
-                            </span>
-                            <span className='mt-0.5 block truncate text-sm text-gray-600'>{entry.short ?? entry.description}</span>
-                          </span>
-                          <span
-                            aria-hidden='true'
-                            className={selected ? 'text-[#6c3fb8]' : 'text-[#a49cb0]'}>
-                            {entry.external ? '↗' : '→'}
-                          </span>
-                        </>
-                      );
-                      const linkClass = `grid grid-cols-[2.25rem_minmax(0,1fr)_auto] items-center gap-3 rounded-[10px] px-3 py-2.5 ${selected ? 'bg-[#f7f4fb] shadow-[inset_3px_0_0_#6c3fb8]' : ''}`;
-                      return (
-                        <div
-                          key={entry.href}
-                          id={optionId(index)}
-                          role='option'
-                          aria-selected={selected}
-                          onMouseMove={() => setActive(index)}>
-                          {/* Real links, so they can still open in a new tab. Arrow keys
-                              move through them instead of Tab. */}
-                          {entry.external ? (
-                            <a
-                              href={entry.href}
-                              tabIndex={-1}
-                              onClick={() => close(false, false)}
-                              className={linkClass}>
-                              {content}
-                            </a>
-                          ) : (
-                            <Link
-                              href={entry.href}
-                              tabIndex={-1}
-                              onClick={() => close(false, false)}
-                              className={linkClass}>
-                              {content}
-                            </Link>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                ))}
-              </div>
-              {loading ? (
-                <p className='px-3 py-4 text-sm text-gray-600'>Loading…</p>
-              ) : (
-                trimmed &&
-                shown.length === 0 && (
-                  // Nothing matched. Offer a call or the quote form instead.
-                  <div className='px-3.5 pb-4 pt-6 text-center text-gray-600'>
-                    <p>
-                      No results for <b className='font-semibold text-[#200b38]'>“{trimmed}”</b>.
-                    </p>
-                    <p>Try another word, or reach us directly.</p>
-                    <div className='mt-3.5 flex flex-wrap justify-center gap-2'>
-                      <a
-                        href={company.phoneHref}
-                        className='inline-flex min-h-11 items-center rounded-lg border border-[#200b38]/20 px-4 text-sm font-semibold text-[#200b38] hover:bg-[#f7f4fb] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#6c3fb8]'>
-                        Call {company.phone}
-                      </a>
-                      <a
-                        href={company.quoteFormUrl}
-                        className='inline-flex min-h-11 items-center rounded-lg bg-[#efb52b] px-4 text-sm font-semibold text-[#200b38] hover:bg-[#f6c95b] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#6c3fb8]'>
-                        Get a free quote
-                      </a>
-                    </div>
-                  </div>
-                )
-              )}
-            </div>
-            {/* Tells screen readers how many results there are. */}
-            <p
-              aria-live='polite'
-              className='sr-only'>
-              {trimmed && !loading ? (shown.length > 0 ? `${shown.length} result${shown.length === 1 ? '' : 's'}` : 'No results') : ''}
-            </p>
-          </div>
+          {field}
         </div>
       )}
+      {/* Wide screens, top of the page: a search box under the menu. */}
+      <div className='search-bar hidden basis-full justify-center lg:flex'>
+        {open && from === 'bar' ? (
+          <div className='w-full max-w-120'>{field}</div>
+        ) : (
+          <button
+            ref={barRef}
+            type='button'
+            aria-label='Search the site'
+            aria-keyshortcuts='Control+K Meta+K /'
+            onClick={openSearch}
+            onPointerEnter={load}
+            onFocus={load}
+            className='flex h-11.5 w-full max-w-120 cursor-text items-center gap-2 rounded-xl bg-white pl-3.5 pr-2 text-left ring-3 ring-[#efb52b]/55 hover:ring-[#efb52b]/80 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white'>
+            <SearchIcon className='size-4.75 shrink-0 text-[#6c3fb8]' />
+            <span className='flex-1 truncate text-base text-[#686170]'>Search services and cities</span>
+            <kbd
+              aria-hidden='true'
+              className='rounded-md bg-[#f7f4fb] px-2 py-0.5 font-sans text-xs font-semibold text-[#6c3fb8]'>
+              /
+            </kbd>
+          </button>
+        )}
+      </div>
     </div>
   );
 }

@@ -43,7 +43,7 @@ export default async function CityPage({ params }: CityPageProps) {
   return (
     <main className='flex-1 border-0 bg-white text-[#200b38]'>
       {/* The shared layout supplies the original header, footer, and font. */}
-      <section className='bg-[#200b38] text-white'>
+      <section className='page-hero bg-[#200b38] text-white'>
         <div className='mx-auto max-w-7xl px-6 py-14 sm:px-8 sm:py-20'>
           <Link
             href='/locations'

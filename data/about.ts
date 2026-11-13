@@ -1,8 +1,19 @@
 // Keep About page copy here so it can move to a CMS later.
 export const aboutIntro = {
   eyebrow: 'Our Story',
-  title: 'From college roots to Mesa’s trusted choice.',
+  title: 'Meet the owner',
+  // Shown under "Meet the owner" in the About menu.
+  tagline: 'From college roots to Mesa’s trusted choice.',
   lead: 'At Clear Impression, we believe a clear view can change your whole perspective.',
+} as const;
+
+// The owner's card beside the story on the About page. To add Niels's
+// headshot, put the photo in public/images/about/ and set photo to its path,
+// for example '/images/about/niels.jpg'. Until then a placeholder shows.
+export const aboutOwner = {
+  name: 'Niels',
+  role: 'Founder. Washing windows in the Valley since 2018.',
+  photo: '' as string,
 } as const;
 
 export const aboutStory = [

@@ -15,6 +15,11 @@ const legacyRoutes = [
 ] as const;
 
 const nextConfig: NextConfig = {
+  // Stamped when the site is built, for "Website last updated" in the footer.
+  // Render builds on every push to main, so the date follows each deploy.
+  env: {
+    SITE_UPDATED_AT: new Date().toISOString(),
+  },
   async redirects() {
     return legacyRoutes.map(([source, destination]) => ({
       source,

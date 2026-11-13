@@ -30,9 +30,9 @@ const highlights = [
     icon: 'M3 12s3.5-6 9-6 9 6 9 6-3.5 6-9 6-9-6-9-6zM12 14.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z',
   },
   {
-    title: 'Used to improve',
-    text: 'Your ideas help us decide what to do better on every visit.',
-    icon: 'M4 17l5-5 4 4 7-7M15 9h5v5',
+    title: 'Good ideas get rewarded',
+    text: 'Use one of your suggestions and we credit your next clean.',
+    icon: 'M4 10h16v10H4zM3 7h18v3H3zM12 7v13M12 7c-1.5-3-5-3-5-1s3 1 5 1zM12 7c1.5-3 5-3 5-1s-3 1-5 1z',
   },
 ];
 
@@ -42,7 +42,7 @@ export default async function FeedbackPage() {
     // The shared layout already supplies the website's header and footer.
     <main className='flex-1 bg-white text-[#200b38]'>
       {/* Same header height and sizes as the other pages. */}
-      <section className='relative isolate overflow-hidden bg-[#200b38] text-white'>
+      <section className='page-hero relative isolate overflow-hidden bg-[#200b38] text-white'>
         {/* A soft glow that drifts slowly behind the header. */}
         <div aria-hidden='true' className={`${styles.glow} absolute -z-10`} />
         <div className='mx-auto flex min-h-88 max-w-7xl flex-col justify-center px-6 py-10 sm:min-h-80 sm:px-8 sm:py-12'>

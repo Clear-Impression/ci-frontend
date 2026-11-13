@@ -37,7 +37,7 @@ export default async function LocationsPage() {
       {/* The shared layout already supplies the website's header and footer. */}
       <section
         aria-labelledby='locations-heading'
-        className='relative isolate overflow-hidden bg-[#200b38] text-white'>
+        className='page-hero relative isolate overflow-hidden bg-[#200b38] text-white'>
         <div className='relative mx-auto flex min-h-88 max-w-7xl flex-col justify-center px-6 py-10 sm:min-h-80 sm:px-8 sm:py-12'>
           {/* A route draws itself across the Valley as each city's pin drops in.
               On small screens it sits faintly behind the text. */}
