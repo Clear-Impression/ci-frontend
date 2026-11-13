@@ -353,11 +353,6 @@ export default function ClearerViewCta() {
             <span>Call {company.phone}</span>
           </a>
         </div>
-        <p
-          aria-live='polite'
-          className='cv-done'>
-          {phase === 'clean' ? 'Sparkling ✨ That’s the Clear Impression difference.' : ''}
-        </p>
       </div>
 
       <div className='cv-visual'>

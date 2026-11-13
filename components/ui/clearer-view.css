@@ -16,7 +16,7 @@
   gap: 40px;
   align-items: center;
   overflow: hidden;
-  padding: 44px 28px;
+  padding: 32px 24px 36px;
   border-radius: 14px;
   background: var(--cv-purple);
   color: #fff;
@@ -27,8 +27,8 @@
 @media (min-width: 1024px) {
   .cv {
     grid-template-columns: 1fr 1.05fr;
-    gap: 56px;
-    padding: 64px 56px 64px 72px;
+    gap: 48px;
+    padding: 40px 48px 44px 56px;
   }
 }
 
@@ -74,6 +74,9 @@
 }
 
 /* ---------- Words ---------- */
+.cv-copy {
+  position: relative;
+}
 .cv-copy > * {
   opacity: 0;
   transform: translateY(18px);
@@ -111,8 +114,8 @@
 }
 
 .cv-title {
-  margin-top: 16px;
-  font-size: clamp(38px, 4.6vw, 60px);
+  margin-top: 12px;
+  font-size: clamp(30px, 3.4vw, 44px);
   font-weight: 600;
   line-height: 1.04;
   letter-spacing: -0.02em;
@@ -153,7 +156,7 @@
 
 .cv-text {
   max-width: 470px;
-  margin-top: 20px;
+  margin-top: 14px;
   color: rgb(255 255 255 / 0.82);
   font-size: 18px;
   line-height: 1.6;
@@ -164,7 +167,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 14px 28px;
-  margin-top: 32px;
+  margin-top: 24px;
 }
 
 .cv-quote {
@@ -172,7 +175,7 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  min-height: 54px;
+  min-height: 48px;
   overflow: hidden;
   padding: 0 26px;
   border-radius: 8px;
@@ -240,20 +243,6 @@
   background-size: 100% 2px, 100% 2px;
 }
 
-.cv-done {
-  min-height: 24px;
-  margin-top: 18px;
-  color: var(--cv-gold);
-  font-size: 15px;
-  font-weight: 600;
-}
-.cv[data-phase='clean'] .cv-done {
-  animation: cv-pop 0.6s cubic-bezier(0.2, 1.4, 0.4, 1) both;
-}
-@keyframes cv-pop {
-  from { opacity: 0; transform: translateY(8px) scale(0.96); }
-  to { opacity: 1; transform: none; }
-}
 .cv[data-phase='clean'] .cv-quote {
   animation: cv-glow 1.8s ease-in-out 3;
 }
@@ -277,7 +266,7 @@
 
 .cv-photo {
   position: relative;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 2 / 1;
   overflow: hidden;
   border-radius: 10px;
   box-shadow: 0 30px 50px -24px rgb(0 0 0 / 0.55), 0 0 0 1px rgb(255 255 255 / 0.08);
