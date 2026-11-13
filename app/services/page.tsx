@@ -1,11 +1,10 @@
 import { getPageHeader } from '@/lib/page-headers';
 import { createPageMetadata } from '@/lib/seo';
 import Link from 'next/link';
-import { aboutClosing } from '@/data/about';
 import { coreServices, howWeDoIt, specializedServices } from '@/data/services';
 import Reveal from '@/components/services/Reveal';
-import QuoteActions from '@/components/ui/QuoteActions';
 import ServiceIndex from './ServiceIndex';
+import ClearerViewCta from '@/components/ui/ClearerViewCta';
 
 // Describe the page for search engines and link previews.
 export const metadata = createPageMetadata({
@@ -138,15 +137,9 @@ export default async function Services() {
         </div>
       </section>
 
-      {/* End with the same call to action as the other pages. */}
+      {/* End with the same wipe-the-window call to action as the other pages. */}
       <section className='mx-auto max-w-7xl px-6 py-16 sm:px-8 sm:py-20'>
-        <Reveal className='cta-reveal rounded-2xl bg-[#200b38] px-8 py-12 text-white sm:px-12'>
-          <h2 className='text-2xl font-semibold sm:text-3xl'>
-            {aboutClosing.heading}
-          </h2>
-          <p className='mt-4 max-w-2xl text-white/80'>{aboutClosing.text}</p>
-          <QuoteActions />
-        </Reveal>
+        <ClearerViewCta />
       </section>
     </main>
   );

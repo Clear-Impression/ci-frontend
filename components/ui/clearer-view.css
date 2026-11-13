@@ -1,0 +1,449 @@
+/* The closing "Let's make your windows shine." card on the inner pages, in
+   the site's own font and brand colors. */
+.cv {
+  --cv-purple: #200b38;
+  --cv-purple-2: #351351;
+  --cv-gold: #efb52b;
+  --cv-gold-hover: #f7c64e;
+  --cv-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --mx: 70%;
+  --my: 40%;
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  gap: 40px;
+  align-items: center;
+  overflow: hidden;
+  padding: 32px 24px 36px;
+  border-radius: 14px;
+  background: var(--cv-purple);
+  color: #fff;
+  box-shadow: 0 30px 70px -34px rgb(32 11 56 / 0.6);
+  touch-action: pan-y;
+}
+
+@media (min-width: 1024px) {
+  .cv {
+    grid-template-columns: 1fr 1.05fr;
+    gap: 48px;
+    padding: 40px 48px 44px 56px;
+  }
+}
+
+/* A soft glow that follows the mouse around the card. */
+.cv-light {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(520px circle at var(--mx) var(--my), rgb(239 181 43 / 0.16), transparent 60%),
+    radial-gradient(700px circle at 0% 100%, rgb(124 58 180 / 0.35), transparent 60%);
+  transition: background 0.2s;
+}
+
+/* Soap bubbles drifting up behind everything. */
+.cv-bubbles {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+.cv-bubbles i {
+  position: absolute;
+  bottom: -40px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid rgb(255 255 255 / 0.28);
+  background: radial-gradient(circle at 30% 30%, rgb(255 255 255 / 0.35), rgb(255 255 255 / 0.04) 60%);
+  animation: cv-float 11s linear infinite;
+}
+.cv-bubbles i:nth-child(1) { left: 6%; animation-delay: 0s; }
+.cv-bubbles i:nth-child(2) { left: 22%; width: 12px; height: 12px; animation-delay: 3s; animation-duration: 9s; }
+.cv-bubbles i:nth-child(3) { left: 38%; width: 30px; height: 30px; animation-delay: 6s; animation-duration: 14s; }
+.cv-bubbles i:nth-child(4) { left: 48%; width: 16px; height: 16px; animation-delay: 1.5s; }
+.cv-bubbles i:nth-child(5) { left: 92%; width: 18px; height: 18px; animation-delay: 4.5s; animation-duration: 12s; }
+@keyframes cv-float {
+  0% { transform: translate(0, 0); opacity: 0; }
+  10% { opacity: 1; }
+  50% { transform: translate(14px, -260px); }
+  100% { transform: translate(-6px, -560px); opacity: 0; }
+}
+
+/* ---------- Words ---------- */
+.cv-copy {
+  position: relative;
+}
+.cv-copy > * {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.7s var(--cv-ease), transform 0.7s var(--cv-ease);
+}
+.cv[data-in] .cv-copy > * {
+  opacity: 1;
+  transform: none;
+}
+.cv-copy > .cv-title {
+  opacity: 1;
+  transform: none;
+}
+.cv[data-in] .cv-text { transition-delay: 0.45s; }
+.cv[data-in] .cv-actions { transition-delay: 0.6s; }
+
+.cv-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--cv-gold);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.cv-eyebrow svg {
+  width: 14px;
+  height: 14px;
+  animation: cv-twinkle 2.4s ease-in-out infinite;
+}
+@keyframes cv-twinkle {
+  0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  50% { transform: scale(0.6) rotate(45deg); opacity: 0.6; }
+}
+
+.cv-title {
+  margin-top: 12px;
+  font-size: clamp(30px, 3.4vw, 44px);
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+}
+/* Each line rises up out of a mask. */
+.cv-line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+}
+.cv-line > span {
+  display: block;
+  transform: translateY(110%);
+  transition: transform 0.9s var(--cv-ease);
+  transition-delay: calc(0.1s + var(--i, 0) * 0.12s);
+}
+.cv[data-in] .cv-line > span {
+  transform: none;
+}
+/* "shine." in gold, with a glint that sweeps across it now and then. */
+.cv-title em {
+  position: relative;
+  font-style: normal;
+  background: linear-gradient(100deg, var(--cv-gold) 0 40%, #fff6d8 50%, var(--cv-gold) 60% 100%);
+  background-size: 250% 100%;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.cv[data-in] .cv-title em {
+  animation: cv-glint 4s ease-in-out 1.2s infinite;
+}
+@keyframes cv-glint {
+  0%, 60% { background-position: 100% 0; }
+  85%, 100% { background-position: 0% 0; }
+}
+
+.cv-text {
+  max-width: 470px;
+  margin-top: 14px;
+  color: rgb(255 255 255 / 0.82);
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.cv-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 28px;
+  margin-top: 24px;
+}
+
+.cv-quote {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  overflow: hidden;
+  padding: 0 26px;
+  border-radius: 8px;
+  background: var(--cv-gold);
+  color: var(--cv-purple);
+  font-size: 16px;
+  font-weight: 600;
+  box-shadow: 0 12px 26px -12px rgb(239 181 43 / 0.7);
+  transition: transform 0.25s var(--cv-ease), background 0.25s, box-shadow 0.25s;
+}
+.cv-quote svg {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.25s var(--cv-ease);
+}
+/* A band of light runs across the button every few seconds. */
+.cv-quote::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 30%, rgb(255 255 255 / 0.55) 50%, transparent 70%);
+  transform: translateX(-120%);
+  animation: cv-sheen 3.6s ease-in-out 1.6s infinite;
+}
+@keyframes cv-sheen {
+  0%, 55% { transform: translateX(-120%); }
+  80%, 100% { transform: translateX(120%); }
+}
+.cv-quote:hover {
+  background: var(--cv-gold-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 18px 32px -12px rgb(239 181 43 / 0.8);
+}
+.cv-quote:hover svg {
+  transform: translateX(4px);
+}
+.cv-quote:focus-visible,
+.cv-call:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+}
+
+.cv-call {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  color: #fff;
+  font-size: 17px;
+  font-weight: 600;
+}
+.cv-call svg {
+  width: 18px;
+  height: 18px;
+  color: var(--cv-gold);
+}
+/* An underline that wipes across on hover, like a squeegee stroke. */
+.cv-call span {
+  background: linear-gradient(var(--cv-gold), var(--cv-gold)) left bottom / 0% 2px no-repeat,
+    linear-gradient(rgb(255 255 255 / 0.7), rgb(255 255 255 / 0.7)) left bottom / 100% 2px no-repeat;
+  padding-bottom: 4px;
+  transition: background-size 0.35s var(--cv-ease);
+}
+.cv-call:hover span {
+  background-size: 100% 2px, 100% 2px;
+}
+
+.cv[data-phase='clean'] .cv-quote {
+  animation: cv-glow 1.8s ease-in-out 3;
+}
+@keyframes cv-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgb(239 181 43 / 0.65); }
+  50% { box-shadow: 0 0 0 14px rgb(239 181 43 / 0); }
+}
+
+/* ---------- Photo ---------- */
+.cv-visual {
+  position: relative;
+  perspective: 1200px;
+  opacity: 0;
+  transform: translateX(40px) scale(0.96);
+  transition: opacity 0.9s var(--cv-ease) 0.2s, transform 0.9s var(--cv-ease) 0.2s;
+}
+.cv[data-in] .cv-visual {
+  opacity: 1;
+  transform: none;
+}
+
+.cv-photo {
+  position: relative;
+  aspect-ratio: 2 / 1;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 30px 50px -24px rgb(0 0 0 / 0.55), 0 0 0 1px rgb(255 255 255 / 0.08);
+  transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+  transition: transform 0.4s var(--cv-ease);
+}
+.cv-photo img {
+  object-fit: cover;
+  transition: transform 0.8s var(--cv-ease);
+}
+.cv-photo:hover img {
+  transform: scale(1.03);
+}
+@media (hover: hover) and (pointer: fine) {
+  .cv[data-phase='dirty'] .cv-photo {
+    cursor: none;
+  }
+}
+
+.cv-dust {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+  pointer-events: none;
+}
+.cv[data-phase='dirty'] .cv-dust {
+  opacity: 1;
+}
+
+/* A glare that sweeps across the clean glass every so often. */
+.cv-glare {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 35%, rgb(255 255 255 / 0.4) 48%, transparent 60%);
+  transform: translateX(-110%);
+}
+.cv[data-phase='clean'] .cv-glare {
+  animation: cv-sheen 5s ease-in-out 0.4s infinite;
+}
+
+/* A gold squeegee: a wide rubber blade with a short handle. */
+.cv-blade {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.cv-blade[data-shown] {
+  opacity: 1;
+}
+.cv-blade i {
+  position: absolute;
+  left: -48px;
+  top: -8px;
+  width: 96px;
+  height: 14px;
+  border-radius: 4px;
+  background: linear-gradient(180deg, #f6c95b, var(--cv-gold) 60%, #b9841a);
+  box-shadow: 0 6px 14px rgb(0 0 0 / 0.35), inset 0 -3px 0 var(--cv-purple);
+  transform: rotate(-12deg);
+}
+.cv-blade i::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  width: 10px;
+  height: 48px;
+  margin-left: -5px;
+  border-radius: 5px 5px 3px 3px;
+  background: linear-gradient(90deg, #4b2384, var(--cv-purple));
+}
+
+.cv-hint {
+  position: absolute;
+  left: 50%;
+  top: 16px;
+  z-index: 2;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.94);
+  color: var(--cv-purple);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 10px 24px rgb(0 0 0 / 0.25);
+  transform: translateX(-50%);
+  animation: cv-nudge 1.8s ease-in-out infinite;
+}
+@keyframes cv-nudge {
+  0%, 100% { transform: translate(-50%, 0); }
+  50% { transform: translate(-50%, -5px); }
+}
+
+.cv-sparkles {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+.cv-sparkles svg {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  color: #fff;
+  opacity: 0;
+  filter: drop-shadow(0 0 8px rgb(255 240 200 / 0.9));
+  animation: cv-sparkle 1.6s ease-out calc(var(--i) * 0.12s) 2 both;
+}
+.cv-sparkles svg:nth-child(1) { left: 44%; top: 18%; }
+.cv-sparkles svg:nth-child(2) { left: 66%; top: 30%; width: 18px; height: 18px; }
+.cv-sparkles svg:nth-child(3) { left: 84%; top: 14%; }
+.cv-sparkles svg:nth-child(4) { left: 52%; top: 58%; width: 16px; height: 16px; }
+.cv-sparkles svg:nth-child(5) { left: 74%; top: 66%; width: 22px; height: 22px; }
+.cv-sparkles svg:nth-child(6) { left: 90%; top: 48%; width: 16px; height: 16px; }
+@keyframes cv-sparkle {
+  0% { opacity: 0; transform: scale(0.2) rotate(0deg); }
+  40% { opacity: 1; transform: scale(1.1) rotate(45deg); }
+  100% { opacity: 0; transform: scale(0.6) rotate(90deg); }
+}
+
+/* A small floating note on the photo's corner. */
+.cv-chip {
+  position: absolute;
+  left: -14px;
+  bottom: -16px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: #fff;
+  color: var(--cv-purple);
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 16px 30px -12px rgb(0 0 0 / 0.45);
+  animation: cv-bob 4s ease-in-out infinite;
+}
+.cv-chip i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #48704f;
+  box-shadow: 0 0 0 4px rgb(72 112 79 / 0.2);
+}
+@keyframes cv-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+@media (max-width: 640px) {
+  .cv-chip {
+    left: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cv *,
+  .cv *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .cv-copy > *,
+  .cv-line > span,
+  .cv-visual {
+    opacity: 1;
+    transform: none;
+  }
+  .cv-photo {
+    transform: none;
+  }
+}

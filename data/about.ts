@@ -54,3 +54,11 @@ export const aboutClosing = {
   heading: 'Ready for a clearer view?',
   text: 'Whether it’s a single-family home or a large exterior project in Mesa, our goal stays the same: honest, quality work that earns your trust for years to come.',
 } as const;
+
+// The closing call to action on the About, Services, Reviews and FAQ pages.
+export const clearerViewCta = {
+  eyebrow: 'Ready for a clearer view?',
+  headingLines: ['Let’s make your', 'windows'],
+  highlight: 'shine.',
+  text: 'Honest, quality window cleaning for homes and businesses across the Phoenix metro area.',
+} as const;
