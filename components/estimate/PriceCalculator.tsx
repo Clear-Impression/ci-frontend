@@ -11,13 +11,16 @@ import {
   formatAmount,
   formatRange,
   getEstimateTab,
+  linesFor,
   rangeFor,
   startingValues,
   type EstimateQuestion,
   type EstimateTab,
   type EstimateValues,
 } from '@/data/estimate';
-import { loadEstimate, saveEstimate } from '@/lib/estimateStore';
+import { loadEstimate, saveEstimate, type EstimateDetails } from '@/lib/estimateStore';
+import EstimateSummary from './EstimateSummary';
+import { downloadEstimatePdf } from './estimatePdf';
 import styles from '@/app/estimate/calculator.module.css';
 
 const smsNumber = company.phoneHref.replace(/^tel:/, '');
@@ -300,8 +303,46 @@ function Question({
 
 // The dark panel on the right: the price range (or the photo promise), the
 // service's own explanation, and ways to book.
-function PricePanel({ tab, values }: { tab: EstimateTab; values: EstimateValues }) {
+function PricePanel({
+  tab,
+  values,
+  added,
+  onToggle,
+}: {
+  tab: EstimateTab;
+  values: EstimateValues;
+  added: boolean;
+  onToggle: () => void;
+}) {
   const range = rangeFor(tab, values);
+  const addButton = (
+    <>
+      <button
+        type='button'
+        onClick={onToggle}
+        disabled={!added && tab.mode === 'range' && !range}
+        aria-pressed={added}
+        className={styles.panelAdd}>
+        {added ? (
+          <>
+            <Check /> In your estimate
+          </>
+        ) : (
+          '+ Add to my estimate'
+        )}
+      </button>
+      {added && (
+        <p className='mt-2 text-center text-sm text-white/70'>
+          <a
+            href='#your-estimate'
+            className='font-semibold text-[#efb52b] underline-offset-4 hover:underline'>
+            See your summary ↓
+          </a>{' '}
+          · or tap again to remove
+        </p>
+      )}
+    </>
+  );
   const learnMore = (
     <Link
       href={`/services/${tab.slug}`}
@@ -316,9 +357,10 @@ function PricePanel({ tab, values }: { tab: EstimateTab; values: EstimateValues 
         <p className={styles.panelEyebrow}>What you get back</p>
         <p className={styles.panelBig}>A real price</p>
         <p className='mt-4 leading-relaxed text-white/80'>{tab.panel.text}</p>
+        {addButton}
         <a
           href={sms(`Hi! I'd like a ${tab.name.toLowerCase()} quote. Here are photos of my windows:`)}
-          className={styles.panelPrimary}>
+          className={styles.panelSecondary}>
           <svg
             aria-hidden='true'
             viewBox='0 0 24 24'
@@ -357,13 +399,14 @@ function PricePanel({ tab, values }: { tab: EstimateTab; values: EstimateValues 
         {range ? formatRange(range) : 'Pick an option'}
       </p>
       <p className='mt-4 leading-relaxed text-white/80'>{tab.panel.text}</p>
+      {addButton}
       <a
         href={
           range
             ? sms(`Hi! I'd like to book ${tab.name}. My instant estimate was ${formatRange(range)} (${describeValues(tab, values)}).`)
             : sms(`Hi! I'd like a quote for ${tab.name}.`)
         }
-        className={styles.panelPrimary}>
+        className={styles.panelSecondary}>
         <svg
           aria-hidden='true'
           viewBox='0 0 24 24'
@@ -377,11 +420,14 @@ function PricePanel({ tab, values }: { tab: EstimateTab; values: EstimateValues 
         </svg>
         {tab.panel.textCta}
       </a>
-      <a
-        href={company.phoneHref}
-        className={styles.panelSecondary}>
-        Call {company.phone}
-      </a>
+      <p className='mt-4 text-center text-sm text-white/70'>
+        or call{' '}
+        <a
+          href={company.phoneHref}
+          className='font-semibold text-white underline underline-offset-4'>
+          {company.phone}
+        </a>
+      </p>
       <ul className='mt-6 space-y-2 text-sm text-white/80'>
         <li className='flex items-center gap-2'>
           <span className='text-[#efb52b]'>
@@ -406,10 +452,31 @@ function PricePanel({ tab, values }: { tab: EstimateTab; values: EstimateValues 
 // "Get your price": a tab for each service. Each tab asks its own questions
 // with its own hints, and the dark panel explains that service and prices it
 // as a range. Stain removal is quoted from a photo instead.
-export default function PriceCalculator() {
+const emptyDetails: EstimateDetails = { name: '', address: '', city: '' };
+
+// How far along the visitor is, from 0 to 100. It clears the summary window.
+function progressFor(added: number, details: EstimateDetails, downloaded: boolean) {
+  let value = 0;
+  if (added > 0) value += 35;
+  if (details.name.trim()) value += 20;
+  if (details.city) value += 20;
+  if (details.address.trim()) value += 5;
+  if (downloaded) value += 20;
+  return value;
+}
+
+// The page passes in the cities from Sanity, so the list matches the Locations page.
+export default function PriceCalculator({ cities }: { cities: readonly string[] }) {
   const [active, setActive] = useState(estimateTabs[0].slug);
   const [values, setValues] = useState<Record<string, EstimateValues>>({});
+  const [added, setAdded] = useState<string[]>([]);
+  const [details, setDetails] = useState<EstimateDetails>(emptyDetails);
+  const [downloaded, setDownloaded] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [reference, setReference] = useState('');
+  const [wipe, setWipe] = useState(0);
+  const [burst, setBurst] = useState(0);
   const rootRef = useRef<HTMLElement>(null);
   const started = useRef(false);
   const tab = getEstimateTab(active) ?? estimateTabs[0];
@@ -426,7 +493,10 @@ export default function PriceCalculator() {
     /* eslint-disable react-hooks/set-state-in-effect -- restoring saved answers once on load */
     if (saved) {
       setValues(saved.values ?? {});
-      if (getEstimateTab(saved.tab)) setActive(saved.tab);
+      setAdded(saved.added ?? []);
+      setDetails({ ...emptyDetails, ...saved.details });
+      setDownloaded(Boolean(saved.downloaded));
+      if (saved.tab && getEstimateTab(saved.tab)) setActive(saved.tab);
     }
     if (asked && getEstimateTab(asked)) setActive(asked);
     setLoaded(true);
@@ -440,11 +510,63 @@ export default function PriceCalculator() {
   useEffect(() => {
     if (!loaded) return;
     const current = getEstimateTab(active) ?? estimateTabs[0];
-    saveEstimate({ tab: active, values: { ...values, [current.slug]: values[current.slug] ?? startingValues(current) } });
-  }, [loaded, active, values]);
+    saveEstimate({
+      tab: active,
+      values: { ...values, [current.slug]: values[current.slug] ?? startingValues(current) },
+      added,
+      details,
+      downloaded,
+    });
+  }, [loaded, active, values, added, details, downloaded]);
 
-  const setAnswer = (id: string, answer: EstimateValues[string]) =>
+  const lines = linesFor(added, values);
+  const progress = progressFor(added.length, details, downloaded);
+
+  // Any change means the downloaded PDF is out of date.
+  const setAnswer = (id: string, answer: EstimateValues[string]) => {
     setValues((current) => ({ ...current, [tab.slug]: { ...(current[tab.slug] ?? startingValues(tab)), [id]: answer } }));
+    setDownloaded(false);
+  };
+
+  const toggleAdded = (slug: string) => {
+    const has = added.includes(slug);
+    setAdded((current) => (has ? current.filter((entry) => entry !== slug) : [...current, slug]));
+    // Keep the answers they see now, even if they never touched a question.
+    const entry = getEstimateTab(slug);
+    if (!has && entry) setValues((current) => ({ ...current, [slug]: current[slug] ?? startingValues(entry) }));
+    if (!has) setWipe((count) => count + 1);
+    setDownloaded(false);
+  };
+
+  const setDetail = (field: keyof EstimateDetails, value: string) => {
+    setDetails((current) => ({ ...current, [field]: value }));
+    setDownloaded(false);
+  };
+
+  const download = async () => {
+    if (!(details.name.trim() && details.city)) {
+      document.getElementById('est-name')?.focus();
+      document.getElementById('your-estimate')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+    setSaving(true);
+    try {
+      setReference(await downloadEstimatePdf(details, lines));
+      setBurst((count) => count + 1);
+      setDownloaded(true);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const startOver = () => {
+    setValues({});
+    setAdded([]);
+    setDetails(emptyDetails);
+    setDownloaded(false);
+    setReference('');
+    rootRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   // Arrow keys move between tabs.
   const onTabsKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -563,6 +685,8 @@ export default function PriceCalculator() {
             <PricePanel
               tab={tab}
               values={tabValues}
+              added={added.includes(tab.slug)}
+              onToggle={() => toggleAdded(tab.slug)}
             />
           </aside>
         </div>
@@ -593,6 +717,22 @@ export default function PriceCalculator() {
           ))}
         </ul>
       </div>
+
+      <EstimateSummary
+        lines={lines}
+        details={details}
+        cities={cities}
+        progress={progress}
+        wipe={wipe}
+        burst={burst}
+        saving={saving}
+        downloaded={downloaded}
+        reference={reference}
+        onDetail={setDetail}
+        onRemove={toggleAdded}
+        onDownload={download}
+        onStartOver={startOver}
+      />
     </section>
   );
 }

@@ -1,15 +1,32 @@
-import { formatRange, getEstimateTab, rangeFor, type EstimateValues } from '@/data/estimate';
+import {
+  formatRange,
+  getEstimateTab,
+  linesFor,
+  rangeFor,
+  totalRange,
+  type EstimateValues,
+} from '@/data/estimate';
 
 // Where the instant estimate keeps the visitor's answers for this browser tab,
 // and the event it fires when they change, so the floating bar stays in sync.
 export const estimateStorageKey = 'ci-instant-estimate-v3';
 export const estimateChangeEvent = 'ci:estimate-change';
 
+export type EstimateDetails = {
+  name: string;
+  address: string;
+  city: string;
+};
+
 export type SavedEstimate = {
   // The service tab that's open.
   tab: string;
   // Answers for each tab the visitor has touched, by service slug.
   values: Record<string, EstimateValues>;
+  // Services added to their summary, in the order they were added.
+  added: string[];
+  details: EstimateDetails;
+  downloaded: boolean;
 };
 
 export type EstimateSummary = {
@@ -17,10 +34,10 @@ export type EstimateSummary = {
   range: string;
 };
 
-export function loadEstimate(): SavedEstimate | null {
+export function loadEstimate(): Partial<SavedEstimate> | null {
   try {
     const saved = window.sessionStorage.getItem(estimateStorageKey);
-    return saved ? (JSON.parse(saved) as SavedEstimate) : null;
+    return saved ? (JSON.parse(saved) as Partial<SavedEstimate>) : null;
   } catch {
     return null;
   }
@@ -35,13 +52,18 @@ export function saveEstimate(estimate: SavedEstimate) {
   window.dispatchEvent(new Event(estimateChangeEvent));
 }
 
-// The open tab's price range, for the floating bar. Nothing if there isn't one.
+// For the floating bar: the total of their summary if they've added services,
+// otherwise the open tab's range. Nothing if there's no price yet.
 export function readEstimate(): EstimateSummary | null {
   const saved = loadEstimate();
-  if (!saved) return null;
+  if (!saved?.tab) return null;
+  const values = saved.values ?? {};
+  const lines = linesFor(saved.added ?? [], values);
+  const total = totalRange(lines);
+  if (total) {
+    return { service: lines.filter((line) => line.range).map((line) => line.name).join(', '), range: formatRange(total) };
+  }
   const tab = getEstimateTab(saved.tab);
-  const values = saved.values?.[saved.tab];
-  if (!tab || !values) return null;
-  const range = rangeFor(tab, values);
-  return range ? { service: tab.name, range: formatRange(range) } : null;
+  const range = tab && values[saved.tab] ? rangeFor(tab, values[saved.tab]) : null;
+  return tab && range ? { service: tab.name, range: formatRange(range) } : null;
 }

@@ -401,3 +401,38 @@ export const formatAmount = (amount: number, unit: string) =>
 
 export const estimateNote =
   'A range, not a bid. Your final price is confirmed with a free on-site or photo quote, with no surprises.';
+
+// One line on the visitor's summary: a service, its range (or none, for
+// photo quotes) and what they picked.
+export type EstimateLine = {
+  slug: string;
+  name: string;
+  range: { low: number; high: number } | null;
+  details: string;
+};
+
+export function linesFor(added: readonly string[], values: Record<string, EstimateValues>): EstimateLine[] {
+  return added.flatMap((slug) => {
+    const tab = getEstimateTab(slug);
+    if (!tab) return [];
+    const picked = values[slug] ?? startingValues(tab);
+    return [
+      {
+        slug,
+        name: tab.name,
+        range: rangeFor(tab, picked),
+        details: tab.mode === 'photo' ? 'Quoted from a photo' : describeValues(tab, picked),
+      },
+    ];
+  });
+}
+
+// The total of every priced line, or null if none of them has a price.
+export function totalRange(lines: readonly EstimateLine[]) {
+  const priced = lines.filter((line) => line.range);
+  if (priced.length === 0) return null;
+  return {
+    low: priced.reduce((sum, line) => sum + (line.range?.low ?? 0), 0),
+    high: priced.reduce((sum, line) => sum + (line.range?.high ?? 0), 0),
+  };
+}
