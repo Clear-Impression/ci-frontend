@@ -61,6 +61,15 @@ export const SERVICES_QUERY = defineQuery(`
     category,
     previewDescription,
     largeDescription,
-    "detailParagraphs": coalesce(detailParagraphs, [])
+    "detailParagraphs": coalesce(detailParagraphs, []),
+    bestFor,
+    "benefits": coalesce(benefits, []),
+    "image": image {
+      "url": asset->url,
+      "width": asset->metadata.dimensions.width,
+      "height": asset->metadata.dimensions.height,
+      "alt": coalesce(alt, ^.title),
+      caption
+    }
   }
 `)

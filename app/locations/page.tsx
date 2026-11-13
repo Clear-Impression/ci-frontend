@@ -91,7 +91,8 @@ export default async function LocationsPage() {
                     style={{ '--i': index } as React.CSSProperties}>
                     <Link href={location.href} className={styles.cityLink}>
                       <span className={styles.linkText}>{location.name}</span>
-                      <span className={styles.arrow} aria-hidden='true'>↗</span>
+                      {/* Nov 12, 2026 - Change from arrow to greater than symbol due to webkit rendering it as an emoji*/}
+                      <span aria-hidden='true'>&gt;</span>
                     </Link>
                   </li>
                 ))}

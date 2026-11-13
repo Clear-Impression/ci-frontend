@@ -10,6 +10,15 @@ export type Service = {
   previewDescription: string;
   largeDescription: string;
   detailParagraphs: readonly string[];
+  bestFor?: string;
+  benefits?: readonly string[];
+  image?: {
+    url: string;
+    width: number;
+    height: number;
+    alt: string;
+    caption?: string;
+  } | null;
 };
 
 export const howWeDoIt: Service[] = [

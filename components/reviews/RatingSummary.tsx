@@ -93,6 +93,7 @@ export default function RatingSummary({
       </div>
       <a
         href={sourceUrl}
+        target='_blank'
         className='mt-8 inline-flex min-h-11 items-center rounded-lg bg-[#efb52b] px-5 py-3 text-sm font-semibold text-[#200b38] hover:bg-[#f6c95b] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6c3fb8] sm:absolute sm:right-10 sm:top-1/2 sm:mt-0 sm:-translate-y-1/2'>
         Read all reviews on Google
       </a>
