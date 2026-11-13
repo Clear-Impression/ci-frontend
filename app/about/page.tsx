@@ -1,5 +1,5 @@
 import { getPageHeader } from '@/lib/page-headers';
-import type { Metadata } from 'next';
+import { createPageMetadata } from '@/lib/seo';
 import { company, services } from '@/data/company';
 import { getLocations } from '@/lib/locations';
 import {
@@ -15,11 +15,12 @@ import TiltCard from '@/components/about/TiltCard';
 import HowWeClean from '@/components/services/HowWeClean';
 
 // Give the About page its own title and search description.
-export const metadata: Metadata = {
+export const metadata = createPageMetadata({
+  path: '/about',
   title: 'About Us | Clear Impression Services',
   description:
     'Founded in 2018 in Mesa, Clear Impression delivers honest, detail-focused window and exterior cleaning across the Phoenix metro area.',
-};
+});
 
 // Split text into words so each one can animate on its own.
 // The spaces stay as real text, so the sentence still reads normally.

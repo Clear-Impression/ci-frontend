@@ -1,5 +1,6 @@
 import { getPageHeader } from '@/lib/page-headers';
 import type { Metadata } from 'next';
+import { createPageMetadata } from '@/lib/seo';
 import './home-redesign.css';
 import { manrope } from './fonts';
 import HomeMotion from '@/components/home/HomeMotion';
@@ -35,10 +36,11 @@ export async function generateMetadata(): Promise<Metadata> {
     type: 'conjunction',
   }).format(cities.map((city) => city.name));
 
-  return {
+  return createPageMetadata({
+    path: '/',
     title: 'Window Cleaning in Phoenix Metro | Clear Impression Services',
     description: `Residential and commercial window cleaning in ${cityList}. Explore our cleaning methods and request a free quote.`,
-  };
+  });
 }
 
 // The sections listed in the "On this page" guide, top to bottom. Each id wraps one section below.

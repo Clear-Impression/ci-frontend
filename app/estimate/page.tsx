@@ -1,6 +1,5 @@
-import type { Metadata } from 'next';
+import { createPageMetadata } from '@/lib/seo';
 import InstantEstimate from '@/components/estimate/InstantEstimate';
-import { company } from '@/data/company';
 import { getLocations } from '@/lib/locations';
 import { getPageHeader } from '@/lib/page-headers';
 
@@ -8,11 +7,11 @@ const title = 'Get a Free Quote | Clear Impression Services';
 const description =
   'Get an instant ballpark price for window, solar panel, gutter, and screen cleaning in the Phoenix metro area, or request an exact quote.';
 
-export const metadata: Metadata = {
+export const metadata = createPageMetadata({
+  path: '/estimate',
   title,
   description,
-  alternates: { canonical: `${company.website}estimate` },
-};
+});
 
 export default async function EstimatePage() {
   const header = await getPageHeader('estimate');

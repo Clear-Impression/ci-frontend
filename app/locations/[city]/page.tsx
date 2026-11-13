@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { createPageMetadata } from '@/lib/seo';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import HomeContact from '@/components/home/HomeContact';
@@ -25,10 +26,11 @@ export async function generateMetadata({
   const location = await getLocationBySlug(city);
   if (!location) notFound();
 
-  return {
+  return createPageMetadata({
+    path: location.href,
     title: `Window Cleaning in ${location.name}, AZ | ${company.name}`,
     description: location.intro,
-  };
+  });
 }
 
 export default async function CityPage({ params }: CityPageProps) {

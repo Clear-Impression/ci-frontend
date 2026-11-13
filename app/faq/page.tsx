@@ -1,9 +1,8 @@
-import type { Metadata } from "next";
+import { createPageMetadata } from "@/lib/seo";
 import FAQAccordion from "./faqAccordion";
 import styles from "./faq.module.css";
 import QuoteActions from "@/components/ui/QuoteActions";
 import { aboutClosing } from "@/data/about";
-import { company } from "@/data/company";
 import { getFAQs } from "@/lib/api";
 import type { FAQItem } from "@/types/faq";
 import { getPageHeader } from "@/lib/page-headers";
@@ -12,11 +11,11 @@ const title = "FAQ | Clear Impression Services";
 const description =
   "Answers to common questions about Clear Impression's window cleaning, scheduling, and service across the Phoenix metro area.";
 
-export const metadata: Metadata = {
+export const metadata = createPageMetadata({
+  path: '/faq',
   title,
   description,
-  alternates: { canonical: `${company.website}faq` },
-};
+});
 
 type FAQPageProps = {
   searchParams: Promise<{ open?: string | string[] }>;
