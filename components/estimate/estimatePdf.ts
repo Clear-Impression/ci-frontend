@@ -1,18 +1,6 @@
 import { company } from '@/data/company';
-import {
-  describeItem,
-  estimateNote,
-  formatMoney,
-  getEstimateService,
-  priceFor,
-  type CartItem,
-} from '@/data/estimate';
-
-export type EstimateDetails = {
-  name: string;
-  address: string;
-  city: string;
-};
+import { estimateNote, formatRange, totalRange, type EstimateLine } from '@/data/estimate';
+import type { EstimateDetails } from '@/lib/estimateStore';
 
 type Color = [number, number, number];
 const ink: Color = [32, 11, 56];
@@ -41,11 +29,8 @@ const pad = (value: number) => String(value).padStart(2, '0');
 
 // Build a one-page, receipt-style summary and start the download.
 // jsPDF only loads when someone actually asks for the PDF.
-export async function downloadEstimatePdf(
-  details: EstimateDetails,
-  cart: readonly CartItem[],
-  total: number,
-) {
+export async function downloadEstimatePdf(details: EstimateDetails, lines: readonly EstimateLine[]) {
+  const total = totalRange(lines);
   const [{ jsPDF }, logo] = await Promise.all([import('jspdf'), loadLogo()]);
   const doc = new jsPDF({ unit: 'pt', format: 'letter' });
   const width = doc.internal.pageSize.getWidth();
@@ -88,10 +73,8 @@ export async function downloadEstimatePdf(
 
   // Each service as a receipt line with a dotted leader to its price.
   let y = 296;
-  cart.forEach((item, index) => {
-    const service = getEstimateService(item.slug);
-    if (!service) return;
-    const price = formatMoney(priceFor(item));
+  lines.forEach((line, index) => {
+    const price = line.range ? formatRange(line.range).replace('–', '-') : 'Photo quote';
 
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(9);
@@ -100,8 +83,8 @@ export async function downloadEstimatePdf(
 
     doc.setFontSize(13);
     doc.setTextColor(...ink);
-    doc.text(service.name, left + 26, y);
-    const nameEnd = left + 26 + doc.getTextWidth(service.name) + 8;
+    doc.text(line.name, left + 26, y);
+    const nameEnd = left + 26 + doc.getTextWidth(line.name) + 8;
 
     doc.setFontSize(13);
     const priceStart = right - doc.getTextWidth(price) - 8;
@@ -114,7 +97,7 @@ export async function downloadEstimatePdf(
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
     doc.setTextColor(...muted);
-    doc.text(describeItem(item), left + 26, y + 16);
+    doc.text(line.details, left + 26, y + 16);
     y += 46;
   });
 
@@ -127,11 +110,11 @@ export async function downloadEstimatePdf(
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(11);
   doc.setTextColor(...muted);
-  doc.text(`Estimated total · ${cart.length} service${cart.length === 1 ? '' : 's'}`, left + 26, y - 8);
+  doc.text(`Likely total · ${lines.length} service${lines.length === 1 ? '' : 's'}`, left + 26, y - 8);
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(34);
+  doc.setFontSize(total ? 28 : 20);
   doc.setTextColor(...ink);
-  doc.text(formatMoney(total), right, y, { align: 'right' });
+  doc.text(total ? formatRange(total).replace('–', '-') : 'Quoted from photos', right, y, { align: 'right' });
 
   y += 40;
   doc.setFont('helvetica', 'normal');

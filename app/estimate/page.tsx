@@ -1,5 +1,5 @@
 import { createPageMetadata } from '@/lib/seo';
-import InstantEstimate from '@/components/estimate/InstantEstimate';
+import PriceCalculator from '@/components/estimate/PriceCalculator';
 import { getLocations } from '@/lib/locations';
 import { getPageHeader } from '@/lib/page-headers';
 
@@ -35,7 +35,8 @@ export default async function EstimatePage() {
         </div>
       </section>
 
-      <InstantEstimate cities={cities.map((city) => city.name)} />
+      {/* A tab for each service, with its own questions and price. */}
+      <PriceCalculator cities={cities.map((city) => city.name)} />
     </main>
   );
 }

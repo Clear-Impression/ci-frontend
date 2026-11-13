@@ -1,0 +1,737 @@
+/* "Get your price": service tabs on top, questions on the left, a dark
+   price panel on the right. Kept in its own file so it never collides with
+   globals.css. */
+
+.shell {
+  overflow: hidden;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 40px 80px -50px rgb(32 11 56 / 0.45), 0 0 0 1px rgb(32 11 56 / 0.06);
+}
+
+.top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 22px 24px;
+  border-bottom: 1px solid #ece4f2;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: #f5f1f8;
+  color: #6c3fb8;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Service tabs. They scroll sideways on small screens. */
+.tabs {
+  display: flex;
+  max-width: 100%;
+  gap: 4px;
+  overflow-x: auto;
+  padding: 5px;
+  border-radius: 14px;
+  background: #f5f1f8;
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+.tab {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  border-radius: 10px;
+  color: #200b38;
+  transition: background 0.25s, color 0.25s, transform 0.25s;
+}
+.tab:hover {
+  background: rgb(255 255 255 / 0.7);
+}
+.tab[aria-selected='true'] {
+  background: #200b38;
+  color: #fff;
+  box-shadow: 0 10px 20px -12px rgb(32 11 56 / 0.7);
+}
+.tab:focus-visible {
+  outline: 2px solid #6c3fb8;
+  outline-offset: 2px;
+}
+.tabNote {
+  display: block;
+  margin-top: 1px;
+  color: #6e6871;
+  font-size: 12px;
+}
+.tab[aria-selected='true'] .tabNote {
+  color: rgb(255 255 255 / 0.65);
+}
+
+.body {
+  display: grid;
+  animation: body-in 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@media (min-width: 1024px) {
+  .body {
+    grid-template-columns: 1.35fr 1fr;
+  }
+}
+@keyframes body-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+.questions {
+  display: grid;
+  align-content: start;
+  gap: 34px;
+  padding: 34px 24px 40px;
+}
+@media (min-width: 640px) {
+  .questions {
+    padding: 40px 40px 44px;
+  }
+}
+
+/* Each question rises in, one after another, when a tab opens. */
+.questionRise {
+  animation: body-in 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: calc(var(--o, 0) * 70ms);
+}
+
+.stepNumber {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #200b38;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* The big number by a slider is a field you can type into. A dashed line
+   under it hints that it's editable. */
+.amountInput {
+  padding: 0 2px;
+  border: 0;
+  border-bottom: 2px dashed #d6cbe2;
+  border-radius: 4px 4px 0 0;
+  background: transparent;
+  color: #200b38;
+  font-size: 36px;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  transition: border-color 0.2s, background 0.2s;
+}
+.amountInput:hover {
+  border-bottom-color: #6c3fb8;
+}
+.amountInput:focus {
+  border-bottom: 2px solid #6c3fb8;
+  background: #f5f1f8;
+  outline: none;
+}
+
+/* Slider with a filled purple track. */
+.range {
+  height: 8px;
+  appearance: none;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #6c3fb8 var(--fill), #ece4f2 var(--fill));
+  cursor: pointer;
+}
+.range::-webkit-slider-thumb {
+  width: 28px;
+  height: 28px;
+  appearance: none;
+  border: 5px solid #6c3fb8;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 4px 12px rgb(32 11 56 / 0.25);
+  transition: transform 0.2s;
+}
+.range::-webkit-slider-thumb:hover,
+.range:active::-webkit-slider-thumb {
+  transform: scale(1.15);
+}
+.range::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border: 5px solid #6c3fb8;
+  border-radius: 50%;
+  background: #fff;
+}
+.range:focus-visible {
+  outline: 2px solid #6c3fb8;
+  outline-offset: 6px;
+}
+
+/* A slim toggle with a dark pill that slides to the picked option. */
+.segmented {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--count), 1fr);
+  margin-top: 14px;
+  padding: 5px;
+  border-radius: 12px;
+  background: #f5f1f8;
+}
+.segmentedPill {
+  position: absolute;
+  top: 5px;
+  bottom: 5px;
+  left: 5px;
+  width: calc((100% - 10px) / var(--count));
+  border-radius: 9px;
+  background: #200b38;
+  box-shadow: 0 8px 18px -10px rgb(32 11 56 / 0.8);
+  transform: translateX(calc(var(--index) * 100%));
+  transition: transform 0.4s cubic-bezier(0.34, 1.3, 0.64, 1);
+}
+.segment {
+  position: relative;
+  min-height: 46px;
+  padding: 0 8px;
+  border-radius: 9px;
+  color: #200b38;
+  font-size: 15px;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+.segment[aria-checked='true'] {
+  color: #fff;
+  font-weight: 600;
+}
+.segment:focus-visible,
+.card:focus-visible {
+  outline: 2px solid #6c3fb8;
+  outline-offset: 2px;
+}
+
+/* Options with a short explanation under each. */
+.cards {
+  display: grid;
+  gap: 12px;
+  margin-top: 14px;
+}
+@media (min-width: 640px) {
+  .cards {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+}
+.card {
+  position: relative;
+  padding: 16px 18px;
+  border-radius: 12px;
+  background: #fff;
+  text-align: left;
+  box-shadow: 0 0 0 1px #e4dcec;
+  transition: box-shadow 0.25s, transform 0.25s, background 0.25s;
+}
+.card:hover {
+  transform: translateY(-2px);
+}
+.card[aria-checked='true'] {
+  background: #faf7fd;
+  box-shadow: 0 0 0 2px #6c3fb8;
+}
+.cardDot {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2px #d6cbe2;
+  transition: background 0.25s, box-shadow 0.25s, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.card[aria-checked='true'] .cardDot {
+  background: #6c3fb8;
+  box-shadow: 0 0 0 3px #ece4f2;
+  transform: scale(1.15);
+}
+
+/* Tick boxes for add-ons. */
+.addon {
+  display: flex;
+  min-height: 56px;
+  cursor: pointer;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  border-radius: 12px;
+  color: #200b38;
+  font-size: 15px;
+  box-shadow: 0 0 0 1px #e4dcec;
+  transition: box-shadow 0.25s, background 0.25s;
+}
+.addon[data-on] {
+  background: #faf7fd;
+  box-shadow: 0 0 0 2px #6c3fb8;
+}
+.addon:has(:focus-visible) {
+  outline: 2px solid #6c3fb8;
+  outline-offset: 2px;
+}
+.addonBox {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  place-items: center;
+  border-radius: 7px;
+  color: transparent;
+  box-shadow: inset 0 0 0 2px #d6cbe2;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.addon[data-on] .addonBox {
+  background: #6c3fb8;
+  color: #fff;
+  box-shadow: none;
+}
+
+/* Photo-quote tab. */
+.why {
+  padding: 22px 24px;
+  border-radius: 14px;
+  background: #f5f1f8;
+}
+.photoStep {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 18px;
+  border-radius: 12px;
+  box-shadow: 0 0 0 1px #e4dcec;
+  animation: body-in 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: calc(var(--o, 0) * 80ms);
+}
+.photoNumber {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  place-items: center;
+  border-radius: 10px;
+  background: #ece4f2;
+  color: #6c3fb8;
+  font-weight: 600;
+}
+
+/* The dark price panel, with a soft gold glow. */
+.panel {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: 36px 24px 40px;
+  background: #200b38;
+  color: #fff;
+}
+@media (min-width: 640px) {
+  .panel {
+    padding: 44px 40px;
+  }
+}
+.panel::before {
+  content: '';
+  position: absolute;
+  top: -120px;
+  right: -120px;
+  z-index: -1;
+  width: 340px;
+  height: 340px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(239 181 43 / 0.22), transparent 65%);
+  animation: glow 9s ease-in-out infinite alternate;
+}
+@keyframes glow {
+  to {
+    transform: translate(-60px, 50px) scale(1.2);
+  }
+}
+.panelEyebrow {
+  color: #efb52b;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.panelBig {
+  margin-top: 10px;
+  font-size: clamp(36px, 4.4vw, 52px);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+/* The price gives a small bounce each time it changes. */
+.pop {
+  animation: pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes pop {
+  from {
+    opacity: 0.4;
+    transform: translateY(6px) scale(0.97);
+  }
+}
+.panelPrimary,
+.panelSecondary {
+  display: flex;
+  min-height: 54px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-radius: 999px;
+  font-weight: 600;
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.25s;
+}
+.panelPrimary {
+  margin-top: 28px;
+  background: #efb52b;
+  color: #200b38;
+  box-shadow: 0 14px 30px -14px rgb(239 181 43 / 0.8);
+}
+.panelPrimary:hover {
+  background: #f7c64e;
+  transform: translateY(-2px);
+}
+.panelSecondary {
+  margin-top: 12px;
+  border: 1px solid rgb(255 255 255 / 0.28);
+  color: #fff;
+}
+.panelSecondary:hover {
+  background: rgb(255 255 255 / 0.08);
+}
+.panelPrimary:focus-visible,
+.panelSecondary:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+/* "Add to my estimate": gold, then a calm check once it's added. */
+.panelAdd {
+  display: flex;
+  width: 100%;
+  min-height: 54px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 28px;
+  border-radius: 999px;
+  background: #efb52b;
+  color: #200b38;
+  font-weight: 600;
+  box-shadow: 0 14px 30px -14px rgb(239 181 43 / 0.8);
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.25s, color 0.25s;
+}
+.panelAdd:hover:not(:disabled):not([aria-pressed='true']) {
+  background: #f7c64e;
+  transform: translateY(-2px);
+}
+.panelAdd[aria-pressed='true']:hover {
+  background: rgb(239 181 43 / 0.26);
+}
+.panelAdd[aria-pressed='true'] {
+  background: rgb(239 181 43 / 0.16);
+  color: #efb52b;
+  box-shadow: inset 0 0 0 1.5px #efb52b;
+  animation: added 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.panelAdd:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+.panelAdd:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+@keyframes added {
+  from {
+    transform: scale(0.94);
+  }
+}
+
+/* ---------- Your estimate ---------- */
+
+/* Inputs with a floating label and a gold line that draws in on focus. */
+.lineField {
+  position: relative;
+  padding-top: 1.1rem;
+}
+.lineField input {
+  width: 100%;
+  padding: 0.6rem 0 0.7rem;
+  border: 0;
+  border-bottom: 2px solid rgb(32 11 56 / 0.15);
+  background: transparent;
+  color: #200b38;
+  font-size: 1.1rem;
+  outline: none;
+}
+.lineField label {
+  position: absolute;
+  top: 1.75rem;
+  left: 0;
+  color: rgb(32 11 56 / 0.5);
+  pointer-events: none;
+  transform-origin: left top;
+  transition:
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    color 0.3s ease;
+}
+.lineField input:focus + label,
+.lineField input:not(:placeholder-shown) + label {
+  color: #6c3fb8;
+  transform: translateY(-1.6rem) scale(0.8);
+}
+.lineField::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #6c3fb8, #efb52b);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.lineField:focus-within::after {
+  transform: scaleX(1);
+}
+
+.cityChip {
+  display: inline-flex;
+  min-height: 44px;
+  cursor: pointer;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: #fff;
+  color: #200b38;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: inset 0 0 0 1px rgb(32 11 56 / 0.12);
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.cityChip:hover {
+  box-shadow: inset 0 0 0 1px rgb(108 63 184 / 0.5);
+}
+.cityChip[data-on] {
+  background: #200b38;
+  color: #efb52b;
+  box-shadow: 0 10px 20px -12px rgb(32 11 56 / 0.8);
+  transform: scale(1.04);
+}
+.cityChip:has(:focus-visible) {
+  outline: 2px solid #6c3fb8;
+  outline-offset: 2px;
+}
+
+/* The dark summary card. */
+.summary {
+  overflow: hidden;
+  border-radius: 20px;
+  background: #200b38;
+  color: #fff;
+  box-shadow: 0 50px 90px -50px rgb(32 11 56 / 0.8);
+}
+@media (min-width: 1024px) {
+  .summary {
+    position: sticky;
+    top: 110px;
+  }
+}
+.summaryWindow {
+  position: relative;
+  height: 160px;
+  overflow: hidden;
+}
+
+/* Frosted, smudged glass that clears as the estimate fills in. */
+.fog {
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(10px) saturate(0.6);
+  background:
+    radial-gradient(40% 50% at 25% 35%, rgb(255 255 255 / 0.45), transparent 70%),
+    radial-gradient(35% 40% at 75% 60%, rgb(255 255 255 / 0.35), transparent 70%),
+    linear-gradient(160deg, rgb(230 220 245 / 0.75), rgb(255 255 255 / 0.55));
+  transition: opacity 0.9s ease;
+}
+
+/* A gold squeegee blade sweeps across whenever a service is added. */
+.squeegee {
+  position: absolute;
+  inset-block: -10%;
+  left: -12%;
+  width: 14%;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.55) 60%, transparent);
+  animation: sweep 1.1s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+.squeegee::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 30%;
+  bottom: 0;
+  width: 4px;
+  border-radius: 999px;
+  background: #efb52b;
+  box-shadow: 0 0 14px rgb(239 181 43 / 0.9);
+}
+@keyframes sweep {
+  to {
+    left: 105%;
+  }
+}
+
+.receiptLine {
+  animation: line-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes line-in {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+}
+.leader {
+  border-bottom: 1px dotted rgb(255 255 255 / 0.3);
+  transform: translateY(-3px);
+}
+
+/* The download button has a shine that passes over it. */
+.goldButton {
+  position: relative;
+  display: flex;
+  width: 100%;
+  min-height: 52px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #efb52b;
+  color: #200b38;
+  font-weight: 600;
+  transition:
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.3s ease;
+}
+.goldButton:not(:disabled)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / 0.55) 50%, transparent 65%);
+  transform: translateX(-120%);
+  animation: shine 3.5s 1s ease-in-out infinite;
+}
+@keyframes shine {
+  40%,
+  100% {
+    transform: translateX(120%);
+  }
+}
+.goldButton:not(:disabled):hover {
+  background: #f6c95b;
+  transform: translateY(-2px);
+}
+.goldButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+.goldButton:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+}
+
+/* Gold sparks after a download. */
+.burst {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  pointer-events: none;
+}
+.burst > span {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  margin: -3px;
+  border-radius: 999px;
+  background: #efb52b;
+  animation: spark 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+@keyframes spark {
+  from {
+    opacity: 1;
+    transform: rotate(var(--a)) translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: rotate(var(--a)) translateX(150px) scale(0.4);
+  }
+}
+
+/* "Rather talk it through?" under the calculator. */
+.strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 28px;
+  margin-top: 18px;
+  padding: 20px 24px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgb(32 11 56 / 0.06);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .body,
+  .questionRise,
+  .photoStep,
+  .pop,
+  .panel::before {
+    animation: none;
+  }
+  .segmentedPill,
+  .card,
+  .tab,
+  .cityChip,
+  .lineField label,
+  .lineField::after,
+  .fog {
+    transition: none;
+  }
+  .panelAdd[aria-pressed='true'],
+  .squeegee,
+  .receiptLine,
+  .goldButton::after,
+  .burst > span {
+    animation: none;
+  }
+}
