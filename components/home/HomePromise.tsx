@@ -1,5 +1,4 @@
 import type { CSSProperties } from 'react';
-import Bubbles from '@/components/home/Bubbles';
 import type { PromiseIcon } from '@/data/promise';
 
 const icons: Record<PromiseIcon, React.ReactNode> = {
@@ -43,7 +42,6 @@ export default function HomePromise({ eyebrow, title, intro, items }: HomePromis
     <section
       aria-labelledby='promise-heading'
       className='hx-section hx-promise hx-on-dark'>
-      <Bubbles count={6} />
       <div className='hx-container'>
         <p className='hx-eyebrow hx-eyebrow-light hx-reveal'>{eyebrow}</p>
         <div className='hx-heading-row'>

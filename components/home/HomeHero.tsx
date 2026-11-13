@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import Bubbles from '@/components/home/Bubbles';
 import HxIcon from '@/components/home/HxIcon';
 import QuoteButton from '@/components/quote/QuoteButton';
 import { googleReviewsUrl } from '@/data/reviews';
@@ -31,7 +30,6 @@ export default function HomeHero({ eyebrow, titleLines, subtitle, rating, review
         aria-hidden='true'
         className='hx-hero-shape'
       />
-      <Bubbles count={10} />
 
       <div className='hx-container hx-hero-grid'>
         <div className='hx-hero-copy'>
