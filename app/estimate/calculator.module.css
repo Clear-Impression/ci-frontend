@@ -124,6 +124,32 @@
   font-weight: 600;
 }
 
+/* The big number by a slider is a field you can type into. A dashed line
+   under it hints that it's editable. */
+.amountInput {
+  padding: 0 2px;
+  border: 0;
+  border-bottom: 2px dashed #d6cbe2;
+  border-radius: 4px 4px 0 0;
+  background: transparent;
+  color: #200b38;
+  font-size: 36px;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  transition: border-color 0.2s, background 0.2s;
+}
+.amountInput:hover {
+  border-bottom-color: #6c3fb8;
+}
+.amountInput:focus {
+  border-bottom: 2px solid #6c3fb8;
+  background: #f5f1f8;
+  outline: none;
+}
+
 /* Slider with a filled purple track. */
 .range {
   height: 8px;

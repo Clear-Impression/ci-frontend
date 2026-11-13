@@ -52,6 +52,87 @@ function StepLabel({ number, label }: { number: number; label: string }) {
   );
 }
 
+// The big number next to a slider. Click or tap it to type an exact amount
+// instead of dragging. It updates the price as you type and tidies up when
+// you leave the field.
+function AmountField({
+  id,
+  label,
+  amount,
+  min,
+  limit,
+  unit,
+  onChange,
+}: {
+  id: string;
+  label: string;
+  amount: number;
+  min: number;
+  limit: number;
+  unit: string;
+  onChange: (value: number) => void;
+}) {
+  const [draft, setDraft] = useState<string | null>(null);
+  const justFocused = useRef(false);
+  const shown = draft ?? amount.toLocaleString('en-US');
+  const parse = (text: string) => Number(text.replace(/[^0-9]/g, ''));
+
+  return (
+    <span className='flex items-baseline whitespace-nowrap text-[#200b38]'>
+      <label
+        htmlFor={id}
+        className='sr-only'>
+        Type the {label}
+      </label>
+      <input
+        id={id}
+        type='text'
+        inputMode='numeric'
+        autoComplete='off'
+        value={shown}
+        // Select the whole number on focus, so typing replaces it. The click
+        // that focused the field would otherwise drop a cursor in instead.
+        onFocus={(event) => {
+          justFocused.current = true;
+          event.currentTarget.select();
+        }}
+        onMouseUp={(event) => {
+          if (justFocused.current) event.preventDefault();
+          justFocused.current = false;
+        }}
+        onChange={(event) => {
+          const text = event.target.value.replace(/[^0-9,]/g, '');
+          setDraft(text);
+          const typed = parse(text);
+          if (typed >= min && typed <= limit) onChange(typed);
+        }}
+        onBlur={() => {
+          const typed = parse(draft ?? '');
+          if (typed) onChange(Math.min(limit, Math.max(min, typed)));
+          setDraft(null);
+        }}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter') event.currentTarget.blur();
+        }}
+        className={styles.amountInput}
+        style={{ width: `${Math.max(2, shown.length) + 0.6}ch` }}
+      />
+      <span className='ml-1.5 text-sm text-gray-500'>{unit}</span>
+      <svg
+        aria-hidden='true'
+        viewBox='0 0 24 24'
+        fill='none'
+        stroke='currentColor'
+        strokeWidth='1.8'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        className='ml-2 size-4 self-center text-[#6c3fb8]'>
+        <path d='M4 20h4L19 9l-4-4L4 16zM13.5 6.5l4 4' />
+      </svg>
+    </span>
+  );
+}
+
 // One question: a slider, a set of options, or a list of add-ons.
 function Question({
   question,
@@ -66,7 +147,8 @@ function Question({
 }) {
   if (question.kind === 'slider') {
     const amount = Number(value);
-    const fill = ((amount - question.min) / (question.max - question.min)) * 100;
+    // Typed amounts can go past the end of the slider; the slider just stays full.
+    const fill = Math.min(100, ((amount - question.min) / (question.max - question.min)) * 100);
     const id = `est-${question.id}`;
     return (
       <div>
@@ -77,10 +159,15 @@ function Question({
               label={question.label}
             />
           </label>
-          <p className='whitespace-nowrap text-[#200b38]'>
-            <span className='text-4xl font-semibold tabular-nums tracking-tight'>{amount.toLocaleString('en-US')}</span>
-            <span className='ml-1.5 text-sm text-gray-500'>{question.unit}</span>
-          </p>
+          <AmountField
+            id={`${id}-typed`}
+            label={`${question.label} (${question.unit})`}
+            amount={amount}
+            min={question.min}
+            limit={question.max * 4}
+            unit={question.unit}
+            onChange={onChange}
+          />
         </div>
         <input
           id={id}
@@ -88,7 +175,7 @@ function Question({
           min={question.min}
           max={question.max}
           step={question.step}
-          value={amount}
+          value={Math.min(amount, question.max)}
           onChange={(event) => onChange(Number(event.target.value))}
           aria-valuetext={formatAmount(amount, question.unit)}
           className={`${styles.range} mt-5 w-full`}
