@@ -7,6 +7,7 @@ import { aboutClosing } from '@/data/about';
 import { company } from '@/data/company';
 import { getServices } from '@/lib/services';
 import ServiceIcon from '@/components/services/ServiceIcon';
+import Image from 'next/image';
 
 type ServicePageProps = {
   params: Promise<{ service: string }>;
@@ -70,7 +71,8 @@ export default async function ServicePage({ params }: ServicePageProps) {
         className='flex-1 border-0 bg-[#f7f4fb]'>
         <div className='mx-auto max-w-7xl px-6 pb-14 pt-6 sm:px-8 sm:pb-20 sm:pt-8'>
           <div className='grid gap-16 lg:grid-cols-2 lg:items-start'>
-            <div className='space-y-6 text-lg leading-8 text-gray-700'>
+            {/* Hero */}
+            <div className='space-y-6 leading-8 text-gray-700'>
               <p>{firstParagraph}</p>
               {moreParagraphs.length > 0 && (
                 <details className='group mt-6'>
@@ -97,20 +99,63 @@ export default async function ServicePage({ params }: ServicePageProps) {
                 </details>
               )}
             </div>
-            <div className='flex aspect-[4/3] items-center justify-center rounded-2xl bg-[#eee6f9] text-[#6c3fb8]'>
-              Service image coming soon
-            </div>
+            {/* Service Images */}
+            <figure>
+              <div className='relative aspect-4/3 overflow-hidden rounded-2xl bg-[#eee6f9] text-[#6c3fb8]'>
+                {service.image?.url ? (
+                  <Image
+                    src={service.image.url}
+                    alt={service.image.alt}
+                    fill
+                    sizes='(min-width: 1024px) 25vw, 100vw'
+                    className='object-cover'
+                  />
+                ) : (
+                  <div className='flex size-full items-center justify-center'>
+                    Service image coming soon
+                  </div>
+                )}
+              </div>
+              {service.image?.caption && (
+                <figcaption className='mt-2 text-sm text-gray-600'>
+                  {service.image.caption}
+                </figcaption>
+              )}
+              {Boolean(service.bestFor || service.benefits?.length) && (
+                <aside className='mt-6 rounded-2xl bg-[#200b38] p-6 text-white shadow-lg shadow-[#200b38]/10'>
+                  <h2 className='text-lg font-semibold'>At a glance</h2>
+                  {service.bestFor && (
+                    <div className='mt-4'>
+                      <h3 className='text-xs font-semibold uppercase tracking-widest text-[#efb52b]'>
+                        Best for
+                      </h3>
+                      <p className='mt-2 text-sm leading-6 text-white/80'>
+                        {service.bestFor}
+                      </p>
+                    </div>
+                  )}
+                  {service.benefits?.length ? (
+                    <div className='mt-5'>
+                      <h3 className='text-xs font-semibold uppercase tracking-widest text-[#efb52b]'>
+                        Benefits
+                      </h3>
+                      <ul className='mt-2 space-y-2 text-sm leading-6 text-white/80'>
+                        {service.benefits.map((benefit) => (
+                          <li key={benefit} className='flex gap-2'>
+                            <span className='text-[#efb52b]' aria-hidden='true'>
+                              ✓
+                            </span>
+                            <span>{benefit}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : null}
+                  <QuoteActions />
+                </aside>
+              )}
+            </figure>
           </div>
-        </div>
-      </section>
-
-      <section className='mx-auto max-w-7xl px-6 py-16 sm:px-8 sm:py-20'>
-        <div className='rounded-2xl bg-[#200b38] px-8 py-12 text-white sm:px-12'>
-          <h2 className='text-2xl font-semibold sm:text-3xl'>
-            {aboutClosing.heading}
-          </h2>
-          <p className='mt-4 max-w-2xl text-white/80'>{aboutClosing.text}</p>
-          <QuoteActions />
         </div>
       </section>
     </main>

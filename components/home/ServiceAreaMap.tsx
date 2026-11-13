@@ -116,14 +116,14 @@ export default function ServiceAreaMap({
         const icon = L.divIcon({
           className: '',
           html: '<svg width="32" height="40" viewBox="0 0 32 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M16 1C7.7 1 1 7.7 1 16c0 10 15 23 15 23s15-13 15-23C31 7.7 24.3 1 16 1Z" fill="#6c3fb8" stroke="white" stroke-width="2"/><circle cx="16" cy="15" r="5" fill="white"/></svg>',
-          iconSize: [32, 40],
+          iconSize: [16, 20],
           iconAnchor: [16, 40],
           popupAnchor: [0, -35],
         });
 
         for (const city of cities) {
           const popup = document.createElement('p');
-          popup.textContent = `${city.name} — window cleaning service available.`;
+          popup.textContent = `${city.name}`;
           const marker = L.marker(city.coordinates, {
             icon,
             title: `${city.name} service area`,

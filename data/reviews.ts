@@ -41,7 +41,7 @@ export const reviews: readonly Review[] = [
 // Checked on Google on October 22, 2026. Update the count when it changes.
 export const googleRating = {
   score: 5.0,
-  count: 110,
+  count: 116,
 } as const;
 
 // Full Google reviews for the Reviews page, copied word for word on
