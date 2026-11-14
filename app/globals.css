@@ -1379,3 +1379,52 @@ html {
     animation: none;
   }
 }
+
+
+/* Homepage header refinement: quieter, more editorial, and aligned with the
+   Manrope typography used by the redesigned homepage. Other routes unchanged. */
+body:has(main.hx) .site-header {
+  font-family: var(--font-manrope), Arial, Helvetica, sans-serif;
+  background: #200b38;
+  box-shadow: 0 1px 0 rgb(255 255 255 / .12);
+}
+body:has(main.hx) .site-header .header-strip {
+  max-height: 0;
+  border: 0;
+  opacity: 0;
+}
+body:has(main.hx) .site-header .header-row {
+  max-width: 1280px;
+  min-height: 86px;
+  padding-block: 12px;
+}
+body:has(main.hx) .site-header .header-logo {
+  height: 58px;
+}
+body:has(main.hx) .site-header nav ul {
+  gap: 30px;
+  font-size: 13px;
+  letter-spacing: .01em;
+}
+body:has(main.hx) .site-header .nav-tab[data-active],
+body:has(main.hx) .site-header .nav-tab[data-open] {
+  color: #efb52b;
+}
+body:has(main.hx) .site-header .header-row > button,
+body:has(main.hx) .site-header .header-row > a {
+  transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+}
+body:has(main.hx) .site-header [class*="bg-[#efb52b]"] {
+  border-radius: 2px;
+  box-shadow: none;
+  letter-spacing: .02em;
+}
+@media (max-width: 640px) {
+  body:has(main.hx) .site-header .header-row {
+    min-height: 72px;
+    padding-inline: 18px;
+  }
+  body:has(main.hx) .site-header .header-logo {
+    height: 48px;
+  }
+}
