@@ -2365,14 +2365,6 @@ a.hx-rating:hover strong {
    Keeps the established purple / gold identity and all existing markup
    and interactions. This layer intentionally removes decorative effects.
    ------------------------------------------------------------------ */
-@font-face {
-  font-family: "Plus Jakarta Sans Local";
-  src: url("/plus-jakarta-sans-latin.woff2") format("woff2");
-  font-style: normal;
-  font-weight: 200 800;
-  font-display: swap;
-}
-
 .hx {
   --hx-purple: #200b38;
   --hx-purple-2: #351351;
@@ -2388,7 +2380,7 @@ a.hx-rating:hover strong {
   --hx-lavender-2: #eee8f5;
   --hx-shadow-soft: 0 18px 48px rgb(32 11 56 / .08);
   --hx-radius: 3px;
-  font-family: "Plus Jakarta Sans Local", "Plus Jakarta Sans", Arial, sans-serif;
+  font-family: var(--font-manrope), "Manrope", Arial, sans-serif;
   background: #fff;
   color: var(--hx-ink);
 }
