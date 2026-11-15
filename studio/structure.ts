@@ -28,6 +28,7 @@ export const structure: StructureResolver = (S) => {
       header('faq'),
       S.documentTypeListItem('faq').title('Questions'),
     ])),
+    S.documentTypeListItem('blog').title('Blog'),
     S.listItem().id('services').title('Services').child(S.list().title('Services').items([
       header('services'),
       services('method', 'Methods'),

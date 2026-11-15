@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useId, useRef, useState } from 'react';
+import { Fragment, useId, useRef, useState } from 'react';
 import type { NavigationItem } from '@/data/company';
 import { getCurrent } from '@/lib/navigation';
 import QuoteButton from '@/components/quote/QuoteButton';
@@ -67,27 +67,42 @@ export default function MobileMenu({
         <ul className='mx-auto grid max-w-7xl gap-1'>
           {/* Use the same navigation list as the desktop header. */}
           {items.map((item) => (
-            <li key={item.href}>
-              {/* Ready pages get links that close the menu when selected. */}
-              {item.available ? (
-                <Link
-                  href={item.href}
-                  onClick={() => setOpen(false)}
-                  aria-current={getCurrent(pathname, item.href)}
-                  data-active={getCurrent(pathname, item.href) ? '' : undefined}
-                  className='block rounded-lg px-3 py-3 font-medium text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-[#efb52b] data-active:bg-white/10 data-active:text-[#efb52b] data-active:shadow-[inset_3px_0_0_#efb52b]'>
-                  {item.label}
-                </Link>
-              ) : (
-                <span
-                  aria-disabled='true'
-                  className='flex items-center justify-between px-3 py-3 text-white/60'>
-                  {item.label}
-                  <span className='text-xs'>Coming soon</span>
-                </span>
+            <Fragment key={item.href}>
+              <li>
+                {/* Ready pages get links that close the menu when selected. */}
+                {item.available ? (
+                  <Link
+                    href={item.href}
+                    onClick={() => setOpen(false)}
+                    aria-current={getCurrent(pathname, item.href)}
+                    data-active={getCurrent(pathname, item.href) ? '' : undefined}
+                    className='block rounded-lg px-3 py-3 font-medium text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-[#efb52b] data-active:bg-white/10 data-active:text-[#efb52b] data-active:shadow-[inset_3px_0_0_#efb52b]'>
+                    {item.label}
+                  </Link>
+                ) : (
+                  <span
+                    aria-disabled='true'
+                    className='flex items-center justify-between px-3 py-3 text-white/60'>
+                    {item.label}
+                    <span className='text-xs'>Coming soon</span>
+                  </span>
+                )}
+              </li>
+              {item.href === '/about' && (
+                <li>
+                  <Link
+                    href='/blog'
+                    onClick={() => setOpen(false)}
+                    aria-current={getCurrent(pathname, '/blog')}
+                    data-active={getCurrent(pathname, '/blog') ? '' : undefined}
+                    className='block rounded-lg px-3 py-3 font-medium text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-[#efb52b] data-active:bg-white/10 data-active:text-[#efb52b] data-active:shadow-[inset_3px_0_0_#efb52b]'>
+                    Blog
+                  </Link>
+                </li>
               )}
-            </li>
+            </Fragment>
           ))}
+
           {/* Close the menu, then open the quote chooser popup. */}
           <li className='mt-3'>
             <QuoteButton
