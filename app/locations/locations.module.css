@@ -164,6 +164,7 @@
 }
 
 .cityLink {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -178,7 +179,31 @@
 }
 
 .cityLink:hover {
-  color: #6c3fb8;
+  color: #2a7340;
+}
+
+/* A green line wipes along the bottom of the row on hover, like a squeegee. */
+.cityLink::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 -1px;
+  height: 3px;
+  border-radius: 3px;
+  background: #55ab68;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 400ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.cityLink:hover::after,
+.cityLink:focus-visible::after {
+  transform: scaleX(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cityLink::after {
+    transition: none;
+  }
 }
 
 .arrowLink {

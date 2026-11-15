@@ -11,6 +11,9 @@ type MobileMenuProps = {
   items: readonly NavigationItem[];
 };
 
+const linkClass =
+  'block rounded-lg px-3 py-3 font-medium text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-[#efb52b] data-active:bg-white/10 data-active:text-[#efb52b] data-active:shadow-[inset_3px_0_0_#efb52b]';
+
 export default function MobileMenu({
   items,
 }: MobileMenuProps) {
@@ -63,19 +66,40 @@ export default function MobileMenu({
         id={menuId}
         aria-label='Mobile navigation'
         hidden={!open}
-        className='absolute inset-x-0 top-full border-t border-white/15 bg-[#200b38] px-6 py-6 shadow-lg'>
+        className='absolute inset-x-0 top-full max-h-[calc(100dvh-5rem)] overflow-y-auto overscroll-contain border-t border-white/15 bg-[#200b38] px-6 py-6 shadow-lg'>
         <ul className='mx-auto grid max-w-7xl gap-1'>
           {/* Use the same navigation list as the desktop header. */}
           {items.map((item) => (
             <li key={item.href}>
               {/* Ready pages get links that close the menu when selected. */}
-              {item.available ? (
+              {item.available && item.links ? (
+                // A tab with pages under it, like Help, lists them under its name.
+                <div className='mt-2 border-t border-white/10 pt-3'>
+                  <p className='px-3 pb-1 text-xs font-semibold uppercase tracking-widest text-[#72c587]'>
+                    {item.label}
+                  </p>
+                  <ul className='grid gap-1'>
+                    {item.links.map((link) => (
+                      <li key={link.href}>
+                        <Link
+                          href={link.href}
+                          onClick={() => setOpen(false)}
+                          aria-current={pathname === link.href ? 'page' : undefined}
+                          data-active={pathname === link.href ? '' : undefined}
+                          className={linkClass}>
+                          {link.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : item.available ? (
                 <Link
                   href={item.href}
                   onClick={() => setOpen(false)}
                   aria-current={getCurrent(pathname, item.href)}
                   data-active={getCurrent(pathname, item.href) ? '' : undefined}
-                  className='block rounded-lg px-3 py-3 font-medium text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-[#efb52b] data-active:bg-white/10 data-active:text-[#efb52b] data-active:shadow-[inset_3px_0_0_#efb52b]'>
+                  className={linkClass}>
                   {item.label}
                 </Link>
               ) : (

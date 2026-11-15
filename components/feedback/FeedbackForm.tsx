@@ -7,6 +7,7 @@ import styles from '@/app/feedback/feedback.module.css';
 import { googleWriteReviewUrl } from '@/data/reviews';
 import {
   feedbackLimits,
+  suggestionReward,
   type FeedbackField,
   type FeedbackState,
 } from '@/data/feedback';
@@ -152,8 +153,8 @@ export default function FeedbackForm({ phone, phoneHref }: FeedbackFormProps) {
         tabIndex={-1}
         role='status'
         className={`${styles.success} flex flex-col items-center justify-center rounded-3xl bg-white px-8 py-14 text-center shadow-xl shadow-[#200b38]/5 ring-1 ring-gray-200 outline-none sm:px-12 sm:py-20`}>
-        <span className='grid size-16 place-items-center rounded-full bg-[#efb52b]/15'>
-          <svg aria-hidden='true' viewBox='0 0 24 24' className='size-8 text-[#200b38]' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'>
+        <span className='grid size-16 place-items-center rounded-full bg-[#55ab68] ring-8 ring-[#eaf6ed]'>
+          <svg aria-hidden='true' viewBox='0 0 24 24' className='size-8 text-white' fill='none' stroke='currentColor' strokeWidth='2.6' strokeLinecap='round' strokeLinejoin='round'>
             <path className={styles.check} d='M5 12.5l4.5 4.5L19 7.5' pathLength={1} />
           </svg>
         </span>
@@ -188,9 +189,18 @@ export default function FeedbackForm({ phone, phoneHref }: FeedbackFormProps) {
       <div aria-hidden='true' className={`${styles.stripe} h-1.5 bg-linear-to-r from-[#200b38] via-[#6c3fb8] to-[#efb52b]`} />
       <div className='p-6 sm:p-10'>
         <h2 id='feedback-form-heading' className='text-2xl font-semibold tracking-tight text-[#200b38]'>
-          Share your feedback
+          Share your feedback or suggestions
         </h2>
         <p className='mt-2 text-sm text-gray-600'>Takes about a minute. All fields are required.</p>
+        {/* Good ideas get rewarded. */}
+        <p className='mt-5 flex items-start gap-3 rounded-xl bg-[#fff6d8] px-4 py-3.5 text-sm leading-6 text-[#59441c] ring-1 ring-[#efb52b]/40'>
+          <svg aria-hidden='true' viewBox='0 0 24 24' className='mt-0.5 size-5 shrink-0 text-[#b47c00]' fill='none' stroke='currentColor' strokeWidth='1.8' strokeLinecap='round' strokeLinejoin='round'>
+            <path d='M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.3 1 2.1h5c0-.8.4-1.6 1-2.1A6 6 0 0 0 12 3z' />
+          </svg>
+          <span>
+            <strong className='font-semibold'>Have an idea?</strong> {suggestionReward}
+          </span>
+        </p>
 
         <form
           key={JSON.stringify(values)}
@@ -212,7 +222,7 @@ export default function FeedbackForm({ phone, phoneHref }: FeedbackFormProps) {
             style={{ '--delay': '620ms' } as React.CSSProperties}>
             <div className='flex items-baseline justify-between'>
               <label htmlFor='message' className='block text-sm font-medium text-[#200b38]'>
-                Your feedback
+                Your feedback or suggestion
               </label>
               <span
                 id='message-count'
@@ -233,7 +243,7 @@ export default function FeedbackForm({ phone, phoneHref }: FeedbackFormProps) {
                 if (errors.message) validate('message', event.target.value);
               }}
               onBlur={(event) => validate('message', event.target.value)}
-              placeholder='Tell us what went well and what we could do better.'
+              placeholder='Tell us what went well, what we could do better, or an idea you’d like to see.'
               aria-invalid={errors.message ? true : undefined}
               aria-describedby={errors.message ? 'message-error message-count' : 'message-count'}
               className={`${fieldClass} mt-2 resize-y px-4 py-3.5 leading-relaxed`}
@@ -286,7 +296,7 @@ export default function FeedbackForm({ phone, phoneHref }: FeedbackFormProps) {
               disabled={pending}
               className='inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-[#200b38] px-7 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#33195a] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6c3fb8] active:scale-[0.98] disabled:cursor-wait disabled:opacity-70'>
               {pending && (
-                <span aria-hidden='true' className='size-4 animate-spin rounded-full border-2 border-white/40 border-t-white' />
+                <span aria-hidden='true' className='spinner' />
               )}
               {pending ? 'Sending…' : 'Send feedback'}
             </button>

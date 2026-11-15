@@ -1,0 +1,193 @@
+/* "What booking with us is like" on the homepage. Uses the homepage's
+   hx- colors, with the logo's green for this section's accents. */
+
+/* A soft lavender band, so this section reads apart from "Where we work"
+   below it, which sits on the cream page background. */
+.section {
+  border-block: 1px solid var(--hx-line);
+  background: var(--hx-lavender);
+}
+
+
+
+/* ---------- The perks ---------- */
+
+.perks {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.perk {
+  display: flex;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid var(--hx-line);
+  border-radius: var(--hx-radius);
+  background: #fff;
+}
+
+.perk:hover {
+  border-color: #b9dcc2;
+}
+
+.perk strong {
+  display: block;
+  color: var(--hx-purple);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.perk small {
+  display: block;
+  margin-top: 4px;
+  color: var(--hx-muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.perkIcon {
+  display: grid;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border-radius: 12px;
+  background: #eaf6ed;
+  color: #2a7340;
+  transition: transform 300ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.perk:hover .perkIcon {
+  transform: translateY(-2px) rotate(-6deg);
+}
+
+.perkIcon svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* ---------- The quick quote form ---------- */
+
+.form {
+  margin-top: 28px;
+  padding: 22px 24px;
+  border: 1px solid var(--hx-line);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: var(--hx-shadow-soft);
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.2fr auto;
+  gap: 14px;
+  align-items: end;
+}
+
+.fields label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--hx-purple);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.fields .labelText {
+  color: var(--hx-purple);
+  font-weight: 700;
+}
+
+.fields .optional {
+  color: var(--hx-muted);
+  font-weight: 700;
+}
+
+.fields input {
+  height: 50px;
+  padding: 0 14px;
+  border: 1px solid #cbbfd2;
+  border-radius: 12px;
+  background: #fff;
+  color: var(--hx-ink);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  transition:
+    border-color 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.fields input::placeholder {
+  color: #8a8394;
+}
+
+.fields input:focus {
+  border-color: #2a7340;
+  outline: none;
+  box-shadow: 0 0 0 4px rgb(85 171 104 / 0.2);
+}
+
+.fields button {
+  min-height: 50px;
+}
+
+.consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 14px;
+  color: #5f5965;
+  font-size: 13px;
+  line-height: 1.55;
+  cursor: pointer;
+}
+
+.consent input {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  accent-color: #2a7340;
+  cursor: pointer;
+}
+
+.consent input:focus-visible {
+  outline: 2px solid #6c3fb8;
+  outline-offset: 2px;
+}
+
+/* ---------- Smaller screens ---------- */
+
+@media (max-width: 1100px) {
+  .perks {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .fields button {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 640px) {
+  .perks,
+  .fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .perkIcon,
+  .fields input {
+    transition: none;
+  }
+
+  .perk:hover .perkIcon {
+    transform: none;
+  }
+}

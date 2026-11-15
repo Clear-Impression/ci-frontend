@@ -24,19 +24,38 @@ export type NavigationItem = {
   href: string;
   available: boolean;
   // Show a preview panel when this tab is hovered or focused.
-  preview?: 'services' | 'locations' | 'about';
+  preview?: 'services' | 'locations' | 'about' | 'help';
+  // Pages grouped under this tab. The tab stays gold on any of them, and the
+  // phone menu lists them under the tab's name.
+  links?: readonly { label: string; href: string }[];
 };
 
 // Set available to true only when the page exists.
 export const navigation: readonly NavigationItem[] = [
   { label: 'Home', href: '/', available: true },
   { label: 'Services', href: '/services', available: true, preview: 'services' },
-  { label: 'Locations', href: '/locations', available: true, preview: 'locations' },
   { label: 'Reviews', href: '/reviews', available: true },
-  { label: 'About', href: '/about', available: true, preview: 'about' },
-  { label: 'FAQ', href: '/faq', available: true },
-  { label: 'Feedback', href: '/feedback', available: true },
-
+  { label: 'Locations', href: '/locations', available: true, preview: 'locations' },
+  {
+    label: 'Help',
+    href: '/faq',
+    available: true,
+    preview: 'help',
+    links: [
+      { label: 'FAQ', href: '/faq' },
+      { label: 'Feedback', href: '/feedback' },
+    ],
+  },
+  {
+    label: 'About',
+    href: '/about',
+    available: true,
+    preview: 'about',
+    links: [
+      { label: 'Meet the owner', href: '/about' },
+      { label: 'Blog', href: '/blog' },
+    ],
+  },
 ];
 
 // These lists are display text for now, not links to unfinished pages.

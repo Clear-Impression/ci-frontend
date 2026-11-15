@@ -26,7 +26,7 @@ export default async function BlogPage() {
     return (
         <main className='flex-1 bg-white text-gray-900'>
         {/* Same header used on about page with modified data */}
-        <section className='relative isolate overflow-hidden bg-[#200b38] text-white'>
+        <section className='page-hero relative isolate overflow-hidden bg-[#200b38] text-white'>
             <div aria-hidden='true' className='about-glow absolute inset-0 -z-10' />
             <div className='focus-out mx-auto flex min-h-88 max-w-7xl flex-col justify-center px-6 py-10 sm:min-h-80 sm:px-8 sm:py-12'>
             <p className='focus-in text-sm font-semibold uppercase tracking-widest text-[#efb52b]'>
