@@ -405,10 +405,12 @@ a.hx-rating:hover strong {
   height: 100%;
   object-fit: cover;
   object-position: 60% center;
+  /* A little extra contrast and color, so the video looks crisp, not hazy. */
+  filter: contrast(1.08) saturate(1.12);
 }
 
-/* A soft light wash from the left, so the purple words stay readable and
-   the video shows clearly on the right. */
+/* A soft light wash on the left, only behind the words, so they stay
+   readable and the rest of the video shows in full color. */
 .hx-hero-wash {
   position: absolute;
   inset: 0;
@@ -416,10 +418,11 @@ a.hx-rating:hover strong {
   pointer-events: none;
   background: linear-gradient(
     90deg,
-    rgb(255 253 249 / 0.96) 0%,
-    rgb(255 253 249 / 0.9) 30%,
-    rgb(255 253 249 / 0.45) 50%,
-    rgb(255 253 249 / 0) 68%
+    rgb(255 253 249 / 0.9) 0%,
+    rgb(255 253 249 / 0.8) 24%,
+    rgb(255 253 249 / 0.45) 38%,
+    rgb(255 253 249 / 0.12) 48%,
+    rgb(255 253 249 / 0) 56%
   );
 }
 
