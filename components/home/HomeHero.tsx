@@ -20,10 +20,9 @@ export default function HomeHero({ eyebrow, titleLines, subtitle, rating, review
     <section
       aria-labelledby='home-heading'
       className='hx-hero'>
-      {/* A drone flies in over a neighborhood at sunset, down to a spotless
-          window. The clip is cut before the logo appears at the end, so it
-          doesn't land behind the headline. A light wash on the left keeps the
-          words easy to read. */}
+      {/* A drone flies in over a neighborhood at sunset, down to one of our
+          cleaners squeegeeing a big window. The clip is cut before its white
+          end frames. A light wash on the left keeps the words easy to read. */}
       <HeroBackdropVideo />
       <span
         aria-hidden='true'
