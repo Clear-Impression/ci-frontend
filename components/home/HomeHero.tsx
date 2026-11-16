@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import HeroBackdropVideo from '@/components/home/HeroBackdropVideo';
 import HxIcon from '@/components/home/HxIcon';
 import QuoteButton from '@/components/quote/QuoteButton';
 import { googleReviewsUrl } from '@/data/reviews';
@@ -11,14 +11,8 @@ type HomeHeroProps = {
   reviewCount: number;
 };
 
-// Free Unsplash photo (unsplash.com/license): a clear desert view through a
-// modern home window. Swap in one of our own photos any time.
-const heroImage =
-  'https://images.unsplash.com/photo-1688600792894-61645c2d866c?auto=format&fit=crop&w=1600&q=85';
-
-// The homepage hero. When the page loads, a squeegee wipes across a dusty
-// window to reveal the clean view underneath, then water drops run down the
-// glass and a glare sweeps across it every few seconds.
+// The homepage hero: the words on the left over a full-width drone video of
+// a home at sunset.
 export default function HomeHero({ eyebrow, titleLines, subtitle, rating, reviewCount }: HomeHeroProps) {
   const lastLine = titleLines.length - 1;
 
@@ -26,9 +20,14 @@ export default function HomeHero({ eyebrow, titleLines, subtitle, rating, review
     <section
       aria-labelledby='home-heading'
       className='hx-hero'>
-      <div
+      {/* A drone flies in over a neighborhood at sunset, down to a spotless
+          window. The clip is cut before the logo appears at the end, so it
+          doesn't land behind the headline. A light wash on the left keeps the
+          words easy to read. */}
+      <HeroBackdropVideo />
+      <span
         aria-hidden='true'
-        className='hx-hero-shape'
+        className='hx-hero-wash'
       />
 
       <div className='hx-container hx-hero-grid'>
@@ -93,72 +92,6 @@ export default function HomeHero({ eyebrow, titleLines, subtitle, rating, review
           </a>
         </div>
 
-        <div className='hx-hero-visual'>
-          <div className='hx-hero-image'>
-            <Image
-              src={heroImage}
-              alt='A clear desert view through a large window in a modern Arizona home.'
-              fill
-              priority
-              sizes='(min-width: 1280px) 620px, (min-width: 760px) 50vw, 100vw'
-            />
-            {/* The same photo, dusty, on top. The squeegee wipes it away. */}
-            <div
-              aria-hidden='true'
-              className='hx-dirty-glass'>
-              <Image
-                src={heroImage}
-                alt=''
-                fill
-                sizes='(min-width: 1280px) 620px, (min-width: 760px) 50vw, 100vw'
-              />
-            </div>
-            <div
-              aria-hidden='true'
-              className='hx-squeegee'>
-              <span className='hx-squeegee-handle' />
-              <span className='hx-squeegee-blade' />
-            </div>
-            <div
-              aria-hidden='true'
-              className='hx-drops'>
-              <i />
-              <i />
-              <i />
-              <i />
-              <i />
-            </div>
-            <span
-              aria-hidden='true'
-              className='hx-glint'>
-              <HxIcon
-                name='sparkle'
-                size={30}
-              />
-            </span>
-            <span
-              aria-hidden='true'
-              className='hx-photo-glare'
-            />
-            <span
-              aria-hidden='true'
-              className='hx-sun-flare'
-            />
-          </div>
-          <div className='hx-hero-note'>
-            <span aria-hidden='true'>
-              <HxIcon name='sparkle' />
-            </span>
-            <div>
-              <small>OUR STANDARD</small>
-              <strong>
-                Pure water.
-                <br />
-                Spot-free finish.
-              </strong>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
   );
