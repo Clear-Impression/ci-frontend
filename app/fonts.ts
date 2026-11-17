@@ -1,9 +1,10 @@
-import { Manrope } from 'next/font/google';
+import { Plus_Jakarta_Sans } from 'next/font/google';
 
-// Manrope for the homepage: bold, modern headings that stay easy to read.
-export const manrope = Manrope({
+// Plus Jakarta Sans for the homepage: clean and modern, used at light and
+// medium weights so the big headings don't feel heavy.
+export const jakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800'],
-  variable: '--font-manrope',
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-jakarta',
   display: 'swap',
 });

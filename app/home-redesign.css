@@ -26,7 +26,7 @@
   --hx-shadow-soft: 0 18px 50px rgb(32 11 56 / 0.09);
   --hx-radius: 14px;
 
-  font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
   color: var(--hx-ink);
   background: var(--hx-paper);
   -webkit-font-smoothing: antialiased;
@@ -35,8 +35,8 @@
 .hx h1,
 .hx h2,
 .hx h3 {
-  font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
-  letter-spacing: -0.045em;
+  font-family: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: -0.03em;
 }
 
 .hx-container {
@@ -79,22 +79,25 @@
 
 .hx-h1 {
   color: var(--hx-purple);
-  font-size: clamp(52px, 6vw, 82px);
-  font-weight: 800;
-  line-height: 0.99;
+  font-size: clamp(56px, 7vw, 104px);
+  font-weight: 500;
+  line-height: 0.95;
+  letter-spacing: -0.045em;
 }
 
 .hx-h2 {
   color: var(--hx-purple);
   font-size: clamp(38px, 4.5vw, 60px);
-  font-weight: 800;
-  line-height: 1.07;
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
 }
 
 .hx-h1 em,
 .hx-h2 em {
   color: var(--hx-gold-text);
   font-style: normal;
+  font-weight: 400;
 }
 
 .hx-on-dark .hx-h2,
@@ -148,7 +151,7 @@
   background: var(--hx-gold);
   color: var(--hx-purple);
   font-size: 14px;
-  font-weight: 800;
+  font-weight: 600;
   box-shadow: 0 9px 24px rgb(185 129 0 / 0.18);
   transition:
     transform 250ms ease,
@@ -209,7 +212,7 @@
   background: rgb(255 255 255 / 0.64);
   color: var(--hx-purple);
   font-size: 14px;
-  font-weight: 800;
+  font-weight: 600;
   transition:
     background-color 250ms ease,
     border-color 250ms ease,
@@ -762,7 +765,7 @@ a.hx-rating:hover strong {
 .hx-stats b {
   color: var(--hx-purple);
   font-size: 38px;
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1;
   letter-spacing: -0.05em;
   font-variant-numeric: tabular-nums;
@@ -995,7 +998,7 @@ a.hx-rating:hover strong {
 .hx-wd-body h3 {
   margin-top: 14px;
   font-size: 26px;
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1.08;
   letter-spacing: -0.03em;
 }
@@ -1319,7 +1322,7 @@ a.hx-rating:hover strong {
 .hx-tech-sticker strong {
   margin-top: 3px;
   font-size: 24px;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .hx-tech-sticker small {
@@ -1906,7 +1909,7 @@ a.hx-rating:hover strong {
   background: #72c587;
   color: var(--hx-purple);
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 /* A short green line joins each step to the next. */

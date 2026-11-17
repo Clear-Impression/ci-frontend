@@ -2,7 +2,7 @@ import { getPageHeader } from '@/lib/page-headers';
 import type { Metadata } from 'next';
 import { createPageMetadata } from '@/lib/seo';
 import './home-redesign.css';
-import { manrope } from './fonts';
+import { jakarta } from './fonts';
 import HomeMotion from '@/components/home/HomeMotion';
 import HomeHero from '@/components/home/HomeHero';
 import HomeTrust from '@/components/home/HomeTrust';
@@ -63,7 +63,7 @@ export default async function Home() {
   const header = await getPageHeader('home');
   const { cities } = await getLocations();
   return (
-    <main className={`hx ${manrope.variable} flex-1`}>
+    <main className={`hx ${jakarta.variable} flex-1`}>
       <HomeMotion />
       <SectionRail sections={railSections} />
       {/* Build the page from sections so their content can change independently. */}
