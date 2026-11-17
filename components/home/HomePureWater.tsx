@@ -2,7 +2,6 @@
 
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import Bubbles from '@/components/home/Bubbles';
 import HxIcon from '@/components/home/HxIcon';
 import type { PureWaterStep } from '@/data/home';
 
@@ -12,8 +11,6 @@ type HomePureWaterProps = {
   lead: string;
   steps: readonly PureWaterStep[];
   result: string;
-  image: string;
-  imageAlt: string;
   caption: string;
 };
 
@@ -23,8 +20,6 @@ export default function HomePureWater({
   lead,
   steps,
   result,
-  image,
-  imageAlt,
   caption,
 }: HomePureWaterProps) {
   const [active, setActive] = useState(0);
@@ -65,16 +60,22 @@ export default function HomePureWater({
     <section
       aria-labelledby='pure-water-heading'
       className='hx-section hx-tech'>
-      <Bubbles count={5} />
       <div className='hx-container hx-tech-grid'>
         <figure className='hx-tech-image hx-reveal'>
+          {/* One photo per stage. The photo for the lit stage fades in. */}
           <div>
-            <Image
-              src={image}
-              alt={imageAlt}
-              fill
-              sizes='(min-width: 760px) 50vw, 100vw'
-            />
+            {steps.map((step, index) => (
+              <Image
+                key={step.image}
+                src={step.image}
+                alt={step.imageAlt}
+                aria-hidden={index !== active || undefined}
+                data-shown={index === active || undefined}
+                fill
+                sizes='(min-width: 760px) 50vw, 100vw'
+                className='hx-tech-photo'
+              />
+            ))}
           </div>
           <figcaption className='sr-only'>{caption}</figcaption>
           <span

@@ -9,11 +9,14 @@ type HomeHeroProps = {
   subtitle?: string;
   rating: number;
   reviewCount: number;
+  // The stats strip, shown along the bottom of the hero over the video.
+  children?: React.ReactNode;
 };
 
-// The homepage hero: the words on the left over a full-width drone video of
-// a home at sunset.
-export default function HomeHero({ eyebrow, titleLines, subtitle, rating, reviewCount }: HomeHeroProps) {
+// The homepage hero: a full-width drone video under a purple shade, a big
+// white headline, then a line with the intro, rating and buttons. The stats
+// strip sits along the bottom, over the same video.
+export default function HomeHero({ eyebrow, titleLines, subtitle, rating, reviewCount, children }: HomeHeroProps) {
   const lastLine = titleLines.length - 1;
 
   return (
@@ -22,7 +25,8 @@ export default function HomeHero({ eyebrow, titleLines, subtitle, rating, review
       className='hx-hero'>
       {/* A drone flies in over a neighborhood at sunset, down to one of our
           cleaners squeegeeing a big window. The clip is cut before its white
-          end frames. A light wash on the left keeps the words easy to read. */}
+          end frames. A purple shade from the bottom keeps the white words easy
+          to read. */}
       <HeroBackdropVideo />
       <span
         aria-hidden='true'
@@ -47,51 +51,48 @@ export default function HomeHero({ eyebrow, titleLines, subtitle, rating, review
               </span>
             ))}
           </h1>
-          {subtitle && (
-            <p
-              className='hx-hero-sub hx-reveal'
-              style={{ '--d': '150ms' } as React.CSSProperties}>
-              {subtitle}
-            </p>
-          )}
-          <div
-            className='hx-button-row hx-reveal'
-            style={{ '--d': '250ms' } as React.CSSProperties}>
-            <QuoteButton className='hx-btn'>
-              Get a free quote <HxIcon name='arrow' />
-            </QuoteButton>
-            <a
-              href='#services'
-              className='hx-btn-secondary'>
-              Our services
-            </a>
+          <div className='hx-hero-bottom'>
+            <div>
+              {subtitle && (
+                <p
+                  className='hx-hero-sub hx-reveal'
+                  style={{ '--d': '150ms' } as React.CSSProperties}>
+                  {subtitle}
+                </p>
+              )}
+              {/* The rating opens our Google Business listing in a new tab. */}
+              <a
+                href={googleReviewsUrl}
+                target='_blank'
+                rel='noopener noreferrer'
+                className='hx-hero-rating hx-reveal'
+                style={{ '--d': '250ms' } as React.CSSProperties}>
+                <span
+                  aria-hidden='true'
+                  className='hx-stars'>
+                  ★★★★★
+                </span>
+                {rating.toFixed(1)} on Google · {reviewCount} reviews
+                <span className='sr-only'> (opens in a new tab)</span>
+              </a>
+            </div>
+            <div
+              className='hx-button-row hx-reveal'
+              style={{ '--d': '300ms' } as React.CSSProperties}>
+              <QuoteButton className='hx-btn'>
+                Get a free quote <HxIcon name='arrow' />
+              </QuoteButton>
+              <a
+                href='#services'
+                className='hx-btn-secondary'>
+                See services
+              </a>
+            </div>
           </div>
-          {/* The rating opens our Google Business listing in a new tab. */}
-          <a
-            href={googleReviewsUrl}
-            target='_blank'
-            rel='noopener noreferrer'
-            className='hx-rating hx-reveal'
-            style={{ '--d': '350ms' } as React.CSSProperties}>
-            <span
-              aria-hidden='true'
-              className='hx-google-g'>
-              G
-            </span>
-            <span className='hx-rating-text'>
-              <span
-                aria-hidden='true'
-                className='hx-stars'>
-                ★★★★★
-              </span>
-              <strong>{rating.toFixed(1)} on Google</strong>
-              <small>Based on {reviewCount} Google reviews</small>
-            </span>
-            <span className='sr-only'> (opens in a new tab)</span>
-          </a>
         </div>
-
       </div>
+
+      {children}
     </section>
   );
 }

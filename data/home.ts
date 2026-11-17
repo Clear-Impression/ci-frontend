@@ -6,6 +6,9 @@ const quoteHref = company.quoteFormUrl;
 export const homeHero = {
   eyebrow: 'Window cleaning in the Phoenix metro area',
   titleLines: ['Clear Impression.', 'Always.'],
+  // Shown under the headline when the homepage header in Sanity has no subtitle.
+  subtitle:
+    'Spot-free windows, solar panels and storefront glass for homes and businesses across the Valley. Pure water outside, careful hands inside.',
   quoteHref,
 };
 
@@ -34,6 +37,9 @@ export const servingSince = 2018;
 export type PureWaterStep = {
   label: string;
   detail: string;
+  // The photo on the left while this stage is lit.
+  image: string;
+  imageAlt: string;
 };
 
 export const pureWater = {
@@ -44,20 +50,24 @@ export const pureWater = {
     {
       label: 'Carbon Filter',
       detail: 'Removes chlorine and sediment from the water before anything else.',
+      image: '/images/home/pure-water-cleaning.webp',
+      imageAlt: 'XERO water purification equipment used for pure-water cleaning.',
     },
     {
       label: 'RO Membrane',
       detail: 'Reverse osmosis strips out 98% of the minerals and impurities that cause spots.',
+      image: '/images/home/commercial-glass-card.jpg',
+      imageAlt: 'A window cleaner washing tall storefront glass with a water-fed pole.',
     },
     {
       label: 'DI Resin',
       detail: 'The final polish: deionization leaves 100% pure water that dries without a trace.',
+      image: '/images/home/home-window-card.jpg',
+      imageAlt: 'Spotless windows on a stucco home reflecting palm trees and blue sky.',
     },
   ] as readonly PureWaterStep[],
   result:
     'Just pure water that evaporates to leave a spotless, crystal-clear finish. Windows stay clean for longer!',
-  image: '/images/home/pure-water-cleaning.webp',
-  imageAlt: 'XERO water purification equipment used for pure-water cleaning.',
   caption: 'The filtration system we bring to every pure water job.',
 };
 
@@ -75,6 +85,9 @@ export type HomeServiceCard = {
   imageAlt: string;
   // Which part of the photo stays in view in the tall card, e.g. '70% center'.
   imagePosition?: string;
+  // True to show this photo on the homepage card even when the service has
+  // its own photo in Sanity.
+  preferThisImage?: boolean;
 };
 
 // The "What we clean" section: four tall photo cards for our main services.
@@ -90,9 +103,10 @@ export const homeServices = {
         'Hand-detailed glass inside, pure water outside. Fingerprints, dog smudges and monsoon splatter, gone.',
       points: ['Drop cloths & shoe covers', 'Water-fed pole outside', 'Dries spot-free'],
       cta: 'See window cleaning',
-      // Our own photo of a clean home window.
-      image: '/images/home/home-window-card.jpg',
-      imageAlt: 'Spotless windows on a stucco home with palm trees reflected in the glass.',
+      image: '/images/home/residential-card.jpg',
+      imageAlt: 'A window cleaner washing a large front window of a home with a water-fed pole.',
+      imagePosition: '70% center',
+      preferThisImage: true,
     },
     {
       slug: 'commercial-office-glass',
@@ -101,9 +115,10 @@ export const homeServices = {
         'Storefronts, restaurants and low-rise offices kept sharp, with minimal disruption to your staff and customers.',
       points: ['Retail & restaurants', 'Weekly, bi-weekly or monthly', 'No lifts or ladders upstairs'],
       cta: 'See commercial glass',
-      image: '/images/home/commercial-glass-card.jpg',
-      imageAlt: 'A window cleaner using a water-fed pole on the glass front of an office building.',
-      imagePosition: '72% center',
+      image: '/images/home/office-glass-wall.jpg',
+      imageAlt: 'A tall wall of spotless glass in a bright office building, looking out over the city.',
+      imagePosition: '35% center',
+      preferThisImage: true,
     },
     {
       slug: 'solar-panel-cleaning',

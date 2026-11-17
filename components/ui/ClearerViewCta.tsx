@@ -281,15 +281,6 @@ export default function ClearerViewCta() {
         aria-hidden='true'
         className='cv-light'
       />
-      <span
-        aria-hidden='true'
-        className='cv-bubbles'>
-        <i />
-        <i />
-        <i />
-        <i />
-        <i />
-      </span>
 
       <div className='cv-copy'>
         <p className='cv-eyebrow'>
