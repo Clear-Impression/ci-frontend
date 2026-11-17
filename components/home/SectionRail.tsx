@@ -48,13 +48,16 @@ const icons: Record<string, React.ReactNode> = {
 // per section, with a small icon and number. The section you're reading is
 // marked in green; click any row to jump there.
 //
-// It stays tucked away while you scroll. When the page sits still for three
+// It stays out of the way on the video hero at the top of the page and near
+// the footer, and stays tucked away while you scroll. When the page sits still for three
 // seconds it slides in, and it slides away again as soon as you scroll. The
 // three-line button at the top left pulls it out (or puts it away) any time;
 // opened that way it stays until you close it.
 export default function SectionRail({ sections }: SectionRailProps) {
   const [active, setActive] = useState(0);
   const [nearFooter, setNearFooter] = useState(false);
+  // True while the video hero still fills most of the screen.
+  const [onHero, setOnHero] = useState(true);
   const [idleOpen, setIdleOpen] = useState(false);
   const [pinned, setPinned] = useState(false);
   const [top, setTop] = useState(0);
@@ -79,6 +82,9 @@ export default function SectionRail({ sections }: SectionRailProps) {
 
       const footer = document.querySelector('footer');
       setNearFooter(footer ? footer.getBoundingClientRect().top < window.innerHeight * 0.75 : false);
+
+      const hero = document.querySelector('.hx-hero');
+      setOnHero(hero ? hero.getBoundingClientRect().bottom > window.innerHeight * 0.45 : false);
     };
 
     const schedule = () => {
@@ -124,7 +130,9 @@ export default function SectionRail({ sections }: SectionRailProps) {
     return () => window.removeEventListener('keydown', onKey);
   }, [pinned]);
 
-  const open = !nearFooter && (pinned || idleOpen);
+  // Never over the video hero or the footer.
+  const away = nearFooter || onHero;
+  const open = !away && (pinned || idleOpen);
 
   return (
     <div
@@ -136,7 +144,7 @@ export default function SectionRail({ sections }: SectionRailProps) {
         aria-controls='hx-sidenav'
         aria-label={open ? 'Hide the list of homepage sections' : 'Show the list of homepage sections'}
         data-open={open || undefined}
-        data-hidden={nearFooter || undefined}
+        data-hidden={away || undefined}
         onClick={() => {
           setPinned(!open);
           setIdleOpen(false);
