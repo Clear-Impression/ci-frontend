@@ -85,6 +85,9 @@ export type HomeServiceCard = {
   imageAlt: string;
   // Which part of the photo stays in view in the tall card, e.g. '70% center'.
   imagePosition?: string;
+  // True to show this photo on the homepage card even when the service has
+  // its own photo in Sanity.
+  preferThisImage?: boolean;
 };
 
 // The "What we clean" section: four tall photo cards for our main services.
@@ -100,9 +103,10 @@ export const homeServices = {
         'Hand-detailed glass inside, pure water outside. Fingerprints, dog smudges and monsoon splatter, gone.',
       points: ['Drop cloths & shoe covers', 'Water-fed pole outside', 'Dries spot-free'],
       cta: 'See window cleaning',
-      // Our own photo of a clean home window.
-      image: '/images/home/home-window-card.jpg',
-      imageAlt: 'Spotless windows on a stucco home with palm trees reflected in the glass.',
+      image: '/images/home/residential-card.jpg',
+      imageAlt: 'A window cleaner washing a large front window of a home with a water-fed pole.',
+      imagePosition: '70% center',
+      preferThisImage: true,
     },
     {
       slug: 'commercial-office-glass',
@@ -111,9 +115,10 @@ export const homeServices = {
         'Storefronts, restaurants and low-rise offices kept sharp, with minimal disruption to your staff and customers.',
       points: ['Retail & restaurants', 'Weekly, bi-weekly or monthly', 'No lifts or ladders upstairs'],
       cta: 'See commercial glass',
-      image: '/images/home/commercial-glass-card.jpg',
-      imageAlt: 'A window cleaner using a water-fed pole on the glass front of an office building.',
-      imagePosition: '72% center',
+      image: '/images/home/office-glass-card.jpg',
+      imageAlt: 'A tall wall of spotless glass in a bright office building, looking out over the city.',
+      imagePosition: '35% center',
+      preferThisImage: true,
     },
     {
       slug: 'solar-panel-cleaning',

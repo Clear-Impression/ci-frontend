@@ -11,17 +11,19 @@ type HomeServicesProps = {
   cards: readonly HomeServiceCard[];
 };
 
-// "What we clean": four tall photo cards, one per main service. Each card
-// has a label, the service name, a short line, three points and a link to the
-// service page. A service's own photo from Sanity wins over the default one.
+// "What we clean": four tall photo cards, one per main service, set a little
+// up and down. Each card has a label, the service name, a short line, three
+// points and a link to the service page. A service's own photo from Sanity
+// wins over the default one, unless the card says to prefer its own photo.
 export default async function HomeServices({ eyebrow, titleLines, lead, cards }: HomeServicesProps) {
   const services = await getServices();
   const items = cards.flatMap((card) => {
     const service = services.find((item) => item.slug === card.slug);
     if (!service) return [];
-    const photo = service.image?.url
-      ? { src: service.image.url, alt: service.image.alt, position: undefined }
-      : { src: card.image, alt: card.imageAlt, position: card.imagePosition };
+    const photo =
+      service.image?.url && !card.preferThisImage
+        ? { src: service.image.url, alt: service.image.alt, position: undefined }
+        : { src: card.image, alt: card.imageAlt, position: card.imagePosition };
     return [{ ...card, title: service.title, photo }];
   });
   const lastLine = titleLines.length - 1;
@@ -74,7 +76,7 @@ export default async function HomeServices({ eyebrow, titleLines, lead, cards }:
                   src={item.photo.src}
                   alt={item.photo.alt}
                   fill
-                  sizes='(min-width: 1180px) 300px, (min-width: 760px) 50vw, 100vw'
+                  sizes='(min-width: 1180px) 340px, (min-width: 760px) 50vw, 100vw'
                   style={{ objectPosition: item.photo.position }}
                   className='hx-wd-photo'
                 />
