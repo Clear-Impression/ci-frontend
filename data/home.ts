@@ -115,7 +115,7 @@ export const homeServices = {
         'Storefronts, restaurants and low-rise offices kept sharp, with minimal disruption to your staff and customers.',
       points: ['Retail & restaurants', 'Weekly, bi-weekly or monthly', 'No lifts or ladders upstairs'],
       cta: 'See commercial glass',
-      image: '/images/home/office-glass-card.jpg',
+      image: '/images/home/office-glass-wall.jpg',
       imageAlt: 'A tall wall of spotless glass in a bright office building, looking out over the city.',
       imagePosition: '35% center',
       preferThisImage: true,
