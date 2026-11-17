@@ -9,6 +9,13 @@ import { getServices } from '@/lib/services';
 import ServiceIcon from '@/components/services/ServiceIcon';
 import Image from 'next/image';
 
+const serviceSearchTitles = new Map([
+  ['residential-window-washing', 'Residential Window Cleaning in Phoenix Metro'],
+  ['commercial-office-glass', 'Commercial Window Cleaning in Phoenix Metro'],
+  ['window-washing-traditional-tools', 'Traditional Window Cleaning'],
+  ['window-washing-100-percent-pure-water', 'Pure Water Window Cleaning'],
+]);
+
 type ServicePageProps = {
   params: Promise<{ service: string }>;
 };
@@ -25,9 +32,10 @@ export async function generateMetadata({
   const service = (await getServices()).find((item) => item.slug === slug);
   if (!service) notFound();
 
+  const searchTitle = serviceSearchTitles.get(service.slug) ?? service.title;
   return createPageMetadata({
     path: '/services/' + service.slug,
-    title: `${service.title} | ${company.name}`,
+    title: `${searchTitle} | ${company.name}`,
     description: service.largeDescription,
   });
 }
@@ -73,6 +81,9 @@ export default async function ServicePage({ params }: ServicePageProps) {
           <div className='grid gap-16 lg:grid-cols-2 lg:items-start'>
             {/* Hero */}
             <div className='space-y-6 leading-8 text-gray-700'>
+              <h2 id='service-details-heading' className='text-2xl font-semibold text-[#200b38]'>
+                Service details
+              </h2>
               <p>{firstParagraph}</p>
               {moreParagraphs.length > 0 && (
                 <details className='group mt-6'>

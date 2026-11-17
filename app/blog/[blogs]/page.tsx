@@ -1,11 +1,13 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { createPageMetadata } from '@/lib/seo';
 import { getBlogBySlug, getBlogs, getBlogDescriptionText } from '@/lib/blog';
 import ClearerViewCta from '@/components/ui/ClearerViewCta';
 import { company } from '@/data/company';
 import BlogContent from '@/components/blog/BlogContent';
+import { getServices } from '@/lib/services';
 
 
 type BlogPageProps = {
@@ -124,6 +126,11 @@ export default async function BlogPostPage({ params }: BlogPageProps) {
 
   if (!blog) notFound();
 
+  const residentialServiceSlug = 'residential-window-washing';
+  const showResidentialService =
+    blog.slug === '5-benefits-of-professional-window-cleaning-in-phoenix' &&
+    (await getServices()).some((service) => service.slug === residentialServiceSlug);
+
   const structuredData = JSON.stringify(createBlogStructuredData(blog)).replace(
     /</g,
     '\\u003c',
@@ -177,6 +184,17 @@ export default async function BlogPostPage({ params }: BlogPageProps) {
         )}
         <div className='text-lg'>
           <BlogContent description={blog.description} />
+          {showResidentialService && (
+            <p className='mt-5 leading-8 text-gray-700'>
+              See what we clean and how we work in our{' '}
+              <Link
+                href={`/services/${residentialServiceSlug}`}
+                className='font-semibold text-[#6c3fb8] underline underline-offset-4 hover:text-[#200b38]'>
+                residential window cleaning service
+              </Link>
+              .
+            </p>
+          )}
         </div>
       </article>
 
