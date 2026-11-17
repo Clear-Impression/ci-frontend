@@ -34,6 +34,9 @@ export const servingSince = 2018;
 export type PureWaterStep = {
   label: string;
   detail: string;
+  // The photo on the left while this stage is lit.
+  image: string;
+  imageAlt: string;
 };
 
 export const pureWater = {
@@ -44,20 +47,24 @@ export const pureWater = {
     {
       label: 'Carbon Filter',
       detail: 'Removes chlorine and sediment from the water before anything else.',
+      image: '/images/home/pure-water-cleaning.webp',
+      imageAlt: 'XERO water purification equipment used for pure-water cleaning.',
     },
     {
       label: 'RO Membrane',
       detail: 'Reverse osmosis strips out 98% of the minerals and impurities that cause spots.',
+      image: '/images/home/commercial-glass-card.jpg',
+      imageAlt: 'A window cleaner washing tall storefront glass with a water-fed pole.',
     },
     {
       label: 'DI Resin',
       detail: 'The final polish: deionization leaves 100% pure water that dries without a trace.',
+      image: '/images/home/home-window-card.jpg',
+      imageAlt: 'Spotless windows on a stucco home reflecting palm trees and blue sky.',
     },
   ] as readonly PureWaterStep[],
   result:
     'Just pure water that evaporates to leave a spotless, crystal-clear finish. Windows stay clean for longer!',
-  image: '/images/home/pure-water-cleaning.webp',
-  imageAlt: 'XERO water purification equipment used for pure-water cleaning.',
   caption: 'The filtration system we bring to every pure water job.',
 };
 

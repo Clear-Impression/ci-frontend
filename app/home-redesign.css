@@ -1301,6 +1301,28 @@ a.hx-rating:hover strong {
   filter: saturate(0.85);
 }
 
+/* The photos sit on top of each other; the lit stage's photo fades in with
+   a slow, gentle zoom. */
+.hx-tech-photo {
+  opacity: 0;
+  transform: scale(1.06);
+  transition:
+    opacity 700ms ease,
+    transform 1400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.hx-tech-photo[data-shown] {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hx-tech-photo {
+    transform: none;
+    transition: none;
+  }
+}
+
 .hx-tech-sticker {
   position: absolute;
   z-index: 2;
