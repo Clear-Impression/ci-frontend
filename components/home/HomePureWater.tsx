@@ -2,7 +2,6 @@
 
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import Bubbles from '@/components/home/Bubbles';
 import HxIcon from '@/components/home/HxIcon';
 import type { PureWaterStep } from '@/data/home';
 
@@ -65,7 +64,6 @@ export default function HomePureWater({
     <section
       aria-labelledby='pure-water-heading'
       className='hx-section hx-tech'>
-      <Bubbles count={5} />
       <div className='hx-container hx-tech-grid'>
         <figure className='hx-tech-image hx-reveal'>
           <div>

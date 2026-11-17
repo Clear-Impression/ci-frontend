@@ -1944,8 +1944,79 @@ a.hx-rating:hover strong {
 
 .hx-sidenav:not([data-shown]) {
   opacity: 0;
-  transform: translate(-12px, -45%);
+  transform: translate(-28px, -45%);
   pointer-events: none;
+}
+
+/* The three-line button at the top left that pulls the guide out. It sits
+   just under the header and turns into an X while the guide is out. */
+.hx-sidenav-toggle {
+  position: fixed;
+  z-index: 31;
+  top: calc(var(--rail-top, 0px) + 18px);
+  left: 22px;
+  display: none;
+  width: 44px;
+  height: 44px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 1px solid var(--hx-line);
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.92);
+  box-shadow: 0 6px 18px rgb(32 11 56 / 0.12);
+  color: var(--hx-purple);
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition:
+    opacity 300ms ease,
+    border-color 250ms ease,
+    transform 250ms ease;
+}
+
+@media (min-width: 1100px) {
+  .hx-sidenav-toggle {
+    display: flex;
+  }
+}
+
+.hx-sidenav-toggle:hover {
+  border-color: var(--hx-gold);
+  transform: scale(1.05);
+}
+
+.hx-sidenav-toggle:focus-visible {
+  outline: 2px solid #6c3fb8;
+  outline-offset: 3px;
+}
+
+.hx-sidenav-toggle[data-hidden] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.hx-sidenav-toggle span {
+  display: block;
+  width: 18px;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  transition:
+    transform 300ms ease,
+    opacity 200ms ease;
+}
+
+.hx-sidenav-toggle[data-open] span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.hx-sidenav-toggle[data-open] span:nth-child(2) {
+  opacity: 0;
+}
+
+.hx-sidenav-toggle[data-open] span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
 }
 
 /* The small label running up the side. */
