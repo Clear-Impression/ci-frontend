@@ -73,3 +73,39 @@ export const SERVICES_QUERY = defineQuery(`
     }
   }
 `)
+
+export const BLOGS_QUERY = defineQuery(`
+  *[
+    _type == "blog" &&
+    coalesce(published, true) == true &&
+    defined(slug.current)
+  ] | order(date desc, _createdAt desc) {
+    title,
+    date,
+    description,
+    "slug": slug.current,
+    "image": image {
+      "url": asset->url,
+      "alt": alt,
+      "caption": caption
+    }
+  }
+`)
+
+export const BLOG_QUERY = defineQuery(`
+  *[
+    _type == "blog" &&
+    coalesce(published, true) == true &&
+    slug.current == $slug
+  ][0] {
+    title,
+    date,
+    description,
+    "slug": slug.current,
+    "image": image {
+      "url": asset->url,
+      "alt": alt,
+      "caption": caption
+    }
+  }
+`)

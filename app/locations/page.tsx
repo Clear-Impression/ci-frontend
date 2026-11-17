@@ -5,10 +5,10 @@ import Link from 'next/link';
 import ServiceAreaMap from '@/components/home/ServiceAreaMap';
 //import HomeContact from '@/components/home/HomeContact';
 import Reveal from '@/components/services/Reveal'
-import { company } from '@/data/company';
 import { getLocations, withCityCount } from '@/lib/locations';
 import ValleyRoute from '@/components/locations/ValleyRoute';
 import styles from './locations.module.css';
+import ClearerViewCta from '@/components/ui/ClearerViewCta';
 
 // Give the Locations page its own title and search description. List every
 // city by name, so the description stays current as cities are added.
@@ -104,24 +104,7 @@ export default async function LocationsPage() {
 
       {/* Same panel as the About page, pointing on to Services or a quote. */}
       <section className='mx-auto max-w-7xl px-6 py-16 sm:px-8 sm:py-20'>
-        <Reveal className='cta-shine relative overflow-hidden rounded-2xl bg-[#200b38] px-8 py-12 text-white sm:px-12'>
-          <h2 className='text-2xl font-semibold sm:text-3xl'>
-            {page.nextHeading}
-          </h2>
-          <p className='mt-4 max-w-2xl text-white/80'>{page.nextText}</p>
-          <div className='relative mt-8 flex flex-wrap gap-3'>
-            <Link
-              href='/services'
-              className='inline-flex min-h-11 items-center rounded-lg bg-[#efb52b] px-5 py-3 text-sm font-semibold text-[#200b38] hover:bg-[#f6c95b] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white'>
-              {page.servicesLabel}
-            </Link>
-            <Link
-              href={company.quoteFormUrl}
-              className='inline-flex min-h-11 items-center rounded-lg border border-white/30 px-5 py-3 text-sm font-semibold text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white'>
-              Get a free quote
-            </Link>
-          </div>
-        </Reveal>
+        <ClearerViewCta />
       </section>
     </main>
   );
