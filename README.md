@@ -175,6 +175,12 @@ local test accounts. The frontend must run as a Next.js server, not a static exp
 Open `clear-impression.code-workspace` to work with both repositories in VS Code.
 They have separate Git histories, branches, and commits.
 
+## Impeccable Documentation
+Impeccable is installed in the repository for Claude, Codex, Gemini, and Copilot.
+You can reference the documentation with the link below. 
+
+[https://impeccable.style/docs/](https://impeccable.style/docs/)
+
 ## Commands
 
 - `npm run dev`: start the development server.
