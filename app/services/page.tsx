@@ -5,6 +5,7 @@ import { coreServices, howWeDoIt, specializedServices } from '@/data/services';
 import Reveal from '@/components/services/Reveal';
 import ServiceIndex from './ServiceIndex';
 import ClearerViewCta from '@/components/ui/ClearerViewCta';
+import HeroVideo from '@/components/ui/HeroVideo';
 
 // Describe the page for search engines and link previews.
 export const metadata = createPageMetadata({
@@ -25,11 +26,24 @@ export default async function Services() {
   return (
     <main className='flex-1 bg-white text-[#200b38]'>
       {/* The headline rises behind fogged glass, then a squeegee wipes it clear. */}
-      <section className='page-hero relative isolate overflow-hidden bg-[#200b38] text-white'>
-        <div aria-hidden='true' className='hero-glare absolute inset-0 -z-10' />
-        {/* Same height, sizes, and spacing as the other page headers. */}
-        <div className='hero-drift mx-auto flex min-h-88 max-w-7xl flex-col justify-center px-6 py-10 sm:min-h-80 sm:px-8 sm:py-12'>
-          <p className='text-sm font-semibold uppercase tracking-widest text-[#efb52b]'>
+      <section className='page-hero relative isolate overflow-hidden bg-[linear-gradient(118deg,#fffdf9_0%,#faf7fc_54%,#eee7f4_100%)] text-[#200b38]'>
+        {/* Solar panels being scrubbed with pure water, mountains behind. The clip is
+            mirrored so the cleaner stands on the right, clear of the words. */}
+        <HeroVideo
+          webm='/videos/services-hero.webm'
+          mp4='/videos/services-hero.mp4'
+          poster='/videos/services-hero-poster.jpg'
+          className='absolute inset-0 -z-20 size-full object-cover object-[65%_center]'
+        />
+        {/* A soft beige wash only behind the words, like the homepage hero, so the
+            rest of the video shows in full color. */}
+        <div
+          aria-hidden='true'
+          className='absolute inset-0 -z-10 bg-linear-to-r from-[#fffdf9]/92 from-15% via-[#fffdf9]/60 via-38% to-transparent to-58% max-sm:bg-linear-to-b max-sm:from-[#fffdf9]/94 max-sm:via-[#fffdf9]/85 max-sm:to-[#fffdf9]/60'
+        />
+        {/* Taller than the other page headers, so more of the video shows. */}
+        <div className='hero-drift mx-auto flex min-h-[30rem] max-w-7xl flex-col justify-center px-6 py-14 sm:min-h-[34rem] sm:px-8 sm:py-16'>
+          <p className='text-sm font-semibold uppercase tracking-widest text-[#b47c00]'>
             What we do
           </p>
           <h1 className='mt-3 max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl'>
@@ -43,7 +57,7 @@ export default async function Services() {
               </span>
             ))}
           </h1>
-          <p className='hero-after mt-6 max-w-2xl text-lg text-white/80'>
+          <p className='hero-after mt-6 max-w-xl text-lg text-[#625c64]'>
             {header.subtitle}
           </p>
         </div>
