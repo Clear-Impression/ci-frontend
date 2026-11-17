@@ -68,8 +68,8 @@ export default function EstimateBar() {
       <div
         role='region'
         aria-label='Your estimate'
-        className='pointer-events-auto flex w-full max-w-xl items-center gap-1.5 rounded-full bg-[#2a1048] py-2 pl-5 pr-2 text-white shadow-2xl shadow-black/30 ring-1 ring-white/15 backdrop-blur-md sm:gap-2 sm:pl-6'>
-        <div className='min-w-0 flex-1'>
+        className='pointer-events-auto flex w-full max-w-xl items-center gap-1.5 rounded-full bg-[#2a1048] py-2 pl-5 pr-2 text-white shadow-2xl shadow-black/30 ring-1 ring-white/15 backdrop-blur-md max-sm:grid max-sm:grid-cols-[1fr_1fr_auto] max-sm:rounded-2xl max-sm:px-3 sm:gap-2 sm:pl-6'>
+        <div className='min-w-0 flex-1 max-sm:col-span-3'>
           <p className='whitespace-nowrap text-[10px] font-semibold uppercase tracking-[0.16em] text-white/55'>
             {estimate ? (
               <>
@@ -91,12 +91,12 @@ export default function EstimateBar() {
 
         <Link
           href={estimate ? '/estimate' : '/estimate?start=1'}
-          className='inline-flex min-h-11 shrink-0 items-center rounded-full px-3 text-sm sm:px-4 font-semibold ring-1 ring-white/25 hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#efb52b]'>
-          {estimate ? 'Adjust' : 'Start'}
+          className='inline-flex min-h-11 shrink-0 items-center justify-center whitespace-nowrap rounded-full px-3 text-sm sm:px-4 font-semibold ring-1 ring-white/25 hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#efb52b]'>
+          {estimate ? 'Edit estimate' : 'Start estimate'}
         </Link>
         <a
           href={smsLink(estimate)}
-          className='inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full bg-[#efb52b] px-3.5 text-sm font-semibold text-[#200b38] hover:bg-[#f6c95b] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:px-5'>
+          className='inline-flex min-h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-full bg-[#efb52b] px-3.5 text-sm font-semibold text-[#200b38] hover:bg-[#f6c95b] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white max-sm:gap-1 max-sm:px-2 sm:px-5'>
           <svg aria-hidden='true' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='1.8' strokeLinecap='round' strokeLinejoin='round' className='size-4'>
             <path d='M4.5 5.5h15v10h-9l-5 4v-4h-1z' />
           </svg>

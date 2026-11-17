@@ -1,12 +1,13 @@
 'use client';
 
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useSyncExternalStore } from 'react';
 
 // The homepage has nothing to go back to, city and service pages already
 // have their own back link in the same corner, and the owner sign-in page
 // and dashboard are the owner's tools, not part of browsing the website.
 const hiddenOn = [/^\/$/, /^\/locations\/[^/]+$/, /^\/services\/[^/]+$/, /^\/owner(\/login)?$/];
+const subscribeToHydration = () => () => {};
 
 // A small "Back" button that floats just under the header. It sits over the
 // page instead of in it, so the layout underneath never moves. It returns to
@@ -15,15 +16,19 @@ const hiddenOn = [/^\/$/, /^\/locations\/[^/]+$/, /^\/services\/[^/]+$/, /^\/own
 export default function BackButton() {
   const pathname = usePathname();
   const router = useRouter();
-  const firstPath = useRef(pathname);
+  // The server's route can differ from the browser URL on a cached response.
+  const hydrated = useSyncExternalStore(subscribeToHydration, () => true, () => false);
+  const firstPath = useRef<string | null>(null);
   const movedWithinSite = useRef(false);
 
   // Once the visitor opens another page here, Back can use their history.
   useEffect(() => {
-    if (pathname !== firstPath.current) movedWithinSite.current = true;
-  }, [pathname]);
+    if (!hydrated) return;
+    if (firstPath.current === null) firstPath.current = pathname;
+    else if (pathname !== firstPath.current) movedWithinSite.current = true;
+  }, [hydrated, pathname]);
 
-  if (hiddenOn.some((pattern) => pattern.test(pathname))) return null;
+  if (!hydrated || hiddenOn.some((pattern) => pattern.test(pathname))) return null;
 
   const goBack = () => {
     const cameFromSite =

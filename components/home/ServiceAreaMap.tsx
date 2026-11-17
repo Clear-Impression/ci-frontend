@@ -9,7 +9,6 @@ import type {
 import type { FeatureCollection } from 'geojson';
 import type { ServiceCity } from '@/data/home';
 import rawCityBoundaries from '@/data/geojson/service-city-boundaries.json';
-import 'leaflet/dist/leaflet.css';
 
 const cityBoundaries = rawCityBoundaries as unknown as FeatureCollection;
 
@@ -78,8 +77,11 @@ export default function ServiceAreaMap({
 
     async function setupMap() {
       try {
-        // Load Leaflet in the browser; it needs the window and map container.
-        const L = await import('leaflet');
+        // Load the map's styles with Leaflet so they don't block the initial page render.
+        const [L] = await Promise.all([
+          import('leaflet'),
+          import('leaflet/dist/leaflet.css'),
+        ]);
         if (cancelled || !containerRef.current) return;
 
         map = L.map(containerRef.current, {

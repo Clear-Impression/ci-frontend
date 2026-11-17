@@ -1,12 +1,17 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { preload } from 'react-dom';
+
+const poster = '/videos/home-drone-poster.jpg';
 
 // The drone video behind the homepage hero: silent, looping and decorative,
 // so screen readers skip it. With reduced motion turned on it stays on the
 // still first frame.
 export default function HeroBackdropVideo() {
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  preload(poster, { as: 'image', fetchPriority: 'high' });
 
   useEffect(() => {
     const video = videoRef.current;
@@ -32,7 +37,7 @@ export default function HeroBackdropVideo() {
       loop
       playsInline
       preload='metadata'
-      poster='/videos/home-drone-poster.jpg'
+      poster={poster}
       className='hx-hero-backdrop-video'>
       <source
         src='/videos/home-drone.webm'
