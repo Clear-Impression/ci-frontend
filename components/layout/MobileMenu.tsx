@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Fragment, useId, useRef, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 import type { NavigationItem } from '@/data/company';
 import { getCurrent } from '@/lib/navigation';
 import QuoteButton from '@/components/quote/QuoteButton';
@@ -10,6 +10,9 @@ import QuoteButton from '@/components/quote/QuoteButton';
 type MobileMenuProps = {
   items: readonly NavigationItem[];
 };
+
+const linkClass =
+  'block rounded-lg px-3 py-3 font-medium text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-[#efb52b] data-active:bg-white/10 data-active:text-[#efb52b] data-active:shadow-[inset_3px_0_0_#efb52b]';
 
 export default function MobileMenu({
   items,
@@ -63,46 +66,52 @@ export default function MobileMenu({
         id={menuId}
         aria-label='Mobile navigation'
         hidden={!open}
-        className='absolute inset-x-0 top-full border-t border-white/15 bg-[#200b38] px-6 py-6 shadow-lg'>
+        className='absolute inset-x-0 top-full max-h-[calc(100dvh-5rem)] overflow-y-auto overscroll-contain border-t border-white/15 bg-[#200b38] px-6 py-6 shadow-lg'>
         <ul className='mx-auto grid max-w-7xl gap-1'>
           {/* Use the same navigation list as the desktop header. */}
           {items.map((item) => (
-            <Fragment key={item.href}>
-              <li>
-                {/* Ready pages get links that close the menu when selected. */}
-                {item.available ? (
-                  <Link
-                    href={item.href}
-                    onClick={() => setOpen(false)}
-                    aria-current={getCurrent(pathname, item.href)}
-                    data-active={getCurrent(pathname, item.href) ? '' : undefined}
-                    className='block rounded-lg px-3 py-3 font-medium text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-[#efb52b] data-active:bg-white/10 data-active:text-[#efb52b] data-active:shadow-[inset_3px_0_0_#efb52b]'>
+            <li key={item.href}>
+              {/* Ready pages get links that close the menu when selected. */}
+              {item.available && item.links ? (
+                // A tab with pages under it, like Help, lists them under its name.
+                <div className='mt-2 border-t border-white/10 pt-3'>
+                  <p className='px-3 pb-1 text-xs font-semibold uppercase tracking-widest text-[#72c587]'>
                     {item.label}
-                  </Link>
-                ) : (
-                  <span
-                    aria-disabled='true'
-                    className='flex items-center justify-between px-3 py-3 text-white/60'>
-                    {item.label}
-                    <span className='text-xs'>Coming soon</span>
-                  </span>
-                )}
-              </li>
-              {item.href === '/about' && (
-                <li>
-                  <Link
-                    href='/blog'
-                    onClick={() => setOpen(false)}
-                    aria-current={getCurrent(pathname, '/blog')}
-                    data-active={getCurrent(pathname, '/blog') ? '' : undefined}
-                    className='block rounded-lg px-3 py-3 font-medium text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-[#efb52b] data-active:bg-white/10 data-active:text-[#efb52b] data-active:shadow-[inset_3px_0_0_#efb52b]'>
-                    Blog
-                  </Link>
-                </li>
+                  </p>
+                  <ul className='grid gap-1'>
+                    {item.links.map((link) => (
+                      <li key={link.href}>
+                        <Link
+                          href={link.href}
+                          onClick={() => setOpen(false)}
+                          aria-current={pathname === link.href ? 'page' : undefined}
+                          data-active={pathname === link.href ? '' : undefined}
+                          className={linkClass}>
+                          {link.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : item.available ? (
+                <Link
+                  href={item.href}
+                  onClick={() => setOpen(false)}
+                  aria-current={getCurrent(pathname, item.href)}
+                  data-active={getCurrent(pathname, item.href) ? '' : undefined}
+                  className={linkClass}>
+                  {item.label}
+                </Link>
+              ) : (
+                <span
+                  aria-disabled='true'
+                  className='flex items-center justify-between px-3 py-3 text-white/60'>
+                  {item.label}
+                  <span className='text-xs'>Coming soon</span>
+                </span>
               )}
-            </Fragment>
+            </li>
           ))}
-
           {/* Close the menu, then open the quote chooser popup. */}
           <li className='mt-3'>
             <QuoteButton

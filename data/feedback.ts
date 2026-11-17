@@ -12,6 +12,10 @@ export const feedbackPage = {
     'Tell us how your service went or what we could improve. Every message is read by our team.',
 } as const;
 
+// The reward for a suggestion we put to work.
+export const suggestionReward =
+  'If we put your suggestion to work, you get credit toward your next clean.';
+
 // The panel at the bottom of the page, for customers ready to book again.
 export const feedbackClosing = {
   heading: 'Need another cleaning?',

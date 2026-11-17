@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { company } from '@/data/company';
-import { formatMoney } from '@/data/estimate';
 import { estimateChangeEvent, readEstimate, type EstimateSummary } from '@/lib/estimateStore';
 
 const dismissKey = 'ci-estimate-bar-hidden';
@@ -12,7 +11,7 @@ const smsNumber = company.phoneHref.replace(/^tel:/, '');
 
 function smsLink(estimate: EstimateSummary | null) {
   const body = estimate
-    ? `Hi! I'd like to book. My instant estimate was ${formatMoney(estimate.total)} for ${estimate.services.join(', ')}.`
+    ? `Hi! I'd like to book ${estimate.service}. My instant estimate was ${estimate.range}.`
     : `Hi! I'd like a quote for window cleaning.`;
   return `sms:${smsNumber}?&body=${encodeURIComponent(body)}`;
 }
@@ -82,8 +81,8 @@ export default function EstimateBar() {
             )}
           </p>
           {estimate ? (
-            <p key={estimate.total} className='estimate-bar-total text-xl font-semibold tabular-nums leading-tight'>
-              {formatMoney(estimate.total)}
+            <p key={estimate.range} className='estimate-bar-total truncate text-lg font-semibold tabular-nums leading-tight sm:text-xl'>
+              {estimate.range}
             </p>
           ) : (
             <p className='truncate text-[15px] font-semibold leading-tight'>See your price in a minute</p>

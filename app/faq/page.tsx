@@ -36,7 +36,7 @@ export default async function FAQPage({ searchParams }: FAQPageProps) {
   return (
     <main className="flex-1 bg-white text-[#200b38]">
       {/* same header band as the other pages */}
-      <section className="relative isolate overflow-hidden bg-[#200b38] text-white">
+      <section className="page-hero relative isolate overflow-hidden bg-[#200b38] text-white">
         {/* a soft glow that drifts slowly behind the title */}
         <div aria-hidden="true" className={`${styles.glow} absolute -z-10`} />
         <div className="mx-auto flex min-h-88 max-w-7xl flex-col justify-center px-6 py-10 sm:min-h-80 sm:px-8 sm:py-12">

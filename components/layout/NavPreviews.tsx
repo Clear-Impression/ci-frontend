@@ -20,9 +20,9 @@ export function AboutPreview() {
         <li className='nav-stagger' style={{ '--n': 0 } as React.CSSProperties}>
           <Link href='/about' className={itemClass}>
             <span>
-              <span className='block font-semibold leading-snug'>About</span>
+              <span className='block font-semibold leading-snug'>Meet the owner</span>
               <span className='mt-0.5 block text-sm leading-5 text-gray-600'>
-                {aboutIntro.title}
+                {aboutIntro.tagline}
               </span>
             </span>
           </Link>
@@ -37,6 +37,51 @@ export function AboutPreview() {
             </span>
           </Link>
         </li>
+      </ul>
+    </div>
+  );
+}
+
+// FAQ and Feedback together under one Help tab.
+const helpLinks = [
+  {
+    href: '/faq',
+    title: 'FAQ',
+    text: 'Quick answers to what customers ask most.',
+    icon: ['M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0', 'M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.7M12 17h.01'],
+  },
+  {
+    href: '/feedback',
+    title: 'Feedback',
+    text: 'Tell us how we did, or share an idea.',
+    icon: ['M4 5h16v11H9l-5 4z'],
+  },
+];
+
+export function HelpPreview() {
+  return (
+    <div className='w-[min(22rem,calc(100vw-3rem))]'>
+      <ul className='p-3'>
+        {helpLinks.map((link, index) => (
+          <li
+            key={link.href}
+            className='nav-stagger'
+            style={{ '--n': index } as React.CSSProperties}>
+            <Link href={link.href} className={itemClass}>
+              <span className='grid size-9 shrink-0 place-items-center rounded-lg bg-[#eaf6ed] text-[#2a7340]'>
+                <svg aria-hidden='true' viewBox='0 0 24 24' className='size-5' fill='none' stroke='currentColor' strokeWidth='1.8' strokeLinecap='round' strokeLinejoin='round'>
+                  {link.icon.map((path) => (
+                    <path key={path} d={path} />
+                  ))}
+                </svg>
+              </span>
+              <span>
+                <span className='block font-semibold leading-snug'>{link.title}</span>
+                <span className='mt-0.5 block text-sm leading-5 text-gray-600'>{link.text}</span>
+              </span>
+            </Link>
+          </li>
+        ))}
       </ul>
     </div>
   );
@@ -148,12 +193,12 @@ export async function LocationsPreview() {
             <Link
               href={city.href}
               className={itemClass}>
-              <span className='nav-icon grid size-10 shrink-0 place-items-center rounded-lg bg-[#6c3fb8]/10'>
+              <span className='nav-icon grid size-10 shrink-0 place-items-center rounded-lg bg-[#eaf6ed]'>
                 <ServiceIcon
                   slug='pin'
                   paths={pin}
                   draw='none'
-                  className='size-5 text-[#6c3fb8]'
+                  className='size-5 text-[#2a7340]'
                 />
               </span>
               <span>
