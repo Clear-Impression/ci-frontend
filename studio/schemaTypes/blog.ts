@@ -25,6 +25,9 @@ export const blog = defineType({
       name: 'date',
       title: 'Publication date',
       type: 'date',
+      description:
+        'Use today for immediate publication, or the planned release date for a scheduled post.',
+      initialValue: () => new Date().toISOString().slice(0, 10),
       validation: (rule) => rule.required(),
     }),
     defineField({
@@ -49,9 +52,54 @@ export const blog = defineType({
     }),
     defineField({
       name: 'description',
-      title: 'Paragraph description',
-      type: 'text',
-      rows: 8,
+      title: 'Article content',
+      type: 'array',
+      of: [
+        {
+          type: 'block',
+          styles: [
+            {title: 'Normal', value: 'normal'},
+            {title: 'Heading 2', value: 'h2'},
+            {title: 'Heading 3', value: 'h3'},
+            {title: 'Heading 4', value: 'h4'},
+            {title: 'Quote', value: 'blockquote'},
+          ],
+          marks: {
+            decorators: [
+              {title: 'Strong', value: 'strong'},
+              {title: 'Emphasis', value: 'em'},
+              {title: 'Underline', value: 'underline'},
+              {title: 'Strikethrough', value: 'strike-through'},
+              {title: 'Code', value: 'code'},
+            ],
+            annotations: [
+              {
+                name: 'link',
+                type: 'object',
+                title: 'Link',
+                fields: [
+                  defineField({
+                    name: 'href',
+                    title: 'URL',
+                    type: 'url',
+                    validation: (rule) => rule.required(),
+                  }),
+                  defineField({
+                    name: 'blank',
+                    title: 'Open in new tab',
+                    type: 'boolean',
+                    initialValue: false,
+                  }),
+                ],
+              },
+            ],
+          },
+          lists: [
+            {title: 'Bullet', value: 'bullet'},
+            {title: 'Numbered', value: 'number'},
+          ],
+        },
+      ],
       validation: (rule) => rule.required(),
     }),
     defineField({

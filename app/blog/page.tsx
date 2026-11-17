@@ -2,7 +2,7 @@ import { createPageMetadata } from '@/lib/seo';
 import { blogIntro } from '@/data/blog';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getBlogs } from '@/lib/blog';
+import { getBlogs, getBlogDescriptionText } from '@/lib/blog';
 import ClearerViewCta from '@/components/ui/ClearerViewCta';
 
 
@@ -74,7 +74,7 @@ export default async function BlogPage() {
                   </h2>
 
                   <p className='mt-4 line-clamp-3 leading-7 text-gray-700'>
-                    {blog.description}
+                    {getBlogDescriptionText(blog.description)}
                   </p>
 
                   <Link
@@ -89,7 +89,7 @@ export default async function BlogPage() {
         </section>
         
         {/* Footer element to guide user to make quote reused from home page */}
-        <section className='mx-auto max-w-7xl px-6 py-16 sm:px-8 sm:py-20'>
+        <section className='mx-auto max-w-7xl px-6 pt-8 pb-16 sm:px-8 sm:pt-10 sm:pb-20'>
           <ClearerViewCta />
         </section>
 
