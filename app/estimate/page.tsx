@@ -3,7 +3,7 @@ import PriceCalculator from '@/components/estimate/PriceCalculator';
 import { getLocations } from '@/lib/locations';
 import { getPageHeader } from '@/lib/page-headers';
 
-const title = 'Get a Free Quote | Clear Impression Services';
+const title = 'Get a Free Quote | Clear Impression';
 const description =
   'Get an instant ballpark price for window, solar panel, gutter, and screen cleaning in the Phoenix metro area, or request an exact quote.';
 

@@ -9,7 +9,7 @@ import ClearerViewCta from '@/components/ui/ClearerViewCta';
 // Describe the page for search engines and link previews.
 export const metadata = createPageMetadata({
   path: '/services',
-  title: 'Services | Clear Impression Services',
+  title: 'Services | Clear Impression',
   description:
     'Window cleaning with traditional tools or 100% pure water, plus hard water stain removal, screen cleaning, and more across Mesa and the Phoenix metro.',
 });

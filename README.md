@@ -1,4 +1,4 @@
-# Clear Impression Services Frontend
+# Clear Impression Frontend
 
 Public-facing website built with Next.js App Router, React, TypeScript, and Tailwind CSS.
 

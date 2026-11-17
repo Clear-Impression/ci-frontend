@@ -10,7 +10,7 @@ import ClearerViewCta from '@/components/ui/ClearerViewCta';
 // Give the Reviews page its own title and search description.
 export const metadata = createPageMetadata({
   path: '/reviews',
-  title: 'Reviews | Clear Impression Services',
+  title: 'Reviews | Clear Impression',
   description:
     'Rated 5.0 on Google. Read what homeowners and businesses across Mesa and the Phoenix metro say about Clear Impression window cleaning.',
 });

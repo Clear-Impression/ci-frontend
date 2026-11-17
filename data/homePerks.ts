@@ -43,5 +43,5 @@ export const homePerks = {
   ] satisfies { icon: PerkIcon; title: string; text: string }[],
   // The opt-in for texts. It has to stay unchecked until the visitor checks it.
   consent:
-    'Yes, text me seasonal offers and service updates from Clear Impression Services. Message frequency varies. Message and data rates may apply. Reply STOP to opt out or HELP for help. Agreeing isn’t required to get a quote.',
+    'Yes, text me seasonal offers and service updates from Clear Impression. Message frequency varies. Message and data rates may apply. Reply STOP to opt out or HELP for help. Agreeing isn’t required to get a quote.',
 };

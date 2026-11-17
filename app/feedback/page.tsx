@@ -7,7 +7,7 @@ import { feedbackClosing, feedbackPage } from '@/data/feedback';
 import { googleRating, googleWriteReviewUrl } from '@/data/reviews';
 import styles from './feedback.module.css';
 
-const title = 'Feedback | Clear Impression Services';
+const title = 'Feedback | Clear Impression';
 const description =
   'Share feedback about your window cleaning service with Clear Impression. Tell us what went well and what we can improve.';
 

@@ -3,7 +3,7 @@ import Link from 'next/link';
 import OwnerLoginForm from '@/components/owner/OwnerLoginForm';
 
 export const metadata: Metadata = {
-  title: 'Owner Sign In | Clear Impression Services',
+  title: 'Owner Sign In | Clear Impression',
   robots: { index: false, follow: false },
 };
 

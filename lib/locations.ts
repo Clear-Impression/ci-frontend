@@ -101,7 +101,7 @@ function toCity(city: CityDocument): LocationPage[] {
     slug,
     href: `/locations/${slug}`,
     title: text(city.title, `Window cleaning in ${name}, AZ.`),
-    intro: text(city.intro, `Residential and commercial window cleaning in ${name}, provided by Clear Impression Services.`),
+    intro: text(city.intro, `Residential and commercial window cleaning in ${name}, provided by Clear Impression.`),
     description: city.description ?? '',
     region: text(city.region, 'Phoenix metro'),
     coordinates: [latitude, longitude],

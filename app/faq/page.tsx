@@ -6,7 +6,7 @@ import { getFAQs } from "@/lib/api";
 import type { FAQItem } from "@/types/faq";
 import { getPageHeader } from "@/lib/page-headers";
 
-const title = "FAQ | Clear Impression Services";
+const title = "FAQ | Clear Impression";
 const description =
   "Answers to common questions about Clear Impression's window cleaning, scheduling, and service across the Phoenix metro area.";
 

@@ -4,7 +4,7 @@ import QuoteForm, { type QuoteStart } from '@/components/quote/QuoteForm';
 import { company } from '@/data/company';
 import { quoteOptions } from '@/data/quote';
 
-const title = 'Request a Quote | Clear Impression Services';
+const title = 'Request a Quote | Clear Impression';
 const description = 'Plan your window, solar panel, or screen cleaning in the Phoenix metro area. Tell Clear Impression about your home or business.';
 
 export const maxDuration = 75;

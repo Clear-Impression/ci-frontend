@@ -21,7 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return createPageMetadata({
     path: '/locations',
-    title: 'Window Cleaning Service Areas | Clear Impression Services',
+    title: 'Window Cleaning Service Areas | Clear Impression',
     description: `Residential and commercial window cleaning in ${cityList}. Find your city and see what we do there.`,
   });
 }

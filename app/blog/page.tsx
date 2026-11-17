@@ -8,7 +8,7 @@ import ClearerViewCta from '@/components/ui/ClearerViewCta';
 
 export const metadata = createPageMetadata({
   path: '/blog',
-  title: 'Blog | Clear Impression Services',
+  title: 'Blog | Clear Impression',
   description: 'Tips and insights from Clear Impression.',
 });
 
