@@ -416,52 +416,170 @@ a.hx-rating:hover strong {
      (a browser filter on top would blur it slightly and shift the colors). */
 }
 
-/* A soft light wash on the left, only behind the words, so they stay
-   readable and the rest of the video shows in full color. */
+/* ---------- Dark video hero ----------
+   The video fills the hero under a purple shade that is light at the top and
+   deep at the bottom, so the big white headline and the stats strip read
+   clearly while the middle of the video stays bright. */
+.hx-hero {
+  display: flex;
+  min-height: max(640px, calc(100svh - var(--hdr, 150px)));
+  flex-direction: column;
+  justify-content: flex-end;
+  background: #200b38;
+  color: #fff;
+}
+
 .hx-hero-wash {
   position: absolute;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background: linear-gradient(
-    90deg,
-    rgb(255 253 249 / 0.5) 0%,
-    rgb(255 253 249 / 0.38) 20%,
-    rgb(255 253 249 / 0.14) 34%,
-    rgb(255 253 249 / 0) 46%
-  );
+  background:
+    linear-gradient(180deg, rgb(32 11 56 / 0.5) 0%, rgb(32 11 56 / 0) 24%),
+    linear-gradient(0deg, rgb(32 11 56 / 0.94) 0%, rgb(32 11 56 / 0.62) 30%, rgb(32 11 56 / 0.18) 58%, rgb(32 11 56 / 0) 76%);
 }
 
-/* With a lighter wash, a soft cream glow behind the words keeps them easy
-   to read where they cross the video. */
-.hx-hero-copy .hx-h1,
-.hx-hero-copy .hx-eyebrow,
-.hx-hero-copy .hx-hero-sub,
-.hx-hero-copy .hx-rating-text {
-  text-shadow: 0 0 28px rgb(255 253 249 / 0.95), 0 0 10px rgb(255 253 249 / 0.75);
-}
-
-/* The small print under the rating sits on a soft cream pill instead,
-   so it stays readable over any part of the video. */
-.hx-hero-copy .hx-rating-text {
-  padding: 6px 12px;
-  border-radius: 12px;
-  background: rgb(255 253 249 / 0.78);
-  backdrop-filter: blur(6px);
-  text-shadow: none;
-}
-
-.hx-hero-copy .hx-rating small {
-  color: #4f4853;
-}
-
-.hx-hero-copy .hx-stars {
-  text-shadow: none;
-}
-
-/* With the frame gone, the words take one column on the left. */
 .hx .hx-hero-grid {
-  grid-template-columns: minmax(0, 620px);
+  display: block;
+  min-height: 0;
+}
+
+.hx .hx-hero-copy {
+  padding: clamp(36px, 6vh, 80px) 0 28px;
+}
+
+.hx-hero .hx-eyebrow {
+  color: rgb(255 255 255 / 0.85);
+}
+
+.hx .hx-hero-copy .hx-h1 {
+  margin-bottom: 0;
+  color: #fff;
+  font-size: clamp(54px, min(9.6vw, 15vh), 148px);
+  font-weight: 500;
+  line-height: 0.93;
+  letter-spacing: -0.055em;
+}
+
+/* Narrow enough that "Clear" and "Impression." sit on their own lines, like
+   a magazine cover. */
+.hx .hx-hero-copy .hx-h1 .line-rise {
+  max-width: 6.4em;
+}
+
+.hx .hx-hero-copy .hx-h1 em {
+  color: var(--hx-gold);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+}
+
+/* The line under the headline: intro and rating on the left, buttons on the
+   right, above a thin divider. */
+.hx-hero-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px 40px;
+  margin-top: 24px;
+  padding-top: 22px;
+  border-top: 1px solid rgb(255 255 255 / 0.22);
+}
+
+.hx .hx-hero-sub {
+  max-width: 46ch;
+  margin-bottom: 14px;
+  color: rgb(255 255 255 / 0.86);
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.hx-hero-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: rgb(255 255 255 / 0.9);
+  font-size: 15px;
+  text-decoration: none;
+}
+
+.hx-hero-rating .hx-stars {
+  color: var(--hx-gold);
+  letter-spacing: 0.12em;
+}
+
+.hx-hero-rating:hover {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.hx-hero-rating:focus-visible {
+  outline: 2px solid var(--hx-gold);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.hx-hero .hx-button-row {
+  margin: 0;
+}
+
+.hx-hero .hx-btn-secondary {
+  border-color: rgb(255 255 255 / 0.75);
+  background: transparent;
+  color: #fff;
+}
+
+.hx-hero .hx-btn-secondary:hover {
+  border-color: #fff;
+  background: rgb(255 255 255 / 0.1);
+}
+
+.hx-hero .hx-btn:focus-visible,
+.hx-hero .hx-btn-secondary:focus-visible {
+  outline-color: var(--hx-gold);
+}
+
+/* The stats strip, merged into the bottom of the hero: frosted glass over
+   the video, white figures, and each figure still links to its page. */
+.hx-hero .hx-stats-strip {
+  border-block: 0;
+  border-top: 1px solid rgb(255 255 255 / 0.14);
+  background: rgb(255 255 255 / 0.06);
+  backdrop-filter: blur(14px) saturate(1.3);
+}
+
+.hx-hero .hx-stats {
+  padding: 20px 0;
+}
+
+.hx-hero .hx-stats > li {
+  border-right-color: rgb(255 255 255 / 0.16);
+}
+
+.hx-hero .hx-stats b,
+.hx-hero .hx-stats strong {
+  color: #fff;
+}
+
+.hx-hero .hx-stats b {
+  font-weight: 500;
+}
+
+.hx-hero .hx-stats small {
+  color: rgb(255 255 255 / 0.68);
+}
+
+.hx-hero .hx-stats strong svg {
+  color: var(--hx-gold);
+}
+
+.hx-hero .hx-stat:hover {
+  background: rgb(255 255 255 / 0.1);
+}
+
+.hx-hero .hx-stat:focus-visible {
+  outline-color: var(--hx-gold);
 }
 
 .hx-hero-shape {
@@ -2662,13 +2780,21 @@ a.hx-rating:hover strong {
 }
 
 @media (max-width: 760px) {
-  /* On phones the wash runs from the top, under the words. */
+  /* On phones the words cover most of the video, so the shade is deeper. */
   .hx-hero-wash {
     background: linear-gradient(
       180deg,
-      rgb(255 253 249 / 0.95) 0%,
-      rgb(255 253 249 / 0.88) 60%,
-      rgb(255 253 249 / 0.55) 100%
+      rgb(32 11 56 / 0.55) 0%,
+      rgb(32 11 56 / 0.7) 50%,
+      rgb(32 11 56 / 0.92) 100%
     );
+  }
+
+  .hx-hero .hx-stats > li {
+    border-bottom-color: rgb(255 255 255 / 0.14);
+  }
+
+  .hx-hero .hx-stats > li:last-child {
+    border-bottom: 0;
   }
 }

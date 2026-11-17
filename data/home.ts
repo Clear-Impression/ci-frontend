@@ -6,6 +6,9 @@ const quoteHref = company.quoteFormUrl;
 export const homeHero = {
   eyebrow: 'Window cleaning in the Phoenix metro area',
   titleLines: ['Clear Impression.', 'Always.'],
+  // Shown under the headline when the homepage header in Sanity has no subtitle.
+  subtitle:
+    'Spot-free windows, solar panels and storefront glass for homes and businesses across the Valley. Pure water outside, careful hands inside.',
   quoteHref,
 };
 

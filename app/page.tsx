@@ -71,18 +71,19 @@ export default async function Home() {
         <HomeHero
           {...homeHero}
           titleLines={header.title.split('\n')}
-          subtitle={header.subtitle}
+          subtitle={header.subtitle || homeHero.subtitle}
           rating={googleRating.score}
-          reviewCount={googleRating.count}
-        />
-      </div>
-      <div id='why-us'>
-        <HomeTrust
-          score={googleRating.score}
-          count={googleRating.count}
-          since={servingSince}
-          cityCount={cities.length}
-        />
+          reviewCount={googleRating.count}>
+          {/* The stats strip sits along the bottom of the hero, over the video. */}
+          <div id='why-us'>
+            <HomeTrust
+              score={googleRating.score}
+              count={googleRating.count}
+              since={servingSince}
+              cityCount={cities.length}
+            />
+          </div>
+        </HomeHero>
       </div>
       {/* What booking is like, with a quick way to start a quote. */}
       <div id='booking'>
