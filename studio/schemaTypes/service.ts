@@ -32,6 +32,29 @@ export const service = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: 'image',
+      title: 'Service image',
+      type: 'image',
+      options: {hotspot: true},
+      description:
+        'Optional image shown on the service page. Leave it empty to keep the placeholder.',
+      fields: [
+        defineField({
+          name: 'alt',
+          title: 'Alternative text',
+          type: 'string',
+          description: 'Briefly describe the image for visitors using screen readers.',
+          validation: (rule) => rule.required(),
+        }),
+        defineField({
+          name: 'caption',
+          title: 'Caption',
+          type: 'string',
+          description: 'Optional text displayed below the image.',
+        }),
+      ],
+    }),
+    defineField({
       name: 'previewDescription',
       title: 'Preview description',
       type: 'string',
@@ -61,29 +84,6 @@ export const service = defineType({
       type: 'array',
       of: [defineArrayMember({type: 'string'})],
       description: 'Add two or three short benefits to show in the service overview.',
-    }),
-    defineField({
-      name: 'image',
-      title: 'Service image',
-      type: 'image',
-      options: {hotspot: true},
-      description:
-        'Optional image shown on the service page. Leave it empty to keep the placeholder.',
-      fields: [
-        defineField({
-          name: 'alt',
-          title: 'Alternative text',
-          type: 'string',
-          description: 'Briefly describe the image for visitors using screen readers.',
-          validation: (rule) => rule.required(),
-        }),
-        defineField({
-          name: 'caption',
-          title: 'Caption',
-          type: 'string',
-          description: 'Optional text displayed below the image.',
-        }),
-      ],
     }),
     defineField({
       name: 'displayOrder',

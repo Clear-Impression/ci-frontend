@@ -2,8 +2,10 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { createPageMetadata } from '@/lib/seo';
-import { getBlogBySlug, getBlogs } from '@/lib/blog';
+import { getBlogBySlug, getBlogs, getBlogDescriptionText } from '@/lib/blog';
 import ClearerViewCta from '@/components/ui/ClearerViewCta';
+import { company } from '@/data/company';
+import BlogContent from '@/components/blog/BlogContent';
 
 
 type BlogPageProps = {
@@ -26,11 +28,32 @@ export async function generateMetadata({
 
   if (!blog) notFound();
 
-  return createPageMetadata({
+  const baseMetadata = createPageMetadata({
     path: `/blog/${blog.slug}`,
     title: `${blog.title} | Clear Impression`,
-    description: blog.description,
+    description: getBlogDescriptionText(blog.description),
   });
+
+  const image = blog.image?.url
+    ? {
+        url: blog.image.url,
+        alt: blog.image.alt ?? blog.title,
+      }
+    : undefined;
+
+  return {
+    ...baseMetadata,
+    openGraph: {
+      ...baseMetadata.openGraph,
+      type: 'article',
+      publishedTime: `${blog.date}T00:00:00.000Z`,
+      images: image ? [image] : baseMetadata.openGraph?.images,
+    },
+    twitter: {
+      ...baseMetadata.twitter,
+      images: image ? [image] : baseMetadata.twitter?.images,
+    },
+  };
 }
 
 function Words({ text, className }: { text: string; className: string }) {
@@ -46,14 +69,72 @@ function Words({ text, className }: { text: string; className: string }) {
   ));
 }
 
+function createBlogStructuredData(blog: NonNullable<Awaited<ReturnType<typeof getBlogBySlug>>>) {
+  const url = new URL(`/blog/${blog.slug}`, company.website).href;
+  const image = blog.image?.url ? [blog.image.url] : undefined;
+
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'BlogPosting',
+        '@id': `${url}#article`,
+        url,
+        mainEntityOfPage: url,
+        headline: blog.title,
+        description: getBlogDescriptionText(blog.description),
+        datePublished: `${blog.date}T00:00:00.000Z`,
+        ...(image ? {image} : {}),
+        publisher: {
+          '@type': 'Organization',
+          name: company.name,
+          url: company.website,
+        },
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: company.website,
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Blog',
+            item: new URL('/blog', company.website).href,
+          },
+          {
+            '@type': 'ListItem',
+            position: 3,
+            name: blog.title,
+            item: url,
+          },
+        ],
+      },
+    ],
+  };
+}
+
 export default async function BlogPostPage({ params }: BlogPageProps) {
   const { blogs: slug } = await params;
   const blog = await getBlogBySlug(slug);
 
   if (!blog) notFound();
 
+  const structuredData = JSON.stringify(createBlogStructuredData(blog)).replace(
+    /</g,
+    '\\u003c',
+  );
+
   return (
     <main className='flex-1 bg-white text-[#200b38]'>
+      <script
+        type='application/ld+json'
+        dangerouslySetInnerHTML={{__html: structuredData}}
+      />
       {/* Same header used on about page with modified data */}
       <section className='relative isolate overflow-hidden bg-[#200b38] text-white'>
           <div aria-hidden='true' className='about-glow absolute inset-0 -z-10' />
@@ -79,9 +160,11 @@ export default async function BlogPostPage({ params }: BlogPageProps) {
           <figure>
             <Image
               src={blog.image.url}
-              alt={blog.image.alt ?? ''}
+              alt={blog.image.alt ?? blog.title}
               width={1200}
               height={400}
+              priority
+              sizes='(max-width: 1280px) 100vw, 1200px'
               className='aspect-3/1 w-full rounded-2xl object-cover'
             />
 
@@ -92,13 +175,13 @@ export default async function BlogPostPage({ params }: BlogPageProps) {
             )}
           </figure>
         )}
-        <p className='mt-5 whitespace-pre-line text-lg leading-8 text-gray-700'>
-          {blog.description}
-        </p>
+        <div className='text-lg'>
+          <BlogContent description={blog.description} />
+        </div>
       </article>
 
       {/* Contact slug */}
-      <section className='mx-auto max-w-7xl px-6 py-16 sm:px-8 sm:py-20'>
+      <section className='mx-auto max-w-7xl px-6 pt-8 pb-16 sm:px-8 sm:pt-10 sm:pb-20'>
         <ClearerViewCta />
       </section>
 
