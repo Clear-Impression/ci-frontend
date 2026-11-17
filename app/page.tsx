@@ -1,5 +1,4 @@
 import { getPageHeader } from '@/lib/page-headers';
-import type { Metadata } from 'next';
 import { createPageMetadata } from '@/lib/seo';
 import './home-redesign.css';
 import { jakarta } from './fonts';
@@ -16,6 +15,7 @@ import { beforeAfter } from '@/data/beforeAfter';
 import HomePromise from '@/components/home/HomePromise';
 import HomePerks from '@/components/home/HomePerks';
 import { homePerks } from '@/data/homePerks';
+import { company } from '@/data/company';
 import { promise } from '@/data/promise';
 import SectionRail, { type RailSection } from '@/components/home/SectionRail';
 import {
@@ -30,20 +30,21 @@ import {
 import { googleRating, homeReviews } from '@/data/reviews';
 import { getLocations, withCityCount } from '@/lib/locations';
 
-// Name every city we serve, so the search description stays current.
-export async function generateMetadata(): Promise<Metadata> {
-  const { cities } = await getLocations();
-  const cityList = new Intl.ListFormat('en', {
-    style: 'long',
-    type: 'conjunction',
-  }).format(cities.map((city) => city.name));
+export const metadata = createPageMetadata({
+  path: '/',
+  title: 'Window Cleaning in Phoenix Metro | Clear Impression',
+  description:
+    'Residential and commercial window cleaning across the Phoenix metro area. Explore our services and request a free quote from Clear Impression.',
+});
 
-  return createPageMetadata({
-    path: '/',
-    title: 'Window Cleaning in Phoenix Metro | Clear Impression',
-    description: `Residential and commercial window cleaning in ${cityList}. Explore our cleaning methods and request a free quote.`,
-  });
-}
+const organizationStructuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: company.name,
+  url: company.website,
+  logo: new URL(company.logo, company.website).href,
+  telephone: company.phoneHref.replace(/^tel:/, ''),
+};
 
 // The sections listed in the "On this page" guide, top to bottom. Each id wraps one section below.
 const railSections = [
@@ -63,7 +64,13 @@ export default async function Home() {
   const header = await getPageHeader('home');
   const { cities } = await getLocations();
   return (
-    <main className={`hx ${jakarta.variable} flex-1`}>
+    <main className={`hx ${manrope.variable} flex-1`}>
+      <script
+        type='application/ld+json'
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(organizationStructuredData).replace(/</g, '\\u003c'),
+        }}
+      />
       <HomeMotion />
       <SectionRail sections={railSections} />
       {/* Build the page from sections so their content can change independently. */}
