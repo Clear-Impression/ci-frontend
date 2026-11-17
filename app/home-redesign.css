@@ -461,6 +461,13 @@ a.hx-rating:hover strong {
   letter-spacing: -0.055em;
 }
 
+/* Extra room under each line so letters that dip below the line, like the
+   "y" in "Always.", aren't cut off. */
+.hx .hx-hero-copy .hx-h1 .line-mask {
+  padding-bottom: 0.2em;
+  margin-bottom: -0.12em;
+}
+
 /* Narrow enough that "Clear" and "Impression." sit on their own lines, like
    a magazine cover. */
 .hx .hx-hero-copy .hx-h1 .line-rise {
