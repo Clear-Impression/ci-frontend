@@ -17,7 +17,7 @@ import ClearerViewCta from '@/components/ui/ClearerViewCta';
 // Give the About page its own title and search description.
 export const metadata = createPageMetadata({
   path: '/about',
-  title: 'Meet the Owner | Clear Impression Services',
+  title: 'Meet the Owner | Clear Impression',
   description:
     'Meet Niels, who founded Clear Impression in Mesa in 2018. Honest, detail-focused window and exterior cleaning across the Phoenix metro area.',
 });

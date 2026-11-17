@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Owner Dashboard | Clear Impression Services',
+  title: 'Owner Dashboard | Clear Impression',
   robots: { index: false, follow: false },
 };
 
@@ -37,7 +37,7 @@ export default function OwnerDashboardPage() {
   return (
     <main className='flex-1 bg-[#faf8fd] px-6 py-16 sm:px-8'>
       <div className='mx-auto max-w-7xl'>
-        <p className='text-sm font-semibold text-[#6c3fb8]'>Clear Impression Services</p>
+        <p className='text-sm font-semibold text-[#6c3fb8]'>Clear Impression</p>
         <h1 className='mt-3 text-3xl font-semibold text-[#200b38]'>Owner dashboard</h1>
         <p className='mt-4 max-w-2xl leading-7 text-[#686170]'>
           Manage your website content and access your business tools.

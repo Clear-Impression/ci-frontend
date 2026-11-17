@@ -20,7 +20,7 @@ const outputPath = path.join(
 const cities = ['Fountain Hills'];
 //
 
-const userAgent = 'ci-frontend-city-boundaries/1.0 (Clear Impression Services)';
+const userAgent = 'ci-frontend-city-boundaries/1.0 (Clear Impression)';
 
 async function fetchBoundary(city) {
   const query = new URLSearchParams({

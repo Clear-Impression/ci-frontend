@@ -8,7 +8,7 @@ web
 
 ## Users
 
-Homeowners and business owners across the Phoenix metro area visit Clear Impression Services to find cleaning services, check service coverage, and request a quote.
+Homeowners and business owners across the Phoenix metro area visit Clear Impression to find cleaning services, check service coverage, and request a quote.
 
 ## Product Purpose
 

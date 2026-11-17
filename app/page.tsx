@@ -40,7 +40,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return createPageMetadata({
     path: '/',
-    title: 'Window Cleaning in Phoenix Metro | Clear Impression Services',
+    title: 'Window Cleaning in Phoenix Metro | Clear Impression',
     description: `Residential and commercial window cleaning in ${cityList}. Explore our cleaning methods and request a free quote.`,
   });
 }

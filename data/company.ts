@@ -1,8 +1,8 @@
 // Keep company details in one place for the header and footer.
 export const company = {
-  name: 'Clear Impression Services',
+  name: 'Clear Impression',
   description:
-    'Residential and commercial window cleaning for a clearer view across the Phoenix metro area.',
+    'Residential and commercial window cleaning across the Phoenix metro area. Fully insured. 100% Honest.',
   phone: '(480) 622-0622',
   phoneHref: 'tel:+14806220622',
   email: 'info@clearimpressionservices.com',

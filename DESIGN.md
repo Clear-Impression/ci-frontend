@@ -1,5 +1,5 @@
 ---
-name: Clear Impression Services
+name: Clear Impression
 description: A clear, practical website for a Phoenix metro cleaning company.
 colors:
   ink: "#200b38"
