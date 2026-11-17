@@ -80,7 +80,7 @@
 .hx-h1 {
   color: var(--hx-purple);
   font-size: clamp(56px, 7vw, 104px);
-  font-weight: 500;
+  font-weight: 400;
   line-height: 0.95;
   letter-spacing: -0.045em;
 }
@@ -97,6 +97,10 @@
 .hx-h2 em {
   color: var(--hx-gold-text);
   font-style: normal;
+  font-weight: 400;
+}
+
+.hx-h1 em {
   font-weight: 400;
 }
 
@@ -421,11 +425,10 @@ a.hx-rating:hover strong {
   pointer-events: none;
   background: linear-gradient(
     90deg,
-    rgb(255 253 249 / 0.72) 0%,
-    rgb(255 253 249 / 0.6) 22%,
-    rgb(255 253 249 / 0.3) 36%,
-    rgb(255 253 249 / 0.08) 46%,
-    rgb(255 253 249 / 0) 54%
+    rgb(255 253 249 / 0.5) 0%,
+    rgb(255 253 249 / 0.38) 20%,
+    rgb(255 253 249 / 0.14) 34%,
+    rgb(255 253 249 / 0) 46%
   );
 }
 
@@ -435,7 +438,21 @@ a.hx-rating:hover strong {
 .hx-hero-copy .hx-eyebrow,
 .hx-hero-copy .hx-hero-sub,
 .hx-hero-copy .hx-rating-text {
-  text-shadow: 0 0 22px rgb(255 253 249 / 0.85), 0 0 6px rgb(255 253 249 / 0.6);
+  text-shadow: 0 0 28px rgb(255 253 249 / 0.95), 0 0 10px rgb(255 253 249 / 0.75);
+}
+
+/* The small print under the rating sits on a soft cream pill instead,
+   so it stays readable over any part of the video. */
+.hx-hero-copy .hx-rating-text {
+  padding: 6px 12px;
+  border-radius: 12px;
+  background: rgb(255 253 249 / 0.78);
+  backdrop-filter: blur(6px);
+  text-shadow: none;
+}
+
+.hx-hero-copy .hx-rating small {
+  color: #4f4853;
 }
 
 .hx-hero-copy .hx-stars {
