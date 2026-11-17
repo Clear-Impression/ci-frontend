@@ -51,8 +51,8 @@ const icons: Record<string, React.ReactNode> = {
 // It stays out of the way on the video hero at the top of the page and near
 // the footer, and stays tucked away while you scroll. When the page sits still for three
 // seconds it slides in, and it slides away again as soon as you scroll. The
-// three-line button at the top left pulls it out (or puts it away) any time;
-// opened that way it stays until you close it.
+// three-line button at the top left pulls it out (or puts it away) any time,
+// until you scroll again.
 export default function SectionRail({ sections }: SectionRailProps) {
   const [active, setActive] = useState(0);
   const [nearFooter, setNearFooter] = useState(false);
@@ -107,8 +107,11 @@ export default function SectionRail({ sections }: SectionRailProps) {
       window.clearTimeout(idleTimer.current);
       idleTimer.current = window.setTimeout(() => setIdleOpen(true), IDLE_MS);
     };
+    // Scrolling always tucks it away, even if it was pulled out by hand, so
+    // it never sits on top of what you're reading.
     const onScroll = () => {
       setIdleOpen(false);
+      setPinned(false);
       restart();
     };
 

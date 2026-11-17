@@ -2302,6 +2302,110 @@ a.hx-rating:hover strong {
   outline-offset: 2px;
 }
 
+/* Clear glass and slim: just the icons, so it covers as little as possible.
+   Pointing at it (or tabbing into it) widens it to show the section names. */
+.hx-sidenav {
+  /* clip, not hidden: it can't be scrolled sideways, so nothing shifts. */
+  overflow: clip;
+  width: 62px;
+  padding: 12px 8px 8px;
+  border-color: rgb(255 255 255 / 0.55);
+  background: rgb(255 255 255 / 0.3);
+  box-shadow:
+    0 18px 44px -20px rgb(32 11 56 / 0.35),
+    inset 0 1px 0 rgb(255 255 255 / 0.7);
+  backdrop-filter: blur(20px) saturate(1.8);
+  transition:
+    opacity 380ms ease,
+    transform 480ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 380ms ease,
+    width 380ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 300ms ease;
+}
+
+.hx-sidenav:hover,
+.hx-sidenav:focus-within {
+  width: 236px;
+  background: rgb(255 255 255 / 0.62);
+}
+
+.hx-sidenav-title {
+  height: 14px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.hx-sidenav a {
+  gap: 0;
+  padding: 0 11px;
+  transition:
+    background-color 200ms ease,
+    color 200ms ease,
+    gap 380ms ease;
+}
+
+.hx-sidenav a span,
+.hx-sidenav a small,
+.hx-sidenav-title,
+.hx-sidenav-quote {
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+
+.hx-sidenav a span {
+  overflow: hidden;
+}
+
+.hx-sidenav:hover a,
+.hx-sidenav:focus-within a {
+  gap: 11px;
+}
+
+.hx-sidenav:hover a span,
+.hx-sidenav:hover a small,
+.hx-sidenav:hover .hx-sidenav-title,
+.hx-sidenav:hover .hx-sidenav-quote,
+.hx-sidenav:focus-within a span,
+.hx-sidenav:focus-within a small,
+.hx-sidenav:focus-within .hx-sidenav-title,
+.hx-sidenav:focus-within .hx-sidenav-quote {
+  opacity: 1;
+  transition-delay: 120ms;
+}
+
+.hx-sidenav a svg {
+  color: #4f4556;
+}
+
+/* The section you're reading keeps its green mark even when slim. */
+.hx-sidenav a[aria-current] {
+  background: rgb(234 246 237 / 0.9);
+}
+
+.hx-sidenav-quote {
+  max-height: 0;
+  margin-top: 0;
+  overflow: clip;
+  border-width: 0;
+  white-space: nowrap;
+  transition:
+    opacity 200ms ease,
+    max-height 380ms ease,
+    margin-top 380ms ease;
+}
+
+.hx-sidenav:hover .hx-sidenav-quote,
+.hx-sidenav:focus-within .hx-sidenav-quote {
+  max-height: 60px;
+  margin-top: 10px;
+  border-width: 1px;
+}
+
+.hx-sidenav a {
+  overflow: clip;
+  white-space: nowrap;
+}
+
 /* The three-line button at the top left that pulls the guide out. Glass to
    match the panel; the lines turn into an X while it's out. */
 .hx-sidenav-toggle {
