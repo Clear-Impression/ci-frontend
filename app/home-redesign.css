@@ -405,8 +405,8 @@ a.hx-rating:hover strong {
   height: 100%;
   object-fit: cover;
   object-position: 60% center;
-  /* A little extra contrast and color, so the video looks crisp, not hazy. */
-  filter: contrast(1.08) saturate(1.12);
+  /* The video file itself is color-balanced and sharpened, so no filter here
+     (a browser filter on top would blur it slightly and shift the colors). */
 }
 
 /* A soft light wash on the left, only behind the words, so they stay
