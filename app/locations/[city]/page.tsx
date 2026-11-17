@@ -6,7 +6,18 @@ import HomeContact from '@/components/home/HomeContact';
 import CityMedia from '@/components/locations/CityMedia';
 import { company } from '@/data/company';
 import { getLocationBySlug, getLocations } from '@/lib/locations';
+import { getServices } from '@/lib/services';
 import styles from '../locations.module.css';
+
+// City summaries can use shorter names than their service detail pages.
+const cityServiceSlugs = new Map([
+  ['window cleaning', 'residential-window-washing'],
+  ['screen cleaning', 'screen-deep-cleaning'],
+  ['solar panel cleaning', 'solar-panel-cleaning'],
+  ['hard water stain removal', 'hard-water-stain-removal'],
+  ['post-construction cleanup', 'post-construction-cleanup'],
+  ['glass door & mirror polishing', 'glass-door-mirror-polishing'],
+]);
 
 type CityPageProps = {
   params: Promise<{ city: string }>;
@@ -38,7 +49,8 @@ export default async function CityPage({ params }: CityPageProps) {
   const location = await getLocationBySlug(city);
   if (!location) notFound();
 
-  const { cityPage } = await getLocations();
+  const [{ cityPage }, publishedServices] = await Promise.all([getLocations(), getServices()]);
+  const publishedSlugs = new Set(publishedServices.map((service) => service.slug));
 
   return (
     <main className='flex-1 border-0 bg-white text-[#200b38]'>
@@ -104,12 +116,23 @@ export default async function CityPage({ params }: CityPageProps) {
           </div>
           {/* Keep every summary visible without flip cards or dropdowns. */}
           <ul className={styles.servicesGrid}>
-            {cityPage.services.map((service) => (
-              <li key={service.name} className={styles.serviceItem}>
-                <h3>{service.name}</h3>
-                <p>{service.description}</p>
-              </li>
-            ))}
+            {cityPage.services.map((service) => {
+              const slug = cityServiceSlugs.get(service.name.trim().toLowerCase());
+              return (
+                <li key={service.name} className={styles.serviceItem}>
+                  <h3>
+                    {slug && publishedSlugs.has(slug) ? (
+                      <Link
+                        href={`/services/${slug}`}
+                        className='underline decoration-[#6c3fb8] underline-offset-4 hover:text-[#6c3fb8]'>
+                        {service.name}
+                      </Link>
+                    ) : service.name}
+                  </h3>
+                  <p>{service.description}</p>
+                </li>
+              );
+            })}
           </ul>
         </div>
       </section>
