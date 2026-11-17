@@ -64,7 +64,7 @@ export default async function Home() {
   const header = await getPageHeader('home');
   const { cities } = await getLocations();
   return (
-    <main className={`hx ${manrope.variable} flex-1`}>
+    <main className={`hx ${jakarta.variable} flex-1`}>
       <script
         type='application/ld+json'
         dangerouslySetInnerHTML={{
