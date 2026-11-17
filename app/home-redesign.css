@@ -1963,16 +1963,42 @@ a.hx-rating:hover strong {
 
 /* ---------- "On this page" guide ---------- */
 
+/* A frosted-glass panel on the left: white glass, a hint of green light in
+   one corner, thin icons, and a green mark on the section you're reading. */
 .hx-sidenav {
   position: fixed;
   z-index: 30;
-  top: 50%;
+  top: calc(var(--rail-top, 0px) + 72px);
   left: 22px;
   display: none;
-  transform: translateY(-45%);
+  width: 228px;
+  overflow: hidden;
+  padding: 16px 10px 10px;
+  border: 1px solid rgb(255 255 255 / 0.7);
+  border-radius: 20px;
+  background: rgb(255 255 255 / 0.74);
+  box-shadow:
+    0 24px 60px -18px rgb(32 11 56 / 0.28),
+    inset 0 1px 0 rgb(255 255 255 / 0.85);
+  backdrop-filter: blur(28px) saturate(1.7);
   transition:
-    opacity 300ms ease,
-    transform 400ms ease;
+    opacity 380ms ease,
+    transform 480ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 380ms ease;
+}
+
+/* A soft green glow in the top corner, like light through glass. */
+.hx-sidenav::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: -60px;
+  right: -60px;
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(85 171 104 / 0.22), transparent 70%);
+  pointer-events: none;
 }
 
 @media (min-width: 1100px) {
@@ -1983,35 +2009,181 @@ a.hx-rating:hover strong {
 
 .hx-sidenav:not([data-shown]) {
   opacity: 0;
-  transform: translate(-28px, -45%);
+  filter: blur(4px);
+  transform: translateX(-24px) scale(0.97);
   pointer-events: none;
 }
 
-/* The three-line button at the top left that pulls the guide out. It sits
-   just under the header and turns into an X while the guide is out. */
+.hx-sidenav-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  padding: 0 10px;
+  color: #7d7482;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.hx-sidenav-title::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--hx-green-line);
+  box-shadow: 0 0 0 3px rgb(85 171 104 / 0.18);
+}
+
+.hx-sidenav ol {
+  display: grid;
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hx-sidenav a {
+  position: relative;
+  display: flex;
+  min-height: 36px;
+  align-items: center;
+  gap: 11px;
+  padding: 0 10px;
+  border-radius: 11px;
+  color: #3f3745;
+  font-size: 13.5px;
+  font-weight: 500;
+  text-decoration: none;
+  transition:
+    background-color 200ms ease,
+    color 200ms ease;
+}
+
+.hx-sidenav a svg {
+  width: 17px;
+  height: 17px;
+  flex: none;
+  color: #938a97;
+  transition: color 200ms ease;
+}
+
+.hx-sidenav a span {
+  flex: 1;
+  white-space: nowrap;
+}
+
+.hx-sidenav a small {
+  color: #aaa1ae;
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+
+.hx-sidenav a:hover {
+  background: rgb(255 255 255 / 0.65);
+  color: var(--hx-purple);
+}
+
+.hx-sidenav a:hover svg {
+  color: #2a7340;
+}
+
+.hx-sidenav a:focus-visible {
+  outline: 2px solid #2a7340;
+  outline-offset: 1px;
+}
+
+/* The section you're reading: a thin green bar, green icon, pale green row. */
+.hx-sidenav a[aria-current] {
+  background: rgb(234 246 237 / 0.85);
+  color: var(--hx-purple);
+  font-weight: 600;
+}
+
+.hx-sidenav a[aria-current]::before {
+  content: '';
+  position: absolute;
+  top: 9px;
+  bottom: 9px;
+  left: 0;
+  width: 3px;
+  border-radius: 3px;
+  background: #55ab68;
+}
+
+.hx-sidenav a[aria-current] svg,
+.hx-sidenav a[aria-current] small {
+  color: #2a7340;
+}
+
+/* A quiet quote link at the bottom. */
+.hx-sidenav-quote {
+  display: flex;
+  width: 100%;
+  min-height: 40px;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding: 0 14px;
+  border: 1px solid rgb(85 171 104 / 0.35);
+  border-radius: 12px;
+  background: rgb(255 255 255 / 0.8);
+  color: #2a7340;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease;
+}
+
+.hx-sidenav-quote svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 250ms ease;
+}
+
+.hx-sidenav-quote:hover {
+  border-color: #55ab68;
+  background: #eaf6ed;
+}
+
+.hx-sidenav-quote:hover svg {
+  transform: translateX(3px);
+}
+
+.hx-sidenav-quote:focus-visible {
+  outline: 2px solid #2a7340;
+  outline-offset: 2px;
+}
+
+/* The three-line button at the top left that pulls the guide out. Glass to
+   match the panel; the lines turn into an X while it's out. */
 .hx-sidenav-toggle {
   position: fixed;
   z-index: 31;
   top: calc(var(--rail-top, 0px) + 18px);
   left: 22px;
   display: none;
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 5px;
-  border: 1px solid var(--hx-line);
-  border-radius: 50%;
-  background: rgb(255 255 255 / 0.92);
-  box-shadow: 0 6px 18px rgb(32 11 56 / 0.12);
+  gap: 4px;
+  border: 1px solid rgb(255 255 255 / 0.7);
+  border-radius: 14px;
+  background: rgb(255 255 255 / 0.74);
+  box-shadow: 0 10px 30px -12px rgb(32 11 56 / 0.3);
   color: var(--hx-purple);
   cursor: pointer;
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(16px) saturate(1.5);
   transition:
     opacity 300ms ease,
     border-color 250ms ease,
-    transform 250ms ease;
+    color 250ms ease;
 }
 
 @media (min-width: 1100px) {
@@ -2021,12 +2193,12 @@ a.hx-rating:hover strong {
 }
 
 .hx-sidenav-toggle:hover {
-  border-color: var(--hx-gold);
-  transform: scale(1.05);
+  border-color: rgb(85 171 104 / 0.6);
+  color: #2a7340;
 }
 
 .hx-sidenav-toggle:focus-visible {
-  outline: 2px solid #6c3fb8;
+  outline: 2px solid #2a7340;
   outline-offset: 3px;
 }
 
@@ -2037,17 +2209,24 @@ a.hx-rating:hover strong {
 
 .hx-sidenav-toggle span {
   display: block;
-  width: 18px;
-  height: 2px;
+  width: 16px;
+  height: 1.6px;
   border-radius: 2px;
   background: currentColor;
   transition:
     transform 300ms ease,
-    opacity 200ms ease;
+    opacity 200ms ease,
+    width 300ms ease;
+}
+
+/* The middle line is shorter, for a lighter, modern look. */
+.hx-sidenav-toggle span:nth-child(2) {
+  width: 11px;
+  margin-right: 5px;
 }
 
 .hx-sidenav-toggle[data-open] span:nth-child(1) {
-  transform: translateY(7px) rotate(45deg);
+  transform: translateY(5.6px) rotate(45deg);
 }
 
 .hx-sidenav-toggle[data-open] span:nth-child(2) {
@@ -2055,106 +2234,26 @@ a.hx-rating:hover strong {
 }
 
 .hx-sidenav-toggle[data-open] span:nth-child(3) {
-  transform: translateY(-7px) rotate(-45deg);
+  transform: translateY(-5.6px) rotate(-45deg);
 }
 
-/* The small label running up the side. */
-.hx-sidenav-title {
-  position: absolute;
-  top: -44px;
-  left: -27px;
-  color: #8c838e;
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  white-space: nowrap;
-  transform: rotate(-90deg);
+@media (prefers-reduced-motion: reduce) {
+  .hx-sidenav,
+  .hx-sidenav-toggle span {
+    transition: opacity 200ms ease;
+  }
+
+  .hx-sidenav:not([data-shown]) {
+    filter: none;
+    transform: none;
+  }
 }
 
-.hx-sidenav ol {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.hx-sidenav a {
-  display: flex;
-  width: 36px;
-  height: 30px;
-  align-items: center;
-  gap: 9px;
-  overflow: hidden;
-  border-radius: 999px;
-  color: #918a93;
-  font-size: 12px;
-  font-weight: 600;
-  white-space: nowrap;
-  transition:
-    width 350ms cubic-bezier(0.22, 1, 0.36, 1),
-    color 200ms ease;
-}
-
-.hx-sidenav a:hover,
-.hx-sidenav a:focus-visible,
-.hx-sidenav a[aria-current] {
-  width: 170px;
-  color: var(--hx-purple);
-}
-
-.hx-sidenav a:focus-visible {
-  outline: 2px solid #6c3fb8;
-  outline-offset: 2px;
-}
-
-.hx-sidenav i {
-  display: grid;
-  width: 34px;
-  height: 22px;
-  flex: none;
-  place-items: center;
-  border: 1px solid var(--hx-line);
-  border-radius: 999px;
-  background: rgb(255 255 255 / 0.85);
-  color: #8c838e;
-  font-size: 10px;
-  font-style: normal;
-  font-weight: 700;
-  transition:
-    background-color 250ms ease,
-    border-color 250ms ease,
-    color 250ms ease,
-    transform 250ms ease;
-}
-
-.hx-sidenav a:hover i {
-  border-color: var(--hx-gold);
-  transform: scale(1.06);
-}
-
-.hx-sidenav a[aria-current] i {
-  border-color: var(--hx-gold);
-  background: var(--hx-gold);
-  color: var(--hx-purple);
-}
-
-/* The name sits on a soft white pill so it stays readable on dark sections. */
-.hx-sidenav span {
-  padding: 3px 9px;
-  border-radius: 999px;
-  background: rgb(255 255 255 / 0.9);
-  box-shadow: 0 4px 14px rgb(32 11 56 / 0.1);
-  opacity: 0;
-  transform: translateX(-6px);
-  transition:
-    opacity 250ms ease,
-    transform 300ms ease;
-}
-
-.hx-sidenav a:hover span,
-.hx-sidenav a:focus-visible span,
-.hx-sidenav a[aria-current] span {
-  opacity: 1;
-  transform: none;
+/* Tighter rows on short screens, so the whole list fits. */
+@media (max-height: 760px) {
+  .hx-sidenav a {
+    min-height: 31px;
+  }
 }
 
 /* ---------- Keyframes ---------- */
