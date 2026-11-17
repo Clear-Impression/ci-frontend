@@ -1,0 +1,675 @@
+/* Services page, styled like the homepage: Plus Jakarta Sans, a dark video
+   hero with a glass strip, tall staggered photo cards and gold accents.
+   Motion: the hero video settles in, the strip numbers count up, headings
+   grow as they scroll in, card photos wipe open from the bottom, and a light
+   streak sweeps across a card's photo on hover. */
+
+.sp {
+  font-family: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+}
+
+.sp-wrap {
+  width: min(1240px, calc(100% - 48px));
+  margin-inline: auto;
+}
+
+.sp-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 18px;
+  color: rgb(255 255 255 / 0.85);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.sp-eyebrow::before {
+  content: '';
+  width: 30px;
+  height: 1.5px;
+  background: #55ab68;
+}
+
+.sp-eyebrow-dark {
+  color: #6d6473;
+}
+
+/* ---------- Hero ---------- */
+.sp-hero {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  min-height: max(620px, calc(100svh - 160px));
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  background: #200b38;
+  color: #fff;
+}
+
+.sp-hero-video {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 65% center;
+}
+
+/* The video settles in with a slow zoom-out when the page opens. */
+.sp-hero-video {
+  animation: sp-settle 2.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes sp-settle {
+  from {
+    transform: scale(1.12);
+  }
+}
+
+.sp-hero-shade {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgb(32 11 56 / 0.45) 0%, rgb(32 11 56 / 0) 24%),
+    linear-gradient(0deg, rgb(32 11 56 / 0.94) 0%, rgb(32 11 56 / 0.62) 32%, rgb(32 11 56 / 0.15) 60%, rgb(32 11 56 / 0) 78%);
+}
+
+.sp-hero-copy {
+  padding: clamp(40px, 7vh, 90px) 0 30px;
+}
+
+.sp-h1 {
+  margin: 0;
+  font-size: clamp(46px, min(8vw, 13vh), 120px);
+  font-weight: 500;
+  line-height: 0.96;
+  letter-spacing: -0.05em;
+}
+
+.sp-h1 em {
+  color: #efb52b;
+  font-style: normal;
+  font-weight: 400;
+}
+
+.sp-hero-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px 40px;
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid rgb(255 255 255 / 0.22);
+  animation: sp-fade-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.6s both;
+}
+
+.sp-hero-bottom > p {
+  max-width: 46ch;
+  margin: 0;
+  color: rgb(255 255 255 / 0.86);
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.sp-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.sp-btn,
+.sp-btn-ghost {
+  display: inline-flex;
+  min-height: 50px;
+  align-items: center;
+  gap: 10px;
+  padding: 0 24px;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform 250ms ease,
+    background-color 250ms ease,
+    border-color 250ms ease;
+}
+
+.sp-btn {
+  border: 0;
+  background: #efb52b;
+  box-shadow: 0 12px 26px -12px rgb(239 181 43 / 0.9);
+  color: #200b38;
+}
+
+.sp-btn svg {
+  width: 18px;
+  height: 18px;
+  transition: transform 250ms ease;
+}
+
+.sp-btn:hover {
+  background: #f7c64e;
+  transform: translateY(-2px);
+}
+
+.sp-btn:hover svg {
+  transform: translateX(4px);
+}
+
+.sp-btn-ghost {
+  border: 1.5px solid rgb(255 255 255 / 0.75);
+  color: #fff;
+}
+
+.sp-btn-ghost:hover {
+  border-color: #fff;
+  background: rgb(255 255 255 / 0.1);
+}
+
+.sp-btn:focus-visible,
+.sp-btn-ghost:focus-visible {
+  outline: 2px solid #efb52b;
+  outline-offset: 3px;
+}
+
+/* The glass strip along the bottom of the hero. */
+.sp-strip {
+  border-top: 1px solid rgb(255 255 255 / 0.14);
+  background: rgb(255 255 255 / 0.06);
+  backdrop-filter: blur(14px) saturate(1.3);
+}
+
+.sp-strip ul {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+
+.sp-strip li + li {
+  border-left: 1px solid rgb(255 255 255 / 0.16);
+}
+
+.sp-strip a {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  color: #fff;
+  text-decoration: none;
+  transition: background-color 250ms ease;
+}
+
+.sp-strip li:first-child a {
+  padding-left: 0;
+}
+
+.sp-strip a:hover {
+  background: rgb(255 255 255 / 0.08);
+}
+
+.sp-strip a:focus-visible {
+  outline: 2px solid #efb52b;
+  outline-offset: -2px;
+}
+
+.sp-strip b {
+  font-size: clamp(30px, 3vw, 40px);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.sp-strip strong {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.sp-strip strong svg {
+  width: 16px;
+  height: 16px;
+  color: #efb52b;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition:
+    opacity 250ms ease,
+    transform 250ms ease;
+}
+
+.sp-strip a:hover strong svg,
+.sp-strip a:focus-visible strong svg {
+  opacity: 1;
+  transform: none;
+}
+
+.sp-strip small {
+  display: block;
+  margin-top: 2px;
+  color: rgb(255 255 255 / 0.68);
+  font-size: 13px;
+}
+
+@keyframes sp-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+/* ---------- Sections ---------- */
+.sp-section {
+  padding: clamp(72px, 10vw, 120px) 0;
+}
+
+.sp-core {
+  background: linear-gradient(180deg, #faf7fc 0%, #f1eaf7 100%);
+}
+
+.sp-specialized {
+  background: #f7f4fb;
+}
+
+.sp-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  align-items: end;
+  gap: 20px 64px;
+  margin-bottom: 56px;
+}
+
+.sp-h2 {
+  margin: 0;
+  font-size: clamp(38px, 5vw, 64px);
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+}
+
+/* Headings grow into place as they scroll in (where the browser supports it). */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .sp-grow {
+      transform-origin: left bottom;
+      animation: sp-grow linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 30%;
+    }
+  }
+}
+
+@keyframes sp-grow {
+  from {
+    transform: scale(0.88) translateY(18px);
+  }
+}
+
+.sp-h2 .line-mask {
+  display: inline-block;
+}
+
+.sp-h2 em {
+  color: #a87400;
+  font-style: normal;
+  font-weight: 400;
+}
+
+.sp-lead {
+  margin: 0;
+  color: #625c64;
+  font-size: 18px;
+  line-height: 1.65;
+}
+
+.sp-methods {
+  margin: 12px 0 0;
+  color: #625c64;
+  line-height: 1.65;
+}
+
+.sp-methods a {
+  color: #2a7340;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: rgb(85 171 104 / 0.5);
+  text-underline-offset: 4px;
+}
+
+.sp-methods a:hover {
+  text-decoration-color: #2a7340;
+}
+
+.sp-methods a:focus-visible {
+  outline: 2px solid #2a7340;
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+@media (max-width: 860px) {
+  .sp-head {
+    grid-template-columns: 1fr;
+    margin-bottom: 40px;
+  }
+}
+
+/* ---------- Core service cards ---------- */
+.sp-cards {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 96px 24px;
+  margin: 0;
+  padding: 0 0 56px;
+  list-style: none;
+}
+
+/* Three cards on the first row, two centered on the second. */
+.sp-card-slot {
+  grid-column: span 2;
+}
+
+.sp-card-slot:nth-child(4) {
+  grid-column: 2 / span 2;
+}
+
+/* Every other card sits a little lower, for a staggered row. */
+.sp-card-slot:nth-child(even) .sp-card {
+  translate: 0 56px;
+}
+
+.sp-card {
+  position: relative;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 24px;
+  background: #200b38;
+  box-shadow: 0 34px 60px -34px rgb(32 11 56 / 0.6);
+  color: #fff;
+  transition:
+    transform 500ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 500ms ease;
+}
+
+.sp-card:hover {
+  box-shadow: 0 44px 70px -30px rgb(32 11 56 / 0.65);
+  transform: translateY(-8px);
+}
+
+.sp-card:focus-within {
+  outline: 3px solid #efb52b;
+  outline-offset: 3px;
+}
+
+/* The photo, shown in full at the top of the card. */
+.sp-card-media {
+  position: relative;
+  aspect-ratio: 4 / 4.4;
+  overflow: hidden;
+  border-radius: 24px 24px 0 0;
+}
+
+.sp-card-photo {
+  object-fit: cover;
+  transition: transform 1200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.sp-card:hover .sp-card-photo {
+  transform: scale(1.06);
+}
+
+/* A soft fade at the bottom edge so the photo meets the purple smoothly. */
+.sp-card-media::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 22%;
+  background: linear-gradient(180deg, rgb(32 11 56 / 0), #200b38);
+  pointer-events: none;
+}
+
+/* A bright streak, like light on clean glass, sweeps across on hover. */
+.sp-card-glare {
+  position: absolute;
+  inset: -20% auto -20% -60%;
+  width: 40%;
+  background: linear-gradient(100deg, transparent, rgb(255 255 255 / 0.35), transparent);
+  pointer-events: none;
+  transform: skewX(-18deg) translateX(0);
+  transition: transform 0s;
+}
+
+.sp-card:hover .sp-card-glare {
+  transform: skewX(-18deg) translateX(520%);
+  transition: transform 1100ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.sp-card-badge {
+  position: absolute;
+  z-index: 1;
+  top: 16px;
+  left: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 13px;
+  border: 1px solid rgb(255 255 255 / 0.5);
+  border-radius: 999px;
+  background: rgb(32 11 56 / 0.55);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  backdrop-filter: blur(10px);
+}
+
+.sp-card-badge svg {
+  color: #efb52b;
+}
+
+.sp-card-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 8px 28px 28px;
+}
+
+.sp-card h3 {
+  margin: 0;
+  font-size: clamp(24px, 2.2vw, 30px);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+/* The title link covers the whole card. */
+.sp-card h3 a::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+.sp-card h3 a:focus-visible {
+  outline: none;
+}
+
+.sp-card-kicker {
+  margin: 8px 0 0;
+  color: #f2c75c;
+  font-size: 14.5px;
+  font-weight: 600;
+}
+
+.sp-card-text {
+  display: -webkit-box;
+  margin: 10px 0 0;
+  overflow: hidden;
+  color: rgb(255 255 255 / 0.78);
+  font-size: 15px;
+  line-height: 1.65;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.sp-card-more {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: 10px;
+  margin-top: auto;
+  padding: 11px 20px;
+  border: 1px solid rgb(255 255 255 / 0.3);
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 600;
+  transition:
+    background-color 250ms ease,
+    border-color 250ms ease,
+    color 250ms ease;
+}
+
+.sp-card-text + .sp-card-more {
+  margin-top: 22px;
+}
+
+.sp-card-more svg {
+  width: 18px;
+  height: 18px;
+  transition: transform 250ms ease;
+}
+
+.sp-card:hover .sp-card-more {
+  border-color: #efb52b;
+  background: #efb52b;
+  color: #200b38;
+}
+
+.sp-card:hover .sp-card-more svg {
+  transform: translateX(4px);
+}
+
+/* Cards rise in one after another when the section scrolls into view. */
+[data-reveal] .sp-card-slot {
+  opacity: 0;
+  transform: translateY(40px);
+  transition:
+    opacity 700ms ease,
+    transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(var(--n, 0) * 90ms);
+}
+
+[data-reveal][data-shown] .sp-card-slot {
+  opacity: 1;
+  transform: none;
+}
+
+[data-reveal] .sp-card-media {
+  clip-path: inset(100% 0 0 0);
+  transition: clip-path 1100ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(150ms + var(--n, 0) * 90ms);
+}
+
+[data-reveal][data-shown] .sp-card-media {
+  clip-path: inset(0 0 0 0);
+}
+
+[data-reveal] .sp-card-photo {
+  scale: 1.18;
+  transition:
+    scale 1600ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 1200ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(150ms + var(--n, 0) * 90ms), 0ms;
+}
+
+[data-reveal][data-shown] .sp-card-photo {
+  scale: 1;
+}
+
+@media (max-width: 1100px) {
+  .sp-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 88px;
+  }
+
+  .sp-card-slot,
+  .sp-card-slot:nth-child(4) {
+    grid-column: auto;
+  }
+
+  .sp-card-slot:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 700px) {
+  .sp-cards {
+    grid-template-columns: 1fr;
+    row-gap: 20px;
+    padding-bottom: 0;
+  }
+
+  .sp-card-slot:nth-child(even) .sp-card {
+    translate: none;
+  }
+
+  .sp-strip ul {
+    grid-template-columns: 1fr;
+  }
+
+  .sp-strip li + li {
+    border-top: 1px solid rgb(255 255 255 / 0.14);
+    border-left: 0;
+  }
+
+  .sp-strip a,
+  .sp-strip li:first-child a {
+    padding: 14px 0;
+  }
+
+  .sp-hero-shade {
+    background: linear-gradient(180deg, rgb(32 11 56 / 0.55) 0%, rgb(32 11 56 / 0.72) 50%, rgb(32 11 56 / 0.94) 100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sp-hero-bottom,
+  .sp-hero-video {
+    animation: none;
+  }
+
+  [data-reveal] .sp-card-media,
+  [data-reveal] .sp-card-photo,
+  .sp-card-glare {
+    clip-path: none;
+    scale: 1;
+    transition: none;
+  }
+
+  .sp-card,
+  .sp-card-photo,
+  [data-reveal] .sp-card-slot {
+    transition: none;
+  }
+
+  .sp-card:hover,
+  .sp-card:hover .sp-card-photo {
+    transform: none;
+  }
+
+  [data-reveal] .sp-card-slot {
+    opacity: 1;
+    transform: none;
+  }
+}

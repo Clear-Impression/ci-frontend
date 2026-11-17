@@ -1,11 +1,16 @@
 import { getPageHeader } from '@/lib/page-headers';
 import { createPageMetadata } from '@/lib/seo';
+import { getServices } from '@/lib/services';
 import Link from 'next/link';
-import { coreServices, howWeDoIt, specializedServices } from '@/data/services';
 import Reveal from '@/components/services/Reveal';
 import ServiceIndex from './ServiceIndex';
+import CoreServiceCards from './CoreServiceCards';
+import CountUp from './CountUp';
 import ClearerViewCta from '@/components/ui/ClearerViewCta';
 import HeroVideo from '@/components/ui/HeroVideo';
+import QuoteButton from '@/components/quote/QuoteButton';
+import { jakarta } from '../fonts';
+import './services-page.css';
 
 // Describe the page for search engines and link previews.
 export const metadata = createPageMetadata({
@@ -15,139 +20,243 @@ export const metadata = createPageMetadata({
     'Window cleaning with traditional tools or 100% pure water, plus hard water stain removal, screen cleaning, and more across Mesa and the Phoenix metro.',
 });
 
-// The two cleaning methods, linked from the Core Services intro.
-const [traditional, pureWater] = howWeDoIt;
-const methodLink =
-  'rounded-sm font-medium text-[#6c3fb8] underline underline-offset-4 hover:text-[#200b38] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#6c3fb8]';
+// Photos for the core service cards, one per service, showing our cleaner in
+// the brand purple at work. They're illustrations, not photos of real jobs.
+const cardPhotos: Record<string, { url: string; alt: string; position?: string }> = {
+  'residential-window-washing': {
+    url: '/images/services/residential.jpg',
+    alt: 'A window cleaner in a purple polo on a step ladder, squeegeeing a large window on a stucco home.',
+  },
+  'commercial-office-glass': {
+    url: '/images/services/commercial.jpg',
+    alt: 'A window cleaner washing the glass front of an office building with a water-fed pole.',
+  },
+  'solar-panel-cleaning': {
+    url: '/images/services/solar.jpg',
+    alt: 'A window cleaner scrubbing rooftop solar panels with a soft brush on a long pole.',
+    position: 'center 30%',
+  },
+  'gutter-roof-care': {
+    url: '/images/services/gutter.jpg',
+    alt: 'A window cleaner on a ladder clearing leaves from a gutter into a bucket.',
+  },
+  'track-detailing': {
+    url: '/images/services/tracks.jpg',
+    alt: 'A window cleaner brushing dirt out of a sliding door track.',
+  },
+};
+const defaultPhoto = {
+  url: '/images/home/clearer-view-window.jpg',
+  alt: 'A clear view through a clean window.',
+};
 
 export default async function Services() {
   const header = await getPageHeader('services');
   const heroLines = header.title.split('\n');
+  const lastLine = heroLines.length - 1;
+  const services = await getServices();
+  const core = services.filter((service) => service.category === 'core');
+  const specialized = services.filter((service) => service.category === 'specialized');
+  const [traditional, pureWater] = services.filter((service) => service.category === 'method');
+
+  const cards = core.map((service) => {
+    const image =
+      cardPhotos[service.slug] ??
+      (service.image?.url ? { url: service.image.url, alt: service.image.alt } : defaultPhoto);
+    return {
+      slug: service.slug,
+      title: service.title,
+      previewDescription: service.previewDescription,
+      largeDescription: service.largeDescription,
+      image,
+    };
+  });
+
+  // The strip along the bottom of the hero: real counts that jump down the page.
+  const strip = [
+    { href: '#core-services', figure: core.length, suffix: '', label: 'Core services', note: 'Homes, businesses, solar and roofs' },
+    { href: '#specialized-services', figure: specialized.length, suffix: '', label: 'Specialized services', note: 'The finishing touches' },
+    ...(pureWater
+      ? [{ href: `/services/${pureWater.slug}`, figure: 100, suffix: '%', label: 'Pure water', note: 'See how our filtered water works' }]
+      : []),
+  ];
+
   return (
-    <main className='flex-1 bg-white text-[#200b38]'>
-      {/* The headline rises behind fogged glass, then a squeegee wipes it clear. */}
-      <section className='page-hero relative isolate overflow-hidden bg-[linear-gradient(118deg,#fffdf9_0%,#faf7fc_54%,#eee7f4_100%)] text-[#200b38]'>
-        {/* Solar panels being scrubbed with pure water, mountains behind. The clip is
-            mirrored so the cleaner stands on the right, clear of the words. */}
+    <main className={`${jakarta.variable} sp flex-1 bg-white text-[#200b38]`}>
+      {/* The hero: the solar video under a purple shade, a big white headline,
+          then the intro and buttons, with a glass strip along the bottom. */}
+      <section
+        aria-labelledby='services-heading'
+        className='sp-hero'>
+        {/* Solar panels being scrubbed with pure water, mountains behind. */}
         <HeroVideo
           webm='/videos/services-hero.webm'
           mp4='/videos/services-hero.mp4'
           poster='/videos/services-hero-poster.jpg'
-          className='absolute inset-0 -z-20 size-full object-cover object-[65%_center]'
+          className='sp-hero-video'
         />
-        {/* A soft beige wash only behind the words, like the homepage hero, so the
-            rest of the video shows in full color. */}
-        <div
+        <span
           aria-hidden='true'
-          className='absolute inset-0 -z-10 bg-linear-to-r from-[#fffdf9]/92 from-15% via-[#fffdf9]/60 via-38% to-transparent to-58% max-sm:bg-linear-to-b max-sm:from-[#fffdf9]/94 max-sm:via-[#fffdf9]/85 max-sm:to-[#fffdf9]/60'
+          className='sp-hero-shade'
         />
-        {/* Taller than the other page headers, so more of the video shows. */}
-        <div className='hero-drift mx-auto flex min-h-[30rem] max-w-7xl flex-col justify-center px-6 py-14 sm:min-h-[34rem] sm:px-8 sm:py-16'>
-          <p className='text-sm font-semibold uppercase tracking-widest text-[#b47c00]'>
-            What we do
-          </p>
-          <h1 className='mt-3 max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl'>
+
+        <div className='sp-wrap sp-hero-copy'>
+          <p className='sp-eyebrow'>What we do</p>
+          <h1
+            id='services-heading'
+            className='sp-h1'>
             {heroLines.map((line, index) => (
-              <span key={line} className='line-mask'>
+              <span
+                key={line}
+                className='line-mask'>
                 <span
                   className='line-rise'
                   style={{ '--i': index } as React.CSSProperties}>
-                  {line}
+                  {index === lastLine && lastLine > 0 ? <em>{line}</em> : line}
                 </span>
               </span>
             ))}
           </h1>
-          <p className='hero-after mt-6 max-w-xl text-lg text-[#625c64]'>
-            {header.subtitle}
-          </p>
+          <div className='sp-hero-bottom'>
+            {header.subtitle && <p>{header.subtitle}</p>}
+            <div className='sp-buttons'>
+              <QuoteButton className='sp-btn'>
+                Get a free quote
+                <svg
+                  aria-hidden='true'
+                  viewBox='0 0 24 24'
+                  fill='none'
+                  stroke='currentColor'
+                  strokeWidth='2'
+                  strokeLinecap='round'
+                  strokeLinejoin='round'>
+                  <path d='M5 12h13M13 6.5l5.5 5.5-5.5 5.5' />
+                </svg>
+              </QuoteButton>
+              <a
+                href='#core-services'
+                className='sp-btn-ghost'>
+                Browse services
+              </a>
+            </div>
+          </div>
         </div>
-        <div aria-hidden='true' className='squeegee-fog absolute inset-0' />
-        <div aria-hidden='true' className='squeegee-blade absolute inset-y-0' />
+
+        <nav
+          aria-label='Jump to'
+          className='sp-strip'>
+          <ul className='sp-wrap'>
+            {strip.map((item) => (
+              <li key={item.label}>
+                <a href={item.href}>
+                  <b>
+                    <CountUp
+                      to={item.figure}
+                      suffix={item.suffix}
+                    />
+                  </b>
+                  <span>
+                    <strong>
+                      {item.label}
+                      <svg
+                        aria-hidden='true'
+                        viewBox='0 0 24 24'
+                        fill='none'
+                        stroke='currentColor'
+                        strokeWidth='2'
+                        strokeLinecap='round'
+                        strokeLinejoin='round'>
+                        <path d='M5 12h13M13 6.5l5.5 5.5-5.5 5.5' />
+                      </svg>
+                    </strong>
+                    <small>{item.note}</small>
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
       </section>
 
+      {/* Core services: tall photo cards, set a little up and down. */}
       <section
+        id='core-services'
         aria-labelledby='core-services-heading'
-        className='bg-[#eee6f9]'>
-        <div className='mx-auto max-w-7xl px-6 py-16 sm:px-8 sm:py-20'>
-          <Reveal className='max-w-2xl'>
-            <h2
-              id='core-services-heading'
-              className='text-3xl font-semibold tracking-tight sm:text-4xl'>
-              <span className='line-mask'>
-                <span className='line-rise'>Core Services</span>
-              </span>
-            </h2>
-            <p className='fade-up mt-4 text-lg leading-relaxed text-gray-600'>
-              Reliable property care for homes, businesses, and outdoor surfaces across the Phoenix Valley.
-            </p>
-            {/* These links keep both method pages one click from Services
-                for visitors and search engines. */}
-            <p className='fade-up mt-3 leading-relaxed text-gray-600'>
-              We clean with{' '}
-              <Link
-                href={`/services/${traditional.slug}`}
-                className={methodLink}>
-                traditional tools
-              </Link>
-              ,{' '}
-              <Link
-                href={`/services/${pureWater.slug}`}
-                className={methodLink}>
-                100% pure water
-              </Link>
-              , or both, chosen for your glass.
-            </p>
+        className='sp-section sp-core'>
+        <div className='sp-wrap'>
+          <Reveal className='sp-head'>
+            <div>
+              <p className='sp-eyebrow sp-eyebrow-dark'>Core services</p>
+              <h2
+                id='core-services-heading'
+                className='sp-h2 sp-grow'>
+                <span className='line-mask'>
+                  <span className='line-rise'>Core</span>
+                </span>{' '}
+                <span className='line-mask'>
+                  <span
+                    className='line-rise'
+                    style={{ '--i': 1 } as React.CSSProperties}>
+                    <em>Services.</em>
+                  </span>
+                </span>
+              </h2>
+            </div>
+            <div>
+              <p className='fade-up sp-lead'>
+                Reliable property care for homes, businesses, and outdoor surfaces across the Phoenix Valley.
+              </p>
+              {/* These links keep both method pages one click from Services
+                  for visitors and search engines. */}
+              {traditional && pureWater && (
+                <p className='fade-up sp-methods'>
+                  We clean with{' '}
+                  <Link href={`/services/${traditional.slug}`}>traditional tools</Link>,{' '}
+                  <Link href={`/services/${pureWater.slug}`}>100% pure water</Link>, or both, chosen for your glass.
+                </p>
+              )}
+            </div>
           </Reveal>
-          <div className='mt-12 grid gap-6 md:grid-cols-2'>
-            {coreServices.map((service) => (
-              <article
-                key={service.slug}
-                className='card-edge rounded-2xl border border-[#200b38]/10 bg-[#faf8fd] p-8 shadow-sm'>
-                <h3 className='text-2xl font-semibold tracking-tight'>
-                  {service.title}
-                </h3>
-                <p className='mt-3 font-medium text-[#6c3fb8]'>
-                  {service.previewDescription}
-                </p>
-                <p className='mt-5 leading-relaxed text-gray-700'>
-                  {service.largeDescription}
-                </p>
-                <Link
-                  href={`/services/${service.slug}`}
-                  className='draw-link mt-6 inline-block rounded-sm py-1 font-semibold focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6c3fb8]'>
-                  Explore this service
-                </Link>
-              </article>
-            ))}
-          </div>
+          <Reveal>
+            <CoreServiceCards cards={cards} />
+          </Reveal>
         </div>
       </section>
 
       {/* Specialized services as a list with a detail pane on wide screens. */}
       <section
+        id='specialized-services'
         aria-labelledby='specialized-heading'
-        className='bg-[#f7f4fb]'>
-        <div className='mx-auto max-w-7xl px-6 py-16 sm:px-8 sm:py-20'>
-          <Reveal className='max-w-2xl'>
-            <h2
-              id='specialized-heading'
-              className='text-3xl font-semibold tracking-tight sm:text-4xl'>
-              <span className='line-mask'>
-                <span className='line-rise'>Specialized Services</span>
-              </span>
-            </h2>
-            <p className='fade-up mt-4 text-lg leading-relaxed text-gray-600'>
-              For all your needs to make a Clear Impression.
-            </p>
+        className='sp-section sp-specialized'>
+        <div className='sp-wrap'>
+          <Reveal className='sp-head'>
+            <div>
+              <p className='sp-eyebrow sp-eyebrow-dark'>Specialized services</p>
+              <h2
+                id='specialized-heading'
+                className='sp-h2 sp-grow'>
+                <span className='line-mask'>
+                  <span className='line-rise'>Specialized</span>
+                </span>{' '}
+                <span className='line-mask'>
+                  <span
+                    className='line-rise'
+                    style={{ '--i': 1 } as React.CSSProperties}>
+                    <em>Services.</em>
+                  </span>
+                </span>
+              </h2>
+            </div>
+            <p className='fade-up sp-lead'>For all your needs to make a Clear Impression.</p>
           </Reveal>
           <div className='mt-12'>
-            <ServiceIndex services={specializedServices} />
+            <ServiceIndex services={specialized} />
           </div>
         </div>
       </section>
 
       {/* End with the same wipe-the-window call to action as the other pages. */}
-      <section className='mx-auto max-w-7xl px-6 py-16 sm:px-8 sm:py-20'>
+      <section className='sp-wrap py-16 sm:py-20'>
         <ClearerViewCta />
       </section>
     </main>
