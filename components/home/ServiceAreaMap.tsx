@@ -7,7 +7,8 @@ import type {
   Marker,
 } from 'leaflet';
 import type { FeatureCollection } from 'geojson';
-import type { ServiceCity } from '@/data/home';
+import { serviceCities, type ServiceCity } from '@/data/home';
+import { serviceCenter } from '@/data/home';
 import rawCityBoundaries from '@/data/geojson/service-city-boundaries.json';
 
 const cityBoundaries = rawCityBoundaries as unknown as FeatureCollection;
@@ -20,6 +21,8 @@ type ServiceAreaMapProps = {
   showBoundaries?: boolean;
   // Leave out the city buttons when the page already lists the cities.
   cityButtons?: boolean;
+  // Start collapsed on small screens, while remaining fully visible on larger screens.
+  collapsibleOnMobile?: boolean;
 };
 
 export default function ServiceAreaMap({
@@ -28,11 +31,13 @@ export default function ServiceAreaMap({
   compact = false,
   showBoundaries = false,
   cityButtons = true,
+  collapsibleOnMobile = false,
 }: ServiceAreaMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<LeafletMap | null>(null);
   const markersRef = useRef(new Map<string, Marker>());
   const boundariesRef = useRef<LayerGroup | null>(null);
+  const [mobileExpanded, setMobileExpanded] = useState(false);
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>(
     'loading',
   );
@@ -61,7 +66,7 @@ export default function ServiceAreaMap({
           color: '#6c3fb8',
           fillColor: '#8f63d0',
           fillOpacity: 0.12,
-          opacity: 0.85,
+          opacity: 0.2,
           weight: 2,
         },
         onEachFeature: (feature, layer) => {
@@ -96,7 +101,7 @@ export default function ServiceAreaMap({
         map.fitBounds(
           [
             [33.15, -112.4],
-            [33.75, -111.5],
+            [33.65, -111.7],
           ],
           { padding: [12, 12] },
         );
@@ -122,6 +127,43 @@ export default function ServiceAreaMap({
           iconAnchor: [16, 40],
           popupAnchor: [0, -35],
         });
+
+        // Geneate a circle boundary radiating from Mesa to desginate service areas.
+        if(serviceCenter){
+          //10 mile
+          L.circle(serviceCenter, {
+            color: '#55ab68',
+            fillColor: '#55ab68',
+            fillOpacity: 0.05,
+            opacity: 0.95,
+            dashArray: '8, 8',
+            weight: 3,
+            lineCap: 'round',
+            //Radius is defined in meters in leaflet, thus 16093.4m equals 10 mi
+            radius: 16093.4
+          }).addTo(map);
+          //20-mile boundary
+          L.circle(serviceCenter, {
+            color: '#8061b7',
+            fillColor: '#8061b7',
+            fillOpacity: 0.018,
+            opacity: 0.9,
+            dashArray: '8, 8',
+            weight: 3,
+            radius: 16093.4*2,
+          }).addTo(map);
+          //30 mile
+          L.circle(serviceCenter, {
+            color: '#b3a0d1',
+            fillColor: '#b3a0d1',
+            fillOpacity: 0.01,
+            opacity: 0.85,
+            dashArray: '8, 8',
+            weight: 3,
+            lineCap: 'round',
+            radius: 16093.4*3
+          }).addTo(map);
+        }
 
         for (const city of cities) {
           const popup = document.createElement('p');
@@ -171,14 +213,41 @@ export default function ServiceAreaMap({
     <div className='overflow-hidden rounded-2xl border border-[#200b38]/10 bg-white shadow-sm'>
       <div className='flex items-center justify-between gap-3 border-b border-[#200b38]/10 px-5 py-4'>
         <h2 className='font-semibold text-[#200b38]'>Greater Phoenix</h2>
-        <span className='flex items-center gap-2 text-xs font-medium text-[#6c3fb8]'>
-          <span
-            className='h-2 w-2 rounded-full bg-[#6c3fb8]'
-            aria-hidden='true'
-          />
-          Service cities
-        </span>
+        {collapsibleOnMobile ? (
+          <button
+            type='button'
+            onClick={() => setMobileExpanded((expanded) => !expanded)}
+            aria-expanded={mobileExpanded}
+            aria-controls='locations-service-map-content'
+            className='flex min-h-11 items-center gap-2 rounded-lg px-2 text-sm font-semibold text-[#542d90] sm:hidden'>
+            {mobileExpanded ? 'Close map' : 'Open map'}
+            <svg
+              aria-hidden='true'
+              viewBox='0 0 20 20'
+              fill='none'
+              className={`h-4 w-4 transition-transform ${mobileExpanded ? 'rotate-180' : ''}`}>
+              <path
+                d='m5 7.5 5 5 5-5'
+                stroke='currentColor'
+                strokeWidth='1.75'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+              />
+            </svg>
+          </button>
+        ) : (
+          <span className='flex items-center gap-2 text-xs font-medium text-[#6c3fb8]'>
+            <span
+              className='h-2 w-2 rounded-full bg-[#6c3fb8]'
+              aria-hidden='true'
+            />
+            Service cities
+          </span>
+        )}
       </div>
+      <div
+        id='locations-service-map-content'
+        className={collapsibleOnMobile && !mobileExpanded ? 'hidden sm:block' : 'block'}>
       {/* Keep a fixed map height so loading tiles does not move the page. */}
       {/* The Locations page asks for a larger map and the homepage for a shorter one. */}
       <div
@@ -232,6 +301,7 @@ export default function ServiceAreaMap({
             Some map tiles could not load. The city list is still available.
           </p>
         )}
+      </div>
       </div>
     </div>
   );

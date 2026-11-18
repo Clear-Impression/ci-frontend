@@ -31,6 +31,8 @@ export const serviceCities: readonly ServiceCity[] = [
   { name: 'Queen Creek', coordinates: [33.24866, -111.63430]},
 ];
 
+export const serviceCenter: [number, number] = [33.3746, -111.8651];
+
 // This is the founder's start year from the About page.
 export const servingSince = 2018;
 

@@ -68,7 +68,12 @@ export default async function LocationsPage() {
         className='bg-[#faf8fd]'>
         <div className='mx-auto max-w-7xl px-6 py-12 sm:px-8 sm:py-16'>
           {/* Reuse the homepage map, with more height and the full page width. */}
-          <ServiceAreaMap cities={mapCities} large showBoundaries />
+          <ServiceAreaMap
+            cities={mapCities}
+            large
+            showBoundaries
+            collapsibleOnMobile
+          />
 
           <div className='mt-12 sm:mt-16'>
             {/* The heading rises in like the other pages' section headings. */}
