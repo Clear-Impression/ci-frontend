@@ -364,48 +364,63 @@
   }
 }
 
-/* ---------- Core service cards ---------- */
+/* ---------- Core service cards ----------
+   One row of tall photo cards that float with a soft shadow, every other one
+   a little lower. The card under the pointer widens and shows its full
+   description; the rest narrow to make room. */
 .sp-cards {
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 96px 24px;
+  display: flex;
+  gap: 18px;
   margin: 0;
-  padding: 0 0 56px;
+  padding: 0 0 60px;
   list-style: none;
 }
 
-/* Three cards on the first row, two centered on the second. */
 .sp-card-slot {
-  grid-column: span 2;
+  min-width: 0;
+  flex: 1 1 0;
+  transition: flex-grow 600ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.sp-card-slot:nth-child(4) {
-  grid-column: 2 / span 2;
+.sp-card-slot:nth-child(even) {
+  padding-top: 56px;
 }
 
-/* Every other card sits a little lower, for a staggered row. */
-.sp-card-slot:nth-child(even) .sp-card {
-  translate: 0 56px;
+.sp-cards:hover .sp-card-slot,
+.sp-cards:focus-within .sp-card-slot {
+  flex-grow: 0.8;
+}
+
+.sp-cards .sp-card-slot:hover,
+.sp-cards .sp-card-slot:focus-within {
+  flex-grow: 2.4;
 }
 
 .sp-card {
   position: relative;
+  isolation: isolate;
   display: flex;
-  height: 100%;
+  height: 470px;
   flex-direction: column;
+  justify-content: flex-end;
   overflow: hidden;
-  border-radius: 24px;
+  border-radius: 26px;
   background: #200b38;
-  box-shadow: 0 34px 60px -34px rgb(32 11 56 / 0.6);
   color: #fff;
+  box-shadow:
+    0 2px 4px rgb(32 11 56 / 0.06),
+    0 26px 50px -24px rgb(32 11 56 / 0.55);
   transition:
     transform 500ms cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 500ms ease;
 }
 
-.sp-card:hover {
-  box-shadow: 0 44px 70px -30px rgb(32 11 56 / 0.65);
-  transform: translateY(-8px);
+.sp-card-slot:hover .sp-card,
+.sp-card-slot:focus-within .sp-card {
+  box-shadow:
+    0 2px 4px rgb(32 11 56 / 0.08),
+    0 44px 70px -26px rgb(32 11 56 / 0.65);
+  transform: translateY(-10px);
 }
 
 .sp-card:focus-within {
@@ -413,47 +428,38 @@
   outline-offset: 3px;
 }
 
-/* The photo, shown in full at the top of the card. */
-.sp-card-media {
-  position: relative;
-  aspect-ratio: 4 / 4.4;
-  overflow: hidden;
-  border-radius: 24px 24px 0 0;
-}
-
 .sp-card-photo {
+  z-index: -2;
   object-fit: cover;
   transition: transform 1200ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.sp-card:hover .sp-card-photo {
-  transform: scale(1.06);
+.sp-card-slot:hover .sp-card-photo {
+  transform: scale(1.05);
 }
 
-/* A soft fade at the bottom edge so the photo meets the purple smoothly. */
-.sp-card-media::after {
+/* The photo stays clear at the top; purple rises only behind the words, and a
+   little higher when the description opens. */
+.sp-card-shade {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, rgb(32 11 56 / 0) 40%, rgb(32 11 56 / 0.75) 68%, rgb(32 11 56 / 0.95) 100%);
+  transition: opacity 500ms ease;
+}
+
+.sp-card-shade::after {
   content: '';
   position: absolute;
-  inset: auto 0 0;
-  height: 22%;
-  background: linear-gradient(180deg, rgb(32 11 56 / 0), #200b38);
-  pointer-events: none;
+  inset: 0;
+  background: linear-gradient(180deg, rgb(32 11 56 / 0) 22%, rgb(32 11 56 / 0.8) 52%, rgb(32 11 56 / 0.96) 100%);
+  opacity: 0;
+  transition: opacity 500ms ease;
 }
 
-/* A bright streak, like light on clean glass, sweeps across on hover. */
-.sp-card-glare {
-  position: absolute;
-  inset: -20% auto -20% -60%;
-  width: 40%;
-  background: linear-gradient(100deg, transparent, rgb(255 255 255 / 0.35), transparent);
-  pointer-events: none;
-  transform: skewX(-18deg) translateX(0);
-  transition: transform 0s;
-}
-
-.sp-card:hover .sp-card-glare {
-  transform: skewX(-18deg) translateX(520%);
-  transition: transform 1100ms cubic-bezier(0.22, 1, 0.36, 1);
+.sp-card-slot:hover .sp-card-shade::after,
+.sp-card-slot:focus-within .sp-card-shade::after {
+  opacity: 1;
 }
 
 .sp-card-badge {
@@ -464,10 +470,10 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 7px 13px;
-  border: 1px solid rgb(255 255 255 / 0.5);
+  padding: 7px 12px;
+  border: 1px solid rgb(255 255 255 / 0.45);
   border-radius: 999px;
-  background: rgb(32 11 56 / 0.55);
+  background: rgb(32 11 56 / 0.5);
   color: #fff;
   font-size: 12px;
   font-weight: 600;
@@ -480,18 +486,15 @@
 }
 
 .sp-card-body {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  padding: 8px 28px 28px;
+  padding: 22px;
 }
 
 .sp-card h3 {
   margin: 0;
-  font-size: clamp(24px, 2.2vw, 30px);
+  font-size: 22px;
   font-weight: 500;
-  line-height: 1.1;
-  letter-spacing: -0.03em;
+  line-height: 1.12;
+  letter-spacing: -0.025em;
 }
 
 /* The title link covers the whole card. */
@@ -499,6 +502,7 @@
   content: '';
   position: absolute;
   inset: 0;
+  z-index: 2;
 }
 
 .sp-card h3 a:focus-visible {
@@ -506,110 +510,119 @@
 }
 
 .sp-card-kicker {
-  margin: 8px 0 0;
+  margin: 6px 0 0;
+  color: rgb(255 255 255 / 0.8);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+/* The description slides open (grid 0fr to 1fr keeps the height smooth). */
+.sp-card-more-wrap {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 500ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 300ms ease;
+}
+
+.sp-card-more-wrap > div {
+  overflow: hidden;
+  min-width: 260px;
+}
+
+.sp-card-slot:hover .sp-card-more-wrap,
+.sp-card-slot:focus-within .sp-card-more-wrap {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transition-delay: 150ms;
+}
+
+.sp-card-slot:hover .sp-card-kicker,
+.sp-card-slot:focus-within .sp-card-kicker {
   color: #f2c75c;
-  font-size: 14.5px;
   font-weight: 600;
 }
 
 .sp-card-text {
-  display: -webkit-box;
-  margin: 10px 0 0;
-  overflow: hidden;
-  color: rgb(255 255 255 / 0.78);
-  font-size: 15px;
-  line-height: 1.65;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
+  margin: 12px 0 0;
+  color: rgb(255 255 255 / 0.84);
+  font-size: 14.5px;
+  line-height: 1.6;
 }
 
 .sp-card-more {
   display: inline-flex;
-  align-self: flex-start;
   align-items: center;
-  gap: 10px;
-  margin-top: auto;
-  padding: 11px 20px;
-  border: 1px solid rgb(255 255 255 / 0.3);
+  gap: 8px;
+  margin-top: 16px;
+  padding: 10px 18px;
   border-radius: 999px;
-  font-size: 15px;
+  background: #efb52b;
+  color: #200b38;
+  font-size: 14px;
   font-weight: 600;
-  transition:
-    background-color 250ms ease,
-    border-color 250ms ease,
-    color 250ms ease;
-}
-
-.sp-card-text + .sp-card-more {
-  margin-top: 22px;
 }
 
 .sp-card-more svg {
-  width: 18px;
-  height: 18px;
-  transition: transform 250ms ease;
-}
-
-.sp-card:hover .sp-card-more {
-  border-color: #efb52b;
-  background: #efb52b;
-  color: #200b38;
-}
-
-.sp-card:hover .sp-card-more svg {
-  transform: translateX(4px);
+  width: 16px;
+  height: 16px;
 }
 
 /* Cards rise in one after another when the section scrolls into view. */
-[data-reveal] .sp-card-slot {
+[data-reveal] .sp-card {
   opacity: 0;
-  transform: translateY(40px);
+  translate: 0 40px;
   transition:
+    transform 500ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 500ms ease,
     opacity 700ms ease,
-    transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
-  transition-delay: calc(var(--n, 0) * 90ms);
+    translate 900ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: 0ms, 0ms, calc(var(--n, 0) * 90ms), calc(var(--n, 0) * 90ms);
 }
 
-[data-reveal][data-shown] .sp-card-slot {
+[data-reveal][data-shown] .sp-card {
   opacity: 1;
-  transform: none;
+  translate: none;
 }
 
-[data-reveal] .sp-card-media {
-  clip-path: inset(100% 0 0 0);
-  transition: clip-path 1100ms cubic-bezier(0.22, 1, 0.36, 1);
-  transition-delay: calc(150ms + var(--n, 0) * 90ms);
-}
-
-[data-reveal][data-shown] .sp-card-media {
-  clip-path: inset(0 0 0 0);
-}
-
-[data-reveal] .sp-card-photo {
-  scale: 1.18;
-  transition:
-    scale 1600ms cubic-bezier(0.22, 1, 0.36, 1),
-    transform 1200ms cubic-bezier(0.22, 1, 0.36, 1);
-  transition-delay: calc(150ms + var(--n, 0) * 90ms), 0ms;
-}
-
-[data-reveal][data-shown] .sp-card-photo {
-  scale: 1;
-}
-
+/* Tablets: two per row, every card open. */
 @media (max-width: 1100px) {
   .sp-cards {
+    display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    row-gap: 88px;
+    gap: 20px;
+    padding-bottom: 0;
   }
 
-  .sp-card-slot,
-  .sp-card-slot:nth-child(4) {
-    grid-column: auto;
+  .sp-card-slot:nth-child(even) {
+    padding-top: 0;
   }
 
   .sp-card-slot:last-child:nth-child(odd) {
     grid-column: 1 / -1;
+  }
+
+  .sp-card {
+    height: 460px;
+  }
+
+  .sp-card-more-wrap {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+
+  .sp-card-more-wrap > div {
+    min-width: 0;
+  }
+
+  .sp-card-shade::after {
+    opacity: 1;
+  }
+
+  .sp-card-slot:hover .sp-card,
+  .sp-card-slot:focus-within .sp-card {
+    transform: none;
   }
 }
 
@@ -618,10 +631,6 @@
     grid-template-columns: 1fr;
     row-gap: 20px;
     padding-bottom: 0;
-  }
-
-  .sp-card-slot:nth-child(even) .sp-card {
-    translate: none;
   }
 
   .sp-strip ul {
@@ -649,27 +658,22 @@
     animation: none;
   }
 
-  [data-reveal] .sp-card-media,
-  [data-reveal] .sp-card-photo,
-  .sp-card-glare {
-    clip-path: none;
-    scale: 1;
-    transition: none;
-  }
-
+  .sp-card-slot,
   .sp-card,
   .sp-card-photo,
-  [data-reveal] .sp-card-slot {
+  .sp-card-shade::after,
+  .sp-card-more-wrap,
+  [data-reveal] .sp-card {
     transition: none;
   }
 
-  .sp-card:hover,
-  .sp-card:hover .sp-card-photo {
+  .sp-card-slot:hover .sp-card,
+  .sp-card-slot:hover .sp-card-photo {
     transform: none;
   }
 
-  [data-reveal] .sp-card-slot {
+  [data-reveal] .sp-card {
     opacity: 1;
-    transform: none;
+    translate: none;
   }
 }
