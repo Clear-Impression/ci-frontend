@@ -16,25 +16,10 @@ const studioUrl = process.env.NEXT_PUBLIC_SANITY_STUDIO_URL || 'http://localhost
 
 const sections = [
   {
-    title: 'FAQs',
-    description: 'Add questions, update answers, and publish changes in Sanity Studio.',
-    label: 'Edit FAQs',
+    title: 'Website content',
+    description: 'Edit FAQs, services, locations, blog posts, and page headers, then publish changes to your website.',
+    label: 'Edit website content',
     href: studioUrl,
-    available: true,
-  },
-  {
-    title: 'Services',
-    description: 'Add, remove, and update the services shown on the website.',
-    label: 'Edit services',
-    href: studioUrl,
-    available: true,
-  },
-  {
-    title: 'Locations',
-    description: 'Add or hide cities, change each city’s photo or video, and edit the Locations page text.',
-    label: 'Edit locations',
-    // Opens Studio straight to the Locations section.
-    href: `${studioUrl.replace(/\/$/, '')}/structure/locations`,
     available: true,
   },
   {
