@@ -581,6 +581,7 @@ export default function PriceCalculator({ cities }: { cities: readonly string[] 
 
   return (
     <section
+      id='calculator'
       ref={rootRef}
       aria-labelledby='price-heading'
       className='mx-auto max-w-7xl scroll-mt-28 px-4 py-14 sm:px-8 sm:py-16'>

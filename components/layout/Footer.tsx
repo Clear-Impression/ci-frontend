@@ -43,16 +43,17 @@ export default async function Footer() {
         <div>
           <Link
             href='/'
-            aria-label={`${company.name} home`}
             className={`inline-block ${linkStyle}`}>
             <Image
               src={company.logo}
               alt='Clear Impression Window Cleaning'
+              aria-hidden='true'
               width={375}
               height={375}
               sizes='64px'
               className='h-16 w-16 rounded-lg'
             />
+            <span className='sr-only'>{company.name} home</span>
           </Link>
           <p className='mt-3 max-w-xs text-sm leading-6 text-white/80'>
             {company.description}
