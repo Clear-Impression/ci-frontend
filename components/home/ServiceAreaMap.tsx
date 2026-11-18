@@ -25,6 +25,11 @@ type ServiceAreaMapProps = {
   collapsibleOnMobile?: boolean;
 };
 
+const MAP_BOUNDS: [[number, number], [number, number]] = [
+  [33.15, -112.4],
+  [33.65, -111.7],
+];
+
 export default function ServiceAreaMap({
   cities,
   large = false,
@@ -98,13 +103,9 @@ export default function ServiceAreaMap({
         mapRef.current = map;
 
         // Start with the wider Phoenix area rather than a single city.
-        map.fitBounds(
-          [
-            [33.15, -112.4],
-            [33.65, -111.7],
-          ],
-          { padding: [12, 12] },
-        );
+        map.fitBounds(MAP_BOUNDS, {
+          padding: [12, 12],
+        });
 
         const tiles = L.tileLayer(
           'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -138,7 +139,6 @@ export default function ServiceAreaMap({
             opacity: 0.95,
             dashArray: '8, 8',
             weight: 3,
-            lineCap: 'round',
             //Radius is defined in meters in leaflet, thus 16093.4m equals 10 mi
             radius: 16093.4
           }).addTo(map);
@@ -160,7 +160,6 @@ export default function ServiceAreaMap({
             opacity: 0.85,
             dashArray: '8, 8',
             weight: 3,
-            lineCap: 'round',
             radius: 16093.4*3
           }).addTo(map);
         }
@@ -201,6 +200,25 @@ export default function ServiceAreaMap({
       markers.clear();
     };
   }, [cities, showBoundaries]);
+
+  useEffect(() => {
+    if (!collapsibleOnMobile || !mobileExpanded) return;
+
+    const frame = requestAnimationFrame(() => {
+      const map = mapRef.current;
+      if (!map) return;
+
+      map.invalidateSize();
+      map.fitBounds(MAP_BOUNDS, {
+        padding: [12, 12],
+      });
+      map.panBy([65, 0], {
+        animate: false,
+      });
+    });
+
+    return () => cancelAnimationFrame(frame);
+  }, [collapsibleOnMobile, mobileExpanded]);
 
   function showCity(city: ServiceCity) {
     const map = mapRef.current;
