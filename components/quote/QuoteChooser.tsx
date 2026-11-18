@@ -3,14 +3,8 @@
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { company } from '@/data/company';
+import { openQuoteChooserEvent } from './QuoteButton';
 import styles from './QuoteChooser.module.css';
-
-// Any "Get a free quote" button can open the chooser by sending this event.
-export const openQuoteChooserEvent = 'ci:open-quote-chooser';
-
-export function openQuoteChooser() {
-  window.dispatchEvent(new Event(openQuoteChooserEvent));
-}
 
 const seenKey = 'ci-quote-chooser-seen';
 
@@ -40,8 +34,9 @@ export default function QuoteChooser() {
 
   const close = () => dialogRef.current?.close();
 
-  // Listen for any button on the site asking to open the chooser.
+  // Mounting the chooser handles the first click. Listen for later clicks too.
   useEffect(() => {
+    open();
     window.addEventListener(openQuoteChooserEvent, open);
     return () => window.removeEventListener(openQuoteChooserEvent, open);
   }, [open]);
@@ -111,7 +106,7 @@ export default function QuoteChooser() {
           <div className={styles.options}>
             {/* Option 1: instant estimate, with a tiny live preview. */}
             <Link
-              href='/estimate?start=1'
+              href='/estimate#calculator'
               onClick={close}
               className={`${styles.option} ${styles.optionDark}`}
               style={{ '--n': 0 } as React.CSSProperties}>

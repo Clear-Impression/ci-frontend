@@ -6,7 +6,7 @@ import MobileMenu from './MobileMenu';
 import NavDropdown from './NavDropdown';
 import NavLink from './NavLink';
 import QuoteButton from '@/components/quote/QuoteButton';
-import QuoteChooser from '@/components/quote/QuoteChooser';
+import QuoteChooserLoader from '@/components/quote/QuoteChooserLoader';
 import ReadingProgress from './ReadingProgress';
 import { AboutPreview, HelpPreview, LocationsPreview, ServicesPreview } from './NavPreviews';
 import SiteSearch from './SiteSearch';
@@ -74,18 +74,19 @@ export default function Navbar() {
         {/* The company logo takes visitors back to the homepage. */}
         <Link
           href='/'
-          aria-label={`${company.name} home`}
           className='shrink-0 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#efb52b]'>
           {/* Load the header logo early because it appears at the top. */}
           <Image
             src={company.logoHorizontal}
             alt='Clear Impression Window Cleaning'
+            aria-hidden='true'
             width={647}
             height={256}
             priority
             sizes='(min-width: 640px) 203px, 162px'
             className='header-logo h-16 w-auto sm:h-20'
           />
+          <span className='sr-only'>{company.name} home</span>
         </Link>
         {/* At the top of the page a search box sits under the menu. After scrolling
             it folds into the search icon at the end of the menu. */}
@@ -140,7 +141,7 @@ export default function Navbar() {
       <ReadingProgress />
       {/* Floats just under the header on every page except the homepage. */}
       <BackButton />
-      <QuoteChooser />
+      <QuoteChooserLoader />
     </StickyHeader>
   );
 }

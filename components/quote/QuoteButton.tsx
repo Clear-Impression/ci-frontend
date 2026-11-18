@@ -1,6 +1,6 @@
 'use client';
 
-import { openQuoteChooser } from './QuoteChooser';
+export const openQuoteChooserEvent = 'ci:open-quote-chooser';
 
 type QuoteButtonProps = {
   className?: string;
@@ -19,7 +19,7 @@ export default function QuoteButton({ className, children, onOpen }: QuoteButton
         if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
         event.preventDefault();
         onOpen?.();
-        openQuoteChooser();
+        window.dispatchEvent(new Event(openQuoteChooserEvent));
       }}
       className={className}>
       {children}

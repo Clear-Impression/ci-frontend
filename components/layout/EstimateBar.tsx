@@ -90,7 +90,7 @@ export default function EstimateBar() {
         </div>
 
         <Link
-          href={estimate ? '/estimate' : '/estimate?start=1'}
+          href={estimate ? '/estimate' : '/estimate#calculator'}
           className='inline-flex min-h-11 shrink-0 items-center justify-center whitespace-nowrap rounded-full px-3 text-sm sm:px-4 font-semibold ring-1 ring-white/25 hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#efb52b]'>
           {estimate ? 'Edit estimate' : 'Start estimate'}
         </Link>
