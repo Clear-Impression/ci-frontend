@@ -1,0 +1,357 @@
+/* The estimate page around the 3-step estimate (ep- classes): a purple hero,
+   then what happens next, Clear Club and questions. */
+
+.ep {
+  padding-bottom: 96px;
+  background: #fff;
+  color: #200b38;
+  font-family: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+}
+
+.ep-container {
+  width: min(1240px, 100%);
+  margin: 0 auto;
+  padding-inline: 20px;
+}
+
+.ep-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  color: #2a7340;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.ep-eyebrow::before {
+  content: '';
+  width: 26px;
+  height: 1.5px;
+  background: #55ab68;
+}
+
+.ep-eyebrow-green {
+  color: #2a7340;
+}
+
+.ep em {
+  font-style: normal;
+  font-weight: 400;
+}
+
+/* ---------- Hero ---------- */
+.ep-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: linear-gradient(180deg, #f3faf4 0%, #fff 100%);
+  color: #200b38;
+}
+
+.ep-hero::before,
+.ep-hero::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  border-radius: 50%;
+}
+
+.ep-hero::before {
+  top: -30%;
+  right: -10%;
+  width: 620px;
+  height: 620px;
+  background: radial-gradient(circle, rgb(85 171 104 / 0.22), transparent 65%);
+}
+
+.ep-hero::after {
+  bottom: -40%;
+  left: -10%;
+  width: 560px;
+  height: 560px;
+  background: radial-gradient(circle, rgb(239 181 43 / 0.22), transparent 65%);
+}
+
+.ep-hero-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 30px;
+  padding-block: 56px 44px;
+}
+
+.ep-hero h1 {
+  margin: 14px 0 0;
+  font-size: clamp(40px, 6vw, 68px);
+  font-weight: 500;
+  letter-spacing: -0.045em;
+  line-height: 1;
+  text-wrap: balance;
+}
+
+.ep-hero h1 em {
+  color: #9a6a00;
+}
+
+.ep-lead {
+  max-width: 560px;
+  margin: 18px 0 0;
+  color: #625a6c;
+  font-size: 18px;
+}
+
+.ep-facts {
+  display: flex;
+  gap: 28px;
+  margin: 0;
+}
+
+.ep-facts div {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.ep-facts dt {
+  color: #625a6c;
+  font-size: 13px;
+}
+
+.ep-facts dd {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+
+.ep-facts dd span {
+  color: #e2a516;
+}
+
+.ep-estimator {
+  position: relative;
+  scroll-margin-top: 110px;
+}
+
+/* ---------- Sections below ---------- */
+.ep-band {
+  padding-top: 84px;
+}
+
+.ep-head {
+  display: grid;
+  max-width: 640px;
+  gap: 8px;
+  margin-bottom: 26px;
+}
+
+.ep-head h2,
+.ep-club h2 {
+  margin: 0;
+  font-size: clamp(28px, 3.6vw, 40px);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+
+.ep-head h2 em {
+  color: #9a6a00;
+}
+
+.ep-head p {
+  margin: 0;
+  color: #625a6c;
+}
+
+.ep-head a {
+  color: #200b38;
+  font-weight: 600;
+}
+
+.ep-next {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: ep-step;
+}
+
+.ep-next li {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  padding: 22px;
+  border: 1px solid #e4dcee;
+  border-radius: 22px;
+  background: #fff;
+  counter-increment: ep-step;
+}
+
+.ep-next li::before {
+  content: counter(ep-step);
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 50%;
+  background: #e8f5eb;
+  color: #23683a;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.ep-next b {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.ep-next span {
+  color: #625a6c;
+  font-size: 14.5px;
+}
+
+.ep-club {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  overflow: hidden;
+  border-radius: 28px;
+  background: #e8f5eb;
+  color: #200b38;
+}
+
+.ep-club-copy {
+  display: grid;
+  align-content: center;
+  gap: 14px;
+  padding: clamp(26px, 4vw, 48px);
+}
+
+.ep-club h2 em {
+  color: #23683a;
+}
+
+.ep-club-copy > p:last-child {
+  margin: 0;
+  color: #44505a;
+}
+
+.ep-plans {
+  display: grid;
+  align-content: center;
+  gap: 12px;
+  padding: clamp(22px, 4vw, 44px);
+  background: rgb(255 255 255 / 0.55);
+}
+
+.ep-plan {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  border: 1px solid #cfe7d5;
+  border-radius: 18px;
+  background: #fff;
+}
+
+.ep-plan b {
+  display: block;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.ep-plan span {
+  color: #625a6c;
+  font-size: 14px;
+}
+
+.ep-plan .ep-save {
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: #fdf1d3;
+  color: #8a5f00;
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ep-two {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  align-items: start;
+  gap: 40px;
+}
+
+.ep-faq {
+  display: grid;
+  gap: 10px;
+}
+
+.ep-faq details {
+  padding: 18px 22px;
+  border: 1px solid #e4dcee;
+  border-radius: 18px;
+  background: #fff;
+}
+
+.ep-faq summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 17px;
+  font-weight: 600;
+  list-style: none;
+  cursor: pointer;
+}
+
+.ep-faq summary::-webkit-details-marker {
+  display: none;
+}
+
+.ep-faq summary::after {
+  content: '+';
+  color: #2a7340;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.ep-faq details[open] summary::after {
+  content: '\2212';
+}
+
+.ep-faq details p {
+  max-width: 72ch;
+  margin: 10px 0 0;
+  color: #625a6c;
+}
+
+@media (max-width: 1040px) {
+  .ep-hero-inner,
+  .ep-club,
+  .ep-two {
+    grid-template-columns: 1fr;
+  }
+
+  .ep-next {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .ep-hero-inner {
+    padding-block: 40px 32px;
+  }
+
+  .ep-next {
+    grid-template-columns: 1fr;
+  }
+
+  .ep-facts {
+    gap: 20px;
+  }
+}
