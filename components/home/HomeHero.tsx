@@ -79,7 +79,9 @@ export default function HomeHero({ eyebrow, titleLines, subtitle, rating, review
             <div
               className='hx-button-row hx-reveal'
               style={{ '--d': '300ms' } as React.CSSProperties}>
-              <QuoteButton className='hx-btn'>
+              {/* The header has the quote button on wide screens, so this one
+                  only shows on phones and tablets. */}
+              <QuoteButton className='hx-btn hx-hero-quote'>
                 Get a free quote <HxIcon name='arrow' />
               </QuoteButton>
               <a

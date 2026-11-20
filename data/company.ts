@@ -16,6 +16,9 @@ export const company = {
   logo: '/logos/logo.png',
   // Wide version of the logo for the header bar.
   logoHorizontal: '/logos/logo-horizontal.png',
+  // The same logo with purple filled in behind the window, for the glass
+  // header where the video would otherwise show through the window.
+  logoHeader: '/logos/logo-horizontal-window.png',
   quoteFormUrl: '/quote',
 } as const;
 

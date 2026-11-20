@@ -230,7 +230,7 @@ export default function SiteSearch({ children }: SiteSearchProps) {
   // The search box and its results. It opens under the menu or in its place.
   const field = (
     <div className='relative w-full'>
-      <div className='search-field flex h-11.5 items-center gap-2 rounded-xl bg-white pl-3.5 pr-1.5 text-[#200b38] ring-3 ring-[#efb52b]/55'>
+      <div className='search-field flex h-10 items-center gap-2 rounded-full bg-white pl-4 pr-1 text-[#200b38] ring-1 ring-[#200b38]/10'>
         <SearchIcon className='size-4.75 shrink-0 text-[#6c3fb8]' />
         <input
           ref={inputRef}
@@ -474,12 +474,12 @@ export default function SiteSearch({ children }: SiteSearchProps) {
             onClick={openSearch}
             onPointerEnter={load}
             onFocus={load}
-            className='flex h-11.5 w-full max-w-120 cursor-text items-center gap-2 rounded-xl bg-white pl-3.5 pr-2 text-left ring-3 ring-[#efb52b]/55 hover:ring-[#efb52b]/80 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white'>
+            className='flex h-10 w-full max-w-120 cursor-text items-center gap-2 rounded-full bg-white pl-4 pr-2 text-left ring-1 ring-white/30 hover:ring-white/60 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white'>
             <SearchIcon className='size-4.75 shrink-0 text-[#6c3fb8]' />
             <span className='flex-1 truncate text-base text-[#686170]'>Search services and cities</span>
             <kbd
               aria-hidden='true'
-              className='rounded-md bg-[#f7f4fb] px-2 py-0.5 font-sans text-xs font-semibold text-[#6c3fb8]'>
+              className='rounded-full bg-[#f7f4fb] px-2 py-0.5 font-sans text-xs font-semibold text-[#6c3fb8]'>
               /
             </kbd>
           </button>
