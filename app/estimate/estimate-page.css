@@ -132,6 +132,7 @@
 .ep-estimator {
   position: relative;
   margin-top: -90px;
+  scroll-margin-top: 110px;
 }
 
 /* ---------- Sections below ---------- */

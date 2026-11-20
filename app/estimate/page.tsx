@@ -81,7 +81,9 @@ export default async function EstimatePage() {
         </div>
       </section>
 
-      <div className='ep-container ep-estimator'>
+      <div
+        id='estimate'
+        className='ep-container ep-estimator'>
         <EstimateFlow availability={availability} />
       </div>
 

@@ -2,7 +2,7 @@
 
 .dialog {
   margin: auto;
-  max-width: min(56rem, calc(100vw - 1.5rem));
+  max-width: min(36rem, calc(100vw - 1.5rem));
   max-height: calc(100svh - 1.5rem);
   width: 100%;
   padding: 0;
@@ -28,10 +28,7 @@
   max-height: calc(100svh - 1.5rem);
   overflow: auto;
   border-radius: 2rem;
-  background:
-    radial-gradient(60% 50% at 100% 0%, rgb(239 181 43 / 0.14), transparent 70%),
-    radial-gradient(60% 50% at 0% 100%, rgb(108 63 184 / 0.1), transparent 70%),
-    #fbf8f3;
+  background: #fff;
   color: #200b38;
   box-shadow: 0 50px 100px -40px rgb(20 6 36 / 0.7);
   animation: pop-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
@@ -186,436 +183,245 @@
   }
 }
 
-/* ---------- The gift inside ---------- */
+/* ---------- The switch and its panel ---------- */
 .inner {
-  padding: 2.5rem 1.5rem 1.5rem;
+  padding: 2.25rem 1.25rem 1.5rem;
 }
 
 @media (min-width: 40rem) {
   .inner {
-    padding: 3rem 3rem 2.5rem;
+    padding: 2.25rem 2.25rem 1.75rem;
   }
 }
 
 .title {
-  max-width: 38rem;
-  padding-right: 2rem;
-  font-size: clamp(1.9rem, 4vw, 2.6rem);
-  font-weight: 700;
-  line-height: 1.05;
+  margin: 0;
+  padding-right: 2.75rem;
+  font-size: clamp(1.5rem, 4vw, 1.75rem);
+  font-weight: 500;
   letter-spacing: -0.03em;
+  line-height: 1.15;
+  text-wrap: balance;
 }
 
-.lead {
-  margin-top: 0.75rem;
-  max-width: 34rem;
-  color: rgb(32 11 56 / 0.65);
-  line-height: 1.6;
-}
-
-.options {
-  margin-top: 2rem;
-  display: grid;
-  gap: 1rem;
-}
-
-@media (min-width: 44rem) {
-  .options {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-.option {
+.switch {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  border-radius: 1.5rem;
-  padding: 1.5rem;
-  transition:
-    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.4s ease;
-}
-
-.option:focus-visible {
-  outline: 3px solid #6c3fb8;
-  outline-offset: 3px;
-}
-
-@media (hover: hover) {
-  .option:hover {
-    transform: translateY(-4px);
-  }
-}
-
-.optionDark {
-  background: #200b38;
-  color: #fff;
-  box-shadow: 0 30px 50px -30px rgb(32 11 56 / 0.8);
-}
-
-.optionLight {
-  background: #fff;
-  box-shadow:
-    inset 0 0 0 1px rgb(32 11 56 / 0.1),
-    0 24px 40px -32px rgb(32 11 56 / 0.5);
-}
-
-/* Each piece of the gift is revealed in turn once the glass is clean. */
-.title,
-.lead,
-.option,
-.live {
-  opacity: 0;
-  transform: translateY(18px);
-}
-
-.inner[data-shown] .title,
-.inner[data-shown] .lead,
-.inner[data-shown] .option,
-.inner[data-shown] .live {
-  animation: reveal 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-.inner[data-shown] .title {
-  animation-delay: 0.35s;
-}
-
-.inner[data-shown] .lead {
-  animation-delay: 0.45s;
-}
-
-.inner[data-shown] .option {
-  animation-delay: calc(0.6s + var(--n, 0) * 0.15s);
-}
-
-.inner[data-shown] .live {
-  animation-delay: 0.95s;
-}
-
-/* When there's no wipe (second visit, or less motion), come in quicker. */
-.card[data-stage='open'] .inner[data-shown] .title,
-.card[data-stage='open'] .inner[data-shown] .lead {
-  animation-delay: 0.05s;
-}
-
-.card[data-stage='open'] .inner[data-shown] .option {
-  animation-delay: calc(0.12s + var(--n, 0) * 0.1s);
-}
-
-.card[data-stage='open'] .inner[data-shown] .live {
-  animation-delay: 0.3s;
-}
-
-@keyframes reveal {
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-.badgeGold,
-.badgeViolet {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 1.25rem;
+  padding: 0.3rem;
   border-radius: 9999px;
-  padding: 0.25rem 0.75rem;
-  font-size: 0.8rem;
-  font-weight: 600;
+  background: #f3edf9;
 }
 
-.badgeGold {
-  background: #efb52b;
+.knob {
+  position: absolute;
+  top: 0.3rem;
+  bottom: 0.3rem;
+  left: 0.3rem;
+  width: calc(50% - 0.3rem);
+  border-radius: 9999px;
+  background: #fff;
+  box-shadow: 0 6px 16px -8px rgb(32 11 56 / 0.45);
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.switch[data-on='detailed'] .knob {
+  transform: translateX(100%);
+}
+
+.switch button {
+  position: relative;
+  z-index: 1;
+  padding: 0.7rem 0.5rem;
+  border: 0;
+  border-radius: 9999px;
+  background: none;
+  color: #625a6c;
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.switch button[aria-selected='true'] {
   color: #200b38;
 }
 
-.badgeViolet {
-  background: rgb(108 63 184 / 0.1);
-  color: #6c3fb8;
+.switch button:focus-visible {
+  outline: 2px solid #efb52b;
+  outline-offset: 2px;
 }
 
-.optionTitle {
-  margin-top: 1rem;
-  font-size: 1.5rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-}
-
-/* Little demos so people can see the difference at a glance. */
-.demo {
-  margin-top: 1rem;
-  width: 100%;
-  border-radius: 1rem;
-  background: rgb(255 255 255 / 0.07);
-  padding: 0.9rem 1rem;
-  font-size: 0.8rem;
+.panel {
   display: grid;
-  gap: 0.55rem;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  animation: panel-in 0.35s ease both;
 }
 
-.demoLight {
-  background: #f7f3fb;
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
 }
 
-.demoRow,
-.demoPrice {
+.big {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin: 0;
+  color: #625a6c;
+}
+
+.big b {
+  color: #200b38;
+  font-size: 3.4rem;
+  font-weight: 300;
+  letter-spacing: -0.05em;
+  line-height: 1;
+}
+
+.rows {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.rows div {
+  display: grid;
+  grid-template-columns: 5.5rem 1fr;
+  gap: 0.9rem;
+}
+
+.rows dt {
+  color: #625a6c;
+}
+
+.rows dd {
+  margin: 0;
+}
+
+.go {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: rgb(255 255 255 / 0.7);
-}
-
-
-.demoTrack {
-  position: relative;
-  height: 6px;
-  border-radius: 9999px;
-  background: rgb(255 255 255 / 0.15);
-  overflow: hidden;
-}
-
-.demoFill {
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 30%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, #9b6ce0, #efb52b);
-  animation: slide 3.6s ease-in-out infinite;
-}
-
-@keyframes slide {
-  0%,
-  10% {
-    width: 30%;
-  }
-  40%,
-  60% {
-    width: 55%;
-  }
-  85%,
-  100% {
-    width: 78%;
-  }
-}
-
-.demoTicker,
-.demoSize {
-  position: relative;
-  height: 1.4rem;
-  overflow: hidden;
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: #efb52b;
-}
-
-.demoSize {
-  height: 1.2rem;
-  font-size: 0.8rem;
-  color: #fff;
-}
-
-.demoSize > span {
-  display: block;
-  height: 1.2rem;
-  line-height: 1.2rem;
-  text-align: right;
-  animation: tick 3.6s ease-in-out infinite;
-}
-
-.demoTicker > span {
-  display: block;
-  height: 1.4rem;
-  line-height: 1.4rem;
-  text-align: right;
-  animation: tick 3.6s ease-in-out infinite;
-}
-
-@keyframes tick {
-  0%,
-  10% {
-    transform: translateY(0);
-  }
-  40%,
-  60% {
-    transform: translateY(-100%);
-  }
-  85%,
-  100% {
-    transform: translateY(-200%);
-  }
-}
-
-.check {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  color: rgb(32 11 56 / 0.75);
-}
-
-.check::before {
-  content: '✓';
-  display: grid;
-  place-items: center;
-  width: 1.25rem;
-  height: 1.25rem;
-  flex-shrink: 0;
-  border-radius: 9999px;
-  background: #6c3fb8;
-  color: #fff;
-  font-size: 0.7rem;
-  font-weight: 700;
-  transform: scale(0);
-  animation: tick-in 3.6s ease infinite;
-}
-
-.check:nth-child(2)::before {
-  animation-delay: 0.5s;
-}
-
-.check:nth-child(3)::before {
-  animation-delay: 1s;
-}
-
-@keyframes tick-in {
-  0% {
-    transform: scale(0);
-  }
-  12%,
-  85% {
-    transform: scale(1);
-  }
-  100% {
-    transform: scale(0);
-  }
-}
-
-.points {
-  margin-top: 1rem;
-  display: grid;
-  gap: 0.35rem;
-  font-size: 0.92rem;
-  opacity: 0.8;
-  flex: 1;
-}
-
-.points > span::before {
-  content: '•';
-  margin-right: 0.5rem;
-  color: #efb52b;
-}
-
-.optionLight .points > span::before {
-  color: #6c3fb8;
-}
-
-.ctaGold,
-.ctaDark {
-  margin-top: 1.5rem;
-  display: inline-flex;
-  min-height: 3rem;
-  align-items: center;
-  border-radius: 9999px;
-  padding: 0 1.4rem;
-  font-weight: 600;
-  transition: background-color 0.2s ease;
-}
-
-.ctaGold {
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+  padding: 1rem 1.4rem;
+  border-radius: 1rem;
   background: #efb52b;
   color: #200b38;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
 }
 
-.ctaDark {
-  background: #200b38;
-  color: #fff;
+.go svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  transition: transform 0.25s ease;
 }
 
-.optionDark:hover .ctaGold {
-  background: #f6c95b;
+.go:hover {
+  transform: translateY(-1px);
 }
 
-.optionLight:hover .ctaDark {
-  background: #33195a;
+.go:hover svg {
+  transform: translateX(4px);
 }
 
-/* The big "talk to a person" button. */
-.live {
-  /* Stays in view at the bottom of the popup on small screens. */
-  position: sticky;
-  bottom: 0.75rem;
-  z-index: 5;
-  margin-top: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  border-radius: 1.5rem;
-  padding: 1rem 1.25rem;
-  background: #fbefcd;
-  box-shadow: 0 16px 30px -20px rgb(32 11 56 / 0.5);
-  transition: background-color 0.2s ease;
-}
-
-.live:hover {
-  background: #f8e4ad;
-}
-
-.live:focus-visible {
-  outline: 3px solid #6c3fb8;
+.go:focus-visible {
+  outline: 2px solid #200b38;
   outline-offset: 3px;
 }
 
-.liveIcon {
-  display: grid;
-  place-items: center;
-  width: 3rem;
-  height: 3rem;
-  flex-shrink: 0;
-  border-radius: 9999px;
+.panel[data-kind='detailed'] .go {
   background: #200b38;
-  color: #efb52b;
+  color: #fff;
 }
 
-.liveIcon svg {
-  width: 1.3rem;
-  height: 1.3rem;
+.panel[data-kind='detailed'] .go:focus-visible {
+  outline-color: #efb52b;
 }
 
-.liveText {
-  display: grid;
+.phone {
+  margin: 1.25rem 0 0;
+  color: #625a6c;
+  font-size: 0.92rem;
+  text-align: center;
 }
 
-.liveTitle {
-  font-size: 1.1rem;
-  font-weight: 700;
+.phone a {
+  color: #200b38;
+  font-weight: 600;
+  text-decoration: none;
 }
 
-.liveSub {
-  color: rgb(32 11 56 / 0.65);
+.phone a:hover {
+  text-decoration: underline;
+}
+
+/* ---------- Reveal after the wipe ---------- */
+.title,
+.switch,
+.panel,
+.phone {
+  opacity: 0;
+}
+
+.inner[data-shown] .title,
+.inner[data-shown] .switch,
+.inner[data-shown] .panel,
+.inner[data-shown] .phone {
+  opacity: 1;
+  animation: rise 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.inner[data-shown] .switch {
+  animation-delay: 0.06s;
+}
+
+.inner[data-shown] .panel {
+  animation-delay: 0.12s;
+}
+
+.inner[data-shown] .phone {
+  animation-delay: 0.2s;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .dialog::backdrop,
   .card,
-  .fogText,
-  .demoFill,
-  .demoTicker > span,
-  .demoSize > span,
-  .check::before {
+  .knob,
+  .go,
+  .go svg,
+  .dialog::backdrop {
     animation: none;
-  }
-
-  .check::before {
-    transform: none;
+    transition: none;
   }
 
   .title,
-  .lead,
-  .option,
-  .live,
+  .switch,
+  .panel,
+  .phone,
   .inner[data-shown] .title,
-  .inner[data-shown] .lead,
-  .inner[data-shown] .option,
-  .inner[data-shown] .live {
+  .inner[data-shown] .switch,
+  .inner[data-shown] .panel,
+  .inner[data-shown] .phone {
     animation: none;
     opacity: 1;
-    transform: none;
   }
 }
