@@ -57,9 +57,9 @@ export default function Navbar() {
           <a
             href={company.phoneHref}
             className='hidden items-center gap-2.5 rounded-full py-0.5 pl-0.5 pr-4 ring-1 ring-[#72c587]/55 hover:bg-[#72c587]/12 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#efb52b] xl:flex'>
-            <PhoneIcon className='size-8 p-1.5' />
+            <PhoneIcon className='size-7 p-1.5' />
             <span className='text-xs font-semibold uppercase tracking-[0.12em] text-[#72c587]'>Call or text</span>
-            <span className='text-xl font-bold tracking-tight text-white'>{company.phone}</span>
+            <span className='text-[1.0625rem] font-bold tracking-tight text-white'>{company.phone}</span>
           </a>
           {/* Smaller screens get a simpler version. */}
           <a
@@ -133,7 +133,7 @@ export default function Navbar() {
         {/* Opens a popup explaining the instant estimate and the detailed quote.
             Green, with a soft light that sweeps across it every few seconds. */}
         <QuoteButton className='header-quote relative hidden min-h-12 items-center overflow-hidden rounded-full bg-[#55ab68] px-6 text-[0.9375rem] font-semibold text-white shadow-[0_14px_28px_-14px_rgb(85_171_104/0.95)] hover:bg-[#4b9d5e] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white lg:inline-flex'>
-          Get a free estimate
+          Get a free quote
         </QuoteButton>
         {/* Show the mobile menu below the desktop breakpoint. */}
         <MobileMenu items={navigation} />
