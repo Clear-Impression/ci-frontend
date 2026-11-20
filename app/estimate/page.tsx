@@ -5,6 +5,7 @@ import { company } from '@/data/company';
 import { googleRating } from '@/data/reviews';
 import { servingSince } from '@/data/home';
 import { clearPricePromise } from '@/data/packages';
+import { jakarta } from '../fonts';
 import './estimate-page.css';
 
 const title = 'Get a Free Quote | Clear Impression';
@@ -49,13 +50,13 @@ export default async function EstimatePage() {
 
   return (
     // The shared layout already supplies the website's header and footer.
-    <main className='ep flex-1'>
+    <main className={`${jakarta.variable} ep flex-1`}>
       <section className='ep-hero'>
         <div className='ep-container ep-hero-inner'>
           <div>
             <p className='ep-eyebrow'>Free quote</p>
             <h1>
-              Your price in three steps, <em>and a day on our calendar.</em>
+              Your window cleaning price, <em>one easy question at a time.</em>
             </h1>
             <p className='ep-lead'>
               Tell us about your home, pick a package and request a day. It takes about two minutes, and nothing is

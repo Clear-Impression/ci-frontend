@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, type FormEvent } from 'react';
+import { useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { requestAppointment, type AppointmentResult } from '@/app/estimate/actions';
 import { company } from '@/data/company';
 import {
@@ -26,14 +26,26 @@ import {
 import type { Availability } from '@/lib/availability';
 import './estimate-flow.css';
 
-type Step = 1 | 2 | 3 | 4;
+// One question per screen, grouped into the three steps from the brief.
+const questions = [
+  { id: 'size', part: 0 },
+  { id: 'stories', part: 0 },
+  { id: 'dirt', part: 0 },
+  { id: 'extra', part: 0 },
+  { id: 'package', part: 1 },
+  { id: 'addons', part: 1 },
+  { id: 'day', part: 2 },
+  { id: 'details', part: 2 },
+] as const;
 
-const stepNames = ['Your home', 'Your package', 'Request a day'] as const;
+const parts = ['Your home', 'Your package', 'Request a day'] as const;
+
 const times = [
   { id: 'Morning', hint: '8 am to 12 pm' },
   { id: 'Afternoon', hint: '12 to 4 pm' },
   { id: 'Either', hint: 'Whatever works' },
 ] as const;
+
 const phonePattern = String.raw`\+?(?:[\(\). \-]*[0-9]){7,15}[\(\). \-]*`;
 
 const longDay = (iso: string) =>
@@ -44,71 +56,182 @@ const longDay = (iso: string) =>
     timeZone: 'America/Phoenix',
   });
 
-function Check() {
+// ---------- Drawings ----------
+// Simple line drawings for each answer: dark lines, pale blue glass, green
+// for screens and tracks, gold for the house wash.
+
+function Window({ x, y, w, h, inside = true }: { x: number; y: number; w: number; h: number; inside?: boolean }) {
+  return (
+    <g>
+      <rect className='ef-glass' x={x} y={y} width={w} height={h} rx='2' />
+      {!inside && <rect className='ef-glass-dim' x={x + w / 2} y={y} width={w / 2} height={h} />}
+      <path className='ef-shine' d={`M${x + 6} ${y + h - 6} L${x + 16} ${y + 6} L${x + 22} ${y + 6} L${x + 12} ${y + h - 6} Z`} />
+      <rect className='ef-line' x={x} y={y} width={w} height={h} rx='2' />
+      <line className='ef-line' x1={x + w / 2} y1={y} x2={x + w / 2} y2={y + h} />
+    </g>
+  );
+}
+
+function Art({ name }: { name: string }) {
+  const svg = (children: ReactNode) => (
+    <svg viewBox='0 0 160 100' aria-hidden='true'>
+      {children}
+    </svg>
+  );
+  switch (name) {
+    case 'one-story':
+      return svg(
+        <>
+          <path className='ef-line' d='M28 48 L80 20 L132 48' />
+          <rect className='ef-wall' x='36' y='44' width='88' height='46' />
+          <Window x={46} y={56} w={30} h={22} />
+          <rect className='ef-wall' x='88' y='60' width='14' height='30' />
+        </>,
+      );
+    case 'two-story':
+      return svg(
+        <>
+          <path className='ef-line' d='M36 30 L80 6 L124 30' />
+          <rect className='ef-wall' x='44' y='26' width='72' height='66' />
+          <Window x={52} y={34} w={24} h={18} />
+          <Window x={84} y={34} w={24} h={18} />
+          <Window x={52} y={64} w={24} h={18} />
+          <rect className='ef-wall' x='88' y='64' width='14' height='28' />
+        </>,
+      );
+    case 'light':
+    case 'normal':
+    case 'rough': {
+      const dots = name === 'light' ? 4 : name === 'normal' ? 12 : 26;
+      return svg(
+        <>
+          <Window x={50} y={14} w={60} h={72} />
+          {Array.from({ length: dots }, (_, index) => (
+            <circle
+              key={index}
+              className='ef-dust'
+              cx={54 + ((index * 23) % 52)}
+              cy={18 + ((index * 37) % 64)}
+              r={name === 'rough' ? 2.6 : 2}
+            />
+          ))}
+          {name === 'rough' && <path className='ef-streak' d='M58 30 Q80 40 100 28 M56 60 Q78 70 104 58' />}
+        </>,
+      );
+    }
+    case 'none':
+      return svg(
+        <>
+          <Window x={50} y={14} w={60} h={72} />
+          <circle className='ef-ok' cx='112' cy='78' r='14' />
+          <path className='ef-ok-tick' d='M105 78 l5 5 9-10' />
+        </>,
+      );
+    case 'hard':
+      return svg(
+        <>
+          <Window x={50} y={14} w={60} h={72} />
+          {[
+            [62, 30],
+            [92, 40],
+            [70, 62],
+            [98, 70],
+            [80, 24],
+          ].map(([cx, cy]) => (
+            <ellipse
+              key={`${cx}-${cy}`}
+              className='ef-spot'
+              cx={cx}
+              cy={cy}
+              rx='6'
+              ry='4.5'
+            />
+          ))}
+        </>,
+      );
+    case 'bronze':
+      return svg(
+        <>
+          <Window x={50} y={12} w={60} h={68} inside={false} />
+          <text x='80' y='96'>outside</text>
+        </>,
+      );
+    case 'silver':
+      return svg(
+        <>
+          <Window x={34} y={12} w={92} h={68} />
+          <text x='57' y='96'>inside</text>
+          <text x='103' y='96'>outside</text>
+        </>,
+      );
+    case 'gold':
+      return svg(
+        <>
+          <path className='ef-wash' d='M22 46 L80 12 L138 46 V94 H22 Z' />
+          <path className='ef-line' d='M18 46 L80 10 L142 46' />
+          <rect className='ef-wall' x='28' y='42' width='104' height='50' />
+          <Window x={40} y={52} w={44} h={28} />
+          <g className='ef-mesh'>
+            <line x1='40' y1='59' x2='84' y2='59' />
+            <line x1='40' y1='66' x2='84' y2='66' />
+            <line x1='40' y1='73' x2='84' y2='73' />
+          </g>
+          <rect className='ef-track' x='38' y='80' width='48' height='4' rx='2' />
+          <rect className='ef-wall' x='100' y='60' width='18' height='32' />
+        </>,
+      );
+    default:
+      return null;
+  }
+}
+
+// ---------- Pieces ----------
+
+function Choice({
+  pressed,
+  onClick,
+  art,
+  title,
+  hint,
+  extra,
+  flag,
+}: {
+  pressed: boolean;
+  onClick: () => void;
+  art: string;
+  title: string;
+  hint?: string;
+  extra?: ReactNode;
+  flag?: string;
+}) {
+  return (
+    <button
+      type='button'
+      className='ef-choice'
+      aria-pressed={pressed}
+      onClick={onClick}>
+      {flag && <span className='ef-flag'>{flag}</span>}
+      <span className='ef-art'>
+        <Art name={art} />
+      </span>
+      <b>{title}</b>
+      {hint && <span className='ef-hint'>{hint}</span>}
+      {extra}
+    </button>
+  );
+}
+
+function Arrow() {
   return (
     <svg
       aria-hidden='true'
       viewBox='0 0 24 24'
       fill='none'
       stroke='currentColor'
-      strokeWidth='3'
+      strokeWidth='2.2'
       strokeLinecap='round'
       strokeLinejoin='round'>
-      <path d='M6 12.5l4 4 8-9' />
-    </svg>
-  );
-}
-
-// A small drawing of what each package cleans. The glass shines when picked.
-function PackageArt({ id }: { id: PackageId }) {
-  if (id === 'gold') {
-    return (
-      <svg viewBox='0 0 150 104' aria-hidden='true'>
-        <defs>
-          <clipPath id='ef-clip-gold'>
-            <rect x='38' y='36' width='74' height='50' />
-          </clipPath>
-        </defs>
-        <path className='ef-house' d='M18 50 L75 10 L132 50 M28 44 V92 H122 V44' />
-        <rect className='ef-glass' x='38' y='36' width='74' height='50' />
-        <g className='ef-mesh'>
-          {[46, 56, 66, 76].map((y) => (
-            <line key={y} x1='38' y1={y} x2='112' y2={y} />
-          ))}
-        </g>
-        <g clipPath='url(#ef-clip-gold)'>
-          <rect className='ef-shine' x='0' y='0' width='22' height='120' transform='rotate(20)' />
-        </g>
-        <rect className='ef-frame' x='38' y='36' width='74' height='50' rx='2' />
-        <line className='ef-frame' x1='75' y1='36' x2='75' y2='86' />
-        <rect className='ef-track' x='36' y='86' width='78' height='5' rx='2' />
-      </svg>
-    );
-  }
-  const wide = id === 'silver';
-  const x = wide ? 20 : 35;
-  const width = wide ? 110 : 80;
-  return (
-    <svg viewBox='0 0 150 104' aria-hidden='true'>
-      <defs>
-        <clipPath id={`ef-clip-${id}`}>
-          <rect x={x} y='14' width={width} height='76' />
-        </clipPath>
-      </defs>
-      <rect className='ef-glass' x={x} y='14' width={width} height='76' />
-      <g clipPath={`url(#ef-clip-${id})`}>
-        <rect className='ef-shine' x='0' y='0' width='22' height='120' transform='rotate(20)' />
-      </g>
-      <rect className='ef-frame' x={x} y='14' width={width} height='76' rx='2' />
-      <line className='ef-frame' x1='75' y1='14' x2='75' y2='90' />
-      {wide ? (
-        <>
-          <text x='47' y='102' textAnchor='middle'>inside</text>
-          <text x='103' y='102' textAnchor='middle'>outside</text>
-        </>
-      ) : (
-        <text x='75' y='102' textAnchor='middle'>outside</text>
-      )}
+      <path d='M5 12h13M13 6.5l5.5 5.5-5.5 5.5' />
     </svg>
   );
 }
@@ -117,55 +240,59 @@ type EstimateFlowProps = {
   availability: Availability;
 };
 
-// The 3-step estimate: tell us about your home, pick a package (and any
-// extras), then request a day. A live price panel sits beside it. Sending the
-// request shows a tracker; we call to confirm, so nothing is booked yet.
+// The estimate, one question at a time: four about the home, then the
+// package and extras, then a day and contact details. A small price card
+// follows along. Sending shows the request tracker; nothing is booked until
+// we call to confirm.
 export default function EstimateFlow({ availability }: EstimateFlowProps) {
-  const [step, setStep] = useState<Step>(1);
-  const [furthest, setFurthest] = useState<Step>(1);
+  const [index, setIndex] = useState(0);
+  const [done, setDone] = useState(false);
   const [home, setHome] = useState<HomeDetails>(startingHome);
   const [packageId, setPackageId] = useState<PackageId>('silver');
   const [picked, setPicked] = useState<AddonId[]>([]);
   const [panels, setPanels] = useState(solarPanels.start);
-  const firstOpen = availability.days.find((day) => day.open)?.date ?? '';
-  const [day, setDay] = useState(firstOpen);
+  const [day, setDay] = useState(availability.days.find((entry) => entry.open)?.date ?? '');
   const [time, setTime] = useState<string>('Morning');
   const [pending, setPending] = useState(false);
   const [result, setResult] = useState<AppointmentResult | null>(null);
   const [firstName, setFirstName] = useState('');
   const submissionKey = useRef<string | null>(null);
   const topRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
 
+  const question = questions[index].id;
+  const part = questions[index].part;
   const offered = addons.filter((addon) => addon.includedIn !== packageId);
   const chosenAddons = offered.filter((addon) => picked.includes(addon.id));
-
-  const summary = (() => {
-    const lines: { label: string; value: string; muted?: boolean }[] = [];
-    const base = packagePrice(packageId, home);
-    let total: Range = { ...base };
-    lines.push({ label: `${packages.find((entry) => entry.id === packageId)?.name} package`, value: formatRange(base) });
-    for (const addon of chosenAddons) {
-      const price = addonPrice(addon.id, home, panels);
-      if (price) {
-        total = { low: total.low + price.low, high: total.high + price.high };
-        lines.push({ label: addon.name, value: `+${formatRange(price)}` });
-      } else {
-        lines.push({ label: addon.name, value: 'after review', muted: true });
-      }
-    }
-    if (packageId === 'gold') lines.push({ label: 'House wash', value: 'after review', muted: true });
-    if (home.hardWater) lines.push({ label: 'Hard water spots', value: 'photo needed', muted: true });
-    const needsReview =
-      packageId === 'gold' || home.hardWater || chosenAddons.some((addon) => !addon.instant);
-    return { lines, total, needsReview };
-  })();
-
   const qualifying = chosenAddons.filter((addon) => addon.qualifies).length;
 
-  function go(next: Step) {
-    setStep(next);
-    setFurthest((value) => (next > value ? next : value));
-    topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // The running total and what still needs a person to price it.
+  const base = packagePrice(packageId, home);
+  let total: Range = { ...base };
+  const lines: { label: string; value: string; muted?: boolean }[] = [
+    { label: `${packages.find((entry) => entry.id === packageId)?.name} package`, value: formatRange(base) },
+  ];
+  for (const addon of chosenAddons) {
+    const price = addonPrice(addon.id, home, panels);
+    if (price) {
+      total = { low: total.low + price.low, high: total.high + price.high };
+      lines.push({ label: addon.name, value: `+${formatRange(price)}` });
+    } else {
+      lines.push({ label: addon.name, value: 'after review', muted: true });
+    }
+  }
+  if (packageId === 'gold') lines.push({ label: 'House wash', value: 'after review', muted: true });
+  if (home.hardWater) lines.push({ label: 'Hard water spots', value: 'photo needed', muted: true });
+  const needsReview = packageId === 'gold' || home.hardWater || chosenAddons.some((addon) => !addon.instant);
+
+  function goTo(next: number) {
+    setIndex(next);
+    // Keep the question in view and move focus to it for keyboard and
+    // screen reader users.
+    requestAnimationFrame(() => {
+      topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      headingRef.current?.focus({ preventScroll: true });
+    });
   }
 
   function toggleAddon(id: AddonId) {
@@ -203,7 +330,8 @@ export default function EstimateFlow({ availability }: EstimateFlowProps) {
       if (outcome.status === 'saved') {
         setFirstName(read('firstName'));
         submissionKey.current = null;
-        go(4);
+        setDone(true);
+        requestAnimationFrame(() => topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
       }
     } catch {
       setResult({ status: 'unavailable' });
@@ -212,54 +340,91 @@ export default function EstimateFlow({ availability }: EstimateFlowProps) {
     }
   }
 
-  // The first empty cells line the first day up under its weekday.
   const leadingBlanks = availability.days.length
     ? new Date(`${availability.days[0].date}T12:00:00-07:00`).getUTCDay()
     : 0;
+
+  const back =
+    index > 0 && !done ? (
+      <button
+        type='button'
+        className='ef-back'
+        onClick={() => goTo(index - 1)}>
+        <span aria-hidden='true'>←</span> Back
+      </button>
+    ) : (
+      <span />
+    );
+
+  const next = (label = 'Continue') => (
+    <button
+      type='button'
+      className='ef-btn ef-btn-gold'
+      onClick={() => goTo(index + 1)}>
+      {label}
+      <Arrow />
+    </button>
+  );
 
   return (
     <div
       ref={topRef}
       className='ef'>
-      <div className='ef-flow'>
-        <ol className='ef-steps'>
-          {stepNames.map((name, index) => {
-            const number = (index + 1) as Step;
-            const state = step === 4 || number < step ? 'done' : number === step ? 'on' : '';
-            return (
+      {/* Progress: one dash per question, grouped by step. */}
+      <div className='ef-top'>
+        {back}
+        <div className='ef-progress'>
+          <ol
+            className='ef-dashes'
+            aria-hidden='true'>
+            {questions.map((entry, position) => (
               <li
-                key={name}
-                className={state}>
-                <button
-                  type='button'
-                  disabled={step === 4 || number > furthest}
-                  aria-current={number === step ? 'step' : undefined}
-                  onClick={() => go(number)}>
-                  <span className='ef-bar'>
-                    <i />
-                  </span>
-                  <span className='ef-step-name'>
-                    Step {number}
-                    <b>{name}</b>
-                  </span>
-                </button>
-              </li>
-            );
-          })}
-        </ol>
+                key={entry.id}
+                className={done || position < index ? 'done' : position === index ? 'on' : ''}
+              />
+            ))}
+          </ol>
+          <p className='ef-count'>
+            {done ? (
+              'All done'
+            ) : (
+              <>
+                <b>
+                  Step {part + 1} · {parts[part]}
+                </b>{' '}
+                · Question {index + 1} of {questions.length}
+              </>
+            )}
+          </p>
+        </div>
 
-        {step === 1 && (
-          <div className='ef-pane'>
-            <div>
-              <h2>Tell us about your home</h2>
-              <p className='ef-sub'>Four quick questions. A guess is fine; we confirm everything before any work starts.</p>
-            </div>
-            <div className='ef-q'>
-              <label
-                className='ef-q-label'
-                htmlFor='ef-size'>
-                Home size <output htmlFor='ef-size'>{home.size.toLocaleString('en-US')} sq ft</output>
-              </label>
+        <div
+          className='ef-price'
+          aria-live='polite'>
+          <span>Your estimate so far</span>
+          <b>{formatRange(total)}</b>
+          <span className={`ef-chip ${needsReview ? 'ef-chip-review' : 'ef-chip-auto'}`}>
+            {needsReview ? 'Part needs review' : 'Instant estimate'}
+          </span>
+        </div>
+      </div>
+
+      <div
+        className='ef-stage'
+        key={done ? 'done' : question}>
+        {!done && question === 'size' && (
+          <section className='ef-q'>
+            <h2
+              ref={headingRef}
+              tabIndex={-1}>
+              How big is <em>your home?</em>
+            </h2>
+            <p className='ef-sub'>The living space on your listing or tax record. A guess is fine.</p>
+            <div className='ef-size'>
+              <output htmlFor='ef-size'>
+                {home.size.toLocaleString('en-US')}
+                <small>sq ft</small>
+              </output>
               <input
                 id='ef-size'
                 type='range'
@@ -267,78 +432,106 @@ export default function EstimateFlow({ availability }: EstimateFlowProps) {
                 max={homeSize.max}
                 step={homeSize.step}
                 value={home.size}
+                aria-label='Home size in square feet'
+                style={{ '--fill': `${((home.size - homeSize.min) / (homeSize.max - homeSize.min)) * 100}%` } as React.CSSProperties}
                 onChange={(event) => setHome({ ...home, size: Number(event.target.value) })}
               />
-              <p className='ef-help'>The living space on your listing or tax record.</p>
+              <span className='ef-scale'>
+                <span>{homeSize.min.toLocaleString('en-US')}</span>
+                <span>{homeSize.max.toLocaleString('en-US')}+</span>
+              </span>
             </div>
-            <fieldset className='ef-q'>
-              <legend className='ef-q-label'>Stories</legend>
-              <div className='ef-seg'>
-                {([1, 2] as const).map((stories) => (
-                  <button
-                    key={stories}
-                    type='button'
-                    aria-pressed={home.stories === stories}
-                    onClick={() => setHome({ ...home, stories })}>
-                    {stories} story
-                    {stories === 2 && <small>Upper glass from the ground with a pure water pole</small>}
-                  </button>
-                ))}
-              </div>
-            </fieldset>
-            <fieldset className='ef-q'>
-              <legend className='ef-q-label'>How dirty, honestly?</legend>
-              <div className='ef-seg'>
-                {dirtOptions.map((option) => (
-                  <button
-                    key={option.id}
-                    type='button'
-                    aria-pressed={home.dirt === option.id}
-                    onClick={() => setHome({ ...home, dirt: option.id })}>
-                    {option.label}
-                    <small>{option.hint}</small>
-                  </button>
-                ))}
-              </div>
-            </fieldset>
-            <fieldset className='ef-q'>
-              <legend className='ef-q-label'>Anything we should know?</legend>
-              <div className='ef-seg'>
-                <button
-                  type='button'
-                  aria-pressed={!home.hardWater}
-                  onClick={() => setHome({ ...home, hardWater: false })}>
-                  Nothing special
-                </button>
-                <button
-                  type='button'
-                  aria-pressed={home.hardWater}
-                  onClick={() => setHome({ ...home, hardWater: true })}>
-                  Hard water spots
-                  <small>We’ll ask for a photo</small>
-                </button>
-              </div>
-            </fieldset>
-            <div className='ef-nav'>
-              <span className='ef-fine'>Your price updates as you go.</span>
-              <button
-                className='ef-btn ef-btn-gold'
-                type='button'
-                onClick={() => go(2)}>
-                Choose a package <span aria-hidden='true'>→</span>
-              </button>
-            </div>
-          </div>
+            <div className='ef-foot'>{next()}</div>
+          </section>
         )}
 
-        {step === 2 && (
-          <div className='ef-pane'>
-            <div>
-              <h2>Choose your cleaning</h2>
-              <p className='ef-sub'>Priced for your home. Silver is what most people mean by “clean my windows”.</p>
+        {!done && question === 'stories' && (
+          <section className='ef-q'>
+            <h2
+              ref={headingRef}
+              tabIndex={-1}>
+              How many <em>stories?</em>
+            </h2>
+            <div className='ef-choices ef-two'>
+              <Choice
+                pressed={home.stories === 1}
+                onClick={() => setHome({ ...home, stories: 1 })}
+                art='one-story'
+                title='1 story'
+                hint='All windows on the ground floor'
+              />
+              <Choice
+                pressed={home.stories === 2}
+                onClick={() => setHome({ ...home, stories: 2 })}
+                art='two-story'
+                title='2 stories'
+                hint='Upper glass cleaned from the ground with a pure water pole'
+              />
             </div>
+            <div className='ef-foot'>{next()}</div>
+          </section>
+        )}
+
+        {!done && question === 'dirt' && (
+          <section className='ef-q'>
+            <h2
+              ref={headingRef}
+              tabIndex={-1}>
+              How dirty are they, <em>honestly?</em>
+            </h2>
+            <div className='ef-choices'>
+              {dirtOptions.map((option) => (
+                <Choice
+                  key={option.id}
+                  pressed={home.dirt === option.id}
+                  onClick={() => setHome({ ...home, dirt: option.id })}
+                  art={option.id}
+                  title={option.label}
+                  hint={option.hint}
+                />
+              ))}
+            </div>
+            <div className='ef-foot'>{next()}</div>
+          </section>
+        )}
+
+        {!done && question === 'extra' && (
+          <section className='ef-q'>
+            <h2
+              ref={headingRef}
+              tabIndex={-1}>
+              Anything we <em>should know?</em>
+            </h2>
+            <div className='ef-choices ef-two'>
+              <Choice
+                pressed={!home.hardWater}
+                onClick={() => setHome({ ...home, hardWater: false })}
+                art='none'
+                title='Nothing special'
+                hint='Regular dust and water marks'
+              />
+              <Choice
+                pressed={home.hardWater}
+                onClick={() => setHome({ ...home, hardWater: true })}
+                art='hard'
+                title='Hard water spots'
+                hint='White spots from sprinklers. We’ll ask for a photo.'
+              />
+            </div>
+            <div className='ef-foot'>{next('See my packages')}</div>
+          </section>
+        )}
+
+        {!done && question === 'package' && (
+          <section className='ef-q'>
+            <h2
+              ref={headingRef}
+              tabIndex={-1}>
+              How clean do you want <em>your windows?</em>
+            </h2>
+            <p className='ef-sub'>Priced for your home. Most people pick Silver.</p>
             <div
-              className='ef-pkgs'
+              className='ef-choices ef-packages'
               role='radiogroup'
               aria-label='Cleaning package'>
               {packages.map((entry) => (
@@ -347,17 +540,18 @@ export default function EstimateFlow({ availability }: EstimateFlowProps) {
                   type='button'
                   role='radio'
                   aria-checked={packageId === entry.id}
-                  className='ef-pkg'
+                  className='ef-choice ef-package'
+                  data-tier={entry.id}
                   onClick={() => setPackageId(entry.id)}>
                   {entry.recommended && <span className='ef-flag'>Recommended</span>}
                   <span className='ef-art'>
-                    <PackageArt id={entry.id} />
+                    <Art name={entry.id} />
                   </span>
-                  <span className='ef-pkg-name'>{entry.name}</span>
-                  <span className='ef-pkg-note'>{entry.note}</span>
-                  <span className='ef-price'>
+                  <b>{entry.name}</b>
+                  <span className='ef-hint'>{entry.note}</span>
+                  <span className='ef-tier-price'>
                     {formatRange(packagePrice(entry.id, home))}
-                    <small>{entry.needsReview ?? 'Instant estimate'}</small>
+                    {entry.needsReview && <small>{entry.needsReview}</small>}
                   </span>
                   <ul>
                     {entry.includes.map((item) => (
@@ -372,11 +566,19 @@ export default function EstimateFlow({ availability }: EstimateFlowProps) {
               ))}
             </div>
             <p className='ef-upgrade'>{upgradeNotes[packageId]}</p>
+            <div className='ef-foot'>{next()}</div>
+          </section>
+        )}
 
+        {!done && question === 'addons' && (
+          <section className='ef-q'>
+            <h2
+              ref={headingRef}
+              tabIndex={-1}>
+              Want to add <em>anything else?</em>
+            </h2>
+            <p className='ef-sub'>Optional. Skip it if not.</p>
             <div className='ef-addons'>
-              <h3>
-                Want to add anything else? <span>Optional. Skip it if not.</span>
-              </h3>
               {offered.map((addon) => {
                 const on = picked.includes(addon.id);
                 const price = addonPrice(addon.id, home, panels);
@@ -390,7 +592,16 @@ export default function EstimateFlow({ availability }: EstimateFlowProps) {
                       aria-pressed={on}
                       onClick={() => toggleAddon(addon.id)}>
                       <span className='ef-box'>
-                        <Check />
+                        <svg
+                          aria-hidden='true'
+                          viewBox='0 0 24 24'
+                          fill='none'
+                          stroke='currentColor'
+                          strokeWidth='3'
+                          strokeLinecap='round'
+                          strokeLinejoin='round'>
+                          <path d='M6 12.5l4 4 8-9' />
+                        </svg>
                       </span>
                       <span className='ef-what'>
                         <b>{addon.name}</b>
@@ -417,7 +628,10 @@ export default function EstimateFlow({ availability }: EstimateFlowProps) {
                           value={panels}
                           onChange={(event) =>
                             setPanels(
-                              Math.min(solarPanels.max, Math.max(solarPanels.min, Number(event.target.value) || solarPanels.min)),
+                              Math.min(
+                                solarPanels.max,
+                                Math.max(solarPanels.min, Number(event.target.value) || solarPanels.min),
+                              ),
                             )
                           }
                         />
@@ -426,89 +640,97 @@ export default function EstimateFlow({ availability }: EstimateFlowProps) {
                   </div>
                 );
               })}
-              {bonusOffer.enabled && qualifying === 1 && (
-                <p className='ef-bonus'>
-                  <span aria-hidden='true'>★</span>
-                  {bonusOffer.text}
-                </p>
-              )}
             </div>
-            <div className='ef-nav'>
+            {bonusOffer.enabled && qualifying === 1 && <p className='ef-bonus'>{bonusOffer.text}</p>}
+            <div className='ef-foot'>
               <button
-                className='ef-btn ef-btn-ghost'
                 type='button'
-                onClick={() => go(1)}>
-                <span aria-hidden='true'>←</span> Back
+                className='ef-skip'
+                onClick={() => {
+                  setPicked([]);
+                  goTo(index + 1);
+                }}>
+                Skip
               </button>
-              <button
-                className='ef-btn ef-btn-gold'
-                type='button'
-                onClick={() => go(3)}>
-                Pick a day <span aria-hidden='true'>→</span>
-              </button>
+              {next('Pick a day')}
             </div>
-          </div>
+          </section>
         )}
 
-        {step === 3 && (
+        {!done && question === 'day' && (
+          <section className='ef-q'>
+            <h2
+              ref={headingRef}
+              tabIndex={-1}>
+              Which day <em>works best?</em>
+            </h2>
+            <p className='ef-sub'>These are our open days. We call to confirm the exact time.</p>
+            <div
+              className='ef-cal'
+              role='group'
+              aria-label='Open days'>
+              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((name) => (
+                <span
+                  key={name}
+                  className='ef-dow'
+                  aria-hidden='true'>
+                  {name}
+                </span>
+              ))}
+              {Array.from({ length: leadingBlanks }, (_, blank) => (
+                <span key={`blank-${blank}`} />
+              ))}
+              {availability.days.map((entry) => (
+                <button
+                  key={entry.date}
+                  type='button'
+                  className='ef-day'
+                  disabled={!entry.open}
+                  aria-pressed={day === entry.date}
+                  aria-label={`${longDay(entry.date)}, ${entry.label.toLowerCase()}`}
+                  onClick={() => setDay(entry.date)}>
+                  <b>{Number(entry.date.slice(8))}</b>
+                  <small>{entry.label}</small>
+                </button>
+              ))}
+            </div>
+            <div
+              className='ef-times'
+              role='group'
+              aria-label='Best time'>
+              {times.map((option) => (
+                <button
+                  key={option.id}
+                  type='button'
+                  aria-pressed={time === option.id}
+                  onClick={() => setTime(option.id)}>
+                  {option.id === 'Either' ? 'Either works' : option.id}
+                  <small>{option.hint}</small>
+                </button>
+              ))}
+            </div>
+            <div className='ef-foot'>{next('Almost done')}</div>
+          </section>
+        )}
+
+        {!done && question === 'details' && (
           <form
-            className='ef-pane'
+            className='ef-q'
             onSubmit={send}
             aria-busy={pending}>
-            <div>
-              <h2>Request a day</h2>
-              <p className='ef-sub'>
-                These are our open days. This is a request: we call to confirm the time and your details.
-              </p>
-            </div>
-            <fieldset className='ef-q'>
-              <legend className='ef-q-label'>Preferred day</legend>
-              <div className='ef-cal'>
-                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((name) => (
-                  <span
-                    key={name}
-                    className='ef-dow'
-                    aria-hidden='true'>
-                    {name}
-                  </span>
-                ))}
-                {Array.from({ length: leadingBlanks }, (_, index) => (
-                  <span key={`blank-${index}`} />
-                ))}
-                {availability.days.map((entry) => (
-                  <button
-                    key={entry.date}
-                    type='button'
-                    className='ef-day'
-                    disabled={!entry.open}
-                    aria-pressed={day === entry.date}
-                    aria-label={`${longDay(entry.date)}, ${entry.label.toLowerCase()}`}
-                    onClick={() => setDay(entry.date)}>
-                    <b>{Number(entry.date.slice(8))}</b>
-                    <small>{entry.label}</small>
-                  </button>
-                ))}
-              </div>
-            </fieldset>
-            <fieldset className='ef-q'>
-              <legend className='ef-q-label'>Best time</legend>
-              <div className='ef-seg'>
-                {times.map((option) => (
-                  <button
-                    key={option.id}
-                    type='button'
-                    aria-pressed={time === option.id}
-                    onClick={() => setTime(option.id)}>
-                    {option.id === 'Either' ? 'Either works' : option.id}
-                    <small>{option.hint}</small>
-                  </button>
-                ))}
-              </div>
-            </fieldset>
+            <h2
+              ref={headingRef}
+              tabIndex={-1}>
+              Where should we <em>send it?</em>
+            </h2>
+            <p className='ef-sub'>
+              {day && `${longDay(day)}, ${time === 'Either' ? 'any time' : time.toLowerCase()}. `}
+              We’ll call or text to confirm.
+            </p>
             <fieldset
               className='ef-form'
               disabled={pending}>
-              <legend className='ef-q-label'>Your details</legend>
+              <legend className='sr-only'>Your details</legend>
               <label>
                 First name
                 <input name='firstName' autoComplete='given-name' required maxLength={100} />
@@ -553,7 +775,22 @@ export default function EstimateFlow({ availability }: EstimateFlowProps) {
                 />
               </label>
             </fieldset>
-            <p className='ef-fine'>{paymentNote}</p>
+            <div className='ef-review'>
+              <ul>
+                {lines.map((line) => (
+                  <li
+                    key={line.label}
+                    className={line.muted ? 'muted' : undefined}>
+                    <span>{line.label}</span>
+                    <span>{line.value}</span>
+                  </li>
+                ))}
+              </ul>
+              <p>
+                <b>{clearPricePromise.title}.</b> {clearPricePromise.text}
+              </p>
+              <p>{paymentNote}</p>
+            </div>
             {result && result.status !== 'saved' && (
               <p
                 className='ef-error'
@@ -565,109 +802,71 @@ export default function EstimateFlow({ availability }: EstimateFlowProps) {
                     : `We couldn’t send your request just now. Please try again, or call or text ${company.phone}.`}
               </p>
             )}
-            <div className='ef-nav'>
-              <button
-                className='ef-btn ef-btn-ghost'
-                type='button'
-                onClick={() => go(2)}>
-                <span aria-hidden='true'>←</span> Back
-              </button>
+            <div className='ef-foot'>
               <button
                 className='ef-btn ef-btn-gold'
                 type='submit'
                 disabled={pending || !day}>
                 {pending ? 'Sending…' : 'Send my request'}
+                {!pending && <Arrow />}
               </button>
             </div>
           </form>
         )}
 
-        {step === 4 && (
-          <div
-            className='ef-pane'
+        {done && (
+          <section
+            className='ef-q ef-done'
             role='status'>
-            <div>
-              <h2>Request received{firstName ? `, ${firstName}` : ''}.</h2>
-              <p className='ef-sub'>We’ll call or text you to confirm the time and your final price.</p>
-            </div>
+            <span
+              className='ef-done-mark'
+              aria-hidden='true'>
+              <svg
+                viewBox='0 0 24 24'
+                fill='none'
+                stroke='currentColor'
+                strokeWidth='2.6'
+                strokeLinecap='round'
+                strokeLinejoin='round'>
+                <path d='M6 12.5l4 4 8-9' />
+              </svg>
+            </span>
+            <h2>
+              Request received{firstName ? `, ${firstName}` : ''}. <em>We’ll be in touch.</em>
+            </h2>
+            <p className='ef-sub'>We’ll call or text to confirm the time and your final price.</p>
             <ol className='ef-tracker'>
               <li className='done'>
-                <span className='ef-pip'>
-                  <i />
-                </span>
-                <span>
-                  <b>Received</b>Just now
-                </span>
+                <i />
+                <b>Received</b>
+                <span>Just now</span>
               </li>
               <li className='now'>
-                <span className='ef-pip'>
-                  <i />
-                </span>
-                <span>
-                  <b>Being reviewed</b>We check the details
-                </span>
+                <i />
+                <b>Being reviewed</b>
+                <span>We check the details</span>
               </li>
               <li>
-                <span className='ef-pip'>
-                  <i />
-                </span>
-                <span>
-                  <b>Confirmed</b>We call to set the time
-                </span>
+                <i />
+                <b>Confirmed</b>
+                <span>We call to set the time</span>
               </li>
               <li>
-                <span className='ef-pip'>
-                  <i />
-                </span>
-                <span>
-                  <b>Cleaning day</b>
-                  {day && `${longDay(day)}, ${time === 'Either' ? 'any time' : time.toLowerCase()}`}
-                </span>
+                <i />
+                <b>Cleaning day</b>
+                <span>{day && `${longDay(day)}, ${time === 'Either' ? 'any time' : time.toLowerCase()}`}</span>
               </li>
             </ol>
-            <div className='ef-recap'>
-              <b>Your estimate: {formatRange(summary.total)}</b>
-              {summary.needsReview && <span> plus the parts we confirm after review</span>}
-            </div>
-          </div>
+            <p className='ef-club'>
+              <b>{clearClub.title}.</b> {clearClub.text}
+            </p>
+          </section>
         )}
       </div>
 
-      <aside
-        className='ef-summary'
-        aria-live='polite'>
-        <span className='ef-label'>Today’s estimate</span>
-        <span className='ef-total'>{formatRange(summary.total)}</span>
-        <span className={`ef-chip ${summary.needsReview ? 'ef-chip-review' : 'ef-chip-auto'}`}>
-          {summary.needsReview ? 'Part of this needs review' : 'Instant estimate'}
-        </span>
-        <ul className='ef-lines'>
-          {summary.lines.map((line) => (
-            <li
-              key={line.label}
-              className={line.muted ? 'muted' : undefined}>
-              <span>{line.label}</span>
-              <span>{line.value}</span>
-            </li>
-          ))}
-          <li className='muted'>
-            <span>
-              {home.size.toLocaleString('en-US')} sq ft · {home.stories} story · {home.dirt}
-            </span>
-          </li>
-        </ul>
-        <div className='ef-club'>
-          <b>{clearClub.title}</b>
-          {clearClub.text}
-        </div>
-        <p className='ef-promise'>
-          <b>{clearPricePromise.title}</b>
-          {clearPricePromise.text}
-        </p>
-        <p className='ef-help-line'>
-          Stuck? Call or text <a href={company.phoneHref}>{company.phone}</a>
-        </p>
-      </aside>
+      <p className='ef-help'>
+        Stuck? Call or text <a href={company.phoneHref}>{company.phone}</a>
+      </p>
     </div>
   );
 }
