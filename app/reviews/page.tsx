@@ -26,7 +26,6 @@ export default async function ReviewsPage() {
         subtitle={header.subtitle}
         reviews={googleReviews}
         googleUrl={googleReviewsUrl}
-        writeReviewUrl={googleWriteReviewUrl}
       />
 
       {/* The overall rating, counting up as it flips into view. */}
