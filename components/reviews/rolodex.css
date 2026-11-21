@@ -3,8 +3,7 @@
   font-family: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
 }
 
-/* The spinning review rolodex: white index cards around a drum on a metal
-   rod, with gold-capped knobs at each end. */
+/* The spinning review rolodex: white index cards turning around a drum. */
 
 .rx {
   position: relative;
@@ -25,42 +24,6 @@
 
 .rx-stage:active {
   cursor: grabbing;
-}
-
-/* The rod runs straight through the middle of the drum. */
-.rx-rod {
-  position: absolute;
-  top: 50%;
-  left: -6%;
-  right: -6%;
-  height: 10px;
-  margin-top: -5px;
-  border-radius: 10px;
-  background: linear-gradient(180deg, #d9d2e3 0%, #8f8499 55%, #5d5468 100%);
-  box-shadow: 0 6px 18px rgb(0 0 0 / 0.35);
-}
-
-.rx-knob {
-  position: absolute;
-  top: 50%;
-  width: 54px;
-  height: 54px;
-  margin-top: -27px;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at 35% 30%, #fff3cf 0 8%, transparent 9%),
-    radial-gradient(circle at 50% 50%, #efb52b 0 34%, #b47c00 35% 42%, #3a1c5c 43% 100%);
-  box-shadow:
-    0 10px 24px rgb(0 0 0 / 0.45),
-    inset 0 2px 0 rgb(255 255 255 / 0.25);
-}
-
-.rx-knob-left {
-  left: calc(-6% - 22px);
-}
-
-.rx-knob-right {
-  right: calc(-6% - 22px);
 }
 
 .rx-drum {
@@ -347,14 +310,6 @@
     font-size: 16px;
   }
 
-  .rx-knob {
-    display: none;
-  }
-
-  .rx-rod {
-    left: 0;
-    right: 0;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
