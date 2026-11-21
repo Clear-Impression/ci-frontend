@@ -1,3 +1,4 @@
+import PageGuide from "@/components/layout/PageGuide";
 import { createPageMetadata } from "@/lib/seo";
 import FAQAccordion from "./faqAccordion";
 import styles from "./faq.module.css";
@@ -35,8 +36,22 @@ export default async function FAQPage({ searchParams }: FAQPageProps) {
 
   return (
     <main className="flex-1 bg-white text-[#200b38]">
+      {/* The "On this page" menu on the left. */}
+      <PageGuide
+        label='FAQ page sections'
+        groups={[
+          {
+            title: 'Questions',
+            items: [
+              { id: 'overview', label: 'Overview' },
+              { id: 'questions', label: 'Common questions' },
+            ],
+          },
+          { title: 'Next step', items: [{ id: 'get-started', label: 'Get a quote' }] },
+        ]}
+      />
       {/* same header band as the other pages */}
-      <section className="page-hero relative isolate overflow-hidden bg-[#200b38] text-white">
+      <section id="overview" className="page-hero relative isolate overflow-hidden bg-[#200b38] text-white">
         {/* a soft glow that drifts slowly behind the title */}
         <div aria-hidden="true" className={`${styles.glow} absolute -z-10`} />
         <div className="mx-auto flex min-h-88 max-w-7xl flex-col justify-center px-6 py-10 sm:min-h-80 sm:px-8 sm:py-12">
@@ -58,7 +73,7 @@ export default async function FAQPage({ searchParams }: FAQPageProps) {
         </div>
       </section>
 
-      <section className="bg-[#f7f4fb]">
+      <section id="questions" className="bg-[#f7f4fb]">
         {/* the questions */}
         <div
           className={`${styles.enter} mx-auto max-w-7xl px-6 py-16 sm:px-8 sm:py-20`}
@@ -82,7 +97,7 @@ export default async function FAQPage({ searchParams }: FAQPageProps) {
       </section>
 
       {/* End with the same wipe-the-window call to action as the other pages. */}
-      <section className="mx-auto max-w-7xl px-6 py-16 sm:px-8 sm:py-20">
+      <section id="get-started" className="mx-auto max-w-7xl px-6 py-16 sm:px-8 sm:py-20">
         <ClearerViewCta />
       </section>
     </main>

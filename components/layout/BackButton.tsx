@@ -39,7 +39,7 @@ export default function BackButton() {
 
   return (
     // Sits below the header's menus, so open menus always cover it.
-    <div className='pointer-events-none absolute inset-x-0 top-full -z-10'>
+    <div className='back-button pointer-events-none absolute inset-x-0 top-full -z-10'>
       <div className='mx-auto max-w-7xl px-6 sm:px-8'>
         <button
           type='button'

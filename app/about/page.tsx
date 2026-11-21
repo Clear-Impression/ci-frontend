@@ -1,3 +1,4 @@
+import PageGuide from '@/components/layout/PageGuide';
 import { getPageHeader } from '@/lib/page-headers';
 import { createPageMetadata } from '@/lib/seo';
 import Image from 'next/image';
@@ -42,8 +43,25 @@ export default async function AboutPage() {
   return (
     // Let the page fill the space between the header and footer.
     <main className='flex-1 bg-white text-gray-900'>
+      {/* The "On this page" menu on the left. */}
+      <PageGuide
+        label='About page sections'
+        groups={[
+          {
+            title: 'About us',
+            items: [
+              { id: 'overview', label: 'Welcome' },
+              { id: 'story', label: 'Our story' },
+              { id: 'promise', label: 'Our promise and values' },
+            ],
+          },
+          { title: 'Next step', items: [{ id: 'get-started', label: 'Get a quote' }] },
+        ]}
+      />
       {/* Same header as the other pages. The words come into focus one by one. */}
-      <section className='page-hero relative isolate overflow-hidden bg-[#200b38] text-white'>
+      <section
+        id='overview'
+        className='page-hero relative isolate overflow-hidden bg-[#200b38] text-white'>
         <div aria-hidden='true' className='about-glow absolute inset-0 -z-10' />
         <div className='focus-out mx-auto flex min-h-88 max-w-7xl flex-col justify-center px-6 py-10 sm:min-h-80 sm:px-8 sm:py-12'>
           <p className='focus-in text-sm font-semibold uppercase tracking-widest text-[#efb52b]'>
@@ -59,7 +77,9 @@ export default async function AboutPage() {
       </section>
 
       {/* The owner's photo on one side, the story on the other. */}
-      <section className='mx-auto max-w-7xl overflow-x-clip px-6 py-16 sm:px-8 sm:py-20'>
+      <section
+        id='story'
+        className='mx-auto max-w-7xl overflow-x-clip px-6 py-16 sm:px-8 sm:py-20'>
         <div className='grid items-start gap-14 lg:grid-cols-[22rem_minmax(0,1fr)] lg:gap-16'>
           <Reveal className='story-col from-left'>
             <figure className='relative mx-auto max-w-sm lg:mx-0'>
@@ -125,7 +145,9 @@ export default async function AboutPage() {
       </section>
 
       {/* Highlight the company promise and the values behind it. */}
-      <section className='bg-[#f7f4fb]'>
+      <section
+        id='promise'
+        className='bg-[#f7f4fb]'>
         <div className='mx-auto max-w-7xl px-6 py-16 sm:px-8 sm:py-20'>
           <Reveal>
             <h2 className='blur-in text-2xl font-semibold text-[#200b38]'>
@@ -176,7 +198,9 @@ export default async function AboutPage() {
       </section>
 
       {/* End with a window visitors can wipe clean, then a way to get in touch. */}
-      <section className='mx-auto max-w-7xl px-6 py-16 sm:px-8 sm:py-20'>
+      <section
+        id='get-started'
+        className='mx-auto max-w-7xl px-6 py-16 sm:px-8 sm:py-20'>
         <ClearerViewCta />
       </section>
     </main>
