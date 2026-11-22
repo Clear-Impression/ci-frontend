@@ -6,5 +6,7 @@ import {locationsPage} from './locationsPage'
 import {photoOrVideo} from './photoOrVideo'
 import {blog} from './blog'
 import {instantPriceTypes} from './instantPrices'
+import {galleryJob} from './galleryJob'
+import {beforeAfter} from './beforeAfter'
 
-export const schemaTypes = [faq, service, pageHeader, city, locationsPage, photoOrVideo, blog, ...instantPriceTypes]
+export const schemaTypes = [faq, service, pageHeader, city, locationsPage, photoOrVideo, blog, galleryJob, beforeAfter, ...instantPriceTypes]

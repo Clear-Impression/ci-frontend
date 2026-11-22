@@ -1,9 +1,11 @@
 import { beforeAfter, type BeforeAfterPair } from './beforeAfter';
 import type { LocationMedia } from './locations';
 
-// The Gallery page's jobs, before-and-after pairs, and job types.
+// Gallery content comes from Sanity (see lib/gallery.ts). This file has the
+// job types Studio offers, and the backup if Sanity has no jobs yet.
 
-// The filter buttons on the Gallery page. Every job has one of these types.
+// The filter buttons on the Gallery page. Studio offers the same list when a
+// job is added, so every job has a button.
 export const galleryJobTypes = [
   { value: 'homes', label: 'Homes' },
   { value: 'businesses', label: 'Businesses' },
@@ -45,7 +47,7 @@ export const galleryPage = {
   mapHint: 'Tap a pin to see one city. Tap it again to see them all.',
 };
 
-// The same before-and-after photos as the homepage for now.
+// Until the before-and-after pairs are added in Sanity, use the homepage's.
 export const fallbackPairs: GalleryPair[] = beforeAfter.pairs.map((pair: BeforeAfterPair) => ({
   title: pair.title,
   caption: pair.caption,
@@ -65,7 +67,7 @@ function photo(url: string, alt: string): GalleryMedia {
 }
 
 // DEMO JOBS ONLY: these use the site's placeholder photos, and the cities are
-// samples. Swap them for real jobs before this goes live.
+// samples. They show until the first real job is added in Sanity Studio.
 export const fallbackJobs: GalleryJob[] = [
   {
     id: 'demo-stucco-home',
