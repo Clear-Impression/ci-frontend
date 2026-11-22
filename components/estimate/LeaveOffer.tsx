@@ -3,16 +3,20 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { jakarta } from '@/app/fonts';
-import { clearPricePromise, leaveOffers } from '@/data/packages';
+import { leaveOffers, packages } from '@/data/packages';
 import { googleRating, googleReviews, googleReviewsUrl } from '@/data/reviews';
+import './leave-offer.css';
 
-// Why it makes sense, in our own words from the rest of the site.
-const reasons = [
-  { title: 'Spot-free, pure water', text: 'Deionized water outside, so the glass dries clear with no streaks.' },
-  { title: 'Your home stays clean', text: 'Drop cloths and shoe covers inside, every time.' },
-  { title: 'No surprise charges', text: clearPricePromise.text.split('. ').slice(1, 2).join('') + '.' },
-  { title: 'Fully insured', text: 'Local to the Phoenix metro area, and 100% honest.' },
-];
+// What Gold adds, straight from the package list.
+const goldExtras = (packages.find((entry) => entry.id === 'gold')?.includes ?? [])
+  .filter((item) => item.added)
+  .map((item) => item.label);
+
+// Three rows of reviews drifting behind the card, each starting at a different review.
+const riverRows = [0, 1, 2].map((row) => {
+  const start = (row * Math.ceil(googleReviews.length / 3)) % googleReviews.length;
+  return [...googleReviews.slice(start), ...googleReviews.slice(0, start)];
+});
 
 const shownKey = 'ci-leave-offer-shown';
 
@@ -25,7 +29,7 @@ type LeaveOfferProps = {
 };
 
 // Shown once per visit when someone looks like they're leaving the estimate
-// (why it makes sense, then what neighbors say):
+// (real reviews drifting behind a glass card with the $50 referral and Gold):
 // the Back button, the browser's back, or the mouse heading for the tabs.
 // It never shows while they're answering, so the page stays smooth.
 export default function LeaveOffer({ armed, price, canPickGold, onPickGold }: LeaveOfferProps) {
@@ -142,6 +146,26 @@ export default function LeaveOffer({ armed, price, canPickGold, onPickGold }: Le
         if (event.target === event.currentTarget) stay();
       }}>
       <div
+        className='lo-river'
+        aria-hidden='true'>
+        {riverRows.map((row, index) => (
+          <div
+            key={index}
+            className='lo-river-row'>
+            {[...row, ...row].map((review, position) => (
+              <div
+                key={`${review.id}-${position}`}
+                className='lo-river-chip'>
+                <span>{'★'.repeat(review.rating)}</span>
+                <p>“{review.quote}”</p>
+                <b>{review.name}</b>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+
+      <div
         className='lo'
         role='dialog'
         aria-modal='true'
@@ -153,91 +177,69 @@ export default function LeaveOffer({ armed, price, canPickGold, onPickGold }: Le
           onClick={stay}>
           ×
         </button>
-        <p className='lo-kicker'>Before you go</p>
-        <h2 id='lo-title'>Why this makes sense</h2>
+
+        <h2 id='lo-title'>
+          Still not
+          <br />
+          <span>convinced?</span>
+        </h2>
         <p className='lo-sub'>
-          Your estimate is still here: <em>{price}</em>. No email needed, no payment now.
+          {googleRating.count} neighbors gave us five stars. Your estimate of <b>{price}</b> is still here, with
+          nothing to pay today.
         </p>
+        <a
+          className='lo-rating'
+          href={googleReviewsUrl}
+          target='_blank'
+          rel='noreferrer'>
+          ★ {googleRating.score.toFixed(1)} on Google
+        </a>
 
-        <ul className='lo-reasons'>
-          {reasons.map((reason) => (
-            <li key={reason.title}>
-              <span aria-hidden='true'>✓</span>
-              <div>
-                <b>{reason.title}</b>
-                <p>{reason.text}</p>
-              </div>
-            </li>
-          ))}
-        </ul>
-
-        <div className='lo-cards'>
-          <div className='lo-card lo-refer'>
+        <div className='lo-offers'>
+          <div className='lo-offer lo-refer'>
             <span
               className='lo-badge'
               aria-hidden='true'>
               $50
             </span>
-            <b>{leaveOffers.referral.title}</b>
-            <p>{leaveOffers.referral.text}</p>
-            <button
-              type='button'
-              className='lo-mini'
-              onClick={copyLink}>
-              {copied ? 'Link copied ✓' : 'Copy our link for a friend'}
-            </button>
-          </div>
-          <div className='lo-card lo-gold'>
-            <span
-              className='lo-badge'
-              aria-hidden='true'>
-              7
-            </span>
-            <b>{leaveOffers.guarantee.title}</b>
-            <p>{leaveOffers.guarantee.text}</p>
-            {canPickGold && (
+            <div>
+              <b>{leaveOffers.referral.title}</b>
+              <p>{leaveOffers.referral.text}</p>
               <button
                 type='button'
                 className='lo-mini'
-                onClick={() => {
-                  setOpen(false);
-                  onPickGold();
-                }}>
-                Switch me to Gold
+                onClick={copyLink}>
+                {copied ? 'Link copied ✓' : 'Copy our link for a friend'}
               </button>
-            )}
-          </div>
-        </div>
-
-        <div className='lo-neighbors'>
-          <div className='lo-neighbors-head'>
-            <div>
-              <h3>Still not convinced?</h3>
-              <p>See what your neighbors say.</p>
             </div>
-            <a
-              className='lo-rating'
-              href={googleReviewsUrl}
-              target='_blank'
-              rel='noreferrer'>
-              <b>{googleRating.score.toFixed(1)}</b>
-              <span aria-hidden='true'>★★★★★</span>
-              <small>{googleRating.count} Google reviews</small>
-            </a>
           </div>
-          <ul className='lo-reviews'>
-            {googleReviews.map((review) => (
-              <li key={review.id}>
-                <span
-                  className='lo-stars'
-                  aria-label={`${review.rating} out of 5 stars`}>
-                  {'★'.repeat(review.rating)}
-                </span>
-                <p>“{review.quote}”</p>
-                <b>{review.name}</b>
-              </li>
-            ))}
-          </ul>
+          <div className='lo-offer lo-gold'>
+            <span
+              className='lo-badge'
+              aria-hidden='true'>
+              Gold
+            </span>
+            <div>
+              <b>Gold gets you everything</b>
+              <ul>
+                <li>Inside and out, like Silver</li>
+                {goldExtras.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+              {canPickGold && (
+                <button
+                  type='button'
+                  className='lo-mini'
+                  onClick={() => {
+                    setOpen(false);
+                    onPickGold();
+                  }}>
+                  Switch me to Gold
+                </button>
+              )}
+            </div>
+          </div>
         </div>
 
         <div className='lo-actions'>
