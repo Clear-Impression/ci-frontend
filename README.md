@@ -128,6 +128,26 @@ away; add its outline by putting its name in `scripts/fetch-city-boundaries.mjs`
 and running `npm run fetch:boundaries`. The animated route in the Locations
 header uses a fixed set of cities in `components/locations/ValleyRoute.tsx`.
 
+## Careers and job applications
+
+Open roles are listed in `jobOpenings` in `data/careers.ts`, with the page copy.
+Each role needs a title, URL slug, job type, and short summary; pay, duties,
+requirements, and schedule are optional. Keep a live role's slug the same, since
+it is saved with each application. Remove a role from the list to close it: it
+leaves `/careers`, its apply page returns 404, and saved applications stay. With
+an empty list, `/careers` says there are no open roles and asks people to call.
+
+The apply form at `/careers/<slug>` sends the answers and a resume (PDF, DOC, or
+DOCX, up to 4 MB) through a server action to FastAPI's
+`POST /api/v1/applications`, which saves them and emails Niels with the resume
+attached. The 4 MB cap keeps the upload under Vercel's 4.5 MB request limit, and
+`next.config.ts` raises the server action body limit to match.
+
+Signed-in owners review applications at `/owner/applications`. The resume link
+goes through `/owner/applications/<id>/resume`, which adds the owner session and
+streams the file from the backend. Run backend migration `0004_job_applications`
+before using either page.
+
 ## Owner login in local development
 
 The API lives in the separate

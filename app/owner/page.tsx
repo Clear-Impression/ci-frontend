@@ -30,6 +30,14 @@ const sections = [
     note: 'Owner access only',
   },
   {
+    title: 'Applications',
+    description: 'Review job applications and download resumes.',
+    label: 'View applications',
+    href: '/owner/applications',
+    available: true,
+    note: 'Owner access only',
+  },
+  {
     title: 'Leads',
     description: 'View quote requests and customer inquiries.',
     label: 'View leads',
