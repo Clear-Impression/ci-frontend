@@ -1,7 +1,18 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { leaveOffers } from '@/data/packages';
+import { createPortal } from 'react-dom';
+import { jakarta } from '@/app/fonts';
+import { clearPricePromise, leaveOffers } from '@/data/packages';
+import { googleRating, googleReviews, googleReviewsUrl } from '@/data/reviews';
+
+// Why it makes sense, in our own words from the rest of the site.
+const reasons = [
+  { title: 'Spot-free, pure water', text: 'Deionized water outside, so the glass dries clear with no streaks.' },
+  { title: 'Your home stays clean', text: 'Drop cloths and shoe covers inside, every time.' },
+  { title: 'No surprise charges', text: clearPricePromise.text.split('. ').slice(1, 2).join('') + '.' },
+  { title: 'Fully insured', text: 'Local to the Phoenix metro area, and 100% honest.' },
+];
 
 const shownKey = 'ci-leave-offer-shown';
 
@@ -13,7 +24,8 @@ type LeaveOfferProps = {
   onPickGold: () => void;
 };
 
-// Shown once per visit when someone looks like they're leaving the estimate:
+// Shown once per visit when someone looks like they're leaving the estimate
+// (why it makes sense, then what neighbors say):
 // the Back button, the browser's back, or the mouse heading for the tabs.
 // It never shows while they're answering, so the page stays smooth.
 export default function LeaveOffer({ armed, price, canPickGold, onPickGold }: LeaveOfferProps) {
@@ -97,7 +109,7 @@ export default function LeaveOffer({ armed, price, canPickGold, onPickGold }: Le
 
   useEffect(() => {
     if (!open) return;
-    keepRef.current?.focus();
+    keepRef.current?.focus({ preventScroll: true });
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setOpen(false);
     };
@@ -122,9 +134,10 @@ export default function LeaveOffer({ armed, price, canPickGold, onPickGold }: Le
     }
   }
 
-  return (
+  // On the page body, so it sits above the site header.
+  return createPortal(
     <div
-      className='lo-backdrop'
+      className={`lo-backdrop ${jakarta.variable}`}
       onClick={(event) => {
         if (event.target === event.currentTarget) stay();
       }}>
@@ -141,10 +154,22 @@ export default function LeaveOffer({ armed, price, canPickGold, onPickGold }: Le
           ×
         </button>
         <p className='lo-kicker'>Before you go</p>
-        <h2 id='lo-title'>
-          Your estimate is still here: <em>{price}</em>
-        </h2>
-        <p className='lo-sub'>No email needed, no payment now. Two things worth knowing:</p>
+        <h2 id='lo-title'>Why this makes sense</h2>
+        <p className='lo-sub'>
+          Your estimate is still here: <em>{price}</em>. No email needed, no payment now.
+        </p>
+
+        <ul className='lo-reasons'>
+          {reasons.map((reason) => (
+            <li key={reason.title}>
+              <span aria-hidden='true'>✓</span>
+              <div>
+                <b>{reason.title}</b>
+                <p>{reason.text}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
 
         <div className='lo-cards'>
           <div className='lo-card lo-refer'>
@@ -184,6 +209,37 @@ export default function LeaveOffer({ armed, price, canPickGold, onPickGold }: Le
           </div>
         </div>
 
+        <div className='lo-neighbors'>
+          <div className='lo-neighbors-head'>
+            <div>
+              <h3>Still not convinced?</h3>
+              <p>See what your neighbors say.</p>
+            </div>
+            <a
+              className='lo-rating'
+              href={googleReviewsUrl}
+              target='_blank'
+              rel='noreferrer'>
+              <b>{googleRating.score.toFixed(1)}</b>
+              <span aria-hidden='true'>★★★★★</span>
+              <small>{googleRating.count} Google reviews</small>
+            </a>
+          </div>
+          <ul className='lo-reviews'>
+            {googleReviews.map((review) => (
+              <li key={review.id}>
+                <span
+                  className='lo-stars'
+                  aria-label={`${review.rating} out of 5 stars`}>
+                  {'★'.repeat(review.rating)}
+                </span>
+                <p>“{review.quote}”</p>
+                <b>{review.name}</b>
+              </li>
+            ))}
+          </ul>
+        </div>
+
         <div className='lo-actions'>
           <button
             ref={keepRef}
@@ -200,6 +256,7 @@ export default function LeaveOffer({ armed, price, canPickGold, onPickGold }: Le
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

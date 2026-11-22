@@ -11,15 +11,15 @@ import { getEstimateTab, type EstimateTab, type EstimateValues } from '@/data/es
 export type PackageId = 'bronze' | 'silver' | 'gold';
 
 export type HomeDetails = {
+  // Window panes.
   size: number;
+  style?: string;
   stories: 1 | 2;
   dirt: 'light' | 'normal' | 'rough';
   hardWater: boolean;
 };
 
-export const startingHome: HomeDetails = { size: 2000, stories: 1, dirt: 'normal', hardWater: false };
-
-export const homeSize = { min: 600, max: 6500, step: 50 };
+export const startingHome: HomeDetails = { size: 24, style: 'none', stories: 1, dirt: 'normal', hardWater: false };
 
 export const dirtOptions = [
   { id: 'light', label: 'Light', hint: 'Cleaned in the last year' },
@@ -78,13 +78,21 @@ export const upgradeNotes: Record<PackageId, string> = {
   gold: 'You have everything: inside and out, screens, tracks, house wash, priority scheduling and our 7-day touch-up guarantee.',
 };
 
-// Extras that a person prices after the request (no instant price). The
-// other services (solar, screens, gutters...) are picked at the top instead.
-export type ExtraId = 'houseWash' | 'chandelier';
+// Special services: priced by a person after the request (no instant
+// price). The names and notes match the Services page.
+export type ExtraId = string;
 
 export const extras: readonly { id: ExtraId; name: string; note: string; includedIn?: PackageId }[] = [
-  { id: 'houseWash', name: 'Exterior house wash', note: 'Confirmed after review', includedIn: 'gold' },
-  { id: 'chandelier', name: 'Chandelier cleaning', note: 'Custom quote' },
+  { id: 'house-wash', name: 'Exterior house wash', note: 'Confirmed after review', includedIn: 'gold' },
+  { id: 'french-storm-windows', name: 'French & Storm Windows', note: 'Detailed care for specialty window designs.' },
+  { id: 'glass-door-mirror-polishing', name: 'Glass Door & Mirror Polishing', note: 'Keep high-touch glass bright and spotless.' },
+  { id: 'skylight-rooftop-glass', name: 'Skylight & Rooftop Glass', note: 'Brighten hard-to-reach glass above your home.' },
+  { id: 'chandelier-cleaning', name: 'Chandelier Cleaning', note: 'Bring back the sparkle of your light fixtures.' },
+  { id: 'awning-sunroom-cleaning', name: 'Awning & Sunroom Cleaning', note: 'Make your covered outdoor spaces feel fresh.' },
+  { id: 'post-construction-cleanup', name: 'Post-Construction Cleanup', note: 'Clear away the mess left after a project.' },
+  { id: 'move-in-move-out-servicing', name: 'Move-In / Move-Out Servicing', note: 'Start or finish a move with a clean property.' },
+  { id: 'graffiti-removal-service', name: 'Graffiti Removal Service', note: 'Get exterior surfaces looking like new again.' },
+  { id: 'general-property-maintenance', name: 'General Property Maintenance', note: 'Keep your property looking its best year-round.' },
 ];
 
 // The bonus offer, shown once two services are picked. The bonus
@@ -172,6 +180,7 @@ function screensAndTracks(windows: EstimateTab) {
 
 function windowsPrice(windows: EstimateTab, home: HomeDetails, outsideOnly: boolean) {
   let price = home.size * windows.rate;
+  price *= choice(windows, 'style', home.style ?? 'none')?.multiply ?? 1;
   price *= choice(windows, 'height', home.stories === 2 ? 'two' : 'one')?.multiply ?? 1;
   if (outsideOnly) price *= choice(windows, 'sides', 'outside')?.multiply ?? 1;
   price += choice(windows, 'dirt', home.dirt)?.add ?? 0;
@@ -185,11 +194,12 @@ export function packagePrice(id: PackageId, home: HomeDetails, tabs: Tabs = []):
   return toRange(windowsPrice(windows, home, false) + screensAndTracks(windows), windows);
 }
 
-// Windows answers (from the windows questions) as home details for the packages.
+// The windows answers as home details for the packages.
 export function homeFromValues(values: EstimateValues): HomeDetails {
   const dirt = values.dirt;
   return {
     size: Number(values.size) || startingHome.size,
+    style: typeof values.style === 'string' ? values.style : 'none',
     stories: values.height === 'two' ? 2 : 1,
     dirt: dirt === 'light' || dirt === 'rough' ? dirt : 'normal',
     hardWater: false,

@@ -29,7 +29,7 @@ import './one-page-estimate.css';
 const windowsSlug = 'residential-window-washing';
 const screensSlug = 'screen-deep-cleaning';
 // The windows questions asked here; sides and screens come from the package.
-const windowsQuestions = ['size', 'height', 'dirt'];
+const windowsQuestions = ['size', 'style', 'height', 'dirt'];
 
 const times = [
   { id: 'Morning', hint: '8 am to 12 pm' },
@@ -102,6 +102,32 @@ function ServiceIcon({ slug }: { slug: string }) {
       </>
     ),
     'hard-water-stain-removal': <path d='M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11ZM9.5 14.5a2.5 2.5 0 0 0 2.5 2.5' />,
+    special: (
+      <>
+        <rect
+          x='4'
+          y='4'
+          width='7'
+          height='7'
+          rx='2'
+        />
+        <rect
+          x='13'
+          y='4'
+          width='7'
+          height='7'
+          rx='2'
+        />
+        <rect
+          x='4'
+          y='13'
+          width='7'
+          height='7'
+          rx='2'
+        />
+        <path d='M16.5 13v7M13 16.5h7' />
+      </>
+    ),
     'screen-deep-cleaning': (
       <>
         <rect
@@ -349,8 +375,15 @@ function Questions({
   const list = only ? tab.questions.filter((question) => only.includes(question.id)) : tab.questions;
   return (
     <>
-      {list.map((question) => {
+      {list.map((question, index) => {
         const fieldId = `oe-${tab.slug}-${question.id}`;
+        const number = (
+          <span
+            className='oe-qn'
+            aria-hidden='true'>
+            {index + 1}
+          </span>
+        );
         if (question.kind === 'slider') {
           const amount = Number(values[question.id] ?? question.start);
           return (
@@ -358,7 +391,10 @@ function Questions({
               key={question.id}
               className='oe-q'>
               <div className='oe-size'>
-                <label htmlFor={fieldId}>{question.label}</label>
+                <label htmlFor={fieldId}>
+                  {number}
+                  {question.label}
+                </label>
                 <output htmlFor={fieldId}>
                   {amount.toLocaleString('en-US')}
                   <small>{question.unit}</small>
@@ -387,7 +423,10 @@ function Questions({
             <fieldset
               key={question.id}
               className='oe-q'>
-              <legend>{question.label}</legend>
+              <legend>
+                {number}
+                {question.label}
+              </legend>
               <div className={question.cards ? 'oe-chips' : 'oe-seg'}>
                 {question.options.map((option) => (
                   <button
@@ -409,7 +448,10 @@ function Questions({
           <fieldset
             key={question.id}
             className='oe-q'>
-            <legend>{question.label}</legend>
+            <legend>
+              {number}
+              {question.label}
+            </legend>
             <div className='oe-chips oe-chips-two'>
               {question.options.map((option) => (
                 <button
@@ -434,13 +476,16 @@ function Questions({
   );
 }
 
-// A photo-only service: why, and what to send.
+// A photo-only service: why there's no slider, what to send, and what you get back.
 function PhotoSteps({ tab }: { tab: EstimateTab }) {
   if (!tab.photo) return null;
   const smsHref = `sms:${company.phone.replace(/[^\d+]/g, '')}`;
   return (
     <div className='oe-photo'>
-      <p>{tab.photo.why}</p>
+      <div className='oe-why'>
+        <span className='oe-label'>Why there’s no slider here</span>
+        <p>{tab.photo.why}</p>
+      </div>
       <ol>
         {tab.photo.steps.map((entry) => (
           <li key={entry.title}>
@@ -449,9 +494,58 @@ function PhotoSteps({ tab }: { tab: EstimateTab }) {
           </li>
         ))}
       </ol>
-      <p className='oe-hint'>
-        <a href={smsHref}>Text us the photos</a> any time, or send your request and we’ll ask for them.
-      </p>
+      <p className='oe-hint'>{tab.photo.scope}</p>
+      <div className='oe-svc-panel'>
+        <span className='oe-label'>What you get back</span>
+        <b>A fixed price</b>
+        <p>{tab.panel.text}</p>
+        <div className='oe-panel-actions'>
+          <a
+            className='oe-panel-main'
+            href={smsHref}>
+            Text us a photo
+          </a>
+          <a
+            className='oe-panel-alt'
+            href={`${company.emailHref}?subject=${encodeURIComponent(`Photo for a ${tab.name.toLowerCase()} quote`)}`}>
+            Email the photo instead
+          </a>
+        </div>
+        <small>No charge for the quote. Or send your request below and we’ll ask for the photos.</small>
+      </div>
+    </div>
+  );
+}
+
+// The special services, picked like chips. A person prices these.
+function SpecialPicker({
+  options,
+  picked,
+  onToggle,
+}: {
+  options: typeof extras;
+  picked: readonly string[];
+  onToggle: (id: string) => void;
+}) {
+  return (
+    <div className='oe-specials'>
+      {options.map((extra) => (
+        <button
+          key={extra.id}
+          type='button'
+          aria-pressed={picked.includes(extra.id)}
+          onClick={() => onToggle(extra.id)}>
+          <span
+            className='oe-box'
+            aria-hidden='true'>
+            ✓
+          </span>
+          <span>
+            <b>{extra.name}</b>
+            <small>{extra.note}</small>
+          </span>
+        </button>
+      ))}
     </div>
   );
 }
@@ -476,6 +570,8 @@ export default function OnePageEstimate({ tabs, availability }: OnePageEstimateP
   );
   const [packageId, setPackageId] = useState<PackageId>('silver');
   const [pickedExtras, setPickedExtras] = useState<ExtraId[]>([]);
+  // Special services: picked at the top, further down, or not at all.
+  const [special, setSpecial] = useState<'top' | 'later' | null>(null);
   const [plan, setPlan] = useState<ClubPlan>('once');
   const [day, setDay] = useState('');
   const [time, setTime] = useState<string>('Morning');
@@ -543,7 +639,11 @@ export default function OnePageEstimate({ tabs, availability }: OnePageEstimateP
   }
 
   const extrasOffered = extras.filter((extra) => !(hasWindows && extra.includedIn === packageId));
-  const chosenExtras = extrasOffered.filter((extra) => pickedExtras.includes(extra.id));
+  const chosenExtras = special ? extrasOffered.filter((extra) => pickedExtras.includes(extra.id)) : [];
+  const toggleExtra = (id: string) => {
+    reach(special === 'top' ? 'oe-details' : 'oe-extras');
+    setPickedExtras((list) => (list.includes(id) ? list.filter((entry) => entry !== id) : [...list, id]));
+  };
   const total = sum(chosen.map(priceOf));
   const instantCount = chosen.filter((tab) => tab.mode === 'range').length;
   const needsReview =
@@ -563,8 +663,8 @@ export default function OnePageEstimate({ tabs, availability }: OnePageEstimateP
   function toggleService(slug: string, later = false) {
     reach(later ? 'oe-extras' : 'oe-services');
     const on = selected.includes(slug);
-    // Keep at least one service picked.
-    if (on && selected.length === 1) return;
+    // Keep at least one thing picked.
+    if (on && selected.length === 1 && special !== 'top') return;
     setSelected((list) => (on ? list.filter((entry) => entry !== slug) : [...list, slug]));
     setAddedLater((list) => (on || !later ? list.filter((entry) => entry !== slug) : [...list, slug]));
   }
@@ -621,7 +721,11 @@ export default function OnePageEstimate({ tabs, availability }: OnePageEstimateP
     ? new Date(`${availability.days[0].date}T12:00:00-07:00`).getUTCDay()
     : 0;
 
-  const totalText = total.high ? formatRange(total) : 'From a photo';
+  const totalText = total.high
+    ? formatRange(total)
+    : chosen.some((tab) => tab.mode === 'photo')
+      ? 'From a photo'
+      : 'Custom quote';
   const planEntry = clubPlans.find((entry) => entry.id === plan) ?? clubPlans[0];
 
   // The receipt on the left: what's been picked so far.
@@ -632,9 +736,9 @@ export default function OnePageEstimate({ tabs, availability }: OnePageEstimateP
       part: 'oe-services',
     })),
     {
-      label: 'Extras',
+      label: 'Special',
       value: chosenExtras.length ? chosenExtras.map((extra) => extra.name).join(', ') : 'None',
-      part: 'oe-extras',
+      part: special === 'top' ? 'oe-services' : 'oe-extras',
     },
     {
       label: 'Day',
@@ -665,15 +769,25 @@ export default function OnePageEstimate({ tabs, availability }: OnePageEstimateP
         ) : tab.slug === screensSlug && goldScreens ? (
           <p className='oe-hint'>Screens and tracks are already part of your Gold package.</p>
         ) : (
-          <Questions
-            tab={tab}
-            values={values[tab.slug]}
-            only={tab.slug === windowsSlug ? windowsQuestions : undefined}
-            onChange={(id, value) => {
-              answer(tab.slug, id, value);
-              reach(addedLater.includes(tab.slug) ? 'oe-extras' : 'oe-details');
-            }}
-          />
+          <>
+            <Questions
+              tab={tab}
+              values={values[tab.slug]}
+              only={tab.slug === windowsSlug ? windowsQuestions : undefined}
+              onChange={(id, value) => {
+                answer(tab.slug, id, value);
+                reach(addedLater.includes(tab.slug) ? 'oe-extras' : 'oe-details');
+              }}
+            />
+            <div className='oe-svc-panel'>
+              <span className='oe-label'>
+                {tab.slug === windowsSlug ? `${packageName} package lands between` : 'Likely lands between'}
+              </span>
+              <b>{priceLabel(tab)}</b>
+              <p>{tab.panel.text}</p>
+              {tab.slug === windowsSlug && <small>Change the package in the next step.</small>}
+            </div>
+          </>
         )}
       </div>
     );
@@ -789,6 +903,28 @@ export default function OnePageEstimate({ tabs, availability }: OnePageEstimateP
                     </span>
                   </button>
                 ))}
+                <button
+                  type='button'
+                  className='oe-service'
+                  aria-pressed={special === 'top'}
+                  onClick={() => {
+                    reach('oe-services');
+                    if (special === 'top' && selected.length === 0) return;
+                    setSpecial(special === 'top' ? null : 'top');
+                  }}>
+                  <span className='oe-service-icon'>
+                    <ServiceIcon slug='special' />
+                  </span>
+                  <span className='oe-service-text'>
+                    <b>Special services</b>
+                    <small>Custom quote</small>
+                  </span>
+                  <span
+                    className='oe-service-tick'
+                    aria-hidden='true'>
+                    ✓
+                  </span>
+                </button>
               </div>
             </Section>
 
@@ -798,9 +934,25 @@ export default function OnePageEstimate({ tabs, availability }: OnePageEstimateP
               title='A few details'
               note='A guess is fine'
               state={stateOf('oe-details')}>
-              {topServices.length ? (
-                topServices.map(serviceBlock)
-              ) : (
+              {topServices.map(serviceBlock)}
+              {special === 'top' && (
+                <div className='oe-svc'>
+                  <div className='oe-svc-head'>
+                    <span className='oe-svc-icon'>
+                      <ServiceIcon slug='special' />
+                    </span>
+                    <b>Special services</b>
+                    <span className='oe-chip oe-chip-review'>Custom quote</span>
+                  </div>
+                  <p className='oe-hint'>Pick any you’d like. We price these after a quick look or a photo.</p>
+                  <SpecialPicker
+                    options={extrasOffered}
+                    picked={pickedExtras}
+                    onToggle={toggleExtra}
+                  />
+                </div>
+              )}
+              {!topServices.length && special !== 'top' && (
                 <p className='oe-hint'>Your services are below, in “Anything else?”.</p>
               )}
             </Section>
@@ -897,19 +1049,15 @@ export default function OnePageEstimate({ tabs, availability }: OnePageEstimateP
                     </div>
                   );
                 })}
-                {extrasOffered.map((extra) => {
-                  const on = pickedExtras.includes(extra.id);
-                  return (
+                {special !== 'top' && (
+                  <div className='oe-addon-row'>
                     <button
-                      key={extra.id}
                       type='button'
                       className='oe-addon'
-                      aria-pressed={on}
+                      aria-pressed={special === 'later'}
                       onClick={() => {
                         reach('oe-extras');
-                        setPickedExtras((list) =>
-                          on ? list.filter((entry) => entry !== extra.id) : [...list, extra.id],
-                        );
+                        setSpecial(special === 'later' ? null : 'later');
                       }}>
                       <span
                         className='oe-box'
@@ -917,15 +1065,24 @@ export default function OnePageEstimate({ tabs, availability }: OnePageEstimateP
                         ✓
                       </span>
                       <span className='oe-what'>
-                        <b>{extra.name}</b>
-                        <span>{extra.note}</span>
+                        <b>Special services</b>
+                        <span>French panes, skylights, chandeliers, move-outs and more</span>
                       </span>
                       <span className='oe-amt'>
-                        <span className='oe-chip oe-chip-review'>Needs review</span>
+                        <span className='oe-chip oe-chip-review'>Custom quote</span>
                       </span>
                     </button>
-                  );
-                })}
+                    {special === 'later' && (
+                      <div className='oe-addon-more'>
+                        <SpecialPicker
+                          options={extrasOffered}
+                          picked={pickedExtras}
+                          onToggle={toggleExtra}
+                        />
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
               {bonusOffer.enabled && instantCount === 2 && <p className='oe-bonus'>{bonusOffer.text}</p>}
             </Section>

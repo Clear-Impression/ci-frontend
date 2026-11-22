@@ -74,9 +74,11 @@ export async function requestAppointment(request: AppointmentRequest): Promise<A
   const chosen = tabs.filter((tab) => slugs.includes(tab.slug));
   const packageEntry = packages.find((entry) => entry.id === request.packageId);
   const hasWindows = chosen.some((tab) => tab.slug === windowsSlug);
+  const askedExtras = Array.isArray(request.extras) ? request.extras : [];
+  const knownExtras = askedExtras.filter((id) => extras.some((extra) => extra.id === id));
 
   if (
-    !chosen.length ||
+    (!chosen.length && !knownExtras.length) ||
     chosen.length !== new Set(slugs).size ||
     (hasWindows && !packageEntry) ||
     !uuidPattern.test(request.submissionKey) ||
@@ -116,9 +118,9 @@ export async function requestAppointment(request: AppointmentRequest): Promise<A
   }
 
   const pickedExtras = extras.filter(
-    (extra) => request.extras?.includes(extra.id) && !(hasWindows && extra.includedIn === packageEntry?.id),
+    (extra) => knownExtras.includes(extra.id) && !(hasWindows && extra.includedIn === packageEntry?.id),
   );
-  for (const extra of pickedExtras) lines.push(`Extra: ${extra.name} (needs a custom quote)`);
+  for (const extra of pickedExtras) lines.push(`Special service: ${extra.name} (needs a custom quote)`);
 
   const plan = clubPlans.find((entry) => entry.id === request.plan) ?? clubPlans[0];
   lines.push(
@@ -129,8 +131,10 @@ export async function requestAppointment(request: AppointmentRequest): Promise<A
   );
 
   const services = [...new Set(chosen.map((tab) => backendService[tab.slug] ?? 'window-cleaning'))];
+  // Special services only: file it under window cleaning; the details say what.
+  if (!services.length) services.push('window-cleaning');
   if (hasWindows && packageEntry?.id === 'gold') services.push('screen-cleaning');
-  const commercialOnly = chosen.every((tab) => tab.slug === 'commercial-office-glass');
+  const commercialOnly = chosen.length > 0 && chosen.every((tab) => tab.slug === 'commercial-office-glass');
 
   const payload = {
     submission_key: request.submissionKey,

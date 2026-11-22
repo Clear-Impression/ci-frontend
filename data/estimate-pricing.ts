@@ -42,7 +42,7 @@ export function applyEstimatePricing(documents: unknown): readonly EstimateTab[]
     const raw = record(documents.find((entry) => record(entry)._id === section.documentId));
     return {
       ...tab,
-      rate: number(raw.rate, tab.rate),
+      rate: number(raw.rate, tab.rate, tab.rateMin ?? 0),
       minimum: number(raw.minimum, tab.minimum),
       rangePercent: number(raw.rangePercent, tab.rangePercent ?? 12, 0, 99),
       roundingIncrement: number(raw.roundingIncrement, tab.roundingIncrement ?? 5, 0.01, 100),
