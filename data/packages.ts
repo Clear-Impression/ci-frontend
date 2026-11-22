@@ -120,15 +120,17 @@ export const clearClub = {
 export const paymentNote = 'No payment now. We take cash, check or Zelle on cleaning day.';
 
 // ---------- Pricing ----------
+// Prices come from the instant estimate settings, which Niels edits in Sanity
+// ("Instant prices"). Pass in the tabs loaded with getEstimatePricing(); the
+// built-in defaults are used only if none are given.
 
-function tab(slug: string): EstimateTab {
-  const found = getEstimateTab(slug);
+type Tabs = readonly EstimateTab[];
+
+function tab(tabs: Tabs, slug: string): EstimateTab {
+  const found = tabs.find((entry) => entry.slug === slug) ?? getEstimateTab(slug);
   if (!found) throw new Error(`Missing estimate settings for ${slug}`);
   return found;
 }
-
-const windowsTab = tab('residential-window-washing');
-const solarTab = tab('solar-panel-cleaning');
 
 function choice(tabData: EstimateTab, questionId: string, optionId: string) {
   const question = tabData.questions.find((entry) => entry.id === questionId);
@@ -145,37 +147,47 @@ function addonAmount(tabData: EstimateTab, addonId: string) {
   return 0;
 }
 
-// Screens and tracks together, from the windows tab.
-const screensAndTracks = addonAmount(windowsTab, 'screens') + addonAmount(windowsTab, 'tracks');
-
-function windowsPrice(home: HomeDetails, outsideOnly: boolean) {
-  let price = home.size * windowsTab.rate;
-  price *= choice(windowsTab, 'height', home.stories === 2 ? 'two' : 'one')?.multiply ?? 1;
-  if (outsideOnly) price *= choice(windowsTab, 'sides', 'outside')?.multiply ?? 1;
-  price += choice(windowsTab, 'dirt', home.dirt)?.add ?? 0;
-  return Math.max(windowsTab.minimum, price);
-}
-
 export type Range = { low: number; high: number };
 
-const roundTo5 = (value: number) => Math.round(value / 5) * 5;
+// The same spread and rounding as the instant estimate settings in Sanity.
+function toRange(middle: number, tabData: EstimateTab): Range {
+  const spread = (tabData.rangePercent ?? 12) / 100;
+  const step = tabData.roundingIncrement ?? 5;
+  const round = (value: number) => Math.round(value / step) * step;
+  return { low: round(middle * (1 - spread)), high: round(middle * (1 + spread)) };
+}
 
-// Same spread as the current calculator: the price minus and plus 12%.
-const toRange = (middle: number): Range => ({ low: roundTo5(middle * 0.88), high: roundTo5(middle * 1.12) });
+// Screens and tracks together, from the windows settings.
+function screensAndTracks(windows: EstimateTab) {
+  return addonAmount(windows, 'screens') + addonAmount(windows, 'tracks');
+}
 
-export function packagePrice(id: PackageId, home: HomeDetails): Range {
-  if (id === 'bronze') return toRange(windowsPrice(home, true));
-  if (id === 'silver') return toRange(windowsPrice(home, false));
-  return toRange(windowsPrice(home, false) + screensAndTracks);
+function windowsPrice(windows: EstimateTab, home: HomeDetails, outsideOnly: boolean) {
+  let price = home.size * windows.rate;
+  price *= choice(windows, 'height', home.stories === 2 ? 'two' : 'one')?.multiply ?? 1;
+  if (outsideOnly) price *= choice(windows, 'sides', 'outside')?.multiply ?? 1;
+  price += choice(windows, 'dirt', home.dirt)?.add ?? 0;
+  return Math.max(windows.minimum, price);
+}
+
+export function packagePrice(id: PackageId, home: HomeDetails, tabs: Tabs = []): Range {
+  const windows = tab(tabs, 'residential-window-washing');
+  if (id === 'bronze') return toRange(windowsPrice(windows, home, true), windows);
+  if (id === 'silver') return toRange(windowsPrice(windows, home, false), windows);
+  return toRange(windowsPrice(windows, home, false) + screensAndTracks(windows), windows);
 }
 
 export const solarPanels = { min: 4, max: 60, start: 20 };
 
-export function addonPrice(id: AddonId, home: HomeDetails, panels: number): Range | null {
-  if (id === 'screens') return toRange(screensAndTracks);
+export function addonPrice(id: AddonId, home: HomeDetails, panels: number, tabs: Tabs = []): Range | null {
+  if (id === 'screens') {
+    const windows = tab(tabs, 'residential-window-washing');
+    return toRange(screensAndTracks(windows), windows);
+  }
   if (id === 'solar') {
-    const height = choice(solarTab, 'height', home.stories === 2 ? 'two' : 'one')?.multiply ?? 1;
-    return toRange(Math.max(solarTab.minimum, panels * solarTab.rate * height));
+    const solar = tab(tabs, 'solar-panel-cleaning');
+    const height = choice(solar, 'height', home.stories === 2 ? 'two' : 'one')?.multiply ?? 1;
+    return toRange(Math.max(solar.minimum, panels * solar.rate * height), solar);
   }
   return null;
 }

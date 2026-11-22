@@ -75,10 +75,12 @@ export async function requestAppointment(request: AppointmentRequest): Promise<A
 
   // Prices are worked out again here, so the request shows what the
   // customer saw even if the page was changed in their browser.
+  // Prices are worked out again from the Sanity prices.
+  const tabs = await getEstimatePricing();
   const lines = [
-    `Package: ${chosen.name} (${formatRange(packagePrice(chosen.id, home))})`,
+    `Package: ${chosen.name} (${formatRange(packagePrice(chosen.id, home, tabs))})`,
     ...picked.map((addon) => {
-      const price = addonPrice(addon.id, home, panels);
+      const price = addonPrice(addon.id, home, panels, tabs);
       const extra = addon.id === 'solar' ? `, ${panels} panels` : '';
       return `Add-on: ${addon.name}${extra} (${price ? formatRange(price) : 'needs a custom quote'})`;
     }),
