@@ -4,6 +4,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { company } from "@/data/company";
 import EstimateBar from "@/components/layout/EstimateBar";
+import ChatButton from "@/components/layout/ChatButton";
 import "./globals.css";
 
 // Load the font here so every page uses the same one.
@@ -46,6 +47,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Footer />
         {/* The instant estimate total, floating at the bottom of every page. */}
         <EstimateBar />
+        {/* The "Ask a question" button in the corner. The chat is coming soon. */}
+        <ChatButton />
       </body>
     </html>
   );

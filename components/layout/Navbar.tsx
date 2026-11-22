@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { company, navigation, type NavigationItem } from '@/data/company';
 import BackButton from './BackButton';
 import MobileMenu from './MobileMenu';
+import OfferTicker from './OfferTicker';
 import NavDropdown from './NavDropdown';
 import NavLink from './NavLink';
 import QuoteButton from '@/components/quote/QuoteButton';
@@ -11,6 +12,7 @@ import ReadingProgress from './ReadingProgress';
 import { AboutPreview, HelpPreview, LocationsPreview, ServicesPreview } from './NavPreviews';
 import SiteSearch from './SiteSearch';
 import StickyHeader from './StickyHeader';
+import { getSeasonalOffers } from '@/lib/seasonal-offers';
 
 // The panel each menu tab opens.
 function Preview({ kind }: { kind: NonNullable<NavigationItem['preview']> }) {
@@ -37,11 +39,21 @@ function PhoneIcon({ className }: { className: string }) {
   );
 }
 
-export default function Navbar() {
+export default async function Navbar() {
+  // The seasonal offers bar, if it's turned on in Sanity.
+  const { bar } = await getSeasonalOffers();
+
   return (
     // Pinned to the top of the screen. The top strip tucks away and the logo
     // shrinks after scrolling, then both come back at the top of the page.
     <StickyHeader className='site-header sticky top-0 z-50 bg-[#200b38] text-white'>
+      {/* The offers can get their own bar above everything else, in the theme's colors. */}
+      {bar?.position === 'above' && (
+        <OfferTicker
+          bar={bar}
+          className='offer-bar py-1.5 text-sm font-semibold focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-current'
+        />
+      )}
       {/* Keep the service area and phone number easy to find. The header runs a bit
           wider than the page so big screens don't leave a wide gap on each side. */}
       <div className='header-strip border-b border-white/15'>
@@ -53,6 +65,14 @@ export default function Navbar() {
             />
             Serving the Phoenix metro area
           </span>
+          {/* Or they scroll inside this strip: between the service area and the call
+              button on wide screens, and on their own line under them on smaller ones. */}
+          {bar?.position === 'strip' && (
+            <OfferTicker
+              bar={bar}
+              className='order-last basis-full rounded-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current xl:order-none xl:flex-1 xl:basis-auto'
+            />
+          )}
           {/* Wide screens get the call button here, kept to one line so the strip stays thin. */}
           <a
             href={company.phoneHref}

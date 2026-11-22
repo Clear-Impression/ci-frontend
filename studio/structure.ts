@@ -25,6 +25,11 @@ export const structure: StructureResolver = (S) => {
       .initialValueTemplates([S.initialValueTemplateItem('service-category', {category})]))
 
   return S.list().title('Content').items([
+    // At the top so it's easy to find when a new season starts.
+    S.listItem().id('seasonal-offers').title('Seasonal offers').child(S.document()
+      .schemaType('seasonalOffers')
+      .documentId('seasonalOffers')
+      .title('Seasonal offers')),
     S.listItem().id('instant-customer-prices').title('Instant customer prices')
       .child(S.list().title('Instant customer prices').items(pricingSections.map((section) =>
         S.listItem().id(section.tab.slug).title(section.title)
