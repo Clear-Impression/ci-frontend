@@ -38,6 +38,7 @@ export const navigation: readonly NavigationItem[] = [
   { label: 'Home', href: '/', available: true },
   { label: 'Services', href: '/services', available: true, preview: 'services' },
   { label: 'Reviews', href: '/reviews', available: true },
+  { label: 'Gallery', href: '/gallery', available: true },
   { label: 'Locations', href: '/locations', available: true, preview: 'locations' },
   {
     label: 'Help',

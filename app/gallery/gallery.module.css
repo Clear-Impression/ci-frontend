@@ -1,0 +1,702 @@
+/* These styles apply only to the Gallery page. */
+
+/* Header: the words on the left, the before-and-after slider on the right. */
+.heroGlow {
+  top: -11rem;
+  right: -8rem;
+  width: 38rem;
+  height: 38rem;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgb(108 63 184 / 0.5), rgb(108 63 184 / 0) 70%);
+}
+
+.headerIntro {
+  opacity: 0;
+  animation: fade-up 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) 0.45s forwards;
+}
+
+.heroRow {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.3fr);
+  gap: 3rem;
+  align-items: center;
+}
+
+.pairText {
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgb(255 255 255 / 0.15);
+}
+
+.pairDots {
+  display: flex;
+  gap: 8px;
+  margin-top: 1rem;
+}
+
+.pairDots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: rgb(255 255 255 / 0.3);
+  transition: width 250ms ease, background-color 250ms ease;
+}
+
+.pairDots span[data-on] {
+  width: 22px;
+  background: #efb52b;
+}
+
+.compareRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.pairArrow {
+  display: grid;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border: 1px solid rgb(255 255 255 / 0.3);
+  border-radius: 9999px;
+  background: rgb(255 255 255 / 0.08);
+  color: #fff;
+  transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease;
+}
+
+.pairArrow:hover {
+  border-color: #efb52b;
+  background: #efb52b;
+  color: #200b38;
+}
+
+.pairArrow:focus-visible {
+  outline: 2px solid #efb52b;
+  outline-offset: 3px;
+}
+
+/* The slider works like the homepage's: "before" on the left of the handle. */
+.compareFrame {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #140624;
+  box-shadow: 0 30px 60px -30px rgb(0 0 0 / 0.6);
+  cursor: ew-resize;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.compareFrame img {
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.compareBefore {
+  position: absolute;
+  inset: 0;
+  clip-path: inset(0 calc(100% - var(--pos)) 0 0);
+}
+
+.compareLabel {
+  position: absolute;
+  z-index: 2;
+  top: 14px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  pointer-events: none;
+  backdrop-filter: blur(7px);
+}
+
+.compareLabel[data-side='before'] {
+  left: 14px;
+  background: rgb(32 11 56 / 0.72);
+  color: #fff;
+}
+
+.compareLabel[data-side='after'] {
+  right: 14px;
+  background: rgb(114 197 135 / 0.95);
+  color: #200b38;
+}
+
+.compareLine {
+  position: absolute;
+  z-index: 3;
+  inset-block: 0;
+  left: var(--pos);
+  width: 2px;
+  background: #fff;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.compareHandle {
+  position: absolute;
+  z-index: 4;
+  top: 50%;
+  left: var(--pos);
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border-radius: 50%;
+  background: #fff;
+  color: #200b38;
+  box-shadow: 0 4px 20px rgb(0 0 0 / 0.3);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1), background-color 200ms ease;
+}
+
+.compareFrame:hover .compareHandle,
+.compareFrame[data-dragging] .compareHandle {
+  background: #efb52b;
+  transform: translate(-50%, -50%) scale(1.12);
+}
+
+.compareFrame:has(input:focus-visible) .compareHandle {
+  outline: 3px solid #efb52b;
+  outline-offset: 3px;
+}
+
+.compareFrame input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* The jobs. The map and filters take the first spot, and the first three
+   rows stretch to fit them, so jobs fill in beside them and then below. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(170px, auto));
+  grid-auto-rows: 230px;
+  grid-auto-flow: dense;
+  gap: 16px;
+}
+
+.side {
+  display: flex;
+  flex-direction: column;
+  grid-column: 1 / span 2;
+  grid-row: 1 / span 3;
+  padding-right: 12px;
+}
+
+.chip {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  border: 1px solid rgb(32 11 56 / 0.15);
+  border-radius: 9999px;
+  background: #fff;
+  color: #200b38;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.chip:hover {
+  border-color: #6c3fb8;
+}
+
+.chip[aria-pressed='true'] {
+  border-color: #200b38;
+  background: #200b38;
+  color: #fff;
+}
+
+.chip:focus-visible {
+  outline: 2px solid #6c3fb8;
+  outline-offset: 3px;
+}
+
+.chipCount {
+  padding: 1px 7px;
+  border-radius: 9999px;
+  background: #f7f4fb;
+  color: #542d90;
+  font-size: 0.75rem;
+}
+
+.chip[aria-pressed='true'] .chipCount {
+  background: rgb(255 255 255 / 0.16);
+  color: #fff;
+}
+
+/* The map: soft city shapes with thin borders, and a pin for each city. */
+.valley {
+  position: relative;
+  width: 100%;
+  margin-top: 6px;
+}
+
+.valley svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.cityShape {
+  fill: #f1ecf8;
+  stroke: #c3b4da;
+  stroke-width: 1.2;
+  stroke-linejoin: round;
+  transition: fill 300ms ease;
+}
+
+.cityShape[data-on] {
+  fill: #fbe7b5;
+  stroke: #d9a520;
+  stroke-width: 1.6;
+}
+
+.pin {
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  margin: -22px 0 0 -22px;
+  padding: 0;
+  border: 0;
+  border-radius: 9999px;
+  background: transparent;
+  opacity: 0;
+  animation: pin-drop 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  animation-delay: calc(0.2s + var(--i, 0) * 0.12s);
+}
+
+.pin:focus-visible {
+  outline: 2px solid #6c3fb8;
+  outline-offset: 2px;
+}
+
+.pinDot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  border: 2px solid #fff;
+  border-radius: 9999px;
+  background: #6c3fb8;
+  box-shadow: 0 1px 4px rgb(32 11 56 / 0.3);
+  transition: transform 150ms ease;
+}
+
+.pin:hover .pinDot {
+  transform: scale(1.3);
+}
+
+.pinName {
+  position: absolute;
+  top: 50%;
+  color: #200b38;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.pin[data-side='left'] .pinName {
+  right: 32px;
+}
+
+.pin[data-side='right'] .pinName {
+  left: 32px;
+}
+
+.pinCount {
+  display: inline-block;
+  margin-left: 3px;
+  padding: 0 6px;
+  border-radius: 9999px;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgb(32 11 56 / 0.12);
+  color: #542d90;
+  font-size: 11px;
+  line-height: 18px;
+}
+
+/* A city with no jobs (for the type picked) gets a hollow pin. */
+.pin[data-empty] .pinDot {
+  border-color: #b4a9c3;
+  background: #fff;
+}
+
+.pin[data-empty] .pinName {
+  color: #686170;
+  font-weight: 500;
+}
+
+/* The picked city: a bigger gold pin with a pulsing ring. */
+.pin[aria-pressed='true'] .pinDot {
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 3px solid #200b38;
+  background: #efb52b;
+}
+
+.pin[aria-pressed='true'] .pinCount {
+  background: #200b38;
+  box-shadow: none;
+  color: #fff;
+}
+
+.pinHalo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid #efb52b;
+  border-radius: 9999px;
+  opacity: 0;
+}
+
+.pin[aria-pressed='true'] .pinHalo {
+  animation: pin-halo 2.4s ease-out 0.3s infinite;
+}
+
+/* Each job: its first photo, title, and city. */
+.tile {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  padding: 0;
+  border: 0;
+  border-radius: 16px;
+  background: #f7f4fb;
+  text-align: left;
+  animation: tile-in 0.45s ease both;
+  animation-delay: calc(var(--i, 0) * 50ms);
+}
+
+.tile[data-size='tall'] {
+  grid-row: span 2;
+}
+
+.tile[data-size='wide'] {
+  grid-column: span 2;
+}
+
+.tile img {
+  object-fit: cover;
+  transition: transform 500ms ease;
+}
+
+.tile:hover img {
+  transform: scale(1.04);
+}
+
+.tile:focus-visible {
+  outline: 3px solid #6c3fb8;
+  outline-offset: 3px;
+}
+
+.tileShade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgb(32 11 56 / 0.85), rgb(32 11 56 / 0) 55%);
+}
+
+.tileBadge,
+.tileCount {
+  position: absolute;
+  top: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.tileBadge {
+  left: 12px;
+  background: rgb(32 11 56 / 0.78);
+  color: #fff;
+}
+
+.tileCount {
+  right: 12px;
+  background: rgb(255 255 255 / 0.92);
+  color: #200b38;
+}
+
+.tileText {
+  position: absolute;
+  right: 16px;
+  bottom: 14px;
+  left: 16px;
+  color: #fff;
+}
+
+.emptyTile {
+  display: flex;
+  grid-column: span 2;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  border-radius: 16px;
+  background: #f7f4fb;
+  text-align: center;
+}
+
+/* An opened job, over the whole screen. */
+.viewer {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: 20px;
+  border: 0;
+  background: rgb(20 6 36 / 0.95);
+  color: #fff;
+}
+
+.viewer::backdrop {
+  background: transparent;
+}
+
+.viewerInner {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.viewerButton {
+  display: grid;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border: 0;
+  border-radius: 9999px;
+  background: rgb(255 255 255 / 0.12);
+  color: #fff;
+}
+
+.viewerButton:hover {
+  background: rgb(255 255 255 / 0.24);
+}
+
+.viewerButton:focus-visible {
+  outline: 2px solid #efb52b;
+  outline-offset: 3px;
+}
+
+.viewerStage {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  align-items: center;
+  gap: 16px;
+}
+
+.viewerMedia {
+  position: relative;
+  display: flex;
+  height: 100%;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+}
+
+.viewerMedia img {
+  object-fit: contain;
+}
+
+.viewerMedia video {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 12px;
+}
+
+.viewerFooter {
+  display: flex;
+  width: 100%;
+  max-width: 56rem;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 auto;
+}
+
+.viewerPhoneArrows {
+  display: none;
+  justify-content: center;
+  gap: 12px;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pin-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pin-halo {
+  0% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  10% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.6);
+  }
+}
+
+@keyframes tile-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Smaller screens: the slider goes under the words, and the map takes the
+   full width above the jobs. */
+@media (max-width: 1023px) {
+  .heroRow {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto;
+    grid-auto-rows: 200px;
+  }
+
+  .side {
+    grid-column: 1 / span 2;
+    grid-row: 1;
+    padding-right: 0;
+  }
+}
+
+/* Phones: one job per row, and only the picked city's name on the map. */
+@media (max-width: 639px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-auto-rows: 240px;
+  }
+
+  .side,
+  .emptyTile {
+    grid-column: auto;
+  }
+
+  .tile[data-size='tall'] {
+    grid-row: auto;
+  }
+
+  .tile[data-size='wide'] {
+    grid-column: auto;
+  }
+
+  .pinName {
+    display: none;
+  }
+
+  .pin[aria-pressed='true'] .pinName {
+    display: block;
+  }
+
+  .compareRow {
+    gap: 8px;
+  }
+
+  .pairArrow {
+    width: 44px;
+    height: 44px;
+  }
+
+  .viewerSide {
+    display: none;
+  }
+
+  .viewerPhoneArrows {
+    display: flex;
+  }
+}
+
+/* Everything appears in place for people who turn motion off. */
+@media (prefers-reduced-motion: reduce) {
+  .headerIntro,
+  .pin,
+  .tile {
+    animation: none;
+    opacity: 1;
+  }
+
+  .pin[aria-pressed='true'] .pinHalo {
+    animation: none;
+  }
+
+  .tile img,
+  .pinDot,
+  .cityShape,
+  .compareHandle,
+  .pairDots span {
+    transition: none;
+  }
+
+  .tile:hover img {
+    transform: none;
+  }
+}
