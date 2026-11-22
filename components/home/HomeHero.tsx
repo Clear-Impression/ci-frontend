@@ -54,11 +54,7 @@ export default function HomeHero({ eyebrow, titleLines, subtitle, rating, review
           <div className='hx-hero-bottom'>
             <div>
               {subtitle && (
-                <p
-                  className='hx-hero-sub hx-reveal'
-                  style={{ '--d': '150ms' } as React.CSSProperties}>
-                  {subtitle}
-                </p>
+                <p className='hx-hero-sub'>{subtitle}</p>
               )}
               {/* The rating opens our Google Business listing in a new tab. */}
               <a

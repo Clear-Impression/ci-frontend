@@ -5,6 +5,10 @@ const legacyRoutes = [
   ["/about-us-window-cleaning-mesa-az", "/about"],
   ["/faqs-learn-here", "/faq"],
   ["/get-a-quote", "/quote"],
+  [
+    "/blog/crystal-clear-views-in-the-east-valley-the-complete-guide-to-window-cleaning-in-mesa-az",
+    "/blog/window-cleaning-mesa-az-guide",
+  ],
   // Older service URLs, whose CMS slugs are normalized in lib/services.ts.
   ["/services/commercial-and-office-glass", "/services/commercial-office-glass"],
   ["/services/gutter-and-roof-care", "/services/gutter-roof-care"],
