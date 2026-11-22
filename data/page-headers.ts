@@ -1,4 +1,5 @@
 import { aboutIntro } from './about';
+import { careersPage } from './careers';
 import { feedbackPage } from './feedback';
 import { homeHero } from './home';
 import { locationsPageContent } from './locations';
@@ -37,6 +38,11 @@ export const pageHeaders: Record<string, PageHeaderSettings> = {
     label: 'Reviews',
     title: 'Customer Reviews',
     subtitle: 'What our customers say about us.',
+  },
+  careers: {
+    label: 'Careers',
+    title: careersPage.title,
+    subtitle: careersPage.description,
   },
   feedback: {
     label: 'Feedback',

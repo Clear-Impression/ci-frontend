@@ -130,12 +130,25 @@ header uses a fixed set of cities in `components/locations/ValleyRoute.tsx`.
 
 ## Careers and job applications
 
-Open roles are listed in `jobOpenings` in `data/careers.ts`, with the page copy.
-Each role needs a title, URL slug, job type, and short summary; pay, duties,
-requirements, and schedule are optional. Keep a live role's slug the same, since
-it is saved with each application. Remove a role from the list to close it: it
-leaves `/careers`, its apply page returns 404, and saved applications stay. With
-an empty list, `/careers` says there are no open roles and asks people to call.
+Job openings live in Sanity under **Careers → Job openings**. Create one with the
+**+** button; each needs a title, URL slug, job type, and short summary, while
+pay, duties, requirements, and schedule are optional. Delete a role from its
+**⋯** menu, or turn off **Accepting applications** to pause it. Either way it
+leaves `/careers` and its apply page returns 404 within a minute; saved
+applications stay in the backend. Keep a live role's slug the same, since it is
+saved with each application. The Careers page title and subtitle use the Careers
+page header.
+
+The website reads roles from Sanity only. With none published, or if Sanity
+can't be reached, `/careers` says there are no open roles and asks people to call.
+To start with the two roles from `starterJobOpenings` in `data/careers.ts`, copy
+them in once from the `studio/` folder:
+
+```bash
+npm run seed:job-openings
+```
+
+Roles already in Sanity are left alone, so running it twice is safe.
 
 The apply form at `/careers/<slug>` sends the answers and a resume (PDF, DOC, or
 DOCX, up to 4 MB) through a server action to FastAPI's

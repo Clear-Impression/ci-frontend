@@ -23,16 +23,17 @@ const publicPaths = [
 export const revalidate = 60;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [{ cities }, services, blogs] = await Promise.all([
+  const [{ cities }, services, blogs, openings] = await Promise.all([
     getLocations(),
     getServices(),
     getBlogs(),
+    getJobOpenings(),
   ]);
   const paths = new Set([
     ...publicPaths,
     ...cities.map((city) => city.href),
     ...services.filter((service) => service.slug).map((service) => '/services/' + service.slug),
-    ...getJobOpenings().map((opening) => '/careers/' + opening.slug),
+    ...openings.map((opening) => '/careers/' + opening.slug),
   ]);
 
   const entries: MetadataRoute.Sitemap = Array.from(paths, (path) => ({

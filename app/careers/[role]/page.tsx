@@ -11,16 +11,18 @@ type RolePageProps = {
   params: Promise<{ role: string }>;
 };
 
-// Only the listed roles have a page. Anything else is a 404.
-export const dynamicParams = false;
+// New roles get a page as soon as they're published, and paused or deleted
+// roles turn into a 404 within a minute.
+export const revalidate = 60;
 
-export function generateStaticParams() {
-  return getJobOpenings().map((opening) => ({ role: opening.slug }));
+export async function generateStaticParams() {
+  const openings = await getJobOpenings();
+  return openings.map((opening) => ({ role: opening.slug }));
 }
 
 export async function generateMetadata({ params }: RolePageProps): Promise<Metadata> {
   const { role } = await params;
-  const opening = getJobOpening(role);
+  const opening = await getJobOpening(role);
   if (!opening) notFound();
 
   return createPageMetadata({
@@ -45,7 +47,7 @@ function DetailList({ heading, items }: { heading: string; items: string[] }) {
 
 export default async function RolePage({ params }: RolePageProps) {
   const { role } = await params;
-  const opening = getJobOpening(role);
+  const opening = await getJobOpening(role);
   if (!opening) notFound();
 
   return (
@@ -83,7 +85,7 @@ export default async function RolePage({ params }: RolePageProps) {
 
       <section className='bg-[#f7f4fb]'>
         <div className='mx-auto grid max-w-7xl gap-10 px-6 py-14 sm:px-8 sm:py-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] lg:gap-14'>
-          {/* The role details from data/careers.ts. */}
+          {/* The role, as written in Sanity. */}
           <aside className={styles.enter} style={{ '--delay': '250ms' } as React.CSSProperties}>
             <p className='leading-relaxed text-[#4f4857]'>{opening.summary}</p>
             <div className='mt-8'>

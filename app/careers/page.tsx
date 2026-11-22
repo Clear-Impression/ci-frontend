@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { getJobOpenings } from '@/lib/careers';
+import { getPageHeader } from '@/lib/page-headers';
 import { createPageMetadata } from '@/lib/seo';
 import { company } from '@/data/company';
 import QuoteActions from '@/components/ui/QuoteActions';
@@ -16,8 +17,11 @@ export const metadata = createPageMetadata({
   description,
 });
 
-export default function CareersPage() {
-  const openings = getJobOpenings();
+// Roles published in Sanity appear within a minute.
+export const revalidate = 60;
+
+export default async function CareersPage() {
+  const [header, openings] = await Promise.all([getPageHeader('careers'), getJobOpenings()]);
 
   return (
     // The shared layout already supplies the website's header and footer.
@@ -30,19 +34,21 @@ export default function CareersPage() {
             {careersPage.eyebrow}
           </p>
           <h1
-            className={`${styles.enter} mt-3 max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl`}
+            className={`${styles.enter} mt-3 max-w-3xl whitespace-pre-line text-4xl font-semibold tracking-tight sm:text-5xl`}
             style={{ '--delay': '90ms' } as React.CSSProperties}>
-            {careersPage.title}
+            {header.title}
           </h1>
-          <p
-            className={`${styles.enter} mt-6 max-w-2xl text-lg text-white/80`}
-            style={{ '--delay': '180ms' } as React.CSSProperties}>
-            {careersPage.description}
-          </p>
+          {header.subtitle && (
+            <p
+              className={`${styles.enter} mt-6 max-w-2xl text-lg text-white/80`}
+              style={{ '--delay': '180ms' } as React.CSSProperties}>
+              {header.subtitle}
+            </p>
+          )}
         </div>
       </section>
 
-      {/* Open roles, from data/careers.ts. */}
+      {/* Open roles, straight from Sanity. */}
       <section aria-labelledby='open-roles' className='bg-[#f7f4fb]'>
         <div className='mx-auto max-w-7xl px-6 py-16 sm:px-8'>
           <div className='flex flex-wrap items-end justify-between gap-4'>

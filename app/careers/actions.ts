@@ -48,8 +48,8 @@ export async function submitApplication(
     return { status: 'invalid', errors, values };
   }
 
-  // The role may have been removed since the page loaded.
-  const opening = getJobOpening(readText(formData, 'role'));
+  // The role may have been paused or deleted in Sanity since the page loaded.
+  const opening = await getJobOpening(readText(formData, 'role'));
   if (!opening) return { status: 'closed', values };
 
   // The form makes this key once per application, so a retry is never saved twice.

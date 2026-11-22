@@ -15,7 +15,7 @@ const studioUrl = process.env.NEXT_PUBLIC_SANITY_STUDIO_URL || 'http://localhost
 const sections = [
   {
     title: 'Website content',
-    description: 'Edit FAQs, services, locations, blog posts, and page headers, then publish changes to your website.',
+    description: 'Edit FAQs, services, locations, blog posts, job openings, and page headers, then publish changes to your website.',
     label: 'Edit website content',
     href: studioUrl,
     available: true,

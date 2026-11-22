@@ -1,5 +1,5 @@
-// Careers page copy, open roles, form limits, and types, shared by the pages,
-// the form, and the server action.
+// Careers page copy, form limits, and types, shared by the pages, the form,
+// and the server action. Job openings are edited in Sanity.
 export const careersPage = {
   eyebrow: 'Careers',
   title: 'Join the Clear Impression crew',
@@ -37,11 +37,10 @@ export const careersClosing = {
   text: 'Get a free quote for your home or business, no surprises.',
 } as const;
 
-// The open roles. Each slug is its apply page, /careers/<slug>, and is saved
-// with every application, so keep it the same once a role is live. Remove a
-// role from this list to close it; saved applications stay in the backend.
-// Placeholder roles until Niels confirms the details and pay.
-export const jobOpenings: JobOpening[] = [
+// The first roles, copied into Sanity once by the seed script
+// (npm run seed:job-openings in studio/). The website itself reads roles
+// from Sanity only, so editing this list later changes nothing on the site.
+export const starterJobOpenings: JobOpening[] = [
   {
     title: 'Window cleaning technician',
     slug: 'window-cleaning-technician',
