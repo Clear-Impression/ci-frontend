@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { company } from '@/data/company';
 import { estimateNote, formatRange, totalRange, type EstimateLine } from '@/data/estimate';
 import type { EstimateDetails } from '@/lib/estimateStore';
+import { contactError, estimatePhonePattern } from '@/data/estimate-request';
 import styles from '@/app/estimate/calculator.module.css';
 
 type EstimateSummaryProps = {
@@ -20,7 +21,7 @@ type EstimateSummaryProps = {
   reference: string;
   onDetail: (field: keyof EstimateDetails, value: string) => void;
   onRemove: (slug: string) => void;
-  onDownload: () => void;
+  onRequest: (withPdf: boolean) => void;
   onStartOver: () => void;
 };
 
@@ -39,11 +40,11 @@ export default function EstimateSummary({
   reference,
   onDetail,
   onRemove,
-  onDownload,
+  onRequest,
   onStartOver,
 }: EstimateSummaryProps) {
   const total = totalRange(lines);
-  const ready = lines.length > 0 && Boolean(details.name.trim() && details.city);
+  const ready = lines.length > 0 && !contactError(details);
   const cityChoices = [...cities, 'Other'];
 
   return (
@@ -51,7 +52,11 @@ export default function EstimateSummary({
       id='your-estimate'
       aria-labelledby='summary-heading'
       className='mt-14 grid scroll-mt-28 items-start gap-10 lg:grid-cols-[minmax(0,1fr)_25rem] lg:gap-14'>
-      <div>
+      <form id='instant-quote-contact' aria-busy={saving} onSubmit={(event) => {
+        event.preventDefault();
+        const submitter = (event.nativeEvent as SubmitEvent).submitter as HTMLButtonElement | null;
+        onRequest(submitter?.value === 'download');
+      }}>
         <p className='text-sm font-semibold uppercase tracking-widest text-[#6c3fb8]'>Your estimate</p>
         <h2
           id='summary-heading'
@@ -59,7 +64,7 @@ export default function EstimateSummary({
           Where should we come?
         </h2>
         <p className='mt-3 max-w-lg leading-relaxed text-gray-600'>
-          Add the services you want from the tabs above, then your name and city, and download a summary to share with us.
+          Enter your email, phone number, and city so we can follow up. Your name and street address are optional. You can send your request, or send it and download a PDF copy.
         </p>
 
         <div className='mt-8 grid gap-8 sm:grid-cols-2'>
@@ -67,16 +72,31 @@ export default function EstimateSummary({
             <input
               id='est-name'
               autoComplete='name'
+              maxLength={100}
+              disabled={saving}
               placeholder=' '
               value={details.name}
               onChange={(event) => onDetail('name', event.target.value)}
             />
-            <label htmlFor='est-name'>Your name</label>
+            <label htmlFor='est-name'>Your name (optional)</label>
+          </div>
+          <div className={styles.lineField}>
+            <input id='est-email' name='email' type='email' autoComplete='email' required maxLength={254}
+              disabled={saving} placeholder=' ' value={details.email} onChange={(event) => onDetail('email', event.target.value)} />
+            <label htmlFor='est-email'>Email address *</label>
+          </div>
+          <div className={styles.lineField}>
+            <input id='est-phone' name='phone' type='tel' autoComplete='tel' required maxLength={32}
+              pattern={estimatePhonePattern} title='Enter a phone number with 7 to 15 digits.'
+              disabled={saving} placeholder=' ' value={details.phone} onChange={(event) => onDetail('phone', event.target.value)} />
+            <label htmlFor='est-phone'>Phone number *</label>
           </div>
           <div className={styles.lineField}>
             <input
               id='est-address'
               autoComplete='street-address'
+              maxLength={200}
+              disabled={saving}
               placeholder=' '
               value={details.address}
               onChange={(event) => onDetail('address', event.target.value)}
@@ -85,8 +105,8 @@ export default function EstimateSummary({
           </div>
         </div>
 
-        <fieldset className='mt-8 min-w-0'>
-          <legend className='text-sm font-medium text-[#200b38]'>City</legend>
+        <fieldset id='est-city' disabled={saving} tabIndex={-1} className='mt-8 min-w-0'>
+          <legend className='text-sm font-medium text-[#200b38]'>City *</legend>
           <div className='mt-3 flex flex-wrap gap-2'>
             {cityChoices.map((city) => {
               const picked = details.city === city;
@@ -98,6 +118,7 @@ export default function EstimateSummary({
                   <input
                     type='radio'
                     name='est-city'
+                    required
                     value={city}
                     checked={picked}
                     onChange={() => onDetail('city', city)}
@@ -124,7 +145,7 @@ export default function EstimateSummary({
             <p className='mt-3 text-sm text-gray-600'>We may still reach you. Call {company.phone} to check.</p>
           )}
         </fieldset>
-      </div>
+      </form>
 
       <aside
         aria-label='Your estimate summary'
@@ -175,6 +196,9 @@ export default function EstimateSummary({
               ? 'Add a service from the tabs above.'
               : `${lines.length} service${lines.length === 1 ? '' : 's'} · likely range`}
           </p>
+          {lines.some((line) => !line.range) && (
+            <p className='mt-3 text-sm text-[#efb52b]'>Hard water removal is quoted separately after photo review and is not included in this total.</p>
+          )}
 
           {lines.length > 0 && (
             <ul className='mt-6 space-y-3'>
@@ -196,6 +220,7 @@ export default function EstimateSummary({
                     <p className='text-xs text-white/50'>{line.details}</p>
                     <button
                       type='button'
+                      disabled={saving}
                       onClick={() => onRemove(line.slug)}
                       className='shrink-0 text-xs font-semibold text-white/50 underline-offset-4 hover:text-white hover:underline'>
                       Remove<span className='sr-only'> {line.name}</span>
@@ -208,9 +233,11 @@ export default function EstimateSummary({
 
           <div className='relative mt-7'>
             <button
-              type='button'
-              onClick={onDownload}
-              disabled={saving || lines.length === 0}
+              type='submit'
+              form='instant-quote-contact'
+              name='intent'
+              value='download'
+              disabled={saving || !ready}
               className={styles.goldButton}>
               <svg
                 aria-hidden='true'
@@ -223,7 +250,7 @@ export default function EstimateSummary({
                 strokeLinejoin='round'>
                 <path d='M12 4v11M7 10.5l5 5 5-5M5 20h14' />
               </svg>
-              {saving ? 'Preparing your PDF…' : downloaded ? 'Download again' : 'Download PDF summary'}
+              {saving ? 'Sending request…' : 'Send request to Clear Impressions and download PDF'}
             </button>
             {burst > 0 && (
               <span
@@ -240,15 +267,16 @@ export default function EstimateSummary({
             )}
           </div>
           {lines.length > 0 && !ready && (
-            <p className='mt-3 text-center text-xs text-white/60'>Add your name and city to download.</p>
+            <p className='mt-3 text-center text-xs text-white/60'>Add a valid email, phone number, and city to send your request or download.</p>
           )}
-          {downloaded && (
+          {reference && (
             <p
               role='status'
               className='mt-3 text-center text-sm text-[#efb52b]'>
-              Saved{reference ? ` · reference ${reference}` : ''}
+              Quote request received. Reference: <span className='break-all'>{reference}</span>
             </p>
           )}
+          {downloaded && <p role='status' className='mt-2 text-center text-sm text-[#efb52b]'>Your PDF copy has been downloaded.</p>}
           <a
             href={company.phoneHref}
             className={styles.panelSecondary}>
@@ -262,7 +290,7 @@ export default function EstimateSummary({
                 className='text-[#efb52b]'>
                 ✓
               </span>
-              No email or sign-up needed
+              No sign-up needed. Email and phone are required to send your request.
             </li>
             <li className='flex gap-2'>
               <span
@@ -276,6 +304,7 @@ export default function EstimateSummary({
           {(lines.length > 0 || details.name) && (
             <button
               type='button'
+              disabled={saving}
               onClick={onStartOver}
               className='mt-5 text-xs font-semibold text-white/50 underline-offset-4 hover:text-white hover:underline'>
               Start over

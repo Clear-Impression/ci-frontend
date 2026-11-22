@@ -14,6 +14,8 @@ export const estimateChangeEvent = 'ci:estimate-change';
 
 export type EstimateDetails = {
   name: string;
+  email: string;
+  phone: string;
   address: string;
   city: string;
 };
@@ -27,6 +29,14 @@ export type SavedEstimate = {
   added: string[];
   details: EstimateDetails;
   downloaded: boolean;
+  pricingVersion?: string;
+  // Keep the floating bar in sync with the price the calculator actually showed.
+  summary?: EstimateSummary | null;
+  propertyType?: 'home' | 'business';
+  step?: string;
+  photoSent?: boolean;
+  finalizeUnlocked?: boolean;
+  submission?: { fingerprint: string; key: string; id?: string };
 };
 
 export type EstimateSummary = {
@@ -57,6 +67,11 @@ export function saveEstimate(estimate: SavedEstimate) {
 export function readEstimate(): EstimateSummary | null {
   const saved = loadEstimate();
   if (!saved?.tab) return null;
+  if (saved.summary === null) return null;
+  if (saved.summary && typeof saved.summary.service === 'string' && typeof saved.summary.range === 'string') {
+    return saved.summary;
+  }
+  // Legacy estimates saved before Sanity pricing had no calculated summary.
   const values = saved.values ?? {};
   const lines = linesFor(saved.added ?? [], values);
   const total = totalRange(lines);

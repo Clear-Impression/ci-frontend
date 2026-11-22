@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test:pricing": "node --test scripts/estimate-pricing.test.mjs",
     "fetch:boundaries": "node scripts/fetch-city-boundaries.mjs"
   },
   "dependencies": {

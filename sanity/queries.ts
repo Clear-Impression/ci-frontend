@@ -1,5 +1,12 @@
 import {defineQuery} from 'groq'
 
+export const ESTIMATE_PRICING_QUERY = defineQuery(`
+  *[_id in $ids] {
+    _id, rate, minimum, rangePercent, roundingIncrement,
+    height, sides, dirt, extras, frequency, fill, parts
+  }
+`)
+
 export const PAGE_HEADER_QUERY = defineQuery(`
   *[_type == "pageHeader" && _id == $id][0] {title, subtitle}
 `)

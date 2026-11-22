@@ -4,6 +4,9 @@ import {visionTool} from '@sanity/vision'
 import {schemaTypes} from './schemaTypes'
 import {structure} from './structure'
 import {pageHeaders} from '../data/page-headers'
+import {pricingSections} from '../data/estimate-pricing'
+
+const pricingTypes = new Set(pricingSections.map((section) => section.schemaType))
 
 export default defineConfig({
   name: 'default',
@@ -40,6 +43,9 @@ export default defineConfig({
   },
   document: {
     actions: (actions, context) => {
+      if (pricingTypes.has(context.schemaType)) {
+        return actions.filter((action) => action.action !== 'duplicate')
+      }
       if (context.schemaType === 'pageHeader') {
         return actions.filter((action) => action.action !== 'duplicate')
       }
@@ -52,6 +58,7 @@ export default defineConfig({
       return actions
     },
     newDocumentOptions: (options, {creationContext}) => options.filter((option) =>
+      !pricingTypes.has(option.templateId) &&
       option.templateId !== 'page-header' &&
       option.templateId !== 'locationsPage' &&
       (option.templateId !== 'service-category' || creationContext.type !== 'global'),
