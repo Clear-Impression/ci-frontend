@@ -65,6 +65,8 @@ export type EstimateTab = {
   // 'range' prices it here; 'photo' explains why it needs a photo instead.
   mode: 'range' | 'photo';
   rate: number;
+  // A saved rate below this is ignored (left over from an older way of pricing).
+  rateMin?: number;
   minimum: number;
   rangePercent?: number;
   roundingIncrement?: number;
@@ -111,12 +113,35 @@ export const estimateTabs: readonly EstimateTab[] = [
     slug: 'residential-window-washing',
     name: 'Residential Window Washing',
     tab: 'Windows',
-    tabNote: 'By home size',
+    tabNote: 'By the pane',
     mode: 'range',
-    rate: 0.12,
+    rate: 9,
+    rateMin: 1,
     minimum: 149,
     questions: [
-      homeSize('The living space on your listing or tax record. A guess is fine.'),
+      {
+        kind: 'slider',
+        id: 'size',
+        label: 'How many window panes?',
+        unit: 'panes',
+        min: 4,
+        max: 100,
+        step: 1,
+        start: 24,
+        help: 'Count each separate piece of glass you want cleaned. A sliding door counts as two. A guess is fine.',
+      },
+      {
+        kind: 'choice',
+        id: 'style',
+        label: 'Any French or divided panes?',
+        start: 'none',
+        cards: true,
+        options: [
+          { id: 'none', label: 'No', hint: 'Regular windows, one big pane each.' },
+          { id: 'some', label: 'A few', hint: 'Some windows split into small squares.', multiply: 1.25 },
+          { id: 'most', label: 'Most of them', hint: 'Lots of small squares to detail.', multiply: 1.5 },
+        ],
+      },
       height('Second-story glass is cleaned from the ground with a water-fed pole.'),
       {
         kind: 'choice',
@@ -227,6 +252,19 @@ export const estimateTabs: readonly EstimateTab[] = [
         step: 1,
         start: 20,
         help: 'Count them from the driveway, or read the number off your solar monitoring app.',
+      },
+      {
+        kind: 'choice',
+        id: 'panelSize',
+        label: 'How big is each panel?',
+        start: 'standard',
+        cards: true,
+        options: [
+          { id: 'standard', label: 'About 17 sq ft', hint: 'Most home panels, about 3 by 5.5 feet.' },
+          { id: 'large', label: 'About 21 sq ft', hint: 'Newer, bigger panels, about 3.5 by 6 feet.', multiply: 1.2 },
+          { id: 'xl', label: '25 sq ft or more', hint: 'Commercial-size panels.', multiply: 1.4 },
+        ],
+        help: 'Not sure? Pick the first one. Most homes have these.',
       },
       height('Two-story roofs take longer to set up and reach safely.'),
     ],

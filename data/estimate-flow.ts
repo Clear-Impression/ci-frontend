@@ -65,8 +65,9 @@ export function restoreQuoteFlow(tabs: readonly EstimateTab[], saved?: unknown, 
   }
   // Size applies to windows/gutters; height describes the building for all three.
   // Prefer a selected service's saved answer over an unselected service's default.
-  for (const id of ['size', 'height']) {
-    const linkedServices = id === 'height' ? heightServices : [WINDOW_SERVICE, GUTTER_SERVICE];
+  // Windows are counted in panes, so only height is shared now.
+  for (const id of ['height']) {
+    const linkedServices = heightServices;
     const hasAnswer = (slug: string) => record(stored[slug])[id] !== undefined;
     const sharedSource = linkedServices.find((slug) => selected.includes(slug) && hasAnswer(slug)) ??
       linkedServices.find(hasAnswer) ?? WINDOW_SERVICE;
@@ -88,8 +89,7 @@ export function restoreQuoteFlow(tabs: readonly EstimateTab[], saved?: unknown, 
 
 export function updateQuoteAnswer(flow: QuoteFlow, slug: string, id: string, answer: EstimateValues[string]): QuoteFlow {
   const values = { ...flow.values, [slug]: { ...flow.values[slug], [id]: answer } };
-  const linkedServices = id === 'height' && heightServices.includes(slug) ? heightServices :
-    id === 'size' && [WINDOW_SERVICE, GUTTER_SERVICE].includes(slug) ? [WINDOW_SERVICE, GUTTER_SERVICE] : [];
+  const linkedServices = id === 'height' && heightServices.includes(slug) ? heightServices : [];
   for (const linked of linkedServices) {
     values[linked] = { ...values[linked], [id]: answer };
   }

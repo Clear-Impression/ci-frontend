@@ -16,24 +16,26 @@ type PageGuideProps = {
   label: string;
 };
 
-// How long the page has to sit still before the menu slides out.
-const IDLE_MS = 2000;
+// How long after scrolling stops the menu stays before sliding away.
+const LINGER_MS = 1200;
 
 // The "On this page" menu on the left of long pages: the page's sections
 // grouped under small headings, on dark purple frosted glass, with
 // "you're here" next to the section you're reading.
 //
-// It slides out once the page has been still for 2 seconds and slides away
-// the moment you scroll, so it never covers what you're reading. It stays
+// It slides out while you scroll, so you can see where you are on the page,
+// and slides away soon after you stop, so it never covers what you're
+// reading (it stays while the pointer is on it). It stays
 // away at the very top of the page and near the footer. The three-line
 // button pulls it out (or puts it away) at any time.
 export default function PageGuide({ groups, label }: PageGuideProps) {
   const [active, setActive] = useState(0);
   const [away, setAway] = useState(true);
-  const [idleOpen, setIdleOpen] = useState(false);
+  const [scrollOpen, setScrollOpen] = useState(false);
   const [pinned, setPinned] = useState(false);
   const guideRef = useRef<HTMLDivElement>(null);
-  const idleTimer = useRef<number | undefined>(undefined);
+  const lingerTimer = useRef<number | undefined>(undefined);
+  const hovering = useRef(false);
 
   // The header keeps resizing for a moment after you stop scrolling.
   useEffect(() => {
@@ -89,22 +91,22 @@ export default function PageGuide({ groups, label }: PageGuideProps) {
     };
   }, [groups]);
 
-  // Slide out after 2 seconds of stillness; slide away as soon as you scroll.
+  // Slide out while scrolling; slide away shortly after scrolling stops.
   useEffect(() => {
-    const restart = () => {
-      window.clearTimeout(idleTimer.current);
-      idleTimer.current = window.setTimeout(() => setIdleOpen(true), IDLE_MS);
-    };
     const onScroll = () => {
-      setIdleOpen(false);
+      setScrollOpen(true);
       setPinned(false);
-      restart();
+      window.clearTimeout(lingerTimer.current);
+      lingerTimer.current = window.setTimeout(function close() {
+        // Keep it while the pointer is on it, so a section can be clicked.
+        if (hovering.current) lingerTimer.current = window.setTimeout(close, LINGER_MS);
+        else setScrollOpen(false);
+      }, LINGER_MS);
     };
-    restart();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => {
       window.removeEventListener('scroll', onScroll);
-      window.clearTimeout(idleTimer.current);
+      window.clearTimeout(lingerTimer.current);
     };
   }, []);
 
@@ -118,7 +120,7 @@ export default function PageGuide({ groups, label }: PageGuideProps) {
     return () => window.removeEventListener('keydown', onKey);
   }, [pinned]);
 
-  const open = pinned || (!away && idleOpen);
+  const open = pinned || (!away && scrollOpen);
   // Where each group starts in the full list of sections.
   const starts = groups.map((_, groupIndex) =>
     groups.slice(0, groupIndex).reduce((total, group) => total + group.items.length, 0),
@@ -128,6 +130,8 @@ export default function PageGuide({ groups, label }: PageGuideProps) {
     <div
       ref={guideRef}
       className='pg-wrap'
+      onPointerEnter={() => (hovering.current = true)}
+      onPointerLeave={() => (hovering.current = false)}
       style={{ '--pg-top': 'calc(var(--hdr-top) + 2.5rem)' } as React.CSSProperties}
     >
       <button
@@ -138,7 +142,7 @@ export default function PageGuide({ groups, label }: PageGuideProps) {
         data-open={open || undefined}
         onClick={() => {
           setPinned(!open);
-          setIdleOpen(false);
+          setScrollOpen(false);
         }}
         className='pg-toggle'
       >

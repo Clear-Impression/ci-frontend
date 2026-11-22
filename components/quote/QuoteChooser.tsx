@@ -8,50 +8,12 @@ import styles from './QuoteChooser.module.css';
 
 const seenKey = 'ci-quote-chooser-seen';
 
-type Kind = 'instant' | 'detailed';
-
-// The two ways to get a price. Both list the same rows in the same order, so
-// flipping the switch shows exactly what changes.
-const options: Record<
-  Kind,
-  { label: string; big: string; note: string; rows: [string, string][]; cta: string; href: string }
-> = {
-  instant: {
-    label: 'Instant estimate',
-    big: '2 min',
-    note: 'to see your price',
-    rows: [
-      ['Price', 'A range for your home'],
-      ['Best for', 'Most homes'],
-      ['Then', 'Pick a package and request a day'],
-    ],
-    cta: 'Start instant estimate',
-    href: '/estimate#estimate',
-  },
-  detailed: {
-    label: 'Detailed quote',
-    big: 'Exact',
-    note: 'price from our team',
-    rows: [
-      ['Price', 'One exact price'],
-      ['Best for', 'Big, commercial or unusual jobs'],
-      ['Then', 'We contact you with your quote'],
-    ],
-    cta: 'Request a detailed quote',
-    href: company.quoteFormUrl,
-  },
-};
-
-const kinds: Kind[] = ['instant', 'detailed'];
-
-// A popup that explains the two ways to get a price, one at a time: a
-// sliding switch flips between the instant estimate and the detailed quote.
+// A popup that explains the two ways to get a price.
 // The first time it opens, it starts as a foggy pane of glass and a gold
 // squeegee wipes it clean to reveal the options, like unwrapping a gift.
 export default function QuoteChooser() {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [stage, setStage] = useState<'closed' | 'fogged' | 'wiping' | 'open'>('closed');
-  const [kind, setKind] = useState<Kind>('instant');
 
   const open = useCallback(() => {
     const dialog = dialogRef.current;
@@ -62,7 +24,6 @@ export default function QuoteChooser() {
       window.sessionStorage.setItem(seenKey, '1');
     } catch {}
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    setKind('instant');
     dialog.showModal();
     if (seen || reduce) {
       setStage('open');
@@ -138,82 +99,94 @@ export default function QuoteChooser() {
           <h2
             id='quote-chooser-title'
             className={styles.title}>
-            How do you want your price?
+            Two ways to get your price
           </h2>
+          <p className={styles.lead}>Not sure which? Start with the instant estimate. You can always ask for a detailed quote after.</p>
 
-          {/* The switch. Instant is picked first. */}
-          <div
-            className={styles.switch}
-            data-on={kind}
-            role='tablist'
-            aria-label='Ways to get your price'>
-            <span
-              aria-hidden='true'
-              className={styles.knob}
-            />
-            {kinds.map((entry) => (
-              <button
-                key={entry}
-                id={`quote-tab-${entry}`}
-                type='button'
-                role='tab'
-                aria-selected={kind === entry}
-                aria-controls='quote-panel'
-                tabIndex={kind === entry ? 0 : -1}
-                onClick={() => setKind(entry)}
-                onKeyDown={(event) => {
-                  if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
-                    event.preventDefault();
-                    const next = kind === 'instant' ? 'detailed' : 'instant';
-                    setKind(next);
-                    document.getElementById(`quote-tab-${next}`)?.focus();
-                  }
-                }}>
-                {options[entry].label}
-              </button>
-            ))}
-          </div>
-
-          <div
-            key={kind}
-            id='quote-panel'
-            role='tabpanel'
-            aria-labelledby={`quote-tab-${kind}`}
-            className={styles.panel}
-            data-kind={kind}>
-            <p className={styles.big}>
-              <b>{options[kind].big}</b>
-              <span>{options[kind].note}</span>
-            </p>
-            <dl className={styles.rows}>
-              {options[kind].rows.map(([label, value]) => (
-                <div key={label}>
-                  <dt>{label}</dt>
-                  <dd>{value}</dd>
-                </div>
-              ))}
-            </dl>
+          <div className={styles.options}>
+            {/* Option 1: instant estimate, with a tiny live preview. */}
             <Link
-              href={options[kind].href}
+              href='/estimate#estimate'
               onClick={close}
-              className={styles.go}>
-              {options[kind].cta}
-              <svg
+              className={`${styles.option} ${styles.optionDark}`}
+              style={{ '--n': 0 } as React.CSSProperties}>
+              <span className={styles.badgeGold}>About 2 minutes</span>
+              <span className={styles.optionTitle}>Instant estimate</span>
+              <span
                 aria-hidden='true'
-                viewBox='0 0 24 24'
-                fill='none'
-                stroke='currentColor'
-                strokeWidth='2.2'
-                strokeLinecap='round'
-                strokeLinejoin='round'>
-                <path d='M5 12h13M13 6.5l5.5 5.5-5.5 5.5' />
-              </svg>
+                className={styles.demo}>
+                <span className={styles.demoRow}>
+                  <span>Home size</span>
+                  <span className={styles.demoSize}>
+                    <span>1,400 sq ft</span>
+                    <span>2,000 sq ft</span>
+                    <span>2,600 sq ft</span>
+                  </span>
+                </span>
+                <span className={styles.demoTrack}>
+                  <span className={styles.demoFill} />
+                </span>
+                <span className={styles.demoPrice}>
+                  <span>Your estimate</span>
+                  <span className={styles.demoTicker}>
+                    <span>$180</span>
+                    <span>$215</span>
+                    <span>$245</span>
+                  </span>
+                </span>
+              </span>
+              <span className={styles.points}>
+                <span>Answer a few questions about your home</span>
+                <span>Pick a package and see your price</span>
+                <span>Request a day that suits you</span>
+              </span>
+              <span className={styles.ctaGold}>
+                Start instant estimate
+              </span>
+            </Link>
+
+            {/* Option 2: detailed quote from the team. */}
+            <Link
+              href={company.quoteFormUrl}
+              onClick={close}
+              className={`${styles.option} ${styles.optionLight}`}
+              style={{ '--n': 1 } as React.CSSProperties}>
+              <span className={styles.badgeViolet}>Exact price</span>
+              <span className={styles.optionTitle}>Detailed quote</span>
+              <span
+                aria-hidden='true'
+                className={`${styles.demo} ${styles.demoLight}`}>
+                <span className={styles.check}>Tell us about your property</span>
+                <span className={styles.check}>Our team reviews it</span>
+                <span className={styles.check}>You get an exact price</span>
+              </span>
+              <span className={styles.points}>
+                <span>Best for big or unusual jobs</span>
+                <span>A real person prices it for you</span>
+                <span>Free, with no obligation</span>
+              </span>
+              <span className={styles.ctaDark}>
+                Request a detailed quote
+              </span>
             </Link>
           </div>
 
-          <p className={styles.phone}>
-            Stuck? Call or text <a href={company.phoneHref}>{company.phone}</a>
-          </p>
+          {/* Talk to a person instead. */}
+          <a
+            href={company.phoneHref}
+            className={styles.live}>
+            <span
+              aria-hidden='true'
+              className={styles.liveIcon}>
+              <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'>
+                <path d='M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2' />
+              </svg>
+            </span>
+            <span className={styles.liveText}>
+              <span className={styles.liveTitle}>Stuck? Speak to a live person</span>
+              <span className={styles.liveSub}>Call or text {company.phone}</span>
+            </span>
+          </a>
         </div>
       </div>
     </dialog>
