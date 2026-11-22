@@ -7,6 +7,34 @@ export const ESTIMATE_PRICING_QUERY = defineQuery(`
   }
 `)
 
+// The scrolling header bar and the homepage popup, with their theme and dates.
+export const SEASONAL_OFFERS_QUERY = defineQuery(`
+  *[_type == "seasonalOffers" && _id == "seasonalOffers"][0] {
+    theme,
+    customColor,
+    customIcon,
+    barOn,
+    barPosition,
+    barMessages,
+    barLink,
+    popupOn,
+    popupLabel,
+    popupTitle,
+    popupText,
+    popupButtonLabel,
+    popupLink,
+    "popupImage": popupImage {
+      alt,
+      "url": asset->url,
+      "width": asset->metadata.dimensions.width,
+      "height": asset->metadata.dimensions.height,
+      "hotspot": hotspot{x, y}
+    },
+    startsAt,
+    endsAt
+  }
+`)
+
 export const PAGE_HEADER_QUERY = defineQuery(`
   *[_type == "pageHeader" && _id == $id][0] {title, subtitle}
 `)
