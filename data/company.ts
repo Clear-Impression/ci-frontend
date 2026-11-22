@@ -57,6 +57,7 @@ export const navigation: readonly NavigationItem[] = [
     links: [
       { label: 'Meet the owner', href: '/about' },
       { label: 'Blog', href: '/blog' },
+      { label: 'Careers', href: '/careers' },
     ],
   },
 ];

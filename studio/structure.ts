@@ -59,6 +59,15 @@ export const structure: StructureResolver = (S) => {
         .apiVersion('2026-10-19')
         .defaultOrdering([{field: 'displayOrder', direction: 'asc'}, {field: 'name', direction: 'asc'}])),
     ])),
+    S.listItem().id('careers').title('Careers').child(S.list().title('Careers').items([
+      header('careers'),
+      S.listItem().id('job-openings').title('Job openings').schemaType('jobOpening')
+        .child(S.documentTypeList('jobOpening')
+          .id('job-openings')
+          .title('Job openings')
+          .apiVersion('2026-10-19')
+          .defaultOrdering([{field: 'displayOrder', direction: 'asc'}, {field: 'title', direction: 'asc'}])),
+    ])),
     ...['home', 'about', 'reviews', 'feedback', 'quote', 'terms'].map((pageId) =>
       S.listItem().id(pageId).title(pageHeaders[pageId].label)
         .child(S.list().title(pageHeaders[pageId].label).items([header(pageId)])),

@@ -200,6 +200,9 @@ export default async function Footer() {
             <Link href='/' className={bottomLinkStyle}>
               Home
             </Link>
+            <Link href='/careers' className={bottomLinkStyle}>
+              Careers
+            </Link>
             <Link href='/terms-and-conditions' className={bottomLinkStyle}>
               Service terms
             </Link>

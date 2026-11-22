@@ -128,6 +128,39 @@ away; add its outline by putting its name in `scripts/fetch-city-boundaries.mjs`
 and running `npm run fetch:boundaries`. The animated route in the Locations
 header uses a fixed set of cities in `components/locations/ValleyRoute.tsx`.
 
+## Careers and job applications
+
+Job openings live in Sanity under **Careers → Job openings**. Create one with the
+**+** button; each needs a title, URL slug, job type, and short summary, while
+pay, duties, requirements, and schedule are optional. Delete a role from its
+**⋯** menu, or turn off **Accepting applications** to pause it. Either way it
+leaves `/careers` and its apply page returns 404 within a minute; saved
+applications stay in the backend. Keep a live role's slug the same, since it is
+saved with each application. The Careers page title and subtitle use the Careers
+page header.
+
+The website reads roles from Sanity only. With none published, or if Sanity
+can't be reached, `/careers` says there are no open roles and asks people to call.
+To start with the two roles from `starterJobOpenings` in `data/careers.ts`, copy
+them in once from the `studio/` folder:
+
+```bash
+npm run seed:job-openings
+```
+
+Roles already in Sanity are left alone, so running it twice is safe.
+
+The apply form at `/careers/<slug>` sends the answers and a resume (PDF, DOC, or
+DOCX, up to 4 MB) through a server action to FastAPI's
+`POST /api/v1/applications`, which saves them and emails Niels with the resume
+attached. The 4 MB cap keeps the upload under Vercel's 4.5 MB request limit, and
+`next.config.ts` raises the server action body limit to match.
+
+Signed-in owners review applications at `/owner/applications`. The resume link
+goes through `/owner/applications/<id>/resume`, which adds the owner session and
+streams the file from the backend. Run backend migration `0004_job_applications`
+before using either page.
+
 ## Owner login in local development
 
 The API lives in the separate
