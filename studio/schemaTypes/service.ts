@@ -67,10 +67,36 @@ export const service = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: 'layout',
+      title: 'Hero image position',
+      type: 'string',
+      options: {
+        list: [
+          {title: 'Image on the right', value: 'image-right'},
+          {title: 'Image on the left', value: 'image-left'},
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'image-right',
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: 'detailHeading',
+      title: 'Detail section heading',
+      type: 'string',
+      initialValue: 'Service details',
+    }),
+    defineField({
       name: 'detailParagraphs',
       title: 'Detail paragraphs',
       type: 'array',
       of: [defineArrayMember({type: 'text'})],
+    }),
+    defineField({
+      name: 'glanceHeading',
+      title: 'At a glance heading',
+      type: 'string',
+      initialValue: 'At a glance',
     }),
     defineField({
       name: 'bestFor',
@@ -79,11 +105,23 @@ export const service = defineType({
       description: 'A short description of who or what this service is best suited for.',
     }),
     defineField({
+      name: 'bestForLabel',
+      title: 'Best for label',
+      type: 'string',
+      initialValue: 'Best for',
+    }),
+    defineField({
       name: 'benefits',
       title: 'Benefits',
       type: 'array',
       of: [defineArrayMember({type: 'string'})],
       description: 'Add two or three short benefits to show in the service overview.',
+    }),
+    defineField({
+      name: 'benefitsLabel',
+      title: 'Benefits label',
+      type: 'string',
+      initialValue: 'Benefits',
     }),
     defineField({
       name: 'displayOrder',
