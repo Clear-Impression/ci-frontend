@@ -7,5 +7,6 @@ import {photoOrVideo} from './photoOrVideo'
 import {blog} from './blog'
 import {instantPriceTypes} from './instantPrices'
 import {seasonalOffers} from './seasonalOffers'
+import {about} from './about'
 
-export const schemaTypes = [faq, service, pageHeader, city, locationsPage, photoOrVideo, blog, seasonalOffers, ...instantPriceTypes]
+export const schemaTypes = [faq, service, pageHeader, city, locationsPage, photoOrVideo, blog, seasonalOffers, about, ...instantPriceTypes]

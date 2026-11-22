@@ -39,6 +39,28 @@ export const PAGE_HEADER_QUERY = defineQuery(`
   *[_type == "pageHeader" && _id == $id][0] {title, subtitle}
 `)
 
+export const ABOUT_QUERY = defineQuery(`
+  *[_type == "about" && _id == "about"][0] {
+    ownerName,
+    ownerRole,
+    "ownerPhoto": ownerPhoto {
+      alt,
+      "url": asset->url,
+      "width": asset->metadata.dimensions.width,
+      "height": asset->metadata.dimensions.height,
+      "hotspot": hotspot{x, y}
+    },
+    "story": story[]{
+      heading,
+      "paragraphs": paragraphs[].text
+    },
+    promiseHeading,
+    promiseTagline,
+    "promiseParagraphs": promiseParagraphs[].text,
+    "values": values[]{icon, title, description}
+  }
+`)
+
 // The photo and video fields shared by cities and the Locations page.
 const PHOTO_OR_VIDEO = `{
   alt,

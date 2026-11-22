@@ -3,13 +3,8 @@ import { getPageHeader } from '@/lib/page-headers';
 import { createPageMetadata } from '@/lib/seo';
 import Image from 'next/image';
 import { company } from '@/data/company';
-import {
-  aboutIntro,
-  aboutOwner,
-  aboutPromise,
-  aboutStory,
-  aboutValues,
-} from '@/data/about';
+import { aboutIntro } from '@/data/about';
+import { getAbout } from '@/lib/about';
 import Reveal from '@/components/services/Reveal';
 import ServiceIcon from '@/components/services/ServiceIcon';
 import TiltCard from '@/components/about/TiltCard';
@@ -39,7 +34,10 @@ function Words({ text, className }: { text: string; className: string }) {
 }
 
 export default async function AboutPage() {
-  const header = await getPageHeader('about');
+  const [header, about] = await Promise.all([
+    getPageHeader('about'),
+    getAbout(),
+  ]);
   return (
     // Let the page fill the space between the header and footer.
     <main className='flex-1 bg-white text-gray-900'>
@@ -83,10 +81,10 @@ export default async function AboutPage() {
         <div className='grid items-start gap-14 lg:grid-cols-[22rem_minmax(0,1fr)] lg:gap-16'>
           <Reveal className='story-col from-left'>
             <figure className='relative mx-auto max-w-sm lg:mx-0'>
-              {aboutOwner.photo ? (
+              {about.owner.photo ? (
                 <Image
-                  src={aboutOwner.photo}
-                  alt={`${aboutOwner.name}, founder of ${company.name}`}
+                  src={about.owner.photo}
+                  alt={about.owner.photoAlt || `${about.owner.name}, founder of ${company.name}`}
                   width={704}
                   height={880}
                   sizes='(min-width: 1024px) 22rem, 90vw'
@@ -118,14 +116,14 @@ export default async function AboutPage() {
                   className='size-2.5 shrink-0 rounded-full bg-[#55ab68]'
                 />
                 <span>
-                  <span className='block text-lg font-semibold text-[#200b38]'>{aboutOwner.name}</span>
-                  <span className='block text-sm text-gray-600'>{aboutOwner.role}</span>
+                  <span className='block text-lg font-semibold text-[#200b38]'>{about.owner.name}</span>
+                  <span className='block text-sm text-gray-600'>{about.owner.role}</span>
                 </span>
               </figcaption>
             </figure>
           </Reveal>
           <Reveal className='story-col from-right space-y-12'>
-            {aboutStory.map((section) => (
+            {about.story.map((section) => (
               <article key={section.heading}>
                 <h2 className='text-2xl font-semibold text-[#200b38]'>
                   {section.heading}
@@ -151,17 +149,17 @@ export default async function AboutPage() {
         <div className='mx-auto max-w-7xl px-6 py-16 sm:px-8 sm:py-20'>
           <Reveal>
             <h2 className='blur-in text-2xl font-semibold text-[#200b38]'>
-              {aboutPromise.heading}
+              {about.promise.heading}
             </h2>
             {/* The quote darkens word by word as it scrolls up the screen. */}
             <blockquote className='ink-quote mt-6 border-l-4 border-[#efb52b] pl-6 text-2xl font-medium text-[#200b38] sm:text-3xl'>
               <Words
-                text={`“${aboutPromise.tagline}”`}
+                text={`“${about.promise.tagline}”`}
                 className='ink-word'
               />
             </blockquote>
             <div className='mt-8 max-w-3xl space-y-4'>
-              {aboutPromise.paragraphs.map((paragraph, index) => (
+              {about.promise.paragraphs.map((paragraph, index) => (
                 <p
                   key={paragraph}
                   style={{ '--i': index + 2 } as React.CSSProperties}
@@ -173,8 +171,8 @@ export default async function AboutPage() {
           </Reveal>
           {/* The value cards are dealt onto the table, then tilt toward the cursor. */}
           <Reveal as='div' className='mt-12'>
-            <ul className='tilt-stage grid gap-6 sm:grid-cols-3'>
-              {aboutValues.map((value, index) => (
+            <ul className='tilt-stage grid gap-6 grid-cols-[repeat(auto-fit,minmax(min(16rem,100%),1fr))]'>
+              {about.values.map((value, index) => (
                 <TiltCard
                   key={value.title}
                   style={{ '--i': index } as React.CSSProperties}
