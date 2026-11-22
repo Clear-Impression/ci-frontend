@@ -412,6 +412,10 @@ a.hx-rating:hover strong {
   height: 100%;
   object-fit: cover;
   object-position: 60% center;
+  /* Zoomed in a little from the top-left, so the video's bottom-right corner
+     never shows on any screen size. */
+  transform: scale(1.28);
+  transform-origin: 35% 0;
   /* The video file itself is color-balanced and sharpened, so no filter here
      (a browser filter on top would blur it slightly and shift the colors). */
 }
@@ -429,14 +433,30 @@ a.hx-rating:hover strong {
   color: #fff;
 }
 
+/* The hero runs up under the glass header, so the video starts at the very
+   top of the screen. --hdr-top is the header's height, set by the header. */
+.hx .hx-hero {
+  margin-top: calc(-1 * var(--hdr-top, 0px));
+  padding-top: var(--hdr-top, 0px);
+  min-height: max(calc(640px + var(--hdr-top, 0px)), 100svh);
+}
+
 .hx-hero-wash {
   position: absolute;
   inset: 0;
   z-index: -1;
   pointer-events: none;
   background:
-    linear-gradient(180deg, rgb(32 11 56 / 0.5) 0%, rgb(32 11 56 / 0) 24%),
-    linear-gradient(0deg, rgb(32 11 56 / 0.94) 0%, rgb(32 11 56 / 0.62) 30%, rgb(32 11 56 / 0.18) 58%, rgb(32 11 56 / 0) 76%);
+    linear-gradient(180deg, rgb(32 11 56 / 0.4) 0%, rgb(32 11 56 / 0) 22%),
+    linear-gradient(0deg, rgb(32 11 56 / 0.9) 0%, rgb(32 11 56 / 0.52) 28%, rgb(32 11 56 / 0.1) 56%, rgb(32 11 56 / 0) 72%);
+}
+
+/* On wide screens the header's quote button is enough, so the hero keeps
+   just "See services". */
+@media (min-width: 64rem) {
+  .hx .hx-hero-quote {
+    display: none;
+  }
 }
 
 .hx .hx-hero-grid {

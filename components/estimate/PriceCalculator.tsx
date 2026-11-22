@@ -526,7 +526,11 @@ export default function PriceCalculator({ cities, tabs }: { cities: readonly str
     flow.step === 'summary' ? !canFinalize : tab?.mode === 'range' && !rangeFor(tab, tabValues);
 
   return (
-    <section ref={rootRef} aria-labelledby='price-heading' className='mx-auto max-w-7xl scroll-mt-28 px-4 py-14 sm:px-8 sm:py-16'>
+    <section
+      id='calculator'
+      ref={rootRef}
+      aria-labelledby='price-heading'
+      className='mx-auto max-w-7xl scroll-mt-28 px-4 py-14 sm:px-8 sm:py-16'>
       <div className={styles.shell}>
         <div className={styles.top}>
           <div className='flex flex-wrap items-center gap-3'>

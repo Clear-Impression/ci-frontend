@@ -1,3 +1,4 @@
+import PageGuide from '@/components/layout/PageGuide';
 import { getPageHeader } from '@/lib/page-headers';
 import type { Metadata } from 'next';
 import { createPageMetadata } from '@/lib/seo';
@@ -34,8 +35,23 @@ export default async function LocationsPage() {
 
   return (
     <main className='flex-1 border-0 bg-white text-[#200b38]'>
+      {/* The "On this page" menu on the left. */}
+      <PageGuide
+        label='Locations page sections'
+        groups={[
+          {
+            title: 'Where we work',
+            items: [
+              { id: 'overview', label: 'Overview' },
+              { id: 'service-map', label: 'Service area map' },
+            ],
+          },
+          { title: 'Next step', items: [{ id: 'get-started', label: 'Get a quote' }] },
+        ]}
+      />
       {/* The shared layout already supplies the website's header and footer. */}
       <section
+        id='overview'
         aria-labelledby='locations-heading'
         className='page-hero relative isolate overflow-hidden bg-[#200b38] text-white'>
         <div className='relative mx-auto flex min-h-88 max-w-7xl flex-col justify-center px-6 py-10 sm:min-h-80 sm:px-8 sm:py-12'>
@@ -64,11 +80,17 @@ export default async function LocationsPage() {
       </section>
 
       <section
+        id='service-map'
         aria-label='Service area map'
         className='bg-[#faf8fd]'>
         <div className='mx-auto max-w-7xl px-6 py-12 sm:px-8 sm:py-16'>
           {/* Reuse the homepage map, with more height and the full page width. */}
-          <ServiceAreaMap cities={mapCities} large showBoundaries />
+          <ServiceAreaMap
+            cities={mapCities}
+            large
+            showBoundaries
+            collapsibleOnMobile
+          />
 
           <div className='mt-12 sm:mt-16'>
             {/* The heading rises in like the other pages' section headings. */}
@@ -103,7 +125,9 @@ export default async function LocationsPage() {
       </section>
 
       {/* Same panel as the About page, pointing on to Services or a quote. */}
-      <section className='mx-auto max-w-7xl px-6 py-16 sm:px-8 sm:py-20'>
+      <section
+        id='get-started'
+        className='mx-auto max-w-7xl px-6 py-16 sm:px-8 sm:py-20'>
         <ClearerViewCta />
       </section>
     </main>

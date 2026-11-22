@@ -63,6 +63,7 @@ export default function HomeServiceArea({ eyebrow, title, lead, cities, cityPage
             cities={cities}
             showBoundaries
             cityButtons={false}
+            collapsibleOnMobile
           />
         </div>
       </div>

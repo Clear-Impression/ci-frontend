@@ -1,3 +1,4 @@
+import PageGuide from '@/components/layout/PageGuide';
 import { getPageHeader } from '@/lib/page-headers';
 import { createPageMetadata } from '@/lib/seo';
 import { getServices } from '@/lib/services';
@@ -83,9 +84,25 @@ export default async function Services() {
 
   return (
     <main className={`${jakarta.variable} sp flex-1 bg-white text-[#200b38]`}>
+      {/* The "On this page" menu on the left. */}
+      <PageGuide
+        label='Services page sections'
+        groups={[
+          {
+            title: 'Our services',
+            items: [
+              { id: 'overview', label: 'Overview' },
+              { id: 'core-services', label: 'Core services' },
+              { id: 'specialized-services', label: 'Specialized services' },
+            ],
+          },
+          { title: 'Next step', items: [{ id: 'get-started', label: 'Get a quote' }] },
+        ]}
+      />
       {/* The hero: the solar video under a purple shade, a big white headline,
           then the intro and buttons, with a glass strip along the bottom. */}
       <section
+        id='overview'
         aria-labelledby='services-heading'
         className='sp-hero'>
         {/* Solar panels being scrubbed with pure water, mountains behind. */}
@@ -256,7 +273,9 @@ export default async function Services() {
       </section>
 
       {/* End with the same wipe-the-window call to action as the other pages. */}
-      <section className='sp-wrap py-16 sm:py-20'>
+      <section
+        id='get-started'
+        className='sp-wrap py-16 sm:py-20'>
         <ClearerViewCta />
       </section>
     </main>

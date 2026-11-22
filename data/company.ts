@@ -5,8 +5,8 @@ export const company = {
     'Residential and commercial window cleaning across the Phoenix metro area. Fully insured. 100% Honest.',
   phone: '(480) 622-0622',
   phoneHref: 'tel:+14806220622',
-  email: 'info@clearimpressionservices.com',
-  emailHref: 'mailto:info@clearimpressionservices.com',
+  email: 'clearimpressionservices@gmail.com',
+  emailHref: 'mailto:clearimpressionservices@gmail.com',
   googleHref: 'https://maps.app.goo.gl/yeWqwmgf9EPuVkqL8',
   homeAdvisorHref: 'https://www.homeadvisor.com/rated.ClearImpression.165676077.html',
   instagramHref: 'https://www.instagram.com/clearimpressionwindowcleaning/',
@@ -16,6 +16,9 @@ export const company = {
   logo: '/logos/logo.png',
   // Wide version of the logo for the header bar.
   logoHorizontal: '/logos/logo-horizontal.png',
+  // The same logo with purple filled in behind the window, for the glass
+  // header where the video would otherwise show through the window.
+  logoHeader: '/logos/logo-horizontal-window.png',
   quoteFormUrl: '/quote',
 } as const;
 

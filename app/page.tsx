@@ -17,7 +17,7 @@ import HomePerks from '@/components/home/HomePerks';
 import { homePerks } from '@/data/homePerks';
 import { company } from '@/data/company';
 import { promise } from '@/data/promise';
-import SectionRail, { type RailSection } from '@/components/home/SectionRail';
+import PageGuide, { type GuideGroup } from '@/components/layout/PageGuide';
 import {
   homeAreas,
   homeClosing,
@@ -47,18 +47,34 @@ const organizationStructuredData = {
 };
 
 // The sections listed in the "On this page" guide, top to bottom. Each id wraps one section below.
-const railSections = [
-  { id: 'top', label: 'Welcome' },
-  { id: 'why-us', label: 'Why Us' },
-  { id: 'booking', label: 'Booking' },
-  { id: 'service-area', label: 'Where We Work' },
-  { id: 'services', label: 'Services' },
-  { id: 'results', label: 'Before & After' },
-  { id: 'pure-water', label: 'Our Technology' },
-  { id: 'promise', label: 'Our Promise' },
-  { id: 'reviews', label: 'Reviews' },
-  { id: 'get-started', label: 'Get Started' },
-] satisfies RailSection[];
+// The "On this page" menu, in three short groups.
+const guideGroups = [
+  {
+    title: 'Get to know us',
+    items: [
+      { id: 'top', label: 'Welcome' },
+      { id: 'why-us', label: 'Why Us' },
+      { id: 'booking', label: 'Booking' },
+      { id: 'service-area', label: 'Where We Work' },
+    ],
+  },
+  {
+    title: 'What we do',
+    items: [
+      { id: 'services', label: 'Services' },
+      { id: 'results', label: 'Before & After' },
+      { id: 'pure-water', label: 'Our Technology' },
+    ],
+  },
+  {
+    title: 'Trust',
+    items: [
+      { id: 'promise', label: 'Our Promise' },
+      { id: 'reviews', label: 'Reviews' },
+      { id: 'get-started', label: 'Get Started' },
+    ],
+  },
+] satisfies GuideGroup[];
 
 export default async function Home() {
   const header = await getPageHeader('home');
@@ -72,7 +88,10 @@ export default async function Home() {
         }}
       />
       <HomeMotion />
-      <SectionRail sections={railSections} />
+      <PageGuide
+        label='Homepage sections'
+        groups={guideGroups}
+      />
       {/* Build the page from sections so their content can change independently. */}
       <div id='top'>
         <HomeHero

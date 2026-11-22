@@ -6,7 +6,7 @@ import MobileMenu from './MobileMenu';
 import NavDropdown from './NavDropdown';
 import NavLink from './NavLink';
 import QuoteButton from '@/components/quote/QuoteButton';
-import QuoteChooser from '@/components/quote/QuoteChooser';
+import QuoteChooserLoader from '@/components/quote/QuoteChooserLoader';
 import ReadingProgress from './ReadingProgress';
 import { AboutPreview, HelpPreview, LocationsPreview, ServicesPreview } from './NavPreviews';
 import SiteSearch from './SiteSearch';
@@ -56,10 +56,10 @@ export default function Navbar() {
           {/* Wide screens get the call button here, kept to one line so the strip stays thin. */}
           <a
             href={company.phoneHref}
-            className='hidden items-center gap-2 rounded-full py-0.5 pl-0.5 pr-3.5 ring-1 ring-[#72c587]/55 hover:bg-[#72c587]/12 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#efb52b] xl:flex'>
-            <PhoneIcon className='size-6 p-1' />
-            <span className='text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-[#72c587]'>Call or text</span>
-            <span className='text-base font-bold tracking-tight text-white'>{company.phone}</span>
+            className='hidden items-center gap-2.5 rounded-full py-0.5 pl-0.5 pr-4 ring-1 ring-[#72c587]/55 hover:bg-[#72c587]/12 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#efb52b] xl:flex'>
+            <PhoneIcon className='size-7 p-1.5' />
+            <span className='text-xs font-semibold uppercase tracking-[0.12em] text-[#72c587]'>Call or text</span>
+            <span className='text-[1.0625rem] font-bold tracking-tight text-white'>{company.phone}</span>
           </a>
           {/* Smaller screens get a simpler version. */}
           <a
@@ -74,18 +74,19 @@ export default function Navbar() {
         {/* The company logo takes visitors back to the homepage. */}
         <Link
           href='/'
-          aria-label={`${company.name} home`}
           className='shrink-0 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#efb52b]'>
           {/* Load the header logo early because it appears at the top. */}
           <Image
-            src={company.logoHorizontal}
+            src={company.logoHeader}
             alt='Clear Impression Window Cleaning'
+            aria-hidden='true'
             width={647}
             height={256}
             priority
             sizes='(min-width: 640px) 203px, 162px'
             className='header-logo h-16 w-auto sm:h-20'
           />
+          <span className='sr-only'>{company.name} home</span>
         </Link>
         {/* At the top of the page a search box sits under the menu. After scrolling
             it folds into the search icon at the end of the menu. */}
@@ -129,8 +130,9 @@ export default function Navbar() {
             </ul>
           </nav>
         </SiteSearch>
-        {/* Opens a popup explaining the instant estimate and the detailed quote. */}
-        <QuoteButton className='hidden min-h-11 items-center rounded-lg bg-[#efb52b] px-5 py-3 text-sm font-semibold text-[#200b38] hover:bg-[#f6c95b] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white lg:inline-flex'>
+        {/* Opens a popup explaining the instant estimate and the detailed quote.
+            Green, with a soft light that sweeps across it every few seconds. */}
+        <QuoteButton className='header-quote relative hidden min-h-12 items-center overflow-hidden rounded-full bg-[#55ab68] px-6 text-[0.9375rem] font-semibold text-white shadow-[0_14px_28px_-14px_rgb(85_171_104/0.95)] hover:bg-[#4b9d5e] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white lg:inline-flex'>
           Get a free quote
         </QuoteButton>
         {/* Show the mobile menu below the desktop breakpoint. */}
@@ -140,7 +142,7 @@ export default function Navbar() {
       <ReadingProgress />
       {/* Floats just under the header on every page except the homepage. */}
       <BackButton />
-      <QuoteChooser />
+      <QuoteChooserLoader />
     </StickyHeader>
   );
 }
