@@ -32,11 +32,31 @@ export default function PageGuide({ groups, label }: PageGuideProps) {
   const [away, setAway] = useState(true);
   const [idleOpen, setIdleOpen] = useState(false);
   const [pinned, setPinned] = useState(false);
-  const [top, setTop] = useState(0);
+  const guideRef = useRef<HTMLDivElement>(null);
   const idleTimer = useRef<number | undefined>(undefined);
 
-  // Which section you're in, where the header ends, and whether you're at
-  // the very top of the page or down by the footer.
+  // The header keeps resizing for a moment after you stop scrolling.
+  useEffect(() => {
+    const guide = guideRef.current;
+    const header = document.querySelector('.site-header');
+    if (!guide || !header) return;
+
+    const measure = () => {
+      const back = header.querySelector('.back-button button');
+      const top = Math.max(0, header.getBoundingClientRect().bottom, back?.getBoundingClientRect().bottom ?? 0);
+      guide.style.setProperty('--pg-top', `${top}px`);
+    };
+    const observer = new ResizeObserver(measure);
+    observer.observe(header);
+    measure();
+    const firstFrame = requestAnimationFrame(measure);
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(firstFrame);
+    };
+  }, []);
+
+  // Track the section you're reading and keep the guide tucked away near the ends of the page.
   useEffect(() => {
     let frame = 0;
     const update = () => {
@@ -50,13 +70,6 @@ export default function PageGuide({ groups, label }: PageGuideProps) {
           if (element && element.getBoundingClientRect().top <= line) current = index;
         });
       setActive(current);
-
-      // Start below the header, and below the Back button where there is one.
-      const header = document.querySelector('.site-header');
-      const back = document.querySelector('.back-button button');
-      setTop(
-        Math.max(0, header ? header.getBoundingClientRect().bottom : 0, back ? back.getBoundingClientRect().bottom : 0),
-      );
 
       const footer = document.querySelector('footer');
       const nearFooter = footer ? footer.getBoundingClientRect().top < window.innerHeight * 0.75 : false;
@@ -113,8 +126,9 @@ export default function PageGuide({ groups, label }: PageGuideProps) {
 
   return (
     <div
+      ref={guideRef}
       className='pg-wrap'
-      style={{ '--pg-top': `${top}px` } as React.CSSProperties}
+      style={{ '--pg-top': 'calc(var(--hdr-top) + 2.5rem)' } as React.CSSProperties}
     >
       <button
         type='button'

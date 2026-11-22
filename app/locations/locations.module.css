@@ -243,16 +243,6 @@
   outline-offset: 4px;
 }
 
-.backLink {
-  min-height: 44px;
-  margin-bottom: 16px;
-  color: white;
-}
-
-.backLink:focus-visible {
-  outline-color: #efb52b;
-}
-
 .photoSection {
   padding: 64px 0 72px;
   background: white;

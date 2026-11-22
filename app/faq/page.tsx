@@ -1,7 +1,8 @@
 import PageGuide from "@/components/layout/PageGuide";
 import { createPageMetadata } from "@/lib/seo";
-import FAQAccordion from "./faqAccordion";
+import FAQBrowser from "./FAQBrowser";
 import styles from "./faq.module.css";
+import motion from "../feedback/feedback.module.css";
 import ClearerViewCta from "@/components/ui/ClearerViewCta";
 import { getFAQs } from "@/lib/api";
 import type { FAQItem } from "@/types/faq";
@@ -50,22 +51,23 @@ export default async function FAQPage({ searchParams }: FAQPageProps) {
           { title: 'Next step', items: [{ id: 'get-started', label: 'Get a quote' }] },
         ]}
       />
-      {/* same header band as the other pages */}
-      <section id="overview" className="page-hero relative isolate overflow-hidden bg-[#200b38] text-white">
-        {/* a soft glow that drifts slowly behind the title */}
-        <div aria-hidden="true" className={`${styles.glow} absolute -z-10`} />
-        <div className="mx-auto flex min-h-88 max-w-7xl flex-col justify-center px-6 py-10 sm:min-h-80 sm:px-8 sm:py-12">
-          <p className={`${styles.enter} text-sm font-semibold uppercase tracking-widest text-[#efb52b]`}>
-            FAQ
-          </p>
+      <section
+        id="overview"
+        aria-labelledby="faq-heading"
+        className="page-hero relative isolate overflow-hidden bg-[#200b38] text-white"
+      >
+        {/* Use the same glow and entrance timing as the Feedback page. */}
+        <div aria-hidden="true" className={`${motion.glow} pointer-events-none absolute -z-10`} />
+        <div className={`${styles.guideGutter} mx-auto flex min-h-88 max-w-7xl flex-col justify-center px-6 py-10 sm:min-h-80 sm:px-8 sm:py-12`}>
           <h1
-            className={`${styles.enter} mt-3 max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl`}
+            id="faq-heading"
+            className={`${motion.enter} max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl`}
             style={{ "--delay": "90ms" } as React.CSSProperties}
           >
             {header.title}
           </h1>
           <p
-            className={`${styles.enter} mt-6 max-w-2xl text-lg text-white/80`}
+            className={`${motion.enter} mt-6 max-w-2xl text-base leading-8 text-white/80 sm:text-lg`}
             style={{ "--delay": "180ms" } as React.CSSProperties}
           >
             {header.subtitle}
@@ -73,11 +75,10 @@ export default async function FAQPage({ searchParams }: FAQPageProps) {
         </div>
       </section>
 
-      <section id="questions" className="bg-[#f7f4fb]">
-        {/* the questions */}
+      <section id="questions" className="scroll-mt-10 bg-[#faf8fd]">
         <div
-          className={`${styles.enter} mx-auto max-w-7xl px-6 py-16 sm:px-8 sm:py-20`}
-          style={{ "--delay": "250ms" } as React.CSSProperties}
+          className={`${styles.guideGutter} ${motion.rise} mx-auto max-w-7xl px-6 py-12 sm:px-8 sm:py-16`}
+          style={{ "--delay": "300ms" } as React.CSSProperties}
         >
           {unavailable ? (
             <p role="status" className="rounded-xl bg-white p-5 text-gray-600 ring-1 ring-[#200b38]/10">
@@ -88,7 +89,8 @@ export default async function FAQPage({ searchParams }: FAQPageProps) {
               There are no published FAQs yet.
             </p>
           ) : (
-            <FAQAccordion
+            <FAQBrowser
+              key={typeof open === "string" ? open : undefined}
               items={faqItems}
               openId={typeof open === "string" ? open : undefined}
             />
