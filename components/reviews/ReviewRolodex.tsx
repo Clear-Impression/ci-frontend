@@ -111,20 +111,6 @@ export default function ReviewRolodex({ reviews, googleUrl, onOpen }: ReviewRolo
         onPointerDown={onPointerDown}
         onPointerUp={onPointerUp}
         onPointerCancel={() => (dragStart.current = null)}>
-        {/* The metal rod and the two knobs the cards turn on. */}
-        <span
-          aria-hidden='true'
-          className='rx-rod'
-        />
-        <span
-          aria-hidden='true'
-          className='rx-knob rx-knob-left'
-        />
-        <span
-          aria-hidden='true'
-          className='rx-knob rx-knob-right'
-        />
-
         <ul
           className='rx-drum'
           aria-live={playing && !held ? 'off' : 'polite'}

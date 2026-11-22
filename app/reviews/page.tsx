@@ -40,10 +40,9 @@ export default async function ReviewsPage() {
       <div id='overview'>
         <ReviewsHero
           title={header.title}
-        subtitle={header.subtitle}
-        reviews={googleReviews}
+          subtitle={header.subtitle}
+          reviews={googleReviews}
           googleUrl={googleReviewsUrl}
-          writeReviewUrl={googleWriteReviewUrl}
         />
       </div>
 

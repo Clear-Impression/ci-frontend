@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState } from 'react';
 import QuoteButton from '@/components/quote/QuoteButton';
 import ReviewPanel from '@/components/reviews/ReviewPanel';
@@ -14,12 +15,11 @@ type ReviewsHeroProps = {
   // The reviews on the rolodex on the right.
   reviews: readonly Review[];
   googleUrl: string;
-  writeReviewUrl: string;
 };
 
 // The Reviews page header: big words on the left and a spinning rolodex of
 // real Google reviews on the right. Each card opens the full review.
-export default function ReviewsHero({ title, subtitle, reviews, googleUrl, writeReviewUrl }: ReviewsHeroProps) {
+export default function ReviewsHero({ title, subtitle, reviews, googleUrl }: ReviewsHeroProps) {
   const words = title.trim().split(' ');
   const lastWord = words.length > 1 ? words.pop() : '';
   const firstWords = words.join(' ');
@@ -73,14 +73,12 @@ export default function ReviewsHero({ title, subtitle, reviews, googleUrl, write
                 <path d='M5 12h14M13 6l6 6-6 6' />
               </svg>
             </QuoteButton>
-            <a
-              href={writeReviewUrl}
-              target='_blank'
-              rel='noopener noreferrer'
+            {/* Opens our own feedback form. */}
+            <Link
+              href='/feedback'
               className={styles.heroGhost}>
               <span aria-hidden='true'>★</span> Leave us a review
-              <span className='sr-only'> (opens Google in a new tab)</span>
-            </a>
+            </Link>
           </div>
         </div>
 
