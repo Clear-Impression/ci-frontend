@@ -14,6 +14,8 @@ export const estimateChangeEvent = 'ci:estimate-change';
 
 export type EstimateDetails = {
   name: string;
+  email: string;
+  phone: string;
   address: string;
   city: string;
 };
@@ -30,6 +32,11 @@ export type SavedEstimate = {
   pricingVersion?: string;
   // Keep the floating bar in sync with the price the calculator actually showed.
   summary?: EstimateSummary | null;
+  propertyType?: 'home' | 'business';
+  step?: string;
+  photoSent?: boolean;
+  finalizeUnlocked?: boolean;
+  submission?: { fingerprint: string; key: string; id?: string };
 };
 
 export type EstimateSummary = {

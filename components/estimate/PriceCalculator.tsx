@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import ServiceIcon from '@/components/services/ServiceIcon';
 import { company } from '@/data/company';
 import {
@@ -10,7 +10,6 @@ import {
   formatAmount,
   formatRange,
   getEstimateTab,
-  linesFor,
   rangeFor,
   startingValues,
   totalRange,
@@ -19,6 +18,9 @@ import {
   type EstimateValues,
 } from '@/data/estimate';
 import { loadEstimate, saveEstimate, type EstimateDetails } from '@/lib/estimateStore';
+import { submitInstantQuote } from '@/app/estimate/actions';
+import { contactError } from '@/data/estimate-request';
+import { WINDOW_SERVICE, GUTTER_SERVICE, SOLAR_SERVICE, PHOTO_SERVICE, quoteServices, quoteTabs, quoteSteps, restoreQuoteFlow, updateQuoteAnswer, selectQuoteService, incompleteQuoteServices, canFinalizeQuote, quoteLines } from '@/data/estimate-flow';
 import EstimateSummary from './EstimateSummary';
 import { downloadEstimatePdf } from './estimatePdf';
 import styles from '@/app/estimate/calculator.module.css';
@@ -301,336 +303,248 @@ function Question({
   );
 }
 
-// The dark panel on the right: the price range (or the photo promise), the
-// service's own explanation, and ways to book.
-function PricePanel({
-  tab,
-  values,
-  added,
-  onToggle,
-}: {
-  tab: EstimateTab;
-  values: EstimateValues;
-  added: boolean;
-  onToggle: () => void;
-}) {
+// The right panel describes the service and uses the Sanity-priced tab.
+function PricePanel({ tab, values }: { tab: EstimateTab; values: EstimateValues }) {
   const range = rangeFor(tab, values);
-  const addButton = (
-    <>
-      <button
-        type='button'
-        onClick={onToggle}
-        disabled={!added && tab.mode === 'range' && !range}
-        aria-pressed={added}
-        className={styles.panelAdd}>
-        {added ? (
-          <>
-            <Check /> In your estimate
-          </>
-        ) : (
-          '+ Add to my estimate'
-        )}
-      </button>
-      {added && (
-        <p className='mt-2 text-center text-sm text-white/70'>
-          <a
-            href='#your-estimate'
-            className='font-semibold text-[#efb52b] underline-offset-4 hover:underline'>
-            See your summary ↓
-          </a>{' '}
-          · or tap again to remove
-        </p>
-      )}
-    </>
-  );
-  const learnMore = (
-    <Link
-      href={`/services/${tab.slug}`}
-      className='font-semibold text-white underline decoration-[#efb52b] underline-offset-4 hover:text-[#efb52b]'>
-      {tab.panel.learnMore} →
-    </Link>
-  );
-
-  if (tab.mode === 'photo') {
-    return (
-      <>
-        <p className={styles.panelEyebrow}>What you get back</p>
-        <p className={styles.panelBig}>A real price</p>
-        <p className='mt-4 leading-relaxed text-white/80'>{tab.panel.text}</p>
-        {addButton}
-        <a
-          href={sms(`Hi! I'd like a ${tab.name.toLowerCase()} quote. Here are photos of my windows:`)}
-          className={styles.panelSecondary}>
-          <svg
-            aria-hidden='true'
-            viewBox='0 0 24 24'
-            fill='none'
-            stroke='currentColor'
-            strokeWidth='1.8'
-            strokeLinecap='round'
-            strokeLinejoin='round'
-            className='size-5'>
-            <path d='M4 8h3l1.5-2h7L17 8h3v11H4z' />
-            <circle
-              cx='12'
-              cy='13'
-              r='3.5'
-            />
-          </svg>
-          {tab.panel.textCta}
-        </a>
-        <a
-          href={`${company.emailHref}?subject=${encodeURIComponent(`${tab.name} quote`)}`}
-          className={styles.panelSecondary}>
-          Email the photos instead
-        </a>
-        <p className='mt-6 text-sm text-white/65'>No charge for the quote. {learnMore}</p>
-      </>
-    );
-  }
-
   return (
     <>
-      <p className={styles.panelEyebrow}>Likely lands between</p>
-      <p
-        key={range ? formatRange(range) : 'none'}
-        aria-live='polite'
-        className={`${styles.panelBig} ${styles.pop}`}>
-        {range ? formatRange(range) : 'Pick an option'}
+      <p className={styles.panelEyebrow}>{tab.mode === 'photo' ? 'Photo quote' : 'Likely lands between'}</p>
+      <p aria-live='polite' className={`${styles.panelBig} ${styles.pop}`} key={range ? formatRange(range) : 'photo'}>
+        {tab.mode === 'photo' ? 'A real price' : range ? formatRange(range) : 'Pick an option'}
       </p>
       <p className='mt-4 leading-relaxed text-white/80'>{tab.panel.text}</p>
-      {addButton}
+      <p className='mt-6 flex items-center gap-2 text-sm text-[#efb52b]'><Check /> Included in your quote</p>
       <a
-        href={
-          range
-            ? sms(`Hi! I'd like to book ${tab.name}. My instant estimate was ${formatRange(range)} (${describeValues(tab, values)}).`)
-            : sms(`Hi! I'd like a quote for ${tab.name}.`)
-        }
+        href={tab.mode === 'photo'
+          ? sms(`Hi! I'd like a ${tab.name.toLowerCase()} quote. Here are photos of my windows:`)
+          : sms(`Hi! I'd like a quote for ${tab.name}${range ? ` (${formatRange(range)}; ${describeValues(tab, values)})` : ''}.`)}
         className={styles.panelSecondary}>
-        <svg
-          aria-hidden='true'
-          viewBox='0 0 24 24'
-          fill='none'
-          stroke='currentColor'
-          strokeWidth='1.8'
-          strokeLinecap='round'
-          strokeLinejoin='round'
-          className='size-5'>
-          <path d='M4.5 5.5h15v10h-9l-5 4v-4h-1z' />
-        </svg>
         {tab.panel.textCta}
       </a>
-      <p className='mt-4 text-center text-sm text-white/70'>
-        or call{' '}
-        <a
-          href={company.phoneHref}
-          className='font-semibold text-white underline underline-offset-4'>
-          {company.phone}
+      {tab.mode === 'photo' ? (
+        <a href={`${company.emailHref}?subject=${encodeURIComponent(`${tab.name} quote`)}`} className={styles.panelSecondary}>
+          Email the photos instead
         </a>
-      </p>
-      <ul className='mt-6 space-y-2 text-sm text-white/80'>
-        <li className='flex items-center gap-2'>
-          <span className='text-[#efb52b]'>
-            <Check />
-          </span>
-          No email or sign-up needed
-        </li>
-        <li className='flex items-center gap-2'>
-          <span className='text-[#efb52b]'>
-            <Check />
-          </span>
-          Free on-site or photo quote to confirm
-        </li>
-      </ul>
-      <p className='mt-6 text-sm leading-relaxed text-white/65'>
-        {estimateNote} {learnMore}
-      </p>
+      ) : (
+        <p className='mt-4 text-sm text-white/70'>Or call <a className='font-semibold underline' href={company.phoneHref}>{company.phone}</a></p>
+      )}
+      <p className='mt-6 text-sm leading-relaxed text-white/65'>{estimateNote}</p>
+      <Link href={`/services/${tab.slug}`} className='mt-4 inline-block text-sm font-semibold text-white underline decoration-[#efb52b] underline-offset-4'>
+        {tab.panel.learnMore} →
+      </Link>
     </>
   );
 }
 
-// "Get your price": a tab for each service. Each tab asks its own questions
-// with its own hints, and the dark panel explains that service and prices it
-// as a range. Stain removal is quoted from a photo instead.
-const emptyDetails: EstimateDetails = { name: '', address: '', city: '' };
+const emptyDetails: EstimateDetails = { name: '', email: '', phone: '', address: '', city: '' };
+const stepLabel = (id: string) => id === 'select-services' ? 'Select services' : id === 'summary' ? 'Summary' :
+  id === 'finalize' ? 'Finalize' : quoteServices.find((service) => service.slug === id)?.label ?? id;
 
-// How far along the visitor is, from 0 to 100. It clears the summary window.
 function progressFor(added: number, details: EstimateDetails, downloaded: boolean) {
-  let value = 0;
-  if (added > 0) value += 35;
-  if (details.name.trim()) value += 20;
-  if (details.city) value += 20;
-  if (details.address.trim()) value += 5;
-  if (downloaded) value += 20;
-  return value;
+  return (added ? 35 : 0) + (details.email.trim() ? 10 : 0) + (details.phone.trim() ? 10 : 0) + (details.city ? 20 : 0) +
+    (details.address.trim() ? 5 : 0) + (downloaded ? 20 : 0);
 }
 
-// The page passes in the cities from Sanity, so the list matches the Locations page.
 export default function PriceCalculator({ cities, tabs }: { cities: readonly string[]; tabs: readonly EstimateTab[] }) {
-  const [active, setActive] = useState(tabs[0].slug);
-  const [values, setValues] = useState<Record<string, EstimateValues>>({});
-  const [added, setAdded] = useState<string[]>([]);
+  const [updatedPrices, setUpdatedPrices] = useState<readonly EstimateTab[] | null>(null);
+  const services = useMemo(() => quoteTabs(updatedPrices ?? tabs), [updatedPrices, tabs]);
+  const pricingVersion = JSON.stringify(services);
+  const [flow, setFlow] = useState(() => restoreQuoteFlow(services));
   const [details, setDetails] = useState<EstimateDetails>(emptyDetails);
   const [downloaded, setDownloaded] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [saving, setSaving] = useState(false);
   const [reference, setReference] = useState('');
+  const [downloadError, setDownloadError] = useState('');
+  const [submission, setSubmission] = useState<{ fingerprint: string; key: string; id?: string } | null>(null);
+  const lastSubmission = useRef<typeof submission>(null);
+  const inFlight = useRef(false);
   const [wipe, setWipe] = useState(0);
   const [burst, setBurst] = useState(0);
   const rootRef = useRef<HTMLElement>(null);
   const started = useRef(false);
-  const tab = getEstimateTab(active, tabs) ?? tabs[0];
-  const tabValues = values[tab.slug] ?? startingValues(tab);
+  const steps = quoteSteps(flow);
+  const stepIndex = steps.indexOf(flow.step);
+  const tab = getEstimateTab(flow.step, services);
+  const tabValues = tab ? flow.values[tab.slug] ?? startingValues(tab) : {};
+  const lines = quoteLines(flow, services);
+  const total = totalRange(lines);
+  const incomplete = incompleteQuoteServices(flow, services);
+  const canFinalize = canFinalizeQuote(flow, services);
+  const hasPhotoQuote = lines.some((line) => line.slug === PHOTO_SERVICE);
+  const contactReady = !contactError(details);
 
-  // Pick up where they left off, or open the tab a link asked for.
   useEffect(() => {
-    // Only once, even when React runs effects twice in development.
     if (started.current) return;
     started.current = true;
     const saved = loadEstimate();
     const params = new URLSearchParams(window.location.search);
-    const asked = params.get('service');
-    /* eslint-disable react-hooks/set-state-in-effect -- restoring saved answers once on load */
-    if (saved) {
-      setValues(saved.values ?? {});
-      setAdded(saved.added ?? []);
-      setDetails({ ...emptyDetails, ...saved.details });
-      setDownloaded(Boolean(saved.downloaded && saved.pricingVersion === JSON.stringify(tabs)));
-      if (saved.tab && getEstimateTab(saved.tab, tabs)) setActive(saved.tab);
+    const restored = restoreQuoteFlow(services, saved, params.get('service'));
+    /* eslint-disable react-hooks/set-state-in-effect -- restore browser-only answers once after hydration */
+    setFlow(restored);
+    if (saved?.details) {
+      setDetails({ name: typeof saved.details.name === 'string' ? saved.details.name : '',
+        email: typeof saved.details.email === 'string' ? saved.details.email : '',
+        phone: typeof saved.details.phone === 'string' ? saved.details.phone : '',
+        address: typeof saved.details.address === 'string' ? saved.details.address : '',
+        city: typeof saved.details.city === 'string' ? saved.details.city : '' });
     }
-    if (asked && getEstimateTab(asked, tabs)) setActive(asked);
+    if (saved?.submission && typeof saved.submission.fingerprint === 'string' &&
+      /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(saved.submission.key)) {
+      lastSubmission.current = saved.submission;
+      setSubmission(saved.submission);
+    }
+    setDownloaded(Boolean(saved?.downloaded && saved.submission?.id && saved.pricingVersion === pricingVersion));
     setLoaded(true);
     /* eslint-enable react-hooks/set-state-in-effect */
-    if (asked || params.has('start')) {
+    if (params.has('service') || params.has('start')) {
       window.history.replaceState(null, '', window.location.pathname);
-      window.setTimeout(() => rootRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
+      rootRef.current?.scrollIntoView({ block: 'start' });
     }
-  }, [tabs]);
+  }, [services, pricingVersion]);
 
   useEffect(() => {
     if (!loaded) return;
-    const current = getEstimateTab(active, tabs) ?? tabs[0];
-    const answers = { ...values, [current.slug]: values[current.slug] ?? startingValues(current) };
-    const summaryLines = linesFor(added, answers, tabs);
-    const total = totalRange(summaryLines);
-    const currentRange = rangeFor(current, answers[current.slug]);
-    const summary = total
-      ? { service: summaryLines.filter((line) => line.range).map((line) => line.name).join(', '), range: formatRange(total) }
-      : currentRange ? { service: current.name, range: formatRange(currentRange) } : null;
+    const currentLines = quoteLines(flow, services);
+    const currentTotal = totalRange(currentLines);
     saveEstimate({
-      tab: active,
-      values: answers,
-      added,
-      details,
-      downloaded,
-      pricingVersion: JSON.stringify(tabs),
-      summary,
+      tab: getEstimateTab(flow.step, services)?.slug ?? flow.selected[0] ?? 'select-services',
+      step: flow.step, propertyType: flow.propertyType, photoSent: flow.photoSent,
+      finalizeUnlocked: flow.finalizeUnlocked, values: flow.values, added: flow.selected,
+      details, downloaded, pricingVersion,
+      submission: submission ?? undefined,
+      summary: currentTotal ? { service: currentLines.filter((line) => line.range).map((line) => line.name).join(', '), range: formatRange(currentTotal) } : null,
     });
-  }, [loaded, active, values, added, details, downloaded, tabs]);
+  }, [loaded, flow, details, downloaded, pricingVersion, services, submission]);
 
-  const lines = linesFor(added, values, tabs);
-  const progress = progressFor(added.length, details, downloaded);
-
-  // Any change means the downloaded PDF is out of date.
+  const clearDownload = () => { setDownloaded(false); setReference(''); setDownloadError(''); };
+  const focusStep = () => window.requestAnimationFrame(() => {
+    document.getElementById('wizard-step-heading')?.focus({ preventScroll: true });
+    rootRef.current?.scrollIntoView({ block: 'start', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+  });
+  const goTo = (step: string, focus = true) => {
+    if (!steps.includes(step) || step !== 'select-services' && !flow.selected.length || step === 'finalize' && !canFinalize) return;
+    setFlow((current) => ({ ...current, step }));
+    if (focus) focusStep();
+  };
+  const selectService = (slug: string, checked: boolean, jump = false) => {
+    setFlow((current) => selectQuoteService(current, slug, checked, jump));
+    clearDownload();
+    if (checked) setWipe((count) => count + 1);
+    if (jump) focusStep();
+  };
   const setAnswer = (id: string, answer: EstimateValues[string]) => {
-    setValues((current) => ({ ...current, [tab.slug]: { ...(current[tab.slug] ?? startingValues(tab)), [id]: answer } }));
-    setDownloaded(false);
+    if (!tab) return;
+    setFlow((current) => updateQuoteAnswer(current, tab.slug, id, answer));
+    clearDownload();
   };
-
-  const toggleAdded = (slug: string) => {
-    const has = added.includes(slug);
-    setAdded((current) => (has ? current.filter((entry) => entry !== slug) : [...current, slug]));
-    // Keep the answers they see now, even if they never touched a question.
-    const entry = getEstimateTab(slug, tabs);
-    if (!has && entry) setValues((current) => ({ ...current, [slug]: current[slug] ?? startingValues(entry) }));
-    if (!has) setWipe((count) => count + 1);
-    setDownloaded(false);
-  };
-
   const setDetail = (field: keyof EstimateDetails, value: string) => {
     setDetails((current) => ({ ...current, [field]: value }));
-    setDownloaded(false);
+    clearDownload();
   };
-
-  const download = async () => {
-    if (!(details.name.trim() && details.city)) {
-      document.getElementById('est-name')?.focus();
-      document.getElementById('your-estimate')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const completeQuote = () => {
+    if (!canFinalize) return;
+    setFlow((current) => ({ ...current, finalizeUnlocked: true, step: 'finalize' }));
+    focusStep();
+  };
+  const sendRequest = async (withPdf: boolean) => {
+    if (inFlight.current || !canFinalize || flow.step !== 'finalize') return;
+    const invalid = contactError(details);
+    if (invalid) {
+      setDownloadError(invalid.message);
+      document.getElementById(`est-${invalid.field}`)?.focus();
       return;
     }
+    inFlight.current = true;
     setSaving(true);
+    setDownloadError('');
     try {
-      setReference(await downloadEstimatePdf(details, lines));
-      setBurst((count) => count + 1);
-      setDownloaded(true);
-    } finally {
-      setSaving(false);
-    }
+      const fingerprint = JSON.stringify({ details, selected: flow.selected,
+        values: Object.fromEntries(flow.selected.map((slug) => [slug, flow.values[slug]])),
+        photoSent: flow.selected.includes(PHOTO_SERVICE) && flow.photoSent, pricingVersion });
+      if (lastSubmission.current?.fingerprint !== fingerprint) {
+        lastSubmission.current = { fingerprint, key: crypto.randomUUID() };
+      }
+      const attempt = lastSubmission.current;
+      setSubmission(attempt);
+      const data = new FormData();
+      for (const [key, value] of Object.entries(details)) data.set(key, value);
+      flow.selected.forEach((slug) => data.append('services', slug));
+      data.set('values', JSON.stringify(flow.values));
+      data.set('photoSent', String(flow.photoSent));
+      data.set('pricingVersion', pricingVersion);
+      data.set('submissionKey', attempt.key);
+      const result = await submitInstantQuote(data);
+      if (result.status === 'pricing_changed') {
+        setUpdatedPrices(result.tabs);
+        setDownloaded(false);
+        setReference('');
+        setFlow((current) => ({ ...current, step: 'summary', finalizeUnlocked: false }));
+        setDownloadError('Prices have been updated. Review your refreshed quote and complete it again before sending.');
+        focusStep();
+        return;
+      }
+      if (result.status !== 'saved') {
+        setDownloadError('message' in result ? result.message : result.status === 'conflict'
+          ? 'This reference was already used with different details. Please call us to check your request.'
+          : 'We couldn’t confirm your request. Please try again; your details are still here.');
+        return;
+      }
+      const received = { ...attempt, id: result.id };
+      lastSubmission.current = received;
+      setSubmission(received);
+      setReference(result.id);
+      if (withPdf) {
+        try {
+          await downloadEstimatePdf(details, lines, result.id);
+          setBurst((count) => count + 1);
+          setDownloaded(true);
+        } catch {
+          setDownloadError('Your request was received, but the PDF could not be created. Try the download button again; the same request reference will be reused.');
+        }
+      }
+    } catch {
+      setDownloadError('We couldn’t confirm your request. Please try again; your details are still here.');
+    } finally { inFlight.current = false; setSaving(false); }
   };
-
   const startOver = () => {
-    setValues({});
-    setAdded([]);
-    setDetails(emptyDetails);
-    setDownloaded(false);
-    setReference('');
-    rootRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setFlow(restoreQuoteFlow(services)); setDetails(emptyDetails); clearDownload();
+    lastSubmission.current = null; setSubmission(null); focusStep();
   };
-
-  // Arrow keys move between tabs.
   const onTabsKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    const step = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0;
-    if (!step) return;
+    const direction = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0;
+    if (!direction && event.key !== 'Home' && event.key !== 'End') return;
     event.preventDefault();
-    const index = tabs.findIndex((entry) => entry.slug === active);
-    const next = tabs[(index + step + tabs.length) % tabs.length];
-    setActive(next.slug);
-    document.getElementById(`tab-${next.slug}`)?.focus();
+    const available = steps.filter((step) => step === 'select-services' || flow.selected.length > 0 && (step !== 'finalize' || canFinalize));
+    const next = event.key === 'Home' ? available[0] : event.key === 'End' ? available.at(-1)! :
+      available[(available.indexOf(flow.step) + direction + available.length) % available.length];
+    goTo(next, false);
+    document.getElementById(`quote-tab-${next}`)?.focus();
+    document.getElementById(`quote-tab-${next}`)?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   };
+  const nextDisabled = flow.step === 'select-services' ? !flow.selected.length :
+    flow.step === 'summary' ? !canFinalize : tab?.mode === 'range' && !rangeFor(tab, tabValues);
 
   return (
-    <section
-      ref={rootRef}
-      aria-labelledby='price-heading'
-      className='mx-auto max-w-7xl scroll-mt-28 px-4 py-14 sm:px-8 sm:py-16'>
+    <section ref={rootRef} aria-labelledby='price-heading' className='mx-auto max-w-7xl scroll-mt-28 px-4 py-14 sm:px-8 sm:py-16'>
       <div className={styles.shell}>
         <div className={styles.top}>
           <div className='flex flex-wrap items-center gap-3'>
-            <h2
-              id='price-heading'
-              className='text-2xl font-semibold tracking-tight text-[#200b38] sm:text-3xl'>
-              Get your price
-            </h2>
-            <span className={styles.badge}>
-              <Check /> No email needed
-            </span>
+            <h2 id='price-heading' className='text-2xl font-semibold tracking-tight text-[#200b38] sm:text-3xl'>Get your price</h2>
+            <span className={styles.badge}><Check /> No email needed to estimate</span>
           </div>
-          <div
-            role='tablist'
-            aria-label='Services'
-            onKeyDown={onTabsKeyDown}
-            className={styles.tabs}>
-            {tabs.map((entry) => {
-              const on = entry.slug === active;
+          <div role='tablist' aria-label='Quote steps' onKeyDown={onTabsKeyDown} className={`${styles.tabs} ${styles.flowTabs}`}>
+            {steps.map((step, index) => {
+              const service = quoteServices.find((entry) => entry.slug === step);
+              const disabled = step !== 'select-services' && !flow.selected.length || step === 'finalize' && !canFinalize;
               return (
-                <button
-                  key={entry.slug}
-                  id={`tab-${entry.slug}`}
-                  type='button'
-                  role='tab'
-                  aria-selected={on}
-                  aria-controls='price-panel'
-                  tabIndex={on ? 0 : -1}
-                  onClick={() => setActive(entry.slug)}
-                  className={styles.tab}>
-                  <ServiceIcon
-                    slug={entry.slug}
-                    draw='none'
-                    className='size-5 shrink-0'
-                  />
+                <button key={step} id={`quote-tab-${step}`} type='button' role='tab' aria-selected={step === flow.step}
+                  aria-controls='quote-step-panel' tabIndex={step === flow.step ? 0 : -1} disabled={disabled || saving}
+                  onClick={() => goTo(step, false)} className={styles.tab}>
+                  {service ? <ServiceIcon slug={service.slug} draw='none' className='size-5 shrink-0' /> : <span className={styles.navNumber} aria-hidden='true'>{index + 1}</span>}
                   <span className='text-left'>
-                    <span className='block text-sm font-semibold leading-tight'>{entry.tab}</span>
-                    <span className={styles.tabNote}>{entry.tabNote}</span>
+                    <span className='block text-sm font-semibold leading-tight'>{stepLabel(step)}</span>
+                    <span className={styles.tabNote}>{service?.note ?? (step === 'select-services' ? 'Choose what you need' : step === 'summary' ? 'Additional services' : 'Where should we come?')}</span>
                   </span>
                 </button>
               );
@@ -638,110 +552,123 @@ export default function PriceCalculator({ cities, tabs }: { cities: readonly str
           </div>
         </div>
 
-        <div
-          id='price-panel'
-          role='tabpanel'
-          aria-labelledby={`tab-${tab.slug}`}
-          key={tab.slug}
-          className={styles.body}>
-          <div className={styles.questions}>
-            {tab.mode === 'photo' && tab.photo ? (
-              <>
-                <div className={styles.why}>
-                  <p className='text-xs font-semibold uppercase tracking-[0.16em] text-[#6c3fb8]'>Why there’s no slider here</p>
-                  <p className='mt-3 leading-relaxed text-gray-700'>{tab.photo.why}</p>
-                </div>
-                <ol className='space-y-3'>
-                  {tab.photo.steps.map((step, index) => (
-                    <li
-                      key={step.title}
-                      className={styles.photoStep}
-                      style={{ '--o': index } as React.CSSProperties}>
-                      <span
-                        aria-hidden='true'
-                        className={styles.photoNumber}>
-                        {index + 1}
-                      </span>
-                      <span>
-                        <span className='block font-semibold text-[#200b38]'>{step.title}</span>
-                        <span className='block text-sm text-gray-600'>{step.text}</span>
-                      </span>
-                    </li>
-                  ))}
-                </ol>
-                <p className='text-sm leading-relaxed text-gray-600'>{tab.photo.scope}</p>
-              </>
-            ) : (
-              tab.questions.map((question, index) => (
-                <div
-                  key={question.id}
-                  className={styles.questionRise}
-                  style={{ '--o': index } as React.CSSProperties}>
-                  <Question
-                    question={question}
-                    number={index + 1}
-                    value={tabValues[question.id]}
-                    onChange={(answer) => setAnswer(question.id, answer)}
-                  />
-                </div>
-              ))
-            )}
+        <div id='quote-step-panel' role='tabpanel' aria-labelledby={`quote-tab-${flow.step}`}>
+          <div className={styles.stepHeader}>
+            <p className='text-xs font-semibold uppercase tracking-widest text-[#6c3fb8]'>Step {stepIndex + 1} of {steps.length} · Home / single building</p>
+            <h3 id='wizard-step-heading' tabIndex={-1} className='mt-2 text-2xl font-semibold text-[#200b38]'>{stepLabel(flow.step)}</h3>
           </div>
 
-          <aside
-            aria-label={`${tab.name} price`}
-            className={styles.panel}>
-            <PricePanel
-              tab={tab}
-              values={tabValues}
-              added={added.includes(tab.slug)}
-              onToggle={() => toggleAdded(tab.slug)}
-            />
-          </aside>
+          {flow.step === 'select-services' && (
+            <div className={styles.flowPage}>
+              <p className='text-gray-600'>Choose all the services you need. Each one becomes a step in your quote.</p>
+              <fieldset className={styles.serviceChoices}>
+                <legend className='sr-only'>Select services</legend>
+                {quoteServices.map((service) => {
+                  const selected = flow.selected.includes(service.slug);
+                  return (
+                    <label key={service.slug} className={styles.serviceChoice} data-on={selected || undefined}>
+                      <input type='checkbox' checked={selected} onChange={(event) => selectService(service.slug, event.target.checked)} className='sr-only' />
+                      <ServiceIcon slug={service.slug} draw='none' className='size-7 shrink-0 text-[#6c3fb8]' />
+                      <span className='flex-1'><span className='block font-semibold'>{service.label}</span><span className='mt-1 block text-sm text-gray-500'>{service.note}</span></span>
+                      <span aria-hidden='true' className={styles.addonBox}><Check /></span>
+                    </label>
+                  );
+                })}
+              </fieldset>
+              <p role='status' className='mt-6 text-sm text-[#6c3fb8]'>{flow.selected.length ? `${flow.selected.length} service${flow.selected.length === 1 ? '' : 's'} selected. Continue to customize your quote.` : 'Select at least one service to continue.'}</p>
+            </div>
+          )}
+
+          {tab && (
+            <div className={styles.body}>
+              <div className={styles.questions}>
+                {(tab.slug === GUTTER_SERVICE || tab.slug === WINDOW_SERVICE) && (
+                  <p className={styles.linkedNotice}>Home size is shared between window cleaning and gutters. Height is shared across window cleaning, gutters, and solar. Changes here update the linked answers.</p>
+                )}
+                {tab.slug === SOLAR_SERVICE && (
+                  <p className={styles.linkedNotice}>Height is shared with window cleaning and gutters. Changing it here updates all three services.</p>
+                )}
+                {tab.mode === 'photo' && tab.photo ? (
+                  <>
+                    <div className={styles.why}><p className='font-semibold'>A photo helps us give you a real price</p><p className='mt-3 leading-relaxed text-gray-700'>{tab.photo.why}</p></div>
+                    <ol className='space-y-3'>{tab.photo.steps.map((step, index) => (
+                      <li key={step.title} className={styles.photoStep}><span aria-hidden='true' className={styles.photoNumber}>{index + 1}</span><span><span className='block font-semibold'>{step.title}</span><span className='block text-sm text-gray-600'>{step.text}</span></span></li>
+                    ))}</ol>
+                    <p className='text-sm text-gray-600'>{tab.photo.scope}</p>
+                    <label className={styles.addon} data-on={flow.photoSent || undefined}>
+                      <input type='checkbox' checked={flow.photoSent} onChange={(event) => { setFlow((current) => ({ ...current, photoSent: event.target.checked })); clearDownload(); }} className='sr-only' />
+                      <span aria-hidden='true' className={styles.addonBox}><Check /></span>I’ve sent my photos
+                    </label>
+                    <p className='text-sm leading-relaxed text-gray-600'>Send your photos using the text or email buttons. You can finish this estimate now and send photos later; hard water removal is priced separately after review.</p>
+                  </>
+                ) : tab.questions.map((question, index) => (
+                  <div key={question.id} className={styles.questionRise} style={{ '--o': index } as React.CSSProperties}>
+                    <Question question={question} number={index + 1} value={tabValues[question.id]} onChange={(answer) => setAnswer(question.id, answer)} />
+                  </div>
+                ))}
+                {tab.mode === 'range' && !rangeFor(tab, tabValues) && <p role='status' className='text-sm font-semibold text-[#6c3fb8]'>Choose at least one cleaning option to continue.</p>}
+              </div>
+              <aside aria-label={`${stepLabel(tab.slug)} price`} className={styles.panel}><PricePanel tab={tab} values={tabValues} /></aside>
+            </div>
+          )}
+
+          {flow.step === 'summary' && (
+            <div className={styles.flowPage}>
+              <p className='text-gray-600'>Review each part of your quote. You can edit a service or add anything you missed.</p>
+              <ul className={styles.reviewList}>
+                {lines.map((line) => (
+                  <li key={line.slug} className={styles.reviewLine}>
+                    <div className='min-w-0 flex-1'><h4 className='font-semibold text-[#200b38]'>{stepLabel(line.slug)}</h4><p className='mt-1 text-sm text-gray-600'>{line.details}</p></div>
+                    <strong className='whitespace-nowrap text-[#200b38]'>{line.range ? formatRange(line.range) : line.slug === PHOTO_SERVICE ? 'Photo quote' : 'Choose options'}</strong>
+                    <div className='flex gap-4 text-sm font-semibold text-[#6c3fb8]'>
+                      <button type='button' onClick={() => goTo(line.slug)} className={styles.textButton}>Edit<span className='sr-only'> {stepLabel(line.slug)}</span></button>
+                      <button type='button' onClick={() => selectService(line.slug, false)} className={styles.textButton}>Remove<span className='sr-only'> {stepLabel(line.slug)}</span></button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              <div className={styles.reviewTotal}><span className='font-semibold'>Estimated total{hasPhotoQuote && total ? ' for priced services' : ''}</span><strong className='text-3xl font-semibold'>{total ? formatRange(total) : 'Photo quote'}</strong></div>
+              {hasPhotoQuote && <p className='mt-3 text-sm text-gray-600'>Hard water removal is quoted separately after photo review and is not included in the priced total.</p>}
+              {incomplete.length > 0 && <p role='alert' className='mt-4 font-semibold text-[#6c3fb8]'>Choose cleaning options for {incomplete.map((entry) => stepLabel(entry.slug)).join(', ')} before completing your quote.</p>}
+              <div className={styles.additionalServices}>
+                <h4 className='text-xl font-semibold text-[#200b38]'>Forgot any services?</h4>
+                <p className='mt-2 text-sm text-gray-600'>Add a service and jump straight to its questions.</p>
+                <div className='mt-5 flex flex-wrap gap-3'>
+                  {quoteServices.filter((service) => !flow.selected.includes(service.slug)).map((service) => (
+                    <button key={service.slug} type='button' onClick={() => selectService(service.slug, true, true)} className={styles.addService}>+ Add {service.label.toLowerCase()}</button>
+                  ))}
+                  {flow.selected.length === quoteServices.length && <p className='text-sm text-[#6c3fb8]'>You’ve included all available services.</p>}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {flow.step === 'finalize' && canFinalize && (
+            <div className={styles.finalize}>
+              <EstimateSummary lines={lines} details={details} cities={cities}
+                progress={progressFor(flow.selected.length, details, downloaded)} wipe={wipe} burst={burst} saving={saving} downloaded={downloaded} reference={reference}
+                onDetail={setDetail} onRemove={(slug) => selectService(slug, false)} onRequest={sendRequest} onStartOver={startOver} />
+            </div>
+          )}
         </div>
-      </div>
 
+        <div className={styles.flowFooter}>
+          <button type='button' onClick={() => goTo(steps[stepIndex - 1])} disabled={stepIndex === 0 || saving} className={styles.backButton}>← Back</button>
+          <span className='text-center text-xs text-gray-500'>{flow.selected.length} service{flow.selected.length === 1 ? '' : 's'} selected</span>
+          {flow.step !== 'finalize' ? (
+            <button type='button' disabled={Boolean(nextDisabled)} onClick={() => flow.step === 'summary' ? completeQuote() : goTo(steps[stepIndex + 1])} className={styles.nextButton}>
+              {flow.step === 'summary' ? 'Complete quote' : 'Next'} →
+            </button>
+          ) : <button type='submit' form='instant-quote-contact' name='intent' value='send' disabled={saving || !contactReady} className={styles.nextButton}>
+            {saving ? 'Sending request…' : 'Send quote to Clear Impressions'}
+          </button>}
+        </div>
+        {downloadError && <p role='alert' className='px-6 pb-6 text-center text-red-700'>{downloadError}</p>}
+      </div>
       <div className={styles.strip}>
-        <p className='text-[#200b38]'>
-          <span className='block font-semibold'>Rather talk it through?</span>
-          <span className='text-gray-600'>
-            Call or text{' '}
-            <a
-              href={company.phoneHref}
-              className='font-semibold text-[#6c3fb8] underline underline-offset-4'>
-              {company.phone}
-            </a>
-          </span>
-        </p>
-        <ul className='flex flex-wrap gap-x-6 gap-y-2 text-sm text-[#200b38]'>
-          {['Free quotes', 'No email needed', 'Serving the Phoenix metro'].map((item) => (
-            <li
-              key={item}
-              className='flex items-center gap-2'>
-              <span className='text-[#6c3fb8]'>
-                <Check />
-              </span>
-              {item}
-            </li>
-          ))}
-        </ul>
+        <p><span className='block font-semibold text-[#200b38]'>Rather talk it through?</span><a className='text-sm font-semibold text-[#6c3fb8] underline-offset-4 hover:underline' href={company.phoneHref}>Call or text {company.phone}</a></p>
+        <p className='text-sm text-gray-600'>Free quotes · No sign-up needed · Serving the Phoenix metro</p>
       </div>
-
-      <EstimateSummary
-        lines={lines}
-        details={details}
-        cities={cities}
-        progress={progress}
-        wipe={wipe}
-        burst={burst}
-        saving={saving}
-        downloaded={downloaded}
-        reference={reference}
-        onDetail={setDetail}
-        onRemove={toggleAdded}
-        onDownload={download}
-        onStartOver={startOver}
-      />
     </section>
   );
 }

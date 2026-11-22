@@ -29,7 +29,7 @@ const pad = (value: number) => String(value).padStart(2, '0');
 
 // Build a one-page, receipt-style summary and start the download.
 // jsPDF only loads when someone actually asks for the PDF.
-export async function downloadEstimatePdf(details: EstimateDetails, lines: readonly EstimateLine[]) {
+export async function downloadEstimatePdf(details: EstimateDetails, lines: readonly EstimateLine[], requestReference?: string) {
   const total = totalRange(lines);
   const [{ jsPDF }, logo] = await Promise.all([import('jspdf'), loadLogo()]);
   const doc = new jsPDF({ unit: 'pt', format: 'letter' });
@@ -38,11 +38,19 @@ export async function downloadEstimatePdf(details: EstimateDetails, lines: reado
   const left = 64;
   const right = width - 64;
   const now = new Date();
-  const reference = `CI-${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}`;
+  const reference = requestReference || `CI-${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}`;
+  const place = [details.address.trim(), details.city === 'Other' ? '' : `${details.city}, AZ`].filter(Boolean).join(', ');
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(11);
+  const contactLines: string[] = [
+    `Prepared for ${details.name.trim() || 'customer'}${place ? `  ·  ${place}` : ''}`,
+    `Email: ${details.email}`, `Phone: ${details.phone}`,
+  ].flatMap((line) => doc.splitTextToSize(line, right - left));
+  const headerHeight = Math.max(280, 224 + contactLines.length * 14 + 12);
 
   // A soft lavender wash behind the top of the page, with a gold edge.
   doc.setFillColor(...soft);
-  doc.rect(0, 0, width, 250, 'F');
+  doc.rect(0, 0, width, headerHeight, 'F');
   doc.setFillColor(...gold);
   doc.rect(0, 0, 6, height, 'F');
 
@@ -55,12 +63,14 @@ export async function downloadEstimatePdf(details: EstimateDetails, lines: reado
   doc.setTextColor(...muted);
   doc.text(reference, right, 80, { align: 'right' });
   doc.text(now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }), right, 94, { align: 'right' });
+  doc.text('Home / single building', right, 108, { align: 'right' });
 
   // Big, friendly title.
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(30);
   doc.setTextColor(...ink);
-  const firstName = details.name.trim().split(/\s+/)[0] || 'there';
+  const givenName = details.name.trim().split(/\s+/)[0] || 'there';
+  const firstName = givenName.length > 25 ? 'there' : givenName;
   doc.text(`Hi ${firstName},`, left, 160);
   doc.setTextColor(...violet);
   doc.text("here's your clean.", left, 194);
@@ -68,12 +78,17 @@ export async function downloadEstimatePdf(details: EstimateDetails, lines: reado
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(11);
   doc.setTextColor(...muted);
-  const place = [details.address.trim(), details.city === 'Other' ? '' : `${details.city}, AZ`].filter(Boolean).join(', ');
-  doc.text(`Prepared for ${details.name.trim()}${place ? `  ·  ${place}` : ''}`, left, 224);
+  contactLines.forEach((line, index) => doc.text(line, left, 224 + index * 14));
 
   // Each service as a receipt line with a dotted leader to its price.
-  let y = 296;
+  let y = headerHeight + 36;
+  const ensureSpace = (needed: number) => {
+    if (y + needed <= height - 56) return;
+    doc.addPage();
+    y = 72;
+  };
   lines.forEach((line, index) => {
+    ensureSpace(46);
     const price = line.range ? formatRange(line.range).replace('–', '-') : 'Photo quote';
 
     doc.setFont('helvetica', 'bold');
@@ -101,6 +116,13 @@ export async function downloadEstimatePdf(details: EstimateDetails, lines: reado
     y += 46;
   });
 
+  const pending = lines.some((line) => !line.range);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  const note = pending ? `Hard water removal is quoted separately after photo review. ${estimateNote}` : estimateNote;
+  const noteLines: string[] = doc.splitTextToSize(note, right - left - 26);
+  const noteGap = Math.max(48, noteLines.length * 12 + 18);
+  ensureSpace(42 + 40 + noteGap + 46);
   // Total: a short gold rule, then a big number.
   y += 8;
   doc.setDrawColor(...gold);
@@ -110,7 +132,7 @@ export async function downloadEstimatePdf(details: EstimateDetails, lines: reado
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(11);
   doc.setTextColor(...muted);
-  doc.text(`Likely total · ${lines.length} service${lines.length === 1 ? '' : 's'}`, left + 26, y - 8);
+  doc.text(`${pending && total ? 'Priced services total' : 'Likely total'} · ${lines.length} service${lines.length === 1 ? '' : 's'}`, left + 26, y - 8);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(total ? 28 : 20);
   doc.setTextColor(...ink);
@@ -120,10 +142,10 @@ export async function downloadEstimatePdf(details: EstimateDetails, lines: reado
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(10);
   doc.setTextColor(...muted);
-  doc.text(doc.splitTextToSize(estimateNote, right - left - 26), left + 26, y);
+  doc.text(noteLines, left + 26, y);
 
   // Next step, set apart with a violet bar instead of a box.
-  y += 48;
+  y += noteGap;
   doc.setFillColor(...violet);
   doc.rect(left + 26, y - 12, 3, 46, 'F');
   doc.setFont('helvetica', 'bold');
@@ -139,11 +161,14 @@ export async function downloadEstimatePdf(details: EstimateDetails, lines: reado
     y + 16,
   );
 
-  // Footer.
-  doc.setFontSize(9);
-  doc.setTextColor(...muted);
-  doc.text(company.name, left, height - 44);
-  doc.text(`${company.phone}  ·  ${company.website.replace(/^https?:\/\//, '').replace(/\/$/, '')}`, right, height - 44, { align: 'right' });
+  // Repeat the footer if long contact details needed an additional page.
+  for (let page = 1; page <= doc.getNumberOfPages(); page++) {
+    doc.setPage(page);
+    doc.setFontSize(9);
+    doc.setTextColor(...muted);
+    doc.text(company.name, left, height - 44);
+    doc.text(`${company.phone}  ·  ${company.website.replace(/^https?:\/\//, '').replace(/\/$/, '')}`, right, height - 44, { align: 'right' });
+  }
 
   const safeName = details.name.trim().replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '') || 'estimate';
   doc.save(`Clear-Impression-estimate-${safeName}.pdf`);

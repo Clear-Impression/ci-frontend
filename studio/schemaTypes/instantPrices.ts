@@ -13,6 +13,7 @@ const priceField = (name: string, title: string, min = 0, max = 1_000_000) => de
 export const instantPriceTypes = pricingSections.map(({tab, title, schemaType}) => {
   const size = tab.questions.find((question) => question.kind === 'slider')
   const adjustments = tab.questions.filter((question) => question.kind !== 'slider')
+  const legacyWindowExtras = (id: string) => tab.slug === 'residential-window-washing' && id === 'extras'
   const unit = size?.kind === 'slider' ? size.unit : 'unit'
   return defineType({
     name: schemaType,
@@ -21,7 +22,7 @@ export const instantPriceTypes = pricingSections.map(({tab, title, schemaType}) 
     description: 'Publish to update customer estimates. Multipliers apply to the size-based price; flat adjustments and add-ons are added afterward. The minimum is applied last.',
     groups: [
       {name: 'size', title: `${size?.label ?? 'Size'} affects price`, default: true},
-      ...adjustments.map((question) => ({name: question.id, title: `${question.label} pricing`})),
+      ...adjustments.filter((question) => !legacyWindowExtras(question.id)).map((question) => ({name: question.id, title: `${question.label} pricing`})),
       {name: 'range', title: 'Price range'},
     ],
     fields: [
@@ -36,7 +37,8 @@ export const instantPriceTypes = pricingSections.map(({tab, title, schemaType}) 
         name: question.id,
         title: question.label,
         type: 'object',
-        group: question.id,
+        group: legacyWindowExtras(question.id) ? undefined : question.id,
+        hidden: legacyWindowExtras(question.id),
         options: {collapsible: false},
         fields: question.options.map((option) => defineField({
           name: option.id,
