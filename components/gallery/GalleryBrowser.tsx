@@ -100,7 +100,10 @@ export default function GalleryBrowser({ jobs, cities, mapSize }: GalleryBrowser
           </div>
 
           {/* The Valley from the Locations header, without the route. The city
-              outlines fade out toward the edges instead of being cut off. */}
+              outlines fade out toward the edges instead of being cut off.
+              Clicking anywhere inside a city works like its pin. The pins stay
+              as buttons for keyboards and screen readers, so the shapes are
+              left out of both. */}
           {cities.length > 0 && (
             <div
               role='group'
@@ -134,6 +137,7 @@ export default function GalleryBrowser({ jobs, cities, mapSize }: GalleryBrowser
                     <path
                       key={item.name}
                       d={item.outline}
+                      onClick={() => setCity(item.name === city ? null : item.name)}
                       data-on={item.name === city || undefined}
                       className={styles.cityShape}
                     />

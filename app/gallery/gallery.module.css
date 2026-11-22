@@ -261,13 +261,22 @@
   stroke: #c3b4da;
   stroke-width: 1.2;
   stroke-linejoin: round;
-  transition: fill 300ms ease;
+  cursor: pointer;
+  transition: fill 200ms ease;
+}
+
+.cityShape:hover {
+  fill: #e4daf2;
 }
 
 .cityShape[data-on] {
   fill: #fbe7b5;
   stroke: #d9a520;
   stroke-width: 1.6;
+}
+
+.cityShape[data-on]:hover {
+  fill: #f8dc97;
 }
 
 .pin {

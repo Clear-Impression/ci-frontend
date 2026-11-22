@@ -44,7 +44,7 @@ export type GalleryPair = {
 export const galleryPage = {
   eyebrow: 'Gallery',
   jobsHeading: 'Recent jobs',
-  mapHint: 'Tap a pin to see one city. Tap it again to see them all.',
+  mapHint: 'Tap a city to see its jobs. Tap it again to see them all.',
 };
 
 // Until the before-and-after pairs are added in Sanity, use the homepage's.
