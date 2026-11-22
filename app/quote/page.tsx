@@ -3,6 +3,7 @@ import { createPageMetadata } from '@/lib/seo';
 import QuoteForm, { type QuoteStart } from '@/components/quote/QuoteForm';
 import { company } from '@/data/company';
 import { quoteOptions } from '@/data/quote';
+import { jakarta } from '../fonts';
 
 const title = 'Request a Quote | Clear Impression';
 const description = 'Plan your window, solar panel, or screen cleaning in the Phoenix metro area. Tell Clear Impression about your home or business.';
@@ -39,33 +40,24 @@ export default async function QuotePage({ searchParams }: QuotePageProps) {
     texts: param(params.texts, 3) === 'yes',
   };
   return (
-    <main className='flex-1 bg-[#faf8fd]'>
-      <div className='mx-auto grid max-w-7xl items-start gap-10 px-6 py-12 sm:px-8 sm:py-16 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16'>
-        {/* Keep the introduction short so the form stays easy to find. */}
-        <section aria-labelledby='quote-heading' className='lg:pt-6'>
-          <p className='text-sm font-semibold text-[#6c3fb8]'>A clearer view starts here</p>
-          <h1 id='quote-heading' className='mt-4 max-w-md text-4xl font-semibold leading-tight tracking-tight text-[#200b38] sm:text-5xl lg:text-6xl'>
-            {header.title.endsWith('.') ? <>{header.title.slice(0, -1)}<span className='text-[#6c3fb8]'>.</span></> : header.title}
+    <main className='flex-1 bg-[#faf8fd] text-[#200b38]'>
+      {/* Use the Estimate page's purple header, with room for the form in the first view. */}
+      <section aria-labelledby='quote-heading' className='bg-[#200b38] px-6 pb-11 pt-14 text-center text-white sm:px-8 sm:pb-11 sm:pt-7'>
+        <div className='mx-auto max-w-2xl'>
+          <h1 id='quote-heading' className='text-4xl font-semibold tracking-tight sm:text-5xl'>
+            {header.title}
           </h1>
-          <p className='mt-6 max-w-md text-base leading-8 text-[#686170]'>
-            {header.subtitle} We’ll use your contact details to follow up about your quote.
-          </p>
-          <div className='mt-8 flex flex-wrap gap-2 text-xs font-medium text-[#542d90]'>
-            <span className='rounded-full border border-[#6c3fb8]/15 bg-white px-3 py-2'>Residential &amp; commercial</span>
-            <span className='rounded-full border border-[#6c3fb8]/15 bg-white px-3 py-2'>Phoenix metro</span>
-          </div>
-
-          <div className='mt-10 max-w-md border-t border-[#200b38]/10 pt-8'>
-            <h2 className='text-lg font-semibold text-[#200b38]'>Rather talk it through?</h2>
-            <p className='mt-2 text-sm leading-7 text-[#686170]'>Call or text us to ask a question or request your quote directly.</p>
-            <a href={company.phoneHref} className='mt-4 inline-block rounded-sm text-2xl font-semibold tracking-tight text-[#200b38] hover:text-[#6c3fb8] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6c3fb8]'>{company.phone}</a>
-            <div className='mt-4'>
-              <a href='sms:+14806220622' className='inline-flex min-h-11 items-center gap-2 rounded-lg border border-[#200b38]/20 bg-white px-4 py-2 text-sm font-semibold text-[#200b38] hover:bg-[#eee6f7] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6c3fb8]'>Send a text <span aria-hidden='true'>↗</span></a>
-            </div>
-          </div>
-        </section>
-
+          {header.subtitle && <p className='mt-3 text-base leading-relaxed text-white/80 sm:text-lg'>{header.subtitle}</p>}
+        </div>
+      </section>
+      <div className={`${jakarta.variable} relative mx-auto -mt-7 max-w-2xl px-4 pb-12 sm:-mt-9 sm:px-6 sm:pb-16`}>
         <QuoteForm options={quoteOptions} phoneHref={company.phoneHref} phone={company.phone} start={start} />
+        <p className='mt-5 flex flex-wrap items-center justify-center gap-x-2 text-center text-sm text-[#625a6c]'>
+          <span>Rather talk it through?</span>
+          <a href={company.phoneHref} className='inline-flex min-h-11 items-center font-semibold text-[#200b38] underline underline-offset-4 hover:text-[#6c3fb8]'>Call {company.phone}</a>
+          <span>or</span>
+          <a href={company.phoneHref.replace(/^tel:/, 'sms:')} className='inline-flex min-h-11 items-center font-semibold text-[#200b38] underline underline-offset-4 hover:text-[#6c3fb8]'>send a text</a>
+        </p>
       </div>
     </main>
   );
