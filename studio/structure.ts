@@ -40,6 +40,10 @@ export const structure: StructureResolver = (S) => {
       S.documentTypeListItem('faq').title('Questions'),
     ])),
     S.documentTypeListItem('blog').title('Blog'),
+    S.listItem().id('about-page').title('About page').child(S.document()
+      .schemaType('about')
+      .documentId('about')
+      .title('About page')),
     S.listItem().id('services').title('Services').child(S.list().title('Services').items([
       header('services'),
       services('method', 'Methods'),
@@ -68,7 +72,7 @@ export const structure: StructureResolver = (S) => {
           .apiVersion('2026-10-19')
           .defaultOrdering([{field: 'displayOrder', direction: 'asc'}, {field: 'title', direction: 'asc'}])),
     ])),
-    ...['home', 'about', 'reviews', 'feedback', 'quote', 'terms'].map((pageId) =>
+    ...['home', 'reviews', 'feedback', 'quote', 'terms'].map((pageId) =>
       S.listItem().id(pageId).title(pageHeaders[pageId].label)
         .child(S.list().title(pageHeaders[pageId].label).items([header(pageId)])),
     ),

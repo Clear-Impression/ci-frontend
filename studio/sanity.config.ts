@@ -51,7 +51,7 @@ export default defineConfig({
       }
       // There is only one Locations page and one Seasonal offers document, so they
       // can't be copied, unpublished, or deleted. Offers are turned off with their switches.
-      if (context.schemaType === 'locationsPage' || context.schemaType === 'seasonalOffers') {
+      if (['locationsPage', 'seasonalOffers', 'about'].includes(context.schemaType)) {
         return actions.filter((action) =>
           !['duplicate', 'unpublish', 'delete'].includes(action.action ?? ''),
         )

@@ -8,6 +8,7 @@ import { company } from '@/data/company';
 import { getLocationBySlug, getLocations } from '@/lib/locations';
 import { getServices } from '@/lib/services';
 import styles from '../locations.module.css';
+import ClearerViewCta from '@/components/ui/ClearerViewCta';
 
 // City summaries can use shorter names than their service detail pages.
 const cityServiceSlugs = new Map([
@@ -139,7 +140,10 @@ export default async function CityPage({ params }: CityPageProps) {
         </div>
       </section>
 
-      <HomeContact />
+      <section className='mx-auto max-w-7xl px-6 pt-8 pb-16 sm:px-8 sm:pt-10 sm:pb-20'>
+        <ClearerViewCta />
+      </section>
+      
     </main>
   );
 }
