@@ -1,7 +1,5 @@
 import type { Metadata } from 'next';
-import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
-import { ownerBackendUrl } from '@/lib/ownerAuth';
+import { verifyOwnerSession } from '@/lib/ownerSession';
 import OwnerLogoutButton from '@/components/owner/OwnerLogoutButton';
 
 // Verify the session on every dashboard request.
@@ -21,6 +19,15 @@ const sections = [
     label: 'Edit website content',
     href: studioUrl,
     available: true,
+    note: 'Opens Sanity Studio',
+  },
+  {
+    title: 'Master quote page',
+    description: 'Open your private quote workspace.',
+    label: 'Master quote page',
+    href: '/owner/master-quote-page',
+    available: true,
+    note: 'Owner access only',
   },
   {
     title: 'Leads',
@@ -39,32 +46,7 @@ const sections = [
 ];
 
 export default async function OwnerDashboardPage() {
-  const token = (await cookies()).get('owner_session')?.value;
-
-  if (!token || !/^[A-Za-z0-9_-]{43}$/.test(token)) {
-    redirect('/owner/login');
-  }
-
-  let status = 503;
-
-  try {
-    const response = await fetch(ownerBackendUrl('/auth/me'), {
-      headers: { Cookie: `owner_session=${token}` },
-      cache: 'no-store',
-      redirect: 'error',
-      signal: AbortSignal.timeout(5000),
-    });
-    status = response.status;
-  } catch {
-    // A backend outage must not expose the dashboard.
-    status = 503;
-  }
-
-  if (status === 401 || status === 403) {
-    redirect('/owner/login');
-  }
-
-  if (status !== 200) {
+  if (!(await verifyOwnerSession())) {
     return (
       <main className='flex-1 bg-[#faf8fd] px-6 py-16 sm:px-8'>
         <div className='mx-auto max-w-lg rounded-2xl border border-[#200b38]/10 bg-white p-6 sm:p-8'>
@@ -106,7 +88,7 @@ export default async function OwnerDashboardPage() {
                 {section.description}
               </p>
               <p className='mt-6 text-xs font-medium text-[#686170]'>
-                {section.available ? 'Opens Sanity Studio' : 'Coming soon'}
+                {section.note ?? 'Coming soon'}
               </p>
               <a
                 href={section.href}
