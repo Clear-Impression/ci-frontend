@@ -166,3 +166,31 @@ export const BLOG_QUERY = defineQuery(`
     }
   }
 `)
+
+// Roles on the Careers page. Paused roles are left out.
+const JOB_OPENING_FIELDS = `{
+  title,
+  "slug": slug.current,
+  employmentType,
+  "pay": coalesce(pay, null),
+  summary,
+  "duties": coalesce(duties, []),
+  "requirements": coalesce(requirements, []),
+  "schedule": coalesce(schedule, null)
+}`
+
+export const JOB_OPENINGS_QUERY = defineQuery(`
+  *[
+    _type == "jobOpening" &&
+    coalesce(accepting, true) == true &&
+    defined(slug.current)
+  ] | order(displayOrder asc, title asc) ${JOB_OPENING_FIELDS}
+`)
+
+export const JOB_OPENING_QUERY = defineQuery(`
+  *[
+    _type == "jobOpening" &&
+    coalesce(accepting, true) == true &&
+    slug.current == $slug
+  ][0] ${JOB_OPENING_FIELDS}
+`)

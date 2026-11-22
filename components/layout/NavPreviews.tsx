@@ -37,6 +37,16 @@ export function AboutPreview() {
             </span>
           </Link>
         </li>
+        <li className='nav-stagger' style={{ '--n': 2 } as React.CSSProperties}>
+          <Link href='/careers' className={itemClass}>
+            <span>
+              <span className='block font-semibold leading-snug'>Careers</span>
+              <span className='mt-0.5 block text-sm leading-5 text-gray-600'>
+                Join the crew. See open roles and apply.
+              </span>
+            </span>
+          </Link>
+        </li>
       </ul>
     </div>
   );
