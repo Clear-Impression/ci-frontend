@@ -2,11 +2,12 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef, useSyncExternalStore } from 'react';
+import { navigation } from '@/data/company';
 
-// The homepage has nothing to go back to, city and service pages already
-// have their own back link in the same corner, and the owner sign-in page
-// and dashboard are the owner's tools, not part of browsing the website.
-const hiddenOn = [/^\/$/, /^\/locations\/[^/]+$/, /^\/services\/[^/]+$/, /^\/owner(\/login)?$/];
+// Main navigation pages skip the Back button. City and service details have
+// their own links to the parent page, and the owner tools have their own navigation.
+const mainPages = new Set(navigation.map(({ href }) => href));
+const hiddenOn = [/^\/locations\/[^/]+$/, /^\/services\/[^/]+$/, /^\/owner(\/login)?$/];
 const subscribeToHydration = () => () => {};
 
 // A small "Back" button that floats just under the header. It sits over the
@@ -28,7 +29,7 @@ export default function BackButton() {
     else if (pathname !== firstPath.current) movedWithinSite.current = true;
   }, [hydrated, pathname]);
 
-  if (!hydrated || hiddenOn.some((pattern) => pattern.test(pathname))) return null;
+  if (!hydrated || mainPages.has(pathname) || hiddenOn.some((pattern) => pattern.test(pathname))) return null;
 
   const goBack = () => {
     const cameFromSite =
@@ -44,7 +45,7 @@ export default function BackButton() {
         <button
           type='button'
           onClick={goBack}
-          className='pointer-events-auto mt-2.5 inline-flex min-h-7.5 items-center gap-1.5 rounded-full border border-white/15 bg-[#200b38]/70 pl-2.5 pr-3 text-[13px] text-white backdrop-blur-sm transition-colors hover:bg-[#200b38] focus-visible:bg-[#200b38] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#efb52b]'>
+          className='pointer-events-auto mt-2.5 inline-flex min-h-11 items-center gap-1.5 rounded-full border border-[#6c3fb8]/40 bg-[#f7f4fb] pl-3 pr-4 text-sm font-semibold text-[#200b38] transition-colors hover:bg-[#ede3f8] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#6c3fb8]'>
           <svg
             aria-hidden='true'
             viewBox='0 0 24 24'
@@ -53,9 +54,8 @@ export default function BackButton() {
             strokeWidth='2'
             strokeLinecap='round'
             strokeLinejoin='round'
-            className='size-3.5'>
-            <path d='M19 12H5' />
-            <path d='M11 18l-6-6 6-6' />
+            className='size-4 shrink-0'>
+            <path d='m15 18-6-6 6-6' />
           </svg>
           Back
         </button>
