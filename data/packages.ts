@@ -1,12 +1,12 @@
-// The 3-step estimate: Bronze, Silver and Gold packages, the optional
-// add-ons, and the wording around them.
+// The estimate: Bronze, Silver and Gold window packages, the extras, the
+// Clear Club plans and the wording around them.
 //
 // PLACEHOLDER PRICES: the window, screen, track and solar numbers come from
 // the instant estimate settings in data/estimate.ts, which are still stand-ins
 // until Niels confirms his real rates. Change them there and both the old
 // calculator and this page update.
 
-import { getEstimateTab, type EstimateTab } from '@/data/estimate';
+import { getEstimateTab, type EstimateTab, type EstimateValues } from '@/data/estimate';
 
 export type PackageId = 'bronze' | 'silver' | 'gold';
 
@@ -78,29 +78,16 @@ export const upgradeNotes: Record<PackageId, string> = {
   gold: 'You have everything: inside and out, screens, tracks, house wash, priority scheduling and our 7-day touch-up guarantee.',
 };
 
-export type AddonId = 'screens' | 'solar' | 'hardWater' | 'houseWash' | 'chandelier';
+// Extras that a person prices after the request (no instant price). The
+// other services (solar, screens, gutters...) are picked at the top instead.
+export type ExtraId = 'houseWash' | 'chandelier';
 
-export type Addon = {
-  id: AddonId;
-  name: string;
-  note: string;
-  // Instant add-ons are priced here; the rest are quoted by a person.
-  instant: boolean;
-  // Counts toward the "add one more and unlock a bonus" offer.
-  qualifies?: boolean;
-  // Already part of this package, so it isn't offered.
-  includedIn?: PackageId;
-};
-
-export const addons: readonly Addon[] = [
-  { id: 'screens', name: 'Screens and tracks', note: 'Screens washed, tracks detailed', instant: true, qualifies: true, includedIn: 'gold' },
-  { id: 'solar', name: 'Solar panel cleaning', note: 'Pure water and soft brushes', instant: true, qualifies: true },
-  { id: 'hardWater', name: 'Hard water stain removal', note: 'Priced from a photo', instant: false },
-  { id: 'houseWash', name: 'Exterior house wash', note: 'Confirmed after review', instant: false, includedIn: 'gold' },
-  { id: 'chandelier', name: 'Chandelier cleaning', note: 'Custom quote', instant: false },
+export const extras: readonly { id: ExtraId; name: string; note: string; includedIn?: PackageId }[] = [
+  { id: 'houseWash', name: 'Exterior house wash', note: 'Confirmed after review', includedIn: 'gold' },
+  { id: 'chandelier', name: 'Chandelier cleaning', note: 'Custom quote' },
 ];
 
-// The bonus offer, shown once one qualifying add-on is picked. The bonus
+// The bonus offer, shown once two services are picked. The bonus
 // itself is still to be decided by Niels; set `enabled` to false to hide it.
 export const bonusOffer = {
   enabled: true,
@@ -113,8 +100,29 @@ export const clearPricePromise = {
 };
 
 export const clearClub = {
-  title: 'Clear Club',
-  text: 'Come back every 3 or 6 months and save on each visit after this one. No sign-up needed today.',
+  title: 'Join the Clear Club?',
+  text: 'Come back every 3 or 6 months and save on each visit after this one. No sign-up today; we set it up when we call.',
+};
+
+export type ClubPlan = 'once' | 'six' | 'three';
+
+export const clubPlans: readonly { id: ClubPlan; label: string; hint: string }[] = [
+  { id: 'once', label: 'Just this once', hint: 'No plan' },
+  { id: 'six', label: 'Every 6 months', hint: 'Save on each visit' },
+  { id: 'three', label: 'Every 3 months', hint: 'Save on each visit' },
+];
+
+// Shown once if someone looks like they're leaving the estimate.
+// The referral amount came from the team; confirm the details with Niels.
+export const leaveOffers = {
+  referral: {
+    title: 'Refer a friend, get $50 off',
+    text: 'Send a friend our way. Once they book, you get $50 off your next service.',
+  },
+  guarantee: {
+    title: 'Gold comes with a 7-day guarantee',
+    text: 'Pick Gold and if anything isn’t right within 7 days, we come back and touch it up.',
+  },
 };
 
 export const paymentNote = 'No payment now. We take cash, check or Zelle on cleaning day.';
@@ -177,19 +185,34 @@ export function packagePrice(id: PackageId, home: HomeDetails, tabs: Tabs = []):
   return toRange(windowsPrice(windows, home, false) + screensAndTracks(windows), windows);
 }
 
-export const solarPanels = { min: 4, max: 60, start: 20 };
+// Windows answers (from the windows questions) as home details for the packages.
+export function homeFromValues(values: EstimateValues): HomeDetails {
+  const dirt = values.dirt;
+  return {
+    size: Number(values.size) || startingHome.size,
+    stories: values.height === 'two' ? 2 : 1,
+    dirt: dirt === 'light' || dirt === 'rough' ? dirt : 'normal',
+    hardWater: false,
+  };
+}
 
-export function addonPrice(id: AddonId, home: HomeDetails, panels: number, tabs: Tabs = []): Range | null {
-  if (id === 'screens') {
-    const windows = tab(tabs, 'residential-window-washing');
-    return toRange(screensAndTracks(windows), windows);
+// Keeps only answers the questions allow, so a changed page can't send odd values.
+export function cleanValues(tabData: EstimateTab, raw: unknown): EstimateValues {
+  const given = raw !== null && typeof raw === 'object' ? (raw as Record<string, unknown>) : {};
+  const values: EstimateValues = {};
+  for (const question of tabData.questions) {
+    const answer = given[question.id];
+    if (question.kind === 'slider') {
+      const amount = Math.round(Number(answer) / question.step) * question.step;
+      values[question.id] = Number.isFinite(amount) ? Math.min(question.max, Math.max(question.min, amount)) : question.start;
+    } else if (question.kind === 'choice') {
+      values[question.id] = question.options.some((option) => option.id === answer) ? (answer as string) : question.start;
+    } else {
+      const list = Array.isArray(answer) ? answer : question.start;
+      values[question.id] = question.options.map((option) => option.id).filter((id) => list.includes(id));
+    }
   }
-  if (id === 'solar') {
-    const solar = tab(tabs, 'solar-panel-cleaning');
-    const height = choice(solar, 'height', home.stories === 2 ? 'two' : 'one')?.multiply ?? 1;
-    return toRange(Math.max(solar.minimum, panels * solar.rate * height), solar);
-  }
-  return null;
+  return values;
 }
 
 const dollars = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });

@@ -1,39 +1,35 @@
 'use client';
 
-import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type FormEvent, type ReactNode } from 'react';
 import { requestAppointment, type AppointmentResult } from '@/app/estimate/actions';
+import LeaveOffer from '@/components/estimate/LeaveOffer';
 import { company } from '@/data/company';
-import type { EstimateTab } from '@/data/estimate';
+import { rangeFor, startingValues, type EstimateTab, type EstimateValues } from '@/data/estimate';
 import {
-  addonPrice,
-  addons,
   bonusOffer,
   clearClub,
   clearPricePromise,
-  dirtOptions,
+  clubPlans,
+  extras,
+  formatDollars,
   formatRange,
-  homeSize,
+  homeFromValues,
   packagePrice,
   packages,
   paymentNote,
-  solarPanels,
-  startingHome,
   upgradeNotes,
-  type AddonId,
-  type HomeDetails,
+  type ClubPlan,
+  type ExtraId,
   type PackageId,
   type Range,
 } from '@/data/packages';
 import type { Availability } from '@/lib/availability';
 import './one-page-estimate.css';
 
-// The four parts of the estimate, all on one page.
-const parts = [
-  { id: 'oe-home', label: 'Your home' },
-  { id: 'oe-package', label: 'Your package' },
-  { id: 'oe-extras', label: 'Anything else' },
-  { id: 'oe-day', label: 'Request a day' },
-] as const;
+const windowsSlug = 'residential-window-washing';
+const screensSlug = 'screen-deep-cleaning';
+// The windows questions asked here; sides and screens come from the package.
+const windowsQuestions = ['size', 'height', 'dirt'];
 
 const times = [
   { id: 'Morning', hint: '8 am to 12 pm' },
@@ -58,6 +54,86 @@ const shortDay = (iso: string) =>
     day: 'numeric',
     timeZone: 'America/Phoenix',
   });
+
+const sum = (ranges: (Range | null)[]) =>
+  ranges.reduce<Range>((total, range) => (range ? { low: total.low + range.low, high: total.high + range.high } : total), {
+    low: 0,
+    high: 0,
+  });
+
+// ---------- Service icons ----------
+
+function ServiceIcon({ slug }: { slug: string }) {
+  const paths: Record<string, ReactNode> = {
+    'residential-window-washing': (
+      <>
+        <rect
+          x='4'
+          y='3'
+          width='16'
+          height='18'
+          rx='2'
+        />
+        <path d='M12 3v18M4 12h16' />
+      </>
+    ),
+    'commercial-office-glass': (
+      <>
+        <rect
+          x='5'
+          y='3'
+          width='14'
+          height='18'
+          rx='1.5'
+        />
+        <path d='M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2M11 21v-3h2v3' />
+      </>
+    ),
+    'solar-panel-cleaning': (
+      <>
+        <path d='M4 15 6.5 5h11L20 15Z' />
+        <path d='M12 5v10M5.3 10h13.4M9 15l-.5 5M15 15l.5 5M7 20h10' />
+      </>
+    ),
+    'gutter-roof-care': (
+      <>
+        <path d='M3 11 12 4l9 7' />
+        <path d='M5 10v10h14V10M3 11h18v2H3zM19 13v5' />
+      </>
+    ),
+    'hard-water-stain-removal': <path d='M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11ZM9.5 14.5a2.5 2.5 0 0 0 2.5 2.5' />,
+    'screen-deep-cleaning': (
+      <>
+        <rect
+          x='4'
+          y='3'
+          width='16'
+          height='18'
+          rx='2'
+        />
+        <path d='M4 8h16M4 13h16M9 3v18M15 3v18' />
+      </>
+    ),
+  };
+  return (
+    <svg
+      aria-hidden='true'
+      viewBox='0 0 24 24'
+      fill='none'
+      stroke='currentColor'
+      strokeWidth='1.7'
+      strokeLinecap='round'
+      strokeLinejoin='round'>
+      {paths[slug] ?? (
+        <circle
+          cx='12'
+          cy='12'
+          r='8'
+        />
+      )}
+    </svg>
+  );
+}
 
 // ---------- Drawings for the packages ----------
 
@@ -258,6 +334,128 @@ function Section({
   );
 }
 
+// The questions for one service, straight from its settings.
+function Questions({
+  tab,
+  values,
+  only,
+  onChange,
+}: {
+  tab: EstimateTab;
+  values: EstimateValues;
+  only?: readonly string[];
+  onChange: (id: string, answer: EstimateValues[string]) => void;
+}) {
+  const list = only ? tab.questions.filter((question) => only.includes(question.id)) : tab.questions;
+  return (
+    <>
+      {list.map((question) => {
+        const fieldId = `oe-${tab.slug}-${question.id}`;
+        if (question.kind === 'slider') {
+          const amount = Number(values[question.id] ?? question.start);
+          return (
+            <div
+              key={question.id}
+              className='oe-q'>
+              <div className='oe-size'>
+                <label htmlFor={fieldId}>{question.label}</label>
+                <output htmlFor={fieldId}>
+                  {amount.toLocaleString('en-US')}
+                  <small>{question.unit}</small>
+                </output>
+              </div>
+              <input
+                id={fieldId}
+                type='range'
+                min={question.min}
+                max={question.max}
+                step={question.step}
+                value={amount}
+                style={{ '--fill': `${((amount - question.min) / (question.max - question.min)) * 100}%` } as CSSProperties}
+                onChange={(event) => onChange(question.id, Number(event.target.value))}
+              />
+              <span className='oe-scale'>
+                <span>{question.min.toLocaleString('en-US')}</span>
+                <span>{question.max.toLocaleString('en-US')}+</span>
+              </span>
+              {question.help && <p className='oe-hint'>{question.help}</p>}
+            </div>
+          );
+        }
+        if (question.kind === 'choice') {
+          return (
+            <fieldset
+              key={question.id}
+              className='oe-q'>
+              <legend>{question.label}</legend>
+              <div className={question.cards ? 'oe-chips' : 'oe-seg'}>
+                {question.options.map((option) => (
+                  <button
+                    key={option.id}
+                    type='button'
+                    aria-pressed={values[question.id] === option.id}
+                    onClick={() => onChange(question.id, option.id)}>
+                    {option.label}
+                    {question.cards && option.hint && <small>{option.hint}</small>}
+                  </button>
+                ))}
+              </div>
+              {question.help && <p className='oe-hint'>{question.help}</p>}
+            </fieldset>
+          );
+        }
+        const ticked = (values[question.id] as readonly string[] | undefined) ?? [];
+        return (
+          <fieldset
+            key={question.id}
+            className='oe-q'>
+            <legend>{question.label}</legend>
+            <div className='oe-chips oe-chips-two'>
+              {question.options.map((option) => (
+                <button
+                  key={option.id}
+                  type='button'
+                  aria-pressed={ticked.includes(option.id)}
+                  onClick={() =>
+                    onChange(
+                      question.id,
+                      ticked.includes(option.id) ? ticked.filter((id) => id !== option.id) : [...ticked, option.id],
+                    )
+                  }>
+                  {option.label}
+                </button>
+              ))}
+            </div>
+            {question.help && <p className='oe-hint'>{question.help}</p>}
+          </fieldset>
+        );
+      })}
+    </>
+  );
+}
+
+// A photo-only service: why, and what to send.
+function PhotoSteps({ tab }: { tab: EstimateTab }) {
+  if (!tab.photo) return null;
+  const smsHref = `sms:${company.phone.replace(/[^\d+]/g, '')}`;
+  return (
+    <div className='oe-photo'>
+      <p>{tab.photo.why}</p>
+      <ol>
+        {tab.photo.steps.map((entry) => (
+          <li key={entry.title}>
+            <b>{entry.title}</b>
+            <span>{entry.text}</span>
+          </li>
+        ))}
+      </ol>
+      <p className='oe-hint'>
+        <a href={smsHref}>Text us the photos</a> any time, or send your request and we’ll ask for them.
+      </p>
+    </div>
+  );
+}
+
 type OnePageEstimateProps = {
   // Instant prices, loaded from Sanity.
   tabs: readonly EstimateTab[];
@@ -268,10 +466,17 @@ type OnePageEstimateProps = {
 // what you've picked on the left, and the live price with what's still to
 // come on the right. Prices come from Sanity, so Niels can change them.
 export default function OnePageEstimate({ tabs, availability }: OnePageEstimateProps) {
-  const [home, setHome] = useState<HomeDetails>(startingHome);
+  const [selected, setSelected] = useState<string[]>(() =>
+    tabs.some((tab) => tab.slug === windowsSlug) ? [windowsSlug] : tabs.slice(0, 1).map((tab) => tab.slug),
+  );
+  // Services added further down, in "Anything else?", keep their questions there.
+  const [addedLater, setAddedLater] = useState<string[]>([]);
+  const [values, setValues] = useState<Record<string, EstimateValues>>(() =>
+    Object.fromEntries(tabs.map((tab) => [tab.slug, startingValues(tab)])),
+  );
   const [packageId, setPackageId] = useState<PackageId>('silver');
-  const [picked, setPicked] = useState<AddonId[]>([]);
-  const [panels, setPanels] = useState(solarPanels.start);
+  const [pickedExtras, setPickedExtras] = useState<ExtraId[]>([]);
+  const [plan, setPlan] = useState<ClubPlan>('once');
   const [day, setDay] = useState('');
   const [time, setTime] = useState<string>('Morning');
   const [current, setCurrent] = useState(0);
@@ -281,19 +486,31 @@ export default function OnePageEstimate({ tabs, availability }: OnePageEstimateP
   const [sentTo, setSentTo] = useState('');
   const submissionKey = useRef<string | null>(null);
   const topRef = useRef<HTMLDivElement>(null);
-
-  const offered = addons.filter((addon) => addon.includedIn !== packageId);
-  const chosenAddons = offered.filter((addon) => picked.includes(addon.id));
-  const qualifying = chosenAddons.filter((addon) => addon.qualifies).length;
   const done = result?.status === 'saved';
+
+  const chosen = tabs.filter((tab) => selected.includes(tab.slug));
+  const hasWindows = selected.includes(windowsSlug);
+  const goldScreens = hasWindows && packageId === 'gold';
+
+  // The parts of the page. The package part only shows with windows.
+  const parts = [
+    { id: 'oe-services', label: 'Pick services' },
+    { id: 'oe-details', label: 'A few details' },
+    ...(hasWindows ? [{ id: 'oe-package', label: 'Your package' }] : []),
+    { id: 'oe-extras', label: 'Anything else' },
+    { id: 'oe-day', label: 'Request a day' },
+  ];
+  const partIndex = (id: string) => parts.findIndex((part) => part.id === id);
+  const partKey = parts.map((part) => part.id).join();
 
   // Which part is on screen. Parts above it count as done.
   useEffect(() => {
+    const ids = partKey.split(',');
     const update = () => {
       const line = window.innerHeight * 0.45;
       let index = 0;
-      parts.forEach((part, position) => {
-        const element = document.getElementById(part.id);
+      ids.forEach((id, position) => {
+        const element = document.getElementById(id);
         if (element && element.getBoundingClientRect().top <= line) index = position;
       });
       setCurrent(index);
@@ -306,32 +523,54 @@ export default function OnePageEstimate({ tabs, availability }: OnePageEstimateP
       window.removeEventListener('scroll', update);
       window.removeEventListener('resize', update);
     };
-  }, []);
+  }, [partKey]);
 
   // Choosing something in a part also counts as reaching it.
-  const reach = (index: number) => setReached((value) => Math.max(value, index));
+  const reach = (id: string) => setReached((value) => Math.max(value, partIndex(id)));
 
-  // The running total, and what still needs a person to price it.
-  const base = packagePrice(packageId, home, tabs);
-  let total: Range = { ...base };
-  for (const addon of chosenAddons) {
-    const price = addonPrice(addon.id, home, panels, tabs);
-    if (price) total = { low: total.low + price.low, high: total.high + price.high };
+  // The price of one service, or null when a person prices it.
+  function priceOf(tab: EstimateTab): Range | null {
+    const answers = values[tab.slug] ?? startingValues(tab);
+    if (tab.slug === windowsSlug) return packagePrice(packageId, homeFromValues(answers), tabs);
+    if (tab.slug === screensSlug && goldScreens) return null;
+    return rangeFor(tab, answers);
   }
-  const needsReview = packageId === 'gold' || home.hardWater || chosenAddons.some((addon) => !addon.instant);
+
+  function priceLabel(tab: EstimateTab) {
+    if (tab.slug === screensSlug && goldScreens) return 'In Gold';
+    const price = priceOf(tab);
+    return price ? formatRange(price) : 'From a photo';
+  }
+
+  const extrasOffered = extras.filter((extra) => !(hasWindows && extra.includedIn === packageId));
+  const chosenExtras = extrasOffered.filter((extra) => pickedExtras.includes(extra.id));
+  const total = sum(chosen.map(priceOf));
+  const instantCount = chosen.filter((tab) => tab.mode === 'range').length;
+  const needsReview =
+    (hasWindows && packageId === 'gold') || chosen.some((tab) => tab.mode !== 'range') || chosenExtras.length > 0;
   const packageName = packages.find((entry) => entry.id === packageId)?.name ?? '';
 
-  const stateOf = (index: number): 'done' | 'now' | 'later' =>
-    done || index < current ? 'done' : index === current ? 'now' : index <= reached ? 'done' : 'later';
+  const stateOf = (id: string): 'done' | 'now' | 'later' => {
+    const index = partIndex(id);
+    return done || index < current ? 'done' : index === current ? 'now' : index <= reached ? 'done' : 'later';
+  };
 
-  // Progress ring: how many of the four parts are done.
+  // Progress ring: how many parts are done.
   const finished = done ? parts.length : Math.min(parts.length, Math.max(current, reached) + (day ? 1 : 0));
   const step = Math.min(parts.length, current + 1);
   const ringLength = 157;
 
-  function toggleAddon(id: AddonId) {
-    reach(2);
-    setPicked((value) => (value.includes(id) ? value.filter((entry) => entry !== id) : [...value, id]));
+  function toggleService(slug: string, later = false) {
+    reach(later ? 'oe-extras' : 'oe-services');
+    const on = selected.includes(slug);
+    // Keep at least one service picked.
+    if (on && selected.length === 1) return;
+    setSelected((list) => (on ? list.filter((entry) => entry !== slug) : [...list, slug]));
+    setAddedLater((list) => (on || !later ? list.filter((entry) => entry !== slug) : [...list, slug]));
+  }
+
+  function answer(slug: string, id: string, value: EstimateValues[string]) {
+    setValues((all) => ({ ...all, [slug]: { ...all[slug], [id]: value } }));
   }
 
   function goToDay() {
@@ -349,10 +588,10 @@ export default function OnePageEstimate({ tabs, availability }: OnePageEstimateP
     try {
       const outcome = await requestAppointment({
         submissionKey: submissionKey.current,
-        home,
-        packageId,
-        addons: chosenAddons.map((addon) => addon.id),
-        panels,
+        services: chosen.map((tab) => ({ slug: tab.slug, values: values[tab.slug] })),
+        packageId: hasWindows ? packageId : null,
+        extras: chosenExtras.map((extra) => extra.id),
+        plan,
         day,
         time,
         contact: {
@@ -382,20 +621,63 @@ export default function OnePageEstimate({ tabs, availability }: OnePageEstimateP
     ? new Date(`${availability.days[0].date}T12:00:00-07:00`).getUTCDay()
     : 0;
 
+  const totalText = total.high ? formatRange(total) : 'From a photo';
+  const planEntry = clubPlans.find((entry) => entry.id === plan) ?? clubPlans[0];
+
   // The receipt on the left: what's been picked so far.
-  const receipt: { label: string; value: string; part: number }[] = [
-    { label: 'Home', value: `${home.size.toLocaleString('en-US')} sq ft`, part: 0 },
-    { label: 'Stories', value: `${home.stories}`, part: 0 },
-    { label: 'Condition', value: dirtOptions.find((option) => option.id === home.dirt)?.label ?? '', part: 0 },
-    { label: 'Hard water', value: home.hardWater ? 'Yes, photo needed' : 'No', part: 0 },
-    { label: 'Package', value: `${packageName} · ${formatRange(base)}`, part: 1 },
+  const receipt: { label: string; value: string; part: string }[] = [
+    ...chosen.map((tab) => ({
+      label: tab.slug === windowsSlug ? `${tab.tab} · ${packageName}` : tab.tab,
+      value: priceLabel(tab),
+      part: 'oe-services',
+    })),
     {
       label: 'Extras',
-      value: chosenAddons.length ? chosenAddons.map((addon) => addon.name).join(', ') : 'None',
-      part: 2,
+      value: chosenExtras.length ? chosenExtras.map((extra) => extra.name).join(', ') : 'None',
+      part: 'oe-extras',
     },
-    { label: 'Day', value: day ? `${shortDay(day)}, ${time === 'Either' ? 'any time' : time.toLowerCase()}` : '', part: 3 },
+    {
+      label: 'Day',
+      value: day ? `${shortDay(day)}, ${time === 'Either' ? 'any time' : time.toLowerCase()}` : '',
+      part: 'oe-day',
+    },
+    { label: 'Clear Club', value: day ? planEntry.label : '', part: 'oe-day' },
   ];
+
+  // Services not picked at the top, offered again in "Anything else?".
+  const crossSell = tabs.filter((tab) => !selected.includes(tab.slug) || addedLater.includes(tab.slug));
+  const topServices = chosen.filter((tab) => !addedLater.includes(tab.slug));
+
+  function serviceBlock(tab: EstimateTab) {
+    return (
+      <div
+        key={tab.slug}
+        className='oe-svc'>
+        <div className='oe-svc-head'>
+          <span className='oe-svc-icon'>
+            <ServiceIcon slug={tab.slug} />
+          </span>
+          <b>{tab.name}</b>
+          <span className={`oe-chip ${tab.mode === 'range' ? 'oe-chip-auto' : 'oe-chip-review'}`}>{priceLabel(tab)}</span>
+        </div>
+        {tab.mode === 'photo' ? (
+          <PhotoSteps tab={tab} />
+        ) : tab.slug === screensSlug && goldScreens ? (
+          <p className='oe-hint'>Screens and tracks are already part of your Gold package.</p>
+        ) : (
+          <Questions
+            tab={tab}
+            values={values[tab.slug]}
+            only={tab.slug === windowsSlug ? windowsQuestions : undefined}
+            onChange={(id, value) => {
+              answer(tab.slug, id, value);
+              reach(addedLater.includes(tab.slug) ? 'oe-extras' : 'oe-details');
+            }}
+          />
+        )}
+      </div>
+    );
+  }
 
   return (
     <div
@@ -408,7 +690,7 @@ export default function OnePageEstimate({ tabs, availability }: OnePageEstimateP
         <p className='oe-label'>Your receipt</p>
         <div className='oe-receipt'>
           {receipt.map((line) => {
-            const waiting = !done && line.part > reached && !(line.part === 3 && day);
+            const waiting = !done && partIndex(line.part) > reached && !(line.part === 'oe-day' && day);
             return (
               <div
                 key={line.label}
@@ -421,7 +703,7 @@ export default function OnePageEstimate({ tabs, availability }: OnePageEstimateP
           })}
           <div className='oe-line-total'>
             <span>Today’s estimate</span>
-            <span>{formatRange(total)}</span>
+            <span>{totalText}</span>
           </div>
         </div>
         <p className='oe-help'>
@@ -477,206 +759,183 @@ export default function OnePageEstimate({ tabs, availability }: OnePageEstimateP
         ) : (
           <>
             <Section
-              id='oe-home'
-              number={1}
-              title='Your home'
-              note='A guess is fine'
-              state={stateOf(0)}>
-              <div className='oe-q'>
-                <div className='oe-size'>
-                  <label htmlFor='oe-size'>Home size</label>
-                  <output htmlFor='oe-size'>
-                    {home.size.toLocaleString('en-US')}
-                    <small>sq ft</small>
-                  </output>
-                </div>
-                <input
-                  id='oe-size'
-                  type='range'
-                  min={homeSize.min}
-                  max={homeSize.max}
-                  step={homeSize.step}
-                  value={home.size}
-                  style={
-                    {
-                      '--fill': `${((home.size - homeSize.min) / (homeSize.max - homeSize.min)) * 100}%`,
-                    } as React.CSSProperties
-                  }
-                  onChange={(event) => setHome({ ...home, size: Number(event.target.value) })}
-                />
-                <span className='oe-scale'>
-                  <span>{homeSize.min.toLocaleString('en-US')}</span>
-                  <span>{homeSize.max.toLocaleString('en-US')}+</span>
-                </span>
-              </div>
-              <div className='oe-two'>
-                <fieldset className='oe-q'>
-                  <legend>Stories</legend>
-                  <div className='oe-seg'>
-                    {([1, 2] as const).map((stories) => (
-                      <button
-                        key={stories}
-                        type='button'
-                        aria-pressed={home.stories === stories}
-                        onClick={() => setHome({ ...home, stories })}>
-                        {stories} story
-                      </button>
-                    ))}
-                  </div>
-                </fieldset>
-                <fieldset className='oe-q'>
-                  <legend>Hard water spots?</legend>
-                  <div className='oe-seg'>
-                    <button
-                      type='button'
-                      aria-pressed={!home.hardWater}
-                      onClick={() => setHome({ ...home, hardWater: false })}>
-                      No
-                    </button>
-                    <button
-                      type='button'
-                      aria-pressed={home.hardWater}
-                      onClick={() => setHome({ ...home, hardWater: true })}>
-                      Yes
-                    </button>
-                  </div>
-                </fieldset>
-              </div>
-              <fieldset className='oe-q'>
-                <legend>How dirty, honestly?</legend>
-                <div className='oe-chips'>
-                  {dirtOptions.map((option) => (
-                    <button
-                      key={option.id}
-                      type='button'
-                      aria-pressed={home.dirt === option.id}
-                      onClick={() => setHome({ ...home, dirt: option.id })}>
-                      {option.label}
-                      <small>{option.hint}</small>
-                    </button>
-                  ))}
-                </div>
-              </fieldset>
-            </Section>
-
-            <Section
-              id='oe-package'
-              number={2}
-              title='Choose your package'
-              note='Most people pick Silver'
-              state={stateOf(1)}>
+              id='oe-services'
+              number={partIndex('oe-services') + 1}
+              title='What can we clean for you?'
+              note='Pick one or more'
+              state={stateOf('oe-services')}>
               <div
-                className='oe-pkgs'
-                role='radiogroup'
-                aria-label='Cleaning package'>
-                {packages.map((entry) => (
+                className='oe-services'
+                role='group'
+                aria-label='Services'>
+                {tabs.map((tab) => (
                   <button
-                    key={entry.id}
+                    key={tab.slug}
                     type='button'
-                    role='radio'
-                    aria-checked={packageId === entry.id}
-                    className='oe-pkg'
-                    data-tier={entry.id}
-                    onClick={() => {
-                      setPackageId(entry.id);
-                      reach(1);
-                    }}>
-                    {entry.recommended && <span className='oe-flag'>Recommended</span>}
-                    <span className='oe-art'>
-                      <PackageArt id={entry.id} />
+                    className='oe-service'
+                    aria-pressed={selected.includes(tab.slug)}
+                    onClick={() => toggleService(tab.slug)}>
+                    <span className='oe-service-icon'>
+                      <ServiceIcon slug={tab.slug} />
                     </span>
-                    <b>{entry.name}</b>
-                    <span className='oe-pkg-note'>{entry.note}</span>
-                    <span className='oe-pkg-price'>
-                      {formatRange(packagePrice(entry.id, home, tabs))}
-                      <small>{entry.needsReview ?? 'Instant estimate'}</small>
+                    <span className='oe-service-text'>
+                      <b>{tab.tab}</b>
+                      <small>{tab.tabNote}</small>
                     </span>
-                    <ul>
-                      {entry.includes.map((item) => (
-                        <li
-                          key={item.label}
-                          className={item.added ? 'added' : undefined}>
-                          {item.label}
-                        </li>
-                      ))}
-                    </ul>
+                    <span
+                      className='oe-service-tick'
+                      aria-hidden='true'>
+                      ✓
+                    </span>
                   </button>
                 ))}
               </div>
-              <p className='oe-upgrade'>{upgradeNotes[packageId]}</p>
             </Section>
 
             <Section
+              id='oe-details'
+              number={partIndex('oe-details') + 1}
+              title='A few details'
+              note='A guess is fine'
+              state={stateOf('oe-details')}>
+              {topServices.length ? (
+                topServices.map(serviceBlock)
+              ) : (
+                <p className='oe-hint'>Your services are below, in “Anything else?”.</p>
+              )}
+            </Section>
+
+            {hasWindows && (
+              <Section
+                id='oe-package'
+                number={partIndex('oe-package') + 1}
+                title='Choose your window package'
+                note='Most people pick Silver'
+                state={stateOf('oe-package')}>
+                <div
+                  className='oe-pkgs'
+                  role='radiogroup'
+                  aria-label='Window cleaning package'>
+                  {packages.map((entry) => (
+                    <button
+                      key={entry.id}
+                      type='button'
+                      role='radio'
+                      aria-checked={packageId === entry.id}
+                      className='oe-pkg'
+                      data-tier={entry.id}
+                      onClick={() => {
+                        setPackageId(entry.id);
+                        reach('oe-package');
+                      }}>
+                      {entry.recommended && <span className='oe-flag'>Recommended</span>}
+                      <span className='oe-art'>
+                        <PackageArt id={entry.id} />
+                      </span>
+                      <b>{entry.name}</b>
+                      <span className='oe-pkg-note'>{entry.note}</span>
+                      <span className='oe-pkg-price'>
+                        {formatRange(packagePrice(entry.id, homeFromValues(values[windowsSlug]), tabs))}
+                        <small>{entry.needsReview ?? 'Instant estimate'}</small>
+                      </span>
+                      <ul>
+                        {entry.includes.map((item) => (
+                          <li
+                            key={item.label}
+                            className={item.added ? 'added' : undefined}>
+                            {item.label}
+                          </li>
+                        ))}
+                      </ul>
+                    </button>
+                  ))}
+                </div>
+                <p className='oe-upgrade'>{upgradeNotes[packageId]}</p>
+              </Section>
+            )}
+
+            <Section
               id='oe-extras'
-              number={3}
+              number={partIndex('oe-extras') + 1}
               title='Want to add anything else?'
               note='Optional'
-              state={stateOf(2)}>
+              state={stateOf('oe-extras')}>
               <div className='oe-addons'>
-                {offered.map((addon) => {
-                  const on = picked.includes(addon.id);
-                  const price = addonPrice(addon.id, home, panels, tabs);
+                {crossSell.map((tab) => {
+                  const on = selected.includes(tab.slug);
+                  const preview = rangeFor(tab, values[tab.slug]);
                   return (
                     <div
-                      key={addon.id}
+                      key={tab.slug}
                       className='oe-addon-row'>
                       <button
                         type='button'
                         className='oe-addon'
                         aria-pressed={on}
-                        onClick={() => toggleAddon(addon.id)}>
+                        onClick={() => toggleService(tab.slug, true)}>
                         <span
                           className='oe-box'
                           aria-hidden='true'>
                           ✓
                         </span>
                         <span className='oe-what'>
-                          <b>{addon.name}</b>
-                          <span>{addon.id === 'solar' ? `${panels} panels` : addon.note}</span>
+                          <b>{tab.name}</b>
+                          <span>{tab.tabNote}</span>
                         </span>
                         <span className='oe-amt'>
-                          {price ? (
+                          {preview ? (
                             <>
-                              +{formatRange(price)}
+                              {on ? formatRange(preview) : `from ${formatDollars(preview.low)}`}
                               <span className='oe-chip oe-chip-auto'>Instant</span>
                             </>
                           ) : (
-                            <span className='oe-chip oe-chip-review'>Needs review</span>
+                            <span className='oe-chip oe-chip-review'>From a photo</span>
                           )}
                         </span>
                       </button>
-                      {addon.id === 'solar' && on && (
-                        <label className='oe-panels'>
-                          How many panels?
-                          <input
-                            type='number'
-                            min={solarPanels.min}
-                            max={solarPanels.max}
-                            value={panels}
-                            onChange={(event) =>
-                              setPanels(
-                                Math.min(
-                                  solarPanels.max,
-                                  Math.max(solarPanels.min, Number(event.target.value) || solarPanels.min),
-                                ),
-                              )
-                            }
-                          />
-                        </label>
-                      )}
+                      {on && <div className='oe-addon-more'>{serviceBlock(tab)}</div>}
                     </div>
                   );
                 })}
+                {extrasOffered.map((extra) => {
+                  const on = pickedExtras.includes(extra.id);
+                  return (
+                    <button
+                      key={extra.id}
+                      type='button'
+                      className='oe-addon'
+                      aria-pressed={on}
+                      onClick={() => {
+                        reach('oe-extras');
+                        setPickedExtras((list) =>
+                          on ? list.filter((entry) => entry !== extra.id) : [...list, extra.id],
+                        );
+                      }}>
+                      <span
+                        className='oe-box'
+                        aria-hidden='true'>
+                        ✓
+                      </span>
+                      <span className='oe-what'>
+                        <b>{extra.name}</b>
+                        <span>{extra.note}</span>
+                      </span>
+                      <span className='oe-amt'>
+                        <span className='oe-chip oe-chip-review'>Needs review</span>
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
-              {bonusOffer.enabled && qualifying === 1 && <p className='oe-bonus'>{bonusOffer.text}</p>}
+              {bonusOffer.enabled && instantCount === 2 && <p className='oe-bonus'>{bonusOffer.text}</p>}
             </Section>
 
             <Section
               id='oe-day'
-              number={4}
+              number={partIndex('oe-day') + 1}
               title='Request a day'
               note='We call to confirm'
-              state={stateOf(3)}>
+              state={stateOf('oe-day')}>
               <form
                 onSubmit={send}
                 aria-busy={pending}>
@@ -704,7 +963,7 @@ export default function OnePageEstimate({ tabs, availability }: OnePageEstimateP
                         aria-label={`${longDay(entry.date)}, ${entry.label.toLowerCase()}`}
                         onClick={() => {
                           setDay(entry.date);
-                          reach(3);
+                          reach('oe-day');
                         }}>
                         <b>{Number(entry.date.slice(8))}</b>
                         <small>{entry.label}</small>
@@ -721,11 +980,30 @@ export default function OnePageEstimate({ tabs, availability }: OnePageEstimateP
                         type='button'
                         aria-pressed={time === option.id}
                         onClick={() => setTime(option.id)}>
-                        {option.id === 'Either' ? 'Either' : option.id}
+                        {option.id}
                       </button>
                     ))}
                   </div>
                 </fieldset>
+
+                {/* Clear Club, right after picking a day. */}
+                <fieldset className='oe-q oe-club-pick'>
+                  <legend>{clearClub.title}</legend>
+                  <p className='oe-hint'>{clearClub.text}</p>
+                  <div className='oe-chips'>
+                    {clubPlans.map((option) => (
+                      <button
+                        key={option.id}
+                        type='button'
+                        aria-pressed={plan === option.id}
+                        onClick={() => setPlan(option.id)}>
+                        {option.label}
+                        <small>{option.hint}</small>
+                      </button>
+                    ))}
+                  </div>
+                </fieldset>
+
                 <fieldset
                   className='oe-fields'
                   disabled={pending}>
@@ -857,7 +1135,7 @@ export default function OnePageEstimate({ tabs, availability }: OnePageEstimateP
           className='oe-price'
           aria-live='polite'>
           <span className='oe-label'>Today’s estimate</span>
-          <b>{formatRange(total)}</b>
+          <b>{totalText}</b>
           <span className={`oe-chip ${needsReview ? 'oe-chip-review' : 'oe-chip-auto'}`}>
             {needsReview ? 'Part of this needs review' : 'Instant estimate'}
           </span>
@@ -892,11 +1170,17 @@ export default function OnePageEstimate({ tabs, availability }: OnePageEstimateP
           <b>{clearPricePromise.title}</b>
           {clearPricePromise.text}
         </p>
-        <p className='oe-club'>
-          <b>{clearClub.title}</b>
-          {clearClub.text}
-        </p>
       </aside>
+
+      <LeaveOffer
+        armed={!done && !pending}
+        price={totalText}
+        canPickGold={hasWindows && packageId !== 'gold'}
+        onPickGold={() => {
+          setPackageId('gold');
+          document.getElementById('oe-package')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }}
+      />
     </div>
   );
 }
