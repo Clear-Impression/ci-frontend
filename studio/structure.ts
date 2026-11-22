@@ -1,5 +1,6 @@
 import type {StructureResolver} from 'sanity/structure'
 import {pageHeaders} from '../data/page-headers'
+import {pricingSections} from '../data/estimate-pricing'
 
 export const structure: StructureResolver = (S) => {
   const header = (pageId: string, title = 'Page header') => S.listItem()
@@ -24,6 +25,11 @@ export const structure: StructureResolver = (S) => {
       .initialValueTemplates([S.initialValueTemplateItem('service-category', {category})]))
 
   return S.list().title('Content').items([
+    S.listItem().id('instant-customer-prices').title('Instant customer prices')
+      .child(S.list().title('Instant customer prices').items(pricingSections.map((section) =>
+        S.listItem().id(section.tab.slug).title(section.title)
+          .child(S.document().schemaType(section.schemaType).documentId(section.documentId).title(section.title)),
+      ))),
     S.listItem().id('faq').title('FAQ').child(S.list().title('FAQ').items([
       header('faq'),
       S.documentTypeListItem('faq').title('Questions'),

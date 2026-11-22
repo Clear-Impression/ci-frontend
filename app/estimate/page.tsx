@@ -2,6 +2,7 @@ import { createPageMetadata } from '@/lib/seo';
 import PriceCalculator from '@/components/estimate/PriceCalculator';
 import { getLocations } from '@/lib/locations';
 import { getPageHeader } from '@/lib/page-headers';
+import { getEstimatePricing } from '@/lib/estimate-pricing';
 
 const title = 'Get a Free Quote | Clear Impression';
 const description =
@@ -14,8 +15,9 @@ export const metadata = createPageMetadata({
 });
 
 export default async function EstimatePage() {
-  const header = await getPageHeader('estimate');
-  const { cities } = await getLocations();
+  const [header, { cities }, tabs] = await Promise.all([
+    getPageHeader('estimate'), getLocations(), getEstimatePricing(),
+  ]);
 
   return (
     // The shared layout already supplies the website's header and footer.
@@ -36,7 +38,7 @@ export default async function EstimatePage() {
       </section>
 
       {/* A tab for each service, with its own questions and price. */}
-      <PriceCalculator cities={cities.map((city) => city.name)} />
+      <PriceCalculator cities={cities.map((city) => city.name)} tabs={tabs} />
     </main>
   );
 }

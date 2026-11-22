@@ -45,3 +45,32 @@ expires; FAQs load through FastAPI without caching.
 
 Project members are managed at
 https://www.sanity.io/manage/project/vpeebhw5.
+
+## Instant customer prices
+
+Open **Instant customer prices**, then select Windows by home size, Commercial
+by building, Solar, Gutters, or Screens & tracks. Each service has subsections
+for the factors it uses: size, height, sides, condition, frequency, and add-ons.
+The size section holds the base rate and minimum; Price range controls the
+percentage spread and rounding increment. Hard water remains a photo quote.
+
+The current calculator values prefill new documents. To persist any missing
+sections as drafts, without changing existing drafts or published pricing:
+
+```bash
+npm run seed:instant-prices
+```
+
+The existing values in `data/estimate.ts` were marked as placeholder prices;
+prefilling copies those values exactly, without treating them as confirmed rates.
+Review and publish each service's pricing to activate it. Publishing updates
+the calculator, summary/PDF, and floating estimate bar after roughly 60 seconds
+once the pricing integration is deployed to Vercel. Draft edits have no public
+effect. Missing or invalid fields and Sanity outages use the code defaults.
+
+Multipliers apply to the base price (quantity × rate), followed by flat
+adjustments and selected add-ons. A per-unit add-on is multiplied by quantity.
+The minimum is then applied, and the displayed range is rounded. A negative
+flat adjustment is a discount; 1 is a neutral multiplier and 0 is a valid value.
+
+Run `npm run test:pricing` from the frontend root to verify pricing behavior.

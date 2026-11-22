@@ -66,6 +66,8 @@ export type EstimateTab = {
   mode: 'range' | 'photo';
   rate: number;
   minimum: number;
+  rangePercent?: number;
+  roundingIncrement?: number;
   questions: readonly EstimateQuestion[];
   panel: {
     text: string;
@@ -330,15 +332,13 @@ export const estimateTabs: readonly EstimateTab[] = [
 // What the visitor picked on one tab.
 export type EstimateValues = Record<string, number | string | readonly string[]>;
 
-export function getEstimateTab(slug: string) {
-  return estimateTabs.find((tab) => tab.slug === slug);
+export function getEstimateTab(slug: string, tabs: readonly EstimateTab[] = estimateTabs) {
+  return tabs.find((tab) => tab.slug === slug);
 }
 
 export function startingValues(tab: EstimateTab): EstimateValues {
   return Object.fromEntries(tab.questions.map((question) => [question.id, question.start]));
 }
-
-const roundTo5 = (value: number) => Math.round(value / 5) * 5;
 
 // The likely price range for one tab, or null if it can't be priced here.
 export function rangeFor(tab: EstimateTab, values: EstimateValues): { low: number; high: number } | null {
@@ -350,7 +350,7 @@ export function rangeFor(tab: EstimateTab, values: EstimateValues): { low: numbe
   for (const question of tab.questions) {
     if (question.kind === 'choice') {
       const option = question.options.find((entry) => entry.id === values[question.id]);
-      if (option?.multiply) price *= option.multiply;
+      if (option?.multiply !== undefined) price *= option.multiply;
       if (option?.add) extra += option.add;
     }
     if (question.kind === 'addons') {
@@ -363,9 +363,13 @@ export function rangeFor(tab: EstimateTab, values: EstimateValues): { low: numbe
     }
   }
   // Screens & tracks has no base rate, so it needs at least one part picked.
-  if (tab.rate === 0 && picked === 0) return null;
+  if (tab.slug === 'screen-deep-cleaning' && picked === 0) return null;
   const middle = Math.max(tab.minimum, price + extra);
-  return { low: Math.max(tab.minimum, roundTo5(middle * 0.88)), high: roundTo5(middle * 1.12) };
+  const spread = (tab.rangePercent ?? 12) / 100;
+  const increment = tab.roundingIncrement ?? 5;
+  const round = (value: number) => Math.round(value / increment) * increment;
+  const low = Math.max(tab.minimum, round(middle * (1 - spread)));
+  return { low, high: Math.max(low, round(middle * (1 + spread))) };
 }
 
 // "2,000 sq ft · 2 story · Inside & out"
@@ -411,9 +415,9 @@ export type EstimateLine = {
   details: string;
 };
 
-export function linesFor(added: readonly string[], values: Record<string, EstimateValues>): EstimateLine[] {
+export function linesFor(added: readonly string[], values: Record<string, EstimateValues>, tabs: readonly EstimateTab[] = estimateTabs): EstimateLine[] {
   return added.flatMap((slug) => {
-    const tab = getEstimateTab(slug);
+    const tab = getEstimateTab(slug, tabs);
     if (!tab) return [];
     const picked = values[slug] ?? startingValues(tab);
     return [

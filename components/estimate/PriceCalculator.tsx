@@ -7,13 +7,13 @@ import { company } from '@/data/company';
 import {
   describeValues,
   estimateNote,
-  estimateTabs,
   formatAmount,
   formatRange,
   getEstimateTab,
   linesFor,
   rangeFor,
   startingValues,
+  totalRange,
   type EstimateQuestion,
   type EstimateTab,
   type EstimateValues,
@@ -466,8 +466,8 @@ function progressFor(added: number, details: EstimateDetails, downloaded: boolea
 }
 
 // The page passes in the cities from Sanity, so the list matches the Locations page.
-export default function PriceCalculator({ cities }: { cities: readonly string[] }) {
-  const [active, setActive] = useState(estimateTabs[0].slug);
+export default function PriceCalculator({ cities, tabs }: { cities: readonly string[]; tabs: readonly EstimateTab[] }) {
+  const [active, setActive] = useState(tabs[0].slug);
   const [values, setValues] = useState<Record<string, EstimateValues>>({});
   const [added, setAdded] = useState<string[]>([]);
   const [details, setDetails] = useState<EstimateDetails>(emptyDetails);
@@ -479,7 +479,7 @@ export default function PriceCalculator({ cities }: { cities: readonly string[] 
   const [burst, setBurst] = useState(0);
   const rootRef = useRef<HTMLElement>(null);
   const started = useRef(false);
-  const tab = getEstimateTab(active) ?? estimateTabs[0];
+  const tab = getEstimateTab(active, tabs) ?? tabs[0];
   const tabValues = values[tab.slug] ?? startingValues(tab);
 
   // Pick up where they left off, or open the tab a link asked for.
@@ -495,31 +495,40 @@ export default function PriceCalculator({ cities }: { cities: readonly string[] 
       setValues(saved.values ?? {});
       setAdded(saved.added ?? []);
       setDetails({ ...emptyDetails, ...saved.details });
-      setDownloaded(Boolean(saved.downloaded));
-      if (saved.tab && getEstimateTab(saved.tab)) setActive(saved.tab);
+      setDownloaded(Boolean(saved.downloaded && saved.pricingVersion === JSON.stringify(tabs)));
+      if (saved.tab && getEstimateTab(saved.tab, tabs)) setActive(saved.tab);
     }
-    if (asked && getEstimateTab(asked)) setActive(asked);
+    if (asked && getEstimateTab(asked, tabs)) setActive(asked);
     setLoaded(true);
     /* eslint-enable react-hooks/set-state-in-effect */
     if (asked || params.has('start')) {
       window.history.replaceState(null, '', window.location.pathname);
       window.setTimeout(() => rootRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
     }
-  }, []);
+  }, [tabs]);
 
   useEffect(() => {
     if (!loaded) return;
-    const current = getEstimateTab(active) ?? estimateTabs[0];
+    const current = getEstimateTab(active, tabs) ?? tabs[0];
+    const answers = { ...values, [current.slug]: values[current.slug] ?? startingValues(current) };
+    const summaryLines = linesFor(added, answers, tabs);
+    const total = totalRange(summaryLines);
+    const currentRange = rangeFor(current, answers[current.slug]);
+    const summary = total
+      ? { service: summaryLines.filter((line) => line.range).map((line) => line.name).join(', '), range: formatRange(total) }
+      : currentRange ? { service: current.name, range: formatRange(currentRange) } : null;
     saveEstimate({
       tab: active,
-      values: { ...values, [current.slug]: values[current.slug] ?? startingValues(current) },
+      values: answers,
       added,
       details,
       downloaded,
+      pricingVersion: JSON.stringify(tabs),
+      summary,
     });
-  }, [loaded, active, values, added, details, downloaded]);
+  }, [loaded, active, values, added, details, downloaded, tabs]);
 
-  const lines = linesFor(added, values);
+  const lines = linesFor(added, values, tabs);
   const progress = progressFor(added.length, details, downloaded);
 
   // Any change means the downloaded PDF is out of date.
@@ -532,7 +541,7 @@ export default function PriceCalculator({ cities }: { cities: readonly string[] 
     const has = added.includes(slug);
     setAdded((current) => (has ? current.filter((entry) => entry !== slug) : [...current, slug]));
     // Keep the answers they see now, even if they never touched a question.
-    const entry = getEstimateTab(slug);
+    const entry = getEstimateTab(slug, tabs);
     if (!has && entry) setValues((current) => ({ ...current, [slug]: current[slug] ?? startingValues(entry) }));
     if (!has) setWipe((count) => count + 1);
     setDownloaded(false);
@@ -573,8 +582,8 @@ export default function PriceCalculator({ cities }: { cities: readonly string[] 
     const step = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0;
     if (!step) return;
     event.preventDefault();
-    const index = estimateTabs.findIndex((entry) => entry.slug === active);
-    const next = estimateTabs[(index + step + estimateTabs.length) % estimateTabs.length];
+    const index = tabs.findIndex((entry) => entry.slug === active);
+    const next = tabs[(index + step + tabs.length) % tabs.length];
     setActive(next.slug);
     document.getElementById(`tab-${next.slug}`)?.focus();
   };
@@ -601,7 +610,7 @@ export default function PriceCalculator({ cities }: { cities: readonly string[] 
             aria-label='Services'
             onKeyDown={onTabsKeyDown}
             className={styles.tabs}>
-            {estimateTabs.map((entry) => {
+            {tabs.map((entry) => {
               const on = entry.slug === active;
               return (
                 <button
