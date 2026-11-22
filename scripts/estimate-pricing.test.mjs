@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { createRequire } from 'node:module';
@@ -244,4 +244,91 @@ test('all Sanity-priced services agree across quote lines, total, and outgoing e
   const gutterOnly = buildInstantQuoteRequest(contact, [GUTTER_SERVICE], flow.values, false, tabs);
   assert.deepEqual(gutterOnly.services, ['window-cleaning']);
   assert.match(gutterOnly.details, /Gutter & Roof Care/);
+});
+
+// Execute the real route/action modules with only their external dependencies
+// mocked, so a merge cannot silently disconnect the calculator or its submit action.
+function loadServerModule(filename, dependencies) {
+  const ts = require('typescript');
+  const compiled = ts.transpileModule(readFileSync(filename, 'utf8'), {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX, target: ts.ScriptTarget.ES2021, esModuleInterop: true },
+  }).outputText;
+  const exports = {};
+  new Function('require', 'exports', compiled)((id) => {
+    if (id in dependencies) return dependencies[id];
+    if (id === 'react/jsx-runtime') return require(id);
+    throw new Error(`Unexpected dependency in ${filename}: ${id}`);
+  }, exports);
+  return exports;
+}
+
+test('the estimate route renders the service calculator with Sanity prices, headers, and cities', async () => {
+  const React = require('react');
+  const { renderToStaticMarkup } = require('react-dom/server');
+  const prices = applyEstimatePricing([document(WINDOW_SERVICE, { rate: 0.23 })]);
+  let calculatorProps;
+  const route = loadServerModule('app/estimate/page.tsx', {
+    '@/lib/seo': { createPageMetadata: () => ({}) },
+    '@/components/estimate/PriceCalculator': { __esModule: true, default: (props) => {
+      calculatorProps = props;
+      return React.createElement('div', { 'data-calculator': 'service-quote' });
+    } },
+    '@/lib/locations': { getLocations: async () => ({ cities: [{ name: 'Mesa' }, { name: 'Phoenix' }] }) },
+    '@/lib/page-headers': { getPageHeader: async () => ({ title: 'Sanity quote heading', subtitle: 'Sanity quote subtitle' }) },
+    '@/lib/estimate-pricing': { getEstimatePricing: async () => prices },
+  });
+  const html = renderToStaticMarkup(await route.default());
+  assert.match(html, /data-calculator="service-quote"/);
+  assert.match(html, /Sanity quote heading/);
+  assert.match(html, /Sanity quote subtitle/);
+  assert.match(html, /id="estimate"/);
+  assert.doesNotMatch(html, /Bronze|Silver|Gold|package|request a day/i);
+  assert.equal(calculatorProps.tabs, prices);
+  assert.equal(calculatorProps.tabs[0].rate, 0.23);
+  assert.deepEqual(calculatorProps.cities, ['Mesa', 'Phoenix']);
+});
+
+test('the merged submit action validates contacts and pricing before using the existing quote email pipeline', async () => {
+  const prices = applyEstimatePricing([document(WINDOW_SERVICE, { rate: 0.2 })]);
+  const tabs = quoteTabs(prices);
+  const sent = [];
+  const actions = loadServerModule('app/estimate/actions.ts', {
+    '@/data/packages': {}, // The parked package action is not part of this flow.
+    '@/app/quote/actions': { submitQuote: async (data) => {
+      sent.push(data);
+      return { status: 'saved', id: '00000000-0000-4000-8000-000000000099' };
+    } },
+    '@/lib/estimate-pricing': { getEstimatePricing: async () => prices },
+    '@/data/estimate-flow': { quoteTabs },
+    '@/data/estimate-request': { buildInstantQuoteRequest, contactError },
+  });
+  const data = new FormData();
+  Object.entries({ ...contact, submissionKey: '00000000-0000-4000-8000-000000000003',
+    values: JSON.stringify(restoreQuoteFlow(tabs).values), pricingVersion: JSON.stringify(tabs), photoSent: 'true',
+  }).forEach(([key, value]) => data.set(key, value));
+  [WINDOW_SERVICE, GUTTER_SERVICE, PHOTO_SERVICE].forEach((slug) => data.append('services', slug));
+  data.set('email', '');
+  assert.equal((await actions.submitInstantQuote(data)).status, 'invalid');
+  assert.equal(sent.length, 0);
+  data.set('email', contact.email);
+  data.set('pricingVersion', 'stale-prices');
+  const refresh = await actions.submitInstantQuote(data);
+  assert.equal(refresh.status, 'pricing_changed');
+  assert.equal(refresh.tabs[0].rate, 0.2);
+  assert.equal(sent.length, 0);
+  data.set('pricingVersion', JSON.stringify(tabs));
+  data.set('total', '0'); // Browser-provided totals must not be used.
+  const result = await actions.submitInstantQuote(data);
+  assert.equal(result.status, 'saved');
+  assert.equal(sent.length, 1);
+  assert.equal(sent[0].get('email'), contact.email);
+  assert.equal(sent[0].get('phone'), contact.phone);
+  assert.equal(sent[0].get('postalCode'), '00000');
+  assert.deepEqual(sent[0].getAll('services'), ['window-cleaning']);
+  assert.match(sent[0].get('details'), /\$350 – \$450/);
+  assert.match(sent[0].get('details'), /Photos sent/);
+  assert.match(sent[0].get('details'), /Gutter & Roof Care/);
+  assert.equal(sent[0].get('total'), null);
+  await actions.submitInstantQuote(data);
+  assert.equal(sent[1].get('submissionKey'), sent[0].get('submissionKey'));
 });

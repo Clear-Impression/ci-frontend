@@ -77,6 +77,11 @@ Run `npm run test:pricing` from the frontend root to verify pricing behavior.
 
 ## Customer quote steps
 
+The package-based `EstimateFlow` is parked for future approval. The active
+`/estimate` route renders `PriceCalculator` and uses `submitInstantQuote`.
+Keep both server-action exports while retaining the inactive package files,
+so those files still type-check without replacing the active submission path.
+
 The website now starts with service selection for a home / single building.
 The Business toggle is removed; Commercial by building is retained in Studio
 for future use.
