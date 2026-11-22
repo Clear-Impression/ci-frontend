@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { company } from '@/data/company';
 import { getBlogs } from '@/lib/blog';
+import { getJobOpenings } from '@/lib/careers';
 import { getLocations } from '@/lib/locations';
 import { getServices } from '@/lib/services';
 
@@ -8,6 +9,7 @@ const publicPaths = [
   '/',
   '/about',
   '/blog',
+  '/careers',
   '/estimate',
   '/faq',
   '/feedback',
@@ -22,15 +24,17 @@ const publicPaths = [
 export const revalidate = 60;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [{ cities }, services, blogs] = await Promise.all([
+  const [{ cities }, services, blogs, openings] = await Promise.all([
     getLocations(),
     getServices(),
     getBlogs(),
+    getJobOpenings(),
   ]);
   const paths = new Set([
     ...publicPaths,
     ...cities.map((city) => city.href),
     ...services.filter((service) => service.slug).map((service) => '/services/' + service.slug),
+    ...openings.map((opening) => '/careers/' + opening.slug),
   ]);
 
   const entries: MetadataRoute.Sitemap = Array.from(paths, (path) => ({

@@ -91,6 +91,13 @@ export const siteSearchEntries: SearchEntry[] = [
     description: 'Appointments, cancellations, rescheduling, weather, and payment.',
     keywords: ['terms', 'policy', 'cancel', 'cancellation', 'reschedule', 'payment', 'weather', 'rain'],
   },
+  {
+    type: 'page',
+    title: 'Careers',
+    href: '/careers',
+    description: 'Open roles on our crew. Apply online with your resume.',
+    keywords: ['jobs', 'job', 'hiring', 'work', 'apply', 'employment', 'career', 'join'],
+  },
   // Every service page. The main services rank a little higher.
   ...services.map((service): SearchEntry => ({
     type: 'service',

@@ -5,29 +5,33 @@ import { getEstimatePricing } from '@/lib/estimate-pricing';
 import { quoteTabs } from '@/data/estimate-flow';
 import { buildInstantQuoteRequest, contactError, type EstimateContact } from '@/data/estimate-request';
 
+import { describeValues, rangeFor, type EstimateValues } from '@/data/estimate';
 import {
-  addonPrice,
-  addons,
+  cleanValues,
+  clubPlans,
+  extras,
   formatRange,
+  homeFromValues,
   packagePrice,
   packages,
-  solarPanels,
-  type AddonId,
-  type HomeDetails,
+  type ClubPlan,
+  type ExtraId,
   type PackageId,
+  type Range,
 } from '@/data/packages';
 
-// Sends an appointment request from the estimate to our backend, using the
-// same quote endpoint as the /quote page. The package, add-ons, price and
+// Sends a request from the one-page estimate to our backend, using the same
+// quote endpoint as the /quote page. The services, package, extras, price and
 // requested day go in the details, so nothing changes on the backend.
 // Next step: pass it on to The Customer Factor (through Zapier) for texts.
 
 export type AppointmentRequest = {
   submissionKey: string;
-  home: HomeDetails;
-  packageId: PackageId;
-  addons: AddonId[];
-  panels: number;
+  services: { slug: string; values: EstimateValues }[];
+  // Only used when windows are picked.
+  packageId: PackageId | null;
+  extras: ExtraId[];
+  plan: ClubPlan;
   day: string;
   time: string;
   contact: {
@@ -47,52 +51,90 @@ export type AppointmentResult =
 
 const uuidPattern = /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
 const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+const windowsSlug = 'residential-window-washing';
 
-// Which backend service each choice belongs to.
-const backendService: Partial<Record<AddonId, string>> = {
-  screens: 'screen-cleaning',
-  solar: 'solar-panel-cleaning',
+// The quote API only knows three categories; the details say exactly what was picked.
+const backendService: Record<string, string> = {
+  'residential-window-washing': 'window-cleaning',
+  'commercial-office-glass': 'window-cleaning',
+  'gutter-roof-care': 'window-cleaning',
+  'hard-water-stain-removal': 'window-cleaning',
+  'screen-deep-cleaning': 'screen-cleaning',
+  'solar-panel-cleaning': 'solar-panel-cleaning',
 };
 
 const clip = (value: unknown, limit: number) => (typeof value === 'string' ? value.trim().slice(0, limit) : '');
 
 export async function requestAppointment(request: AppointmentRequest): Promise<AppointmentResult> {
-  const chosen = packages.find((entry) => entry.id === request.packageId);
-  const picked = addons.filter(
-    (addon) => request.addons.includes(addon.id) && addon.includedIn !== request.packageId,
-  );
-  const panels = Math.min(solarPanels.max, Math.max(solarPanels.min, Math.round(Number(request.panels) || 0)));
-  const home: HomeDetails = {
-    size: Math.min(20000, Math.max(0, Math.round(Number(request.home?.size) || 0))),
-    stories: request.home?.stories === 2 ? 2 : 1,
-    dirt: ['light', 'normal', 'rough'].includes(request.home?.dirt) ? request.home.dirt : 'normal',
-    hardWater: Boolean(request.home?.hardWater),
-  };
+  // Prices are worked out again here from the Sanity prices, so the request
+  // shows the real numbers even if the page was changed in the browser.
+  const tabs = await getEstimatePricing();
+  const given = Array.isArray(request.services) ? request.services.slice(0, tabs.length) : [];
+  const slugs = given.map((entry) => entry?.slug);
+  const chosen = tabs.filter((tab) => slugs.includes(tab.slug));
+  const packageEntry = packages.find((entry) => entry.id === request.packageId);
+  const hasWindows = chosen.some((tab) => tab.slug === windowsSlug);
+  const askedExtras = Array.isArray(request.extras) ? request.extras : [];
+  const knownExtras = askedExtras.filter((id) => extras.some((extra) => extra.id === id));
 
-  if (!chosen || !uuidPattern.test(request.submissionKey) || !datePattern.test(request.day)) {
+  if (
+    (!chosen.length && !knownExtras.length) ||
+    chosen.length !== new Set(slugs).size ||
+    (hasWindows && !packageEntry) ||
+    !uuidPattern.test(request.submissionKey) ||
+    !datePattern.test(request.day)
+  ) {
     return { status: 'invalid' };
   }
 
-  // Prices are worked out again here, so the request shows what the
-  // customer saw even if the page was changed in their browser.
-  const lines = [
-    `Package: ${chosen.name} (${formatRange(packagePrice(chosen.id, home))})`,
-    ...picked.map((addon) => {
-      const price = addonPrice(addon.id, home, panels);
-      const extra = addon.id === 'solar' ? `, ${panels} panels` : '';
-      return `Add-on: ${addon.name}${extra} (${price ? formatRange(price) : 'needs a custom quote'})`;
-    }),
-    `Home: ${home.size.toLocaleString('en-US')} sq ft, ${home.stories} story, ${home.dirt}${home.hardWater ? ', hard water spots' : ''}`,
+  const lines: string[] = [];
+  let total: Range = { low: 0, high: 0 };
+  const add = (range: Range | null) => {
+    if (range) total = { low: total.low + range.low, high: total.high + range.high };
+  };
+
+  for (const tab of chosen) {
+    const values = cleanValues(tab, given.find((entry) => entry.slug === tab.slug)?.values);
+    if (tab.slug === windowsSlug && packageEntry) {
+      const price = packagePrice(packageEntry.id, homeFromValues(values), tabs);
+      add(price);
+      const answers = tab.questions
+        .filter((question) => question.id === 'size' || question.id === 'height' || question.id === 'dirt')
+        .map((question) => describeValues({ ...tab, questions: [question] }, values));
+      lines.push(`${tab.name}: ${packageEntry.name} package (${formatRange(price)})\n  ${answers.join(' · ')}`);
+      continue;
+    }
+    if (tab.slug === 'screen-deep-cleaning' && packageEntry?.id === 'gold' && hasWindows) {
+      lines.push(`${tab.name}: included in Gold\n  ${describeValues(tab, values)}`);
+      continue;
+    }
+    const price = rangeFor(tab, values);
+    add(price);
+    lines.push(
+      price
+        ? `${tab.name}: ${formatRange(price)}\n  ${describeValues(tab, values)}`
+        : `${tab.name}: needs a photo to price`,
+    );
+  }
+
+  const pickedExtras = extras.filter(
+    (extra) => knownExtras.includes(extra.id) && !(hasWindows && extra.includedIn === packageEntry?.id),
+  );
+  for (const extra of pickedExtras) lines.push(`Special service: ${extra.name} (needs a custom quote)`);
+
+  const plan = clubPlans.find((entry) => entry.id === request.plan) ?? clubPlans[0];
+  lines.push(
+    `Instant total: ${total.high ? formatRange(total) : 'priced after review'}`,
+    `Clear Club: ${plan.id === 'once' ? 'not now (one-time clean)' : plan.label.toLowerCase()}`,
     `Requested day: ${request.day}, ${clip(request.time, 20) || 'any time'}`,
     'Source: instant estimate (request, not a confirmed booking)',
-  ];
+  );
 
-  const services = new Set(['window-cleaning']);
-  for (const addon of picked) {
-    const service = backendService[addon.id];
-    if (service) services.add(service);
-  }
-  if (chosen.id === 'gold') services.add('screen-cleaning');
+  const services = [...new Set(chosen.map((tab) => backendService[tab.slug] ?? 'window-cleaning'))];
+  // Special services only: file it under window cleaning; the details say what.
+  if (!services.length) services.push('window-cleaning');
+  if (hasWindows && packageEntry?.id === 'gold') services.push('screen-cleaning');
+  const commercialOnly = chosen.length > 0 && chosen.every((tab) => tab.slug === 'commercial-office-glass');
 
   const payload = {
     submission_key: request.submissionKey,
@@ -104,8 +146,8 @@ export async function requestAppointment(request: AppointmentRequest): Promise<A
     city: clip(request.contact?.city, 100),
     state: 'AZ',
     postal_code: clip(request.contact?.postalCode, 10),
-    property_type: 'residential',
-    services: [...services],
+    property_type: commercialOnly ? 'commercial' : 'residential',
+    services: [...new Set(services)],
     details: lines.join('\n'),
   };
 

@@ -32,6 +32,13 @@ const nextConfig: NextConfig = {
     }));
   },
   agentRules: false,
+  // Server actions accept 1 MB by default. The careers form sends a resume of
+  // up to 4 MB, and Vercel rejects anything over 4.5 MB anyway.
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '4.5mb',
+    },
+  },
   // Photos uploaded in Sanity Studio are served from Sanity's image CDN.
   images: {
     remotePatterns: [

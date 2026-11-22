@@ -1,25 +1,25 @@
-// The 3-step estimate: Bronze, Silver and Gold packages, the optional
-// add-ons, and the wording around them.
+// The estimate: Bronze, Silver and Gold window packages, the extras, the
+// Clear Club plans and the wording around them.
 //
 // PLACEHOLDER PRICES: the window, screen, track and solar numbers come from
 // the instant estimate settings in data/estimate.ts, which are still stand-ins
 // until Niels confirms his real rates. Change them there and both the old
 // calculator and this page update.
 
-import { getEstimateTab, type EstimateTab } from '@/data/estimate';
+import { getEstimateTab, type EstimateTab, type EstimateValues } from '@/data/estimate';
 
 export type PackageId = 'bronze' | 'silver' | 'gold';
 
 export type HomeDetails = {
+  // Window panes.
   size: number;
+  style?: string;
   stories: 1 | 2;
   dirt: 'light' | 'normal' | 'rough';
   hardWater: boolean;
 };
 
-export const startingHome: HomeDetails = { size: 2000, stories: 1, dirt: 'normal', hardWater: false };
-
-export const homeSize = { min: 600, max: 6500, step: 50 };
+export const startingHome: HomeDetails = { size: 24, style: 'none', stories: 1, dirt: 'normal', hardWater: false };
 
 export const dirtOptions = [
   { id: 'light', label: 'Light', hint: 'Cleaned in the last year' },
@@ -78,29 +78,24 @@ export const upgradeNotes: Record<PackageId, string> = {
   gold: 'You have everything: inside and out, screens, tracks, house wash, priority scheduling and our 7-day touch-up guarantee.',
 };
 
-export type AddonId = 'screens' | 'solar' | 'hardWater' | 'houseWash' | 'chandelier';
+// Special services: priced by a person after the request (no instant
+// price). The names and notes match the Services page.
+export type ExtraId = string;
 
-export type Addon = {
-  id: AddonId;
-  name: string;
-  note: string;
-  // Instant add-ons are priced here; the rest are quoted by a person.
-  instant: boolean;
-  // Counts toward the "add one more and unlock a bonus" offer.
-  qualifies?: boolean;
-  // Already part of this package, so it isn't offered.
-  includedIn?: PackageId;
-};
-
-export const addons: readonly Addon[] = [
-  { id: 'screens', name: 'Screens and tracks', note: 'Screens washed, tracks detailed', instant: true, qualifies: true, includedIn: 'gold' },
-  { id: 'solar', name: 'Solar panel cleaning', note: 'Pure water and soft brushes', instant: true, qualifies: true },
-  { id: 'hardWater', name: 'Hard water stain removal', note: 'Priced from a photo', instant: false },
-  { id: 'houseWash', name: 'Exterior house wash', note: 'Confirmed after review', instant: false, includedIn: 'gold' },
-  { id: 'chandelier', name: 'Chandelier cleaning', note: 'Custom quote', instant: false },
+export const extras: readonly { id: ExtraId; name: string; note: string; includedIn?: PackageId }[] = [
+  { id: 'house-wash', name: 'Exterior house wash', note: 'Confirmed after review', includedIn: 'gold' },
+  { id: 'french-storm-windows', name: 'French & Storm Windows', note: 'Detailed care for specialty window designs.' },
+  { id: 'glass-door-mirror-polishing', name: 'Glass Door & Mirror Polishing', note: 'Keep high-touch glass bright and spotless.' },
+  { id: 'skylight-rooftop-glass', name: 'Skylight & Rooftop Glass', note: 'Brighten hard-to-reach glass above your home.' },
+  { id: 'chandelier-cleaning', name: 'Chandelier Cleaning', note: 'Bring back the sparkle of your light fixtures.' },
+  { id: 'awning-sunroom-cleaning', name: 'Awning & Sunroom Cleaning', note: 'Make your covered outdoor spaces feel fresh.' },
+  { id: 'post-construction-cleanup', name: 'Post-Construction Cleanup', note: 'Clear away the mess left after a project.' },
+  { id: 'move-in-move-out-servicing', name: 'Move-In / Move-Out Servicing', note: 'Start or finish a move with a clean property.' },
+  { id: 'graffiti-removal-service', name: 'Graffiti Removal Service', note: 'Get exterior surfaces looking like new again.' },
+  { id: 'general-property-maintenance', name: 'General Property Maintenance', note: 'Keep your property looking its best year-round.' },
 ];
 
-// The bonus offer, shown once one qualifying add-on is picked. The bonus
+// The bonus offer, shown once two services are picked. The bonus
 // itself is still to be decided by Niels; set `enabled` to false to hide it.
 export const bonusOffer = {
   enabled: true,
@@ -113,22 +108,45 @@ export const clearPricePromise = {
 };
 
 export const clearClub = {
-  title: 'Clear Club',
-  text: 'Come back every 3 or 6 months and save on each visit after this one. No sign-up needed today.',
+  title: 'Join the Clear Club?',
+  text: 'Come back every 3 or 6 months and save on each visit after this one. No sign-up today; we set it up when we call.',
+};
+
+export type ClubPlan = 'once' | 'six' | 'three';
+
+export const clubPlans: readonly { id: ClubPlan; label: string; hint: string }[] = [
+  { id: 'once', label: 'Just this once', hint: 'No plan' },
+  { id: 'six', label: 'Every 6 months', hint: 'Save on each visit' },
+  { id: 'three', label: 'Every 3 months', hint: 'Save on each visit' },
+];
+
+// Shown once if someone looks like they're leaving the estimate.
+// The referral amount came from the team; confirm the details with Niels.
+export const leaveOffers = {
+  referral: {
+    title: 'Refer a friend, get $50 off',
+    text: 'Send a friend our way. Once they book, you get $50 off your next service.',
+  },
+  guarantee: {
+    title: 'Gold comes with a 7-day guarantee',
+    text: 'Pick Gold and if anything isn’t right within 7 days, we come back and touch it up.',
+  },
 };
 
 export const paymentNote = 'No payment now. We take cash, check or Zelle on cleaning day.';
 
 // ---------- Pricing ----------
+// Prices come from the instant estimate settings, which Niels edits in Sanity
+// ("Instant prices"). Pass in the tabs loaded with getEstimatePricing(); the
+// built-in defaults are used only if none are given.
 
-function tab(slug: string): EstimateTab {
-  const found = getEstimateTab(slug);
+type Tabs = readonly EstimateTab[];
+
+function tab(tabs: Tabs, slug: string): EstimateTab {
+  const found = tabs.find((entry) => entry.slug === slug) ?? getEstimateTab(slug);
   if (!found) throw new Error(`Missing estimate settings for ${slug}`);
   return found;
 }
-
-const windowsTab = tab('residential-window-washing');
-const solarTab = tab('solar-panel-cleaning');
 
 function choice(tabData: EstimateTab, questionId: string, optionId: string) {
   const question = tabData.questions.find((entry) => entry.id === questionId);
@@ -145,39 +163,66 @@ function addonAmount(tabData: EstimateTab, addonId: string) {
   return 0;
 }
 
-// Screens and tracks together, from the windows tab.
-const screensAndTracks = addonAmount(windowsTab, 'screens') + addonAmount(windowsTab, 'tracks');
-
-function windowsPrice(home: HomeDetails, outsideOnly: boolean) {
-  let price = home.size * windowsTab.rate;
-  price *= choice(windowsTab, 'height', home.stories === 2 ? 'two' : 'one')?.multiply ?? 1;
-  if (outsideOnly) price *= choice(windowsTab, 'sides', 'outside')?.multiply ?? 1;
-  price += choice(windowsTab, 'dirt', home.dirt)?.add ?? 0;
-  return Math.max(windowsTab.minimum, price);
-}
-
 export type Range = { low: number; high: number };
 
-const roundTo5 = (value: number) => Math.round(value / 5) * 5;
-
-// Same spread as the current calculator: the price minus and plus 12%.
-const toRange = (middle: number): Range => ({ low: roundTo5(middle * 0.88), high: roundTo5(middle * 1.12) });
-
-export function packagePrice(id: PackageId, home: HomeDetails): Range {
-  if (id === 'bronze') return toRange(windowsPrice(home, true));
-  if (id === 'silver') return toRange(windowsPrice(home, false));
-  return toRange(windowsPrice(home, false) + screensAndTracks);
+// The same spread and rounding as the instant estimate settings in Sanity.
+function toRange(middle: number, tabData: EstimateTab): Range {
+  const spread = (tabData.rangePercent ?? 12) / 100;
+  const step = tabData.roundingIncrement ?? 5;
+  const round = (value: number) => Math.round(value / step) * step;
+  return { low: round(middle * (1 - spread)), high: round(middle * (1 + spread)) };
 }
 
-export const solarPanels = { min: 4, max: 60, start: 20 };
+// Screens and tracks together, from the windows settings.
+function screensAndTracks(windows: EstimateTab) {
+  return addonAmount(windows, 'screens') + addonAmount(windows, 'tracks');
+}
 
-export function addonPrice(id: AddonId, home: HomeDetails, panels: number): Range | null {
-  if (id === 'screens') return toRange(screensAndTracks);
-  if (id === 'solar') {
-    const height = choice(solarTab, 'height', home.stories === 2 ? 'two' : 'one')?.multiply ?? 1;
-    return toRange(Math.max(solarTab.minimum, panels * solarTab.rate * height));
+function windowsPrice(windows: EstimateTab, home: HomeDetails, outsideOnly: boolean) {
+  let price = home.size * windows.rate;
+  price *= choice(windows, 'style', home.style ?? 'none')?.multiply ?? 1;
+  price *= choice(windows, 'height', home.stories === 2 ? 'two' : 'one')?.multiply ?? 1;
+  if (outsideOnly) price *= choice(windows, 'sides', 'outside')?.multiply ?? 1;
+  price += choice(windows, 'dirt', home.dirt)?.add ?? 0;
+  return Math.max(windows.minimum, price);
+}
+
+export function packagePrice(id: PackageId, home: HomeDetails, tabs: Tabs = []): Range {
+  const windows = tab(tabs, 'residential-window-washing');
+  if (id === 'bronze') return toRange(windowsPrice(windows, home, true), windows);
+  if (id === 'silver') return toRange(windowsPrice(windows, home, false), windows);
+  return toRange(windowsPrice(windows, home, false) + screensAndTracks(windows), windows);
+}
+
+// The windows answers as home details for the packages.
+export function homeFromValues(values: EstimateValues): HomeDetails {
+  const dirt = values.dirt;
+  return {
+    size: Number(values.size) || startingHome.size,
+    style: typeof values.style === 'string' ? values.style : 'none',
+    stories: values.height === 'two' ? 2 : 1,
+    dirt: dirt === 'light' || dirt === 'rough' ? dirt : 'normal',
+    hardWater: false,
+  };
+}
+
+// Keeps only answers the questions allow, so a changed page can't send odd values.
+export function cleanValues(tabData: EstimateTab, raw: unknown): EstimateValues {
+  const given = raw !== null && typeof raw === 'object' ? (raw as Record<string, unknown>) : {};
+  const values: EstimateValues = {};
+  for (const question of tabData.questions) {
+    const answer = given[question.id];
+    if (question.kind === 'slider') {
+      const amount = Math.round(Number(answer) / question.step) * question.step;
+      values[question.id] = Number.isFinite(amount) ? Math.min(question.max, Math.max(question.min, amount)) : question.start;
+    } else if (question.kind === 'choice') {
+      values[question.id] = question.options.some((option) => option.id === answer) ? (answer as string) : question.start;
+    } else {
+      const list = Array.isArray(answer) ? answer : question.start;
+      values[question.id] = question.options.map((option) => option.id).filter((id) => list.includes(id));
+    }
   }
-  return null;
+  return values;
 }
 
 const dollars = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });

@@ -8,5 +8,7 @@ import {blog} from './blog'
 import {instantPriceTypes} from './instantPrices'
 import {galleryJob} from './galleryJob'
 import {beforeAfter} from './beforeAfter'
-
-export const schemaTypes = [faq, service, pageHeader, city, locationsPage, photoOrVideo, blog, galleryJob, beforeAfter, ...instantPriceTypes]
+import {jobOpening} from './jobOpening'
+import {seasonalOffers} from './seasonalOffers'
+import {about} from './about'
+export const schemaTypes = [faq, service, pageHeader, city, locationsPage, photoOrVideo, blog, seasonalOffers, jobOpening, about, ...instantPriceTypes]

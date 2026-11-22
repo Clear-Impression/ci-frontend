@@ -7,8 +7,58 @@ export const ESTIMATE_PRICING_QUERY = defineQuery(`
   }
 `)
 
+// The scrolling header bar and the homepage popup, with their theme and dates.
+export const SEASONAL_OFFERS_QUERY = defineQuery(`
+  *[_type == "seasonalOffers" && _id == "seasonalOffers"][0] {
+    theme,
+    customColor,
+    customIcon,
+    barOn,
+    barPosition,
+    barMessages,
+    barLink,
+    popupOn,
+    popupLabel,
+    popupTitle,
+    popupText,
+    popupButtonLabel,
+    popupLink,
+    "popupImage": popupImage {
+      alt,
+      "url": asset->url,
+      "width": asset->metadata.dimensions.width,
+      "height": asset->metadata.dimensions.height,
+      "hotspot": hotspot{x, y}
+    },
+    startsAt,
+    endsAt
+  }
+`)
+
 export const PAGE_HEADER_QUERY = defineQuery(`
   *[_type == "pageHeader" && _id == $id][0] {title, subtitle}
+`)
+
+export const ABOUT_QUERY = defineQuery(`
+  *[_type == "about" && _id == "about"][0] {
+    ownerName,
+    ownerRole,
+    "ownerPhoto": ownerPhoto {
+      alt,
+      "url": asset->url,
+      "width": asset->metadata.dimensions.width,
+      "height": asset->metadata.dimensions.height,
+      "hotspot": hotspot{x, y}
+    },
+    "story": story[]{
+      heading,
+      "paragraphs": paragraphs[].text
+    },
+    promiseHeading,
+    promiseTagline,
+    "promiseParagraphs": promiseParagraphs[].text,
+    "values": values[]{icon, title, description}
+  }
 `)
 
 // The photo and video fields shared by cities and the Locations page.
@@ -144,4 +194,32 @@ export const BLOG_QUERY = defineQuery(`
       "caption": caption
     }
   }
+`)
+
+// Roles on the Careers page. Paused roles are left out.
+const JOB_OPENING_FIELDS = `{
+  title,
+  "slug": slug.current,
+  employmentType,
+  "pay": coalesce(pay, null),
+  summary,
+  "duties": coalesce(duties, []),
+  "requirements": coalesce(requirements, []),
+  "schedule": coalesce(schedule, null)
+}`
+
+export const JOB_OPENINGS_QUERY = defineQuery(`
+  *[
+    _type == "jobOpening" &&
+    coalesce(accepting, true) == true &&
+    defined(slug.current)
+  ] | order(displayOrder asc, title asc) ${JOB_OPENING_FIELDS}
+`)
+
+export const JOB_OPENING_QUERY = defineQuery(`
+  *[
+    _type == "jobOpening" &&
+    coalesce(accepting, true) == true &&
+    slug.current == $slug
+  ][0] ${JOB_OPENING_FIELDS}
 `)

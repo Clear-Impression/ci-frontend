@@ -49,8 +49,9 @@ export default defineConfig({
       if (context.schemaType === 'pageHeader') {
         return actions.filter((action) => action.action !== 'duplicate')
       }
-      // There is only one Locations page, so it can't be copied, unpublished, or deleted.
-      if (context.schemaType === 'locationsPage') {
+      // There is only one Locations page and one Seasonal offers document, so they
+      // can't be copied, unpublished, or deleted. Offers are turned off with their switches.
+      if (['locationsPage', 'seasonalOffers', 'about'].includes(context.schemaType)) {
         return actions.filter((action) =>
           !['duplicate', 'unpublish', 'delete'].includes(action.action ?? ''),
         )
@@ -61,6 +62,7 @@ export default defineConfig({
       !pricingTypes.has(option.templateId) &&
       option.templateId !== 'page-header' &&
       option.templateId !== 'locationsPage' &&
+      option.templateId !== 'seasonalOffers' &&
       (option.templateId !== 'service-category' || creationContext.type !== 'global'),
     ),
   },

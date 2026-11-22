@@ -1,12 +1,12 @@
 import { createPageMetadata } from '@/lib/seo';
-import PriceCalculator from '@/components/estimate/PriceCalculator';
-import { getLocations } from '@/lib/locations';
-import { getPageHeader } from '@/lib/page-headers';
+import { jakarta } from '@/app/fonts';
+import OnePageEstimate from '@/components/estimate/OnePageEstimate';
+import { getAvailability } from '@/lib/availability';
 import { getEstimatePricing } from '@/lib/estimate-pricing';
 
 const title = 'Get a Free Quote | Clear Impression';
 const description =
-  'Get an instant ballpark price for window, solar panel, gutter, and screen cleaning in the Phoenix metro area, or request an exact quote.';
+  'Get an instant price for window cleaning in the Phoenix metro area: pick Bronze, Silver or Gold, add extras and request a day, all on one page.';
 
 export const metadata = createPageMetadata({
   path: '/estimate',
@@ -14,32 +14,22 @@ export const metadata = createPageMetadata({
   description,
 });
 
+// Prices (from Sanity) and open days are checked again every 10 minutes.
+export const revalidate = 600;
+
 export default async function EstimatePage() {
-  const [header, { cities }, tabs] = await Promise.all([
-    getPageHeader('estimate'), getLocations(), getEstimatePricing(),
-  ]);
+  const [tabs, availability] = await Promise.all([getEstimatePricing(), getAvailability()]);
 
   return (
     // The shared layout already supplies the website's header and footer.
-    <main className='flex-1 bg-[#faf8fd] text-[#200b38]'>
-      {/* Same header band as the other pages. */}
-      <section className='relative isolate overflow-hidden bg-[#200b38] text-white'>
-        <div className='mx-auto flex min-h-88 max-w-7xl flex-col justify-center px-6 py-10 sm:min-h-80 sm:px-8 sm:py-12'>
-          <p className='text-sm font-semibold uppercase tracking-widest text-[#efb52b]'>
-            Free quote
-          </p>
-          <h1 className='mt-3 max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl'>
-            {header.title}
-          </h1>
-          {header.subtitle && (
-            <p className='mt-6 max-w-2xl text-lg text-white/80'>{header.subtitle}</p>
-          )}
-        </div>
-      </section>
-
-      {/* A tab for each service, with its own questions and price. */}
-      <div id='estimate'>
-        <PriceCalculator cities={cities.map((city) => city.name)} tabs={tabs} />
+    <main className={`${jakarta.variable} oe-page flex-1`}>
+      <div
+        id='estimate'
+        style={{ scrollMarginTop: 100 }}>
+        <OnePageEstimate
+          tabs={tabs}
+          availability={availability}
+        />
       </div>
     </main>
   );
