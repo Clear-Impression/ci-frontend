@@ -6,8 +6,8 @@ import { preload } from 'react-dom';
 const poster = '/videos/home-drone-poster.jpg';
 
 // The drone video behind the homepage hero: silent, looping and decorative,
-// so screen readers skip it. With reduced motion turned on it stays on the
-// still first frame.
+// so screen readers skip it. Small screens and reduced-motion users see the
+// poster without downloading the video.
 export default function HeroBackdropVideo() {
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -16,16 +16,20 @@ export default function HeroBackdropVideo() {
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const playback = window.matchMedia('(width > 760px) and (prefers-reduced-motion: no-preference)');
     const update = () => {
-      if (motion.matches) video.pause();
-      else video.play().catch(() => {
+      if (!playback.matches) video.pause();
+      else if (document.readyState === 'complete') video.play().catch(() => {
         // Autoplay can be blocked (e.g. low-power mode); the poster shows instead.
       });
     };
     update();
-    motion.addEventListener('change', update);
-    return () => motion.removeEventListener('change', update);
+    window.addEventListener('load', update, { once: true });
+    playback.addEventListener('change', update);
+    return () => {
+      window.removeEventListener('load', update);
+      playback.removeEventListener('change', update);
+    };
   }, []);
 
   return (
@@ -36,7 +40,7 @@ export default function HeroBackdropVideo() {
       muted
       loop
       playsInline
-      preload='metadata'
+      preload='none'
       poster={poster}
       className='hx-hero-backdrop-video'>
       <source
