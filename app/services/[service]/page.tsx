@@ -1,13 +1,12 @@
 import type { Metadata } from 'next';
-import { createPageMetadata } from '@/lib/seo';
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import QuoteActions from '@/components/ui/QuoteActions';
-import { aboutClosing } from '@/data/about';
+import ServiceIcon from '@/components/services/ServiceIcon';
 import { company } from '@/data/company';
 import { getServices } from '@/lib/services';
-import ServiceIcon from '@/components/services/ServiceIcon';
-import Image from 'next/image';
+import { createPageMetadata } from '@/lib/seo';
+import ClearerViewCta from '@/components/ui/ClearerViewCta';
 
 const serviceSearchTitles = new Map([
   ['residential-window-washing', 'Residential Window Cleaning in Phoenix Metro'],
@@ -45,136 +44,157 @@ export default async function ServicePage({ params }: ServicePageProps) {
   const service = (await getServices()).find((item) => item.slug === slug);
   if (!service) notFound();
 
-  const [firstParagraph, ...moreParagraphs] = service.detailParagraphs;
+  const imageOnLeft = service.layout === 'image-left';
+  const detailHeading = service.detailHeading?.trim() || 'Service details';
+  const glanceHeading = service.glanceHeading?.trim() || 'At a glance';
+  const bestForHeading = service.bestForLabel?.trim() || 'Best for';
+  const benefitsHeading = service.benefitsLabel?.trim() || 'Benefits';
 
   return (
     <main className='flex-1 border-0 bg-white text-[#200b38]'>
-      <section className='page-hero bg-[#200b38] text-white'>
-        <div className='mx-auto max-w-7xl px-6 pb-14 pt-6 sm:px-8 sm:pb-20 sm:pt-8'>
+      <section className='page-hero overflow-hidden bg-[#200b38] text-white'>
+        <div className='mx-auto max-w-7xl px-6 pb-12 pt-6 sm:px-8 sm:pb-16 sm:pt-8'>
           <Link
             href='/services'
             className='group inline-flex min-h-11 items-center gap-2 rounded-sm text-sm font-semibold text-white hover:text-[#efb52b] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#efb52b]'>
-            <svg aria-hidden='true' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round' className='size-4 shrink-0'>
+            <svg
+              aria-hidden='true'
+              viewBox='0 0 24 24'
+              fill='none'
+              stroke='currentColor'
+              strokeWidth='2'
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              className='size-4 shrink-0'>
               <path d='M19 12H5m6 6-6-6 6-6' />
             </svg>
-            <span className='underline-offset-4 group-hover:underline group-focus-visible:underline'>Back to services</span>
+            <span className='underline-offset-4 group-hover:underline group-focus-visible:underline'>
+              Back to services
+            </span>
           </Link>
-          <ServiceIcon
-            slug={service.slug}
-            draw='auto'
-            className='mt-10 size-14 text-[#d9b65f]'
-          />
-          <p className='mt-6 text-sm font-semibold uppercase tracking-widest text-[#efb52b]'>
-            what we do
-          </p>
-          <h1 className='mt-4 max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl'>
-            {service.title}
-          </h1>
-          <p className='mt-6 max-w-2xl text-base leading-8 text-white/80 sm:text-lg'>
-            {service.largeDescription}
-          </p>
-        </div>
-      </section>
-      
-      <section
-        aria-labelledby='service-details-heading'
-        className='flex-1 border-0 bg-[#f7f4fb]'>
-        <div className='mx-auto max-w-7xl px-6 pb-14 pt-6 sm:px-8 sm:pb-20 sm:pt-8'>
-          <div className='grid gap-16 lg:grid-cols-2 lg:items-start'>
-            {/* Hero */}
-            <div className='space-y-6 leading-8 text-gray-700'>
-              <h2 id='service-details-heading' className='text-2xl font-semibold text-[#200b38]'>
-                Service details
-              </h2>
-              <p>{firstParagraph}</p>
-              {moreParagraphs.length > 0 && (
-                <details className='group mt-6'>
-                  <summary className='inline-flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-sm font-semibold text-[#6c3fb8] hover:text-[#200b38] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6c3fb8] [&::-webkit-details-marker]:hidden'>
-                    <span className='group-open:hidden'>Read more about {service.title.toLowerCase()}</span>
-                    <span className='hidden group-open:inline'>Show less</span>
-                    <svg
-                      aria-hidden='true'
-                      viewBox='0 0 24 24'
-                      fill='none'
-                      stroke='currentColor'
-                      strokeWidth='2'
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                      className='size-5 motion-safe:transition-transform group-open:rotate-180'>
-                      <path d='M6 9l6 6 6-6' />
-                    </svg>
-                  </summary>
-                  <div className='mt-4 space-y-6'>
-                    {moreParagraphs.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </div>
-                </details>
-              )}
+
+          <div className='mt-1 grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(22rem,0.72fr)] lg:gap-14'>
+            <div className={imageOnLeft ? 'lg:order-2' : ''}>
+              <div className='grid size-14 place-items-center rounded-xl border border-white/15 bg-white/5'>
+                <ServiceIcon
+                  slug={service.slug}
+                  draw='auto'
+                  className='size-8 text-[#d9b65f]'
+                />
+              </div>
+              <h1 className='mt-6 max-w-3xl text-2xl font-semibold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl'>
+                {service.title}
+              </h1>
+              <p className='mt-6 max-w-2xl text-base leading-8 text-white/80 sm:text-lg'>
+                {service.largeDescription}
+              </p>
             </div>
-            {/* Service Images */}
-            <figure>
-              <div className='relative aspect-4/3 overflow-hidden rounded-2xl bg-[#eee6f9] text-[#6c3fb8]'>
+
+            <figure className={imageOnLeft ? 'lg:order-1' : ''}>
+              <div className='relative aspect-4/3 overflow-hidden rounded-3xl bg-[#33195a] ring-1 ring-white/10'>
                 {service.image?.url ? (
                   <Image
                     src={service.image.url}
                     alt={service.image.alt}
                     fill
-                    sizes='(min-width: 1024px) 25vw, 100vw'
+                    sizes='(min-width: 1024px) 38vw, 100vw'
                     className='object-cover'
                   />
                 ) : (
-                  <div className='flex size-full items-center justify-center'>
-                    Service image coming soon
+                  <div className='grid size-full place-items-center'>
+                    <ServiceIcon
+                      slug={service.slug}
+                      draw='none'
+                      className='size-20 text-[#d9b65f]'
+                    />
                   </div>
                 )}
               </div>
               {service.image?.caption && (
-                <figcaption className='mt-2 text-sm text-gray-600'>
+                <figcaption className='mt-3 text-sm text-white/60'>
                   {service.image.caption}
                 </figcaption>
-              )}
-              {Boolean(service.bestFor || service.benefits?.length) && (
-                <aside className='mt-6 rounded-2xl bg-[#200b38] p-6 text-white shadow-lg shadow-[#200b38]/10'>
-                  <h2 className='text-lg font-semibold'>At a glance</h2>
-                  {service.bestFor && (
-                    <div className='mt-4'>
-                      <h3 className='text-xs font-semibold uppercase tracking-widest text-[#72c587]'>
-                        Best for
-                      </h3>
-                      <p className='mt-2 text-sm leading-6 text-white/80'>
-                        {service.bestFor}
-                      </p>
-                    </div>
-                  )}
-                  {service.benefits?.length ? (
-                    <div className='mt-5'>
-                      <h3 className='text-xs font-semibold uppercase tracking-widest text-[#72c587]'>
-                        Benefits
-                      </h3>
-                      <ul className='mt-2 space-y-2 text-sm leading-6 text-white/80'>
-                        {service.benefits.map((benefit) => (
-                          <li key={benefit} className='flex gap-2'>
-                            <span
-                              aria-hidden='true'
-                              className='mt-0.75 grid size-4.5 shrink-0 place-items-center rounded-full bg-[#72c587] text-[#200b38]'>
-                              <svg viewBox='0 0 24 24' className='size-2.75' fill='none' stroke='currentColor' strokeWidth='3.5' strokeLinecap='round' strokeLinejoin='round'>
-                                <path d='m5 12.5 4.5 4.5L19 7.5' />
-                              </svg>
-                            </span>
-                            <span>{benefit}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ) : null}
-                  <QuoteActions />
-                </aside>
               )}
             </figure>
           </div>
         </div>
       </section>
+
+      <section
+        aria-labelledby='service-details-heading'
+        className='flex-1 border-0 bg-[#f7f4fb]'>
+        <div className='mx-auto max-w-7xl px-6 py-16 sm:px-8 sm:py-20'>
+          <div className='grid gap-12 lg:grid-cols-[minmax(0,1.35fr)_minmax(20rem,1fr)] lg:items-start lg:gap-12'>
+            <article className='max-w-3xl'>
+              <h2
+                id='service-details-heading'
+                className='text-3xl font-semibold tracking-tight text-[#200b38] sm:text-4xl'>
+                {detailHeading}
+              </h2>
+              <div className='mt-8 divide-y divide-[#200b38]/10 border-y border-[#200b38]/10'>
+                {service.detailParagraphs.map((paragraph) => (
+                  <p
+                    key={paragraph}
+                    className='py-7 leading-8 text-[#686170] first:pt-0 last:pb-0'>
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+            </article>
+
+            {Boolean(service.bestFor || service.benefits?.length) && (
+              <aside className='rounded-3xl bg-[#200b38] p-7 text-white shadow-lg shadow-[#200b38]/10 sm:p-8 lg:sticky lg:top-32'>
+                <h2 className='text-xl font-semibold'>{glanceHeading}</h2>
+                {service.bestFor && (
+                  <div className='mt-7 border-t border-white/15 pt-6'>
+                    <h3 className='text-sm font-semibold text-[#efb52b]'>
+                      {bestForHeading}
+                    </h3>
+                    <p className='mt-3 leading-7 text-white/80'>
+                      {service.bestFor}
+                    </p>
+                  </div>
+                )}
+                {service.benefits?.length ? (
+                  <div className='mt-7 border-t border-white/15 pt-6'>
+                    <h3 className='text-sm font-semibold text-[#efb52b]'>
+                      {benefitsHeading}
+                    </h3>
+                    <ul className='mt-4 space-y-3 leading-6 text-white/85'>
+                      {service.benefits.map((benefit) => (
+                        <li key={benefit} className='flex gap-3'>
+                          <span
+                            aria-hidden='true'
+                            className='mt-1 grid size-5 shrink-0 place-items-center rounded-full bg-[#72c587] text-[#200b38]'>
+                            <svg
+                              viewBox='0 0 24 24'
+                              className='size-3'
+                              fill='none'
+                              stroke='currentColor'
+                              strokeWidth='3.5'
+                              strokeLinecap='round'
+                              strokeLinejoin='round'>
+                              <path d='m5 12.5 4.5 4.5L19 7.5' />
+                            </svg>
+                          </span>
+                          <span>{benefit}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+              </aside>
+            )}
+          </div>
+        </div>
+      </section>
+      {/* Footer found in other pages */}
+      <section
+        id='get-started'
+        className='mx-auto max-w-7xl px-6 py-16 sm:px-8 sm:py-20'>
+        <ClearerViewCta />
+      </section>
+
     </main>
   );
 }

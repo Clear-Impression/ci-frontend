@@ -12,6 +12,11 @@ export type Service = {
   detailParagraphs: readonly string[];
   bestFor?: string;
   benefits?: readonly string[];
+  detailHeading?: string;
+  glanceHeading?: string;
+  bestForLabel?: string;
+  benefitsLabel?: string;
+  layout?: 'image-right' | 'image-left';
   image?: {
     url: string;
     width: number;

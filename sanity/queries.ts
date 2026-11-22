@@ -119,6 +119,11 @@ export const SERVICES_QUERY = defineQuery(`
     previewDescription,
     largeDescription,
     "detailParagraphs": coalesce(detailParagraphs, []),
+    detailHeading,
+    glanceHeading,
+    bestForLabel,
+    benefitsLabel,
+    layout,
     bestFor,
     "benefits": coalesce(benefits, []),
     "image": image {
