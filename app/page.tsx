@@ -14,6 +14,7 @@ import HomeBeforeAfter from '@/components/home/HomeBeforeAfter';
 import { beforeAfter } from '@/data/beforeAfter';
 import HomePromise from '@/components/home/HomePromise';
 import HomePerks from '@/components/home/HomePerks';
+import OfferPopup from '@/components/home/OfferPopup';
 import { homePerks } from '@/data/homePerks';
 import { company } from '@/data/company';
 import { promise } from '@/data/promise';
@@ -29,6 +30,7 @@ import {
 } from '@/data/home';
 import { googleRating, homeReviews } from '@/data/reviews';
 import { getLocations, withCityCount } from '@/lib/locations';
+import { getSeasonalOffers } from '@/lib/seasonal-offers';
 
 export const metadata = createPageMetadata({
   path: '/',
@@ -79,6 +81,7 @@ const guideGroups = [
 export default async function Home() {
   const header = await getPageHeader('home');
   const { cities } = await getLocations();
+  const { popup } = await getSeasonalOffers();
   return (
     <main className={`hx ${jakarta.variable} flex-1`}>
       <script
@@ -88,6 +91,8 @@ export default async function Home() {
         }}
       />
       <HomeMotion />
+      {/* The seasonal offer popup, if it's turned on in Sanity. */}
+      {popup && <OfferPopup offer={popup} />}
       <PageGuide
         label='Homepage sections'
         groups={guideGroups}

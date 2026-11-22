@@ -56,6 +56,11 @@ html {
     opacity 0.25s ease;
 }
 
+/* One more line on smaller screens when the seasonal offers scroll in the strip. */
+.header-strip:has(.offer-ticker) {
+  max-height: 8rem;
+}
+
 .header-row {
   transition: padding 0.3s ease;
 }
@@ -79,7 +84,8 @@ html {
   backdrop-filter: blur(18px) saturate(1.4);
 }
 
-.site-header[data-scrolled] .header-strip {
+.site-header[data-scrolled] .header-strip,
+.site-header[data-scrolled] .offer-bar {
   max-height: 0;
   opacity: 0;
 }
@@ -101,24 +107,36 @@ html {
    --hdr-top is the header's full height, for the video to start under it.
    These are its usual heights; the header updates the value once it loads. */
 :root {
-  --hdr-top: 169px;
+  --hdr-top: calc(169px + var(--offer-h, 0px));
 }
 
 @media (width >= 40rem) {
   :root {
-    --hdr-top: 161px;
+    --hdr-top: calc(161px + var(--offer-h, 0px));
   }
 }
 
 @media (width >= 64rem) {
   :root {
-    --hdr-top: 175px;
+    --hdr-top: calc(175px + var(--offer-h, 0px));
   }
 }
 
 @media (width >= 80rem) {
   :root {
-    --hdr-top: 163px;
+    --hdr-top: calc(163px + var(--offer-h, 0px));
+  }
+}
+
+/* How much taller the seasonal offers make the header. Inside the strip they
+   only add a line below wide screens. */
+:root:has(.offer-bar) {
+  --offer-h: 2rem;
+}
+
+@media (width < 80rem) {
+  :root:has(.header-strip .offer-ticker) {
+    --offer-h: 1.75rem;
   }
 }
 
@@ -397,8 +415,225 @@ html {
   transition: translate 0.2s ease;
 }
 
+/* ------------------------------------------------------------------
+   Seasonal offers: a line of offers scrolling right to left, in its own
+   bar or inside the strip, plus the homepage popup. Edited in Sanity.
+   ------------------------------------------------------------------ */
+
+/* The colors for each theme in data/offer-themes.ts. "Make your own" sets
+   these same variables inline, from the color picked in Sanity.
+   --offer-bg / --offer-fg / --offer-icon: the bar above the header.
+   --offer-strip: the offers when they scroll inside the purple strip.
+   --offer-accent / --offer-label: the popup's top edge and small label. */
+[data-offer-theme='regular'] {
+  --offer-bg: #38824b;
+  --offer-fg: #fff;
+  --offer-icon: #c9f0d4;
+  --offer-strip: #72c587;
+  --offer-accent: #55ab68;
+  --offer-label: #2f7a43;
+}
+
+[data-offer-theme='valentines'] {
+  --offer-bg: #f9cfe0;
+  --offer-fg: #7a1340;
+  --offer-icon: #e0457b;
+  --offer-strip: #ff9fc4;
+  --offer-accent: #e0457b;
+  --offer-label: #c1306a;
+}
+
+[data-offer-theme='eid'] {
+  --offer-bg: #0f5c45;
+  --offer-fg: #f4e7c3;
+  --offer-icon: #e8c46a;
+  --offer-strip: #6fd3a8;
+  --offer-accent: #1d8a63;
+  --offer-label: #127352;
+}
+
+[data-offer-theme='spring'] {
+  --offer-bg: #cde9fb;
+  --offer-fg: #0d3b66;
+  --offer-icon: #3c97d6;
+  --offer-strip: #9fd3ff;
+  --offer-accent: #4aa3e8;
+  --offer-label: #1f6fae;
+}
+
+[data-offer-theme='easter'] {
+  --offer-bg: #e9ddfb;
+  --offer-fg: #4a2380;
+  --offer-icon: #a77de6;
+  --offer-strip: #cdb4ff;
+  --offer-accent: #a77de6;
+  --offer-label: #7a4cc2;
+}
+
+[data-offer-theme='fourth-of-july'] {
+  --offer-bg: #1d3a8a;
+  --offer-fg: #fff;
+  --offer-icon: #ff5a6a;
+  --offer-strip: #ff8b96;
+  --offer-accent: #d62839;
+  --offer-label: #1d3a8a;
+}
+
+[data-offer-theme='monsoon'] {
+  --offer-bg: #d9c29b;
+  --offer-fg: #33240f;
+  --offer-icon: #6b4a1f;
+  --offer-strip: #e3c79a;
+  --offer-accent: #b88a4a;
+  --offer-label: #7d5a22;
+}
+
+[data-offer-theme='halloween'] {
+  --offer-bg: #f27a1a;
+  --offer-fg: #1c1208;
+  --offer-icon: #1c1208;
+  --offer-strip: #ff9a3c;
+  --offer-accent: #f27a1a;
+  --offer-label: #a84b0b;
+}
+
+[data-offer-theme='diwali'] {
+  --offer-bg: #6d1a3f;
+  --offer-fg: #ffe3a3;
+  --offer-icon: #ffb22e;
+  --offer-strip: #ffb22e;
+  --offer-accent: #e8891c;
+  --offer-label: #9c2a5c;
+}
+
+[data-offer-theme='thanksgiving'] {
+  --offer-bg: #7a3e1d;
+  --offer-fg: #fbe9d0;
+  --offer-icon: #f0a35e;
+  --offer-strip: #e8a76a;
+  --offer-accent: #b5541c;
+  --offer-label: #9a4516;
+}
+
+[data-offer-theme='holidays'] {
+  --offer-bg: #b3202c;
+  --offer-fg: #fff;
+  --offer-icon: #ffd6da;
+  --offer-strip: #ff9ba3;
+  --offer-accent: #b3202c;
+  --offer-label: #b3202c;
+}
+
+.offer-bar {
+  background: var(--offer-bg);
+  color: var(--offer-fg);
+  max-height: 3rem;
+  transition:
+    max-height 0.3s ease,
+    opacity 0.25s ease;
+}
+
+.offer-ticker {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  /* Lets the messages size themselves to this box (cqw below). */
+  container-type: inline-size;
+  /* Fade the messages in and out at the edges. */
+  mask-image: linear-gradient(90deg, transparent, #000 2rem, #000 calc(100% - 2rem), transparent);
+}
+
+.header-strip .offer-ticker {
+  color: var(--offer-strip);
+}
+
+a.offer-ticker:hover .offer-ticker-item > span {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.offer-ticker-track {
+  display: flex;
+  width: max-content;
+  animation: offer-scroll var(--offer-seconds, 30s) linear infinite;
+}
+
+/* Stop so it can be read, or clicked. */
+.offer-ticker:hover .offer-ticker-track,
+.offer-ticker:focus-visible .offer-ticker-track {
+  animation-play-state: paused;
+}
+
+/* Each set is at least as wide as the bar, so a short message never
+   leaves the bar empty as it loops around. */
+.offer-ticker-set {
+  display: flex;
+  min-width: 100cqw;
+}
+
+/* The theme's icon after every message, including the last, so the loop
+   looks the same where the two sets meet. */
+.offer-ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding-right: 1.25rem;
+}
+
+.offer-ticker .offer-icon {
+  width: 1.05em;
+  height: 1.05em;
+  flex: none;
+}
+
+.offer-bar .offer-icon {
+  color: var(--offer-icon);
+}
+
+@keyframes offer-scroll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Hold still: show the first message, centered, with no copy. */
+@media (prefers-reduced-motion: reduce) {
+  .offer-ticker {
+    mask-image: none;
+    text-align: center;
+  }
+
+  .offer-ticker-track {
+    width: auto;
+    animation: none;
+  }
+
+  .offer-ticker-set {
+    min-width: 0;
+    flex: 1;
+    justify-content: center;
+  }
+
+  .offer-ticker-item {
+    min-width: 0;
+    padding-right: 0;
+  }
+
+  .offer-ticker-item > span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .offer-ticker-set[aria-hidden],
+  .offer-ticker-item:not(:first-child) {
+    display: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .header-strip,
+  .offer-bar,
   .header-row,
   .header-logo,
   .search-bar,
