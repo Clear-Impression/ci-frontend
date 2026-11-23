@@ -1,11 +1,11 @@
 import { googleRating } from './reviews';
 
-// "What booking with us is like" on the homepage, just above the service area map.
+// "What to expect next": shown on the estimate page after someone sends a request.
 
 export type PerkIcon = 'bell' | 'van' | 'calendar' | 'star' | 'tag' | 'gift';
 
 export const homePerks = {
-  eyebrow: 'What booking with us is like',
+  eyebrow: 'What to expect next',
   title: 'You’ll always know',
   highlight: 'what’s next.',
   lead: 'From the day you book to the minute we pull up, we keep you posted by text and email. No phone tag.',
@@ -35,13 +35,5 @@ export const homePerks = {
       title: 'Upfront pricing',
       text: 'The price we confirm is the price you pay.',
     },
-    {
-      icon: 'gift',
-      title: 'Seasonal offers by text',
-      text: 'Opt in below and our seasonal deals come straight to you.',
-    },
   ] satisfies { icon: PerkIcon; title: string; text: string }[],
-  // The opt-in for texts. It has to stay unchecked until the visitor checks it.
-  consent:
-    'Yes, text me seasonal offers and service updates from Clear Impression. Message frequency varies. Message and data rates may apply. Reply STOP to opt out or HELP for help. Agreeing isn’t required to get a quote.',
 };

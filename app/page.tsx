@@ -13,9 +13,7 @@ import HomeClosing from '@/components/home/HomeClosing';
 import HomeBeforeAfter from '@/components/home/HomeBeforeAfter';
 import { beforeAfter } from '@/data/beforeAfter';
 import HomePromise from '@/components/home/HomePromise';
-import HomePerks from '@/components/home/HomePerks';
 import OfferPopup from '@/components/home/OfferPopup';
-import { homePerks } from '@/data/homePerks';
 import { company } from '@/data/company';
 import { promise } from '@/data/promise';
 import PageGuide, { type GuideGroup } from '@/components/layout/PageGuide';
@@ -55,14 +53,13 @@ const guideGroups = [
     items: [
       { id: 'top', label: 'Welcome' },
       { id: 'why-us', label: 'Our Promise' },
-      { id: 'booking', label: 'Booking' },
+      { id: 'services', label: 'Services' },
       { id: 'service-area', label: 'Where We Work' },
     ],
   },
   {
     title: 'What we do',
     items: [
-      { id: 'services', label: 'Services' },
       { id: 'results', label: 'Before & After' },
       { id: 'pure-water', label: 'Our Technology' },
     ],
@@ -113,11 +110,11 @@ export default async function Home() {
           </div>
         </HomeHero>
       </div>
-      {/* What booking is like, with a quick way to start a quote. */}
-      <div id='booking'>
-        <HomePerks {...homePerks} />
+      {/* Our services, right under the promise. */}
+      <div id='services'>
+        <HomeServices {...homeServices} />
       </div>
-      {/* Follow the path visitors take: find their city, pick a service, get a quote. */}
+      {/* Then find your city. */}
       <div id='service-area'>
         <HomeServiceArea
           {...homeAreas}
@@ -125,9 +122,6 @@ export default async function Home() {
           cities={cities.map(({ name, coordinates }) => ({ name, coordinates }))}
           cityPages={cities}
         />
-      </div>
-      <div id='services'>
-        <HomeServices {...homeServices} />
       </div>
       <div id='results'>
         <HomeBeforeAfter {...beforeAfter} />
