@@ -4,7 +4,7 @@ import './home-redesign.css';
 import { jakarta } from './fonts';
 import HomeMotion from '@/components/home/HomeMotion';
 import HomeHero from '@/components/home/HomeHero';
-import HomeTrust from '@/components/home/HomeTrust';
+import HomePromiseStrip from '@/components/home/HomePromiseStrip';
 import HomePureWater from '@/components/home/HomePureWater';
 import HomeServices from '@/components/home/HomeServices';
 import HomeReviews from '@/components/home/HomeReviews';
@@ -26,7 +26,6 @@ import {
   homeServices,
   homeSteps,
   pureWater,
-  servingSince,
 } from '@/data/home';
 import { googleRating, homeReviews } from '@/data/reviews';
 import { getLocations, withCityCount } from '@/lib/locations';
@@ -55,7 +54,7 @@ const guideGroups = [
     title: 'Get to know us',
     items: [
       { id: 'top', label: 'Welcome' },
-      { id: 'why-us', label: 'Why Us' },
+      { id: 'why-us', label: 'Our Promise' },
       { id: 'booking', label: 'Booking' },
       { id: 'service-area', label: 'Where We Work' },
     ],
@@ -71,7 +70,7 @@ const guideGroups = [
   {
     title: 'Trust',
     items: [
-      { id: 'promise', label: 'Our Promise' },
+      { id: 'promise', label: 'Promise in Detail' },
       { id: 'reviews', label: 'Reviews' },
       { id: 'get-started', label: 'Get Started' },
     ],
@@ -105,13 +104,11 @@ export default async function Home() {
           subtitle={header.subtitle || homeHero.subtitle}
           rating={googleRating.score}
           reviewCount={googleRating.count}>
-          {/* The stats strip sits along the bottom of the hero, over the video. */}
+          {/* The Clear Impression Promise, along the bottom of the hero. */}
           <div id='why-us'>
-            <HomeTrust
-              score={googleRating.score}
-              count={googleRating.count}
-              since={servingSince}
-              cityCount={cities.length}
+            <HomePromiseStrip
+              eyebrow={promise.eyebrow}
+              items={promise.items}
             />
           </div>
         </HomeHero>
