@@ -4,13 +4,18 @@ import { company } from '@/data/company';
 import { services as servicePages } from '@/data/services';
 import { getLocations } from '@/lib/locations';
 
-// Keep hover and keyboard focus styles the same for footer links.
+// Footer text links: on hover (or keyboard focus) a gold dot pops in beside
+// the link and the text turns gold. The dot itself is in globals.css.
 const linkStyle =
-  'rounded-sm underline-offset-4 transition-colors hover:text-[#72c587] hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#efb52b]';
+  'footer-link inline-block rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#efb52b]';
 
-// The bottom links are always underlined, so they read as links.
+// Links that are pictures (the logo and badges) just get the focus ring.
+const imageLinkStyle =
+  'inline-block rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#efb52b]';
+
+// The bottom links: the same gold dot, but the links stay put, with a taller tap area.
 const bottomLinkStyle =
-  'inline-flex min-h-11 items-center rounded-sm underline decoration-[#72c587] decoration-2 underline-offset-[6px] transition-colors hover:text-[#72c587] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#efb52b]';
+  'footer-link footer-link-still inline-flex min-h-11 items-center rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#efb52b]';
 
 // The date of the latest deploy. next.config.ts sets it each time the site is
 // built, so it moves forward whenever a change is pushed and goes live.
@@ -39,25 +44,22 @@ export default async function Footer() {
       <div className='h-1 bg-[#55ab68]' />
       {/* Four columns on wide screens. Below that, two by two, so the city list has room for its two columns. */}
       <div className='mx-auto grid max-w-7xl gap-6 px-6 py-6 sm:grid-cols-2 sm:px-8 xl:grid-cols-[1.5fr_1fr_1.25fr_1.25fr]'>
-        {/* Repeat the logo and short company description at the bottom. */}
+        {/* The logo, big, at the bottom of every page. */}
         <div>
           <Link
             href='/'
-            className={`inline-block ${linkStyle}`}>
+            className={imageLinkStyle}>
             <Image
               src={company.logo}
               alt='Clear Impression Window Cleaning'
               aria-hidden='true'
               width={375}
               height={375}
-              sizes='64px'
-              className='h-16 w-16 rounded-lg'
+              sizes='(min-width: 640px) 176px, 144px'
+              className='h-36 w-36 rounded-2xl sm:h-44 sm:w-44'
             />
             <span className='sr-only'>{company.name} home</span>
           </Link>
-          <p className='mt-3 max-w-xs text-sm leading-6 text-white/80'>
-            {company.description}
-          </p>
         </div>
         <div>
           <h2 className='text-base font-semibold'>Our services</h2>
@@ -153,7 +155,7 @@ export default async function Footer() {
               <p className='mr-3'>
                 <a 
                     href={company.bbbHref}
-                    className={`wrap-break-word ${linkStyle}`}
+                    className={imageLinkStyle}
                     target='_blank'>
                     <Image
                       src='/icons/bbbAccredited.png'
@@ -166,7 +168,7 @@ export default async function Footer() {
               <p className='mr-3'>
                 <a 
                     href={company.homeAdvisorHref}
-                    className={`wrap-break-word ${linkStyle}`}
+                    className={imageLinkStyle}
                     target='_blank'>
                     <Image
                       src='/icons/angiApproved.png'
@@ -196,7 +198,7 @@ export default async function Footer() {
             </p>
           )}
           {/* Keep the full service terms available from every page. */}
-          <nav aria-label='Footer links' className='flex flex-wrap items-center gap-x-5 gap-y-2'>
+          <nav aria-label='Footer links' className='flex flex-wrap items-center gap-x-8 gap-y-2'>
             <Link href='/' className={bottomLinkStyle}>
               Home
             </Link>
