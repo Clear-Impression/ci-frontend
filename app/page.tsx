@@ -4,7 +4,7 @@ import './home-redesign.css';
 import { jakarta } from './fonts';
 import HomeMotion from '@/components/home/HomeMotion';
 import HomeHero from '@/components/home/HomeHero';
-import HomeTrust from '@/components/home/HomeTrust';
+import HomePromiseStrip from '@/components/home/HomePromiseStrip';
 import HomePureWater from '@/components/home/HomePureWater';
 import HomeServices from '@/components/home/HomeServices';
 import HomeReviews from '@/components/home/HomeReviews';
@@ -13,9 +13,7 @@ import HomeClosing from '@/components/home/HomeClosing';
 import HomeBeforeAfter from '@/components/home/HomeBeforeAfter';
 import { beforeAfter } from '@/data/beforeAfter';
 import HomePromise from '@/components/home/HomePromise';
-import HomePerks from '@/components/home/HomePerks';
 import OfferPopup from '@/components/home/OfferPopup';
-import { homePerks } from '@/data/homePerks';
 import { company } from '@/data/company';
 import { promise } from '@/data/promise';
 import PageGuide, { type GuideGroup } from '@/components/layout/PageGuide';
@@ -26,7 +24,6 @@ import {
   homeServices,
   homeSteps,
   pureWater,
-  servingSince,
 } from '@/data/home';
 import { googleRating, homeReviews } from '@/data/reviews';
 import { getLocations, withCityCount } from '@/lib/locations';
@@ -55,15 +52,14 @@ const guideGroups = [
     title: 'Get to know us',
     items: [
       { id: 'top', label: 'Welcome' },
-      { id: 'why-us', label: 'Why Us' },
-      { id: 'booking', label: 'Booking' },
+      { id: 'why-us', label: 'Our Promise' },
+      { id: 'services', label: 'Services' },
       { id: 'service-area', label: 'Where We Work' },
     ],
   },
   {
     title: 'What we do',
     items: [
-      { id: 'services', label: 'Services' },
       { id: 'results', label: 'Before & After' },
       { id: 'pure-water', label: 'Our Technology' },
     ],
@@ -71,7 +67,7 @@ const guideGroups = [
   {
     title: 'Trust',
     items: [
-      { id: 'promise', label: 'Our Promise' },
+      { id: 'promise', label: 'Promise in Detail' },
       { id: 'reviews', label: 'Reviews' },
       { id: 'get-started', label: 'Get Started' },
     ],
@@ -105,22 +101,20 @@ export default async function Home() {
           subtitle={header.subtitle || homeHero.subtitle}
           rating={googleRating.score}
           reviewCount={googleRating.count}>
-          {/* The stats strip sits along the bottom of the hero, over the video. */}
+          {/* The Clear Impression Promise, along the bottom of the hero. */}
           <div id='why-us'>
-            <HomeTrust
-              score={googleRating.score}
-              count={googleRating.count}
-              since={servingSince}
-              cityCount={cities.length}
+            <HomePromiseStrip
+              eyebrow={promise.eyebrow}
+              items={promise.items}
             />
           </div>
         </HomeHero>
       </div>
-      {/* What booking is like, with a quick way to start a quote. */}
-      <div id='booking'>
-        <HomePerks {...homePerks} />
+      {/* Our services, right under the promise. */}
+      <div id='services'>
+        <HomeServices {...homeServices} />
       </div>
-      {/* Follow the path visitors take: find their city, pick a service, get a quote. */}
+      {/* Then find your city. */}
       <div id='service-area'>
         <HomeServiceArea
           {...homeAreas}
@@ -128,9 +122,6 @@ export default async function Home() {
           cities={cities.map(({ name, coordinates }) => ({ name, coordinates }))}
           cityPages={cities}
         />
-      </div>
-      <div id='services'>
-        <HomeServices {...homeServices} />
       </div>
       <div id='results'>
         <HomeBeforeAfter {...beforeAfter} />

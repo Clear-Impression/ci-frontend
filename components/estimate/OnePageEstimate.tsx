@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type CSSProperties, type FormEvent, type ReactNode } from 'react';
 import { requestAppointment, type AppointmentResult } from '@/app/estimate/actions';
 import LeaveOffer from '@/components/estimate/LeaveOffer';
+import WhatsNext from '@/components/estimate/WhatsNext';
 import { company } from '@/data/company';
 import { rangeFor, startingValues, type EstimateTab, type EstimateValues } from '@/data/estimate';
 import {
@@ -580,6 +581,8 @@ export default function OnePageEstimate({ tabs, availability }: OnePageEstimateP
   const [pending, setPending] = useState(false);
   const [result, setResult] = useState<AppointmentResult | null>(null);
   const [sentTo, setSentTo] = useState('');
+  // "What to expect next" pops up once the request is sent.
+  const [showNext, setShowNext] = useState(false);
   const submissionKey = useRef<string | null>(null);
   const topRef = useRef<HTMLDivElement>(null);
   const done = result?.status === 'saved';
@@ -707,6 +710,7 @@ export default function OnePageEstimate({ tabs, availability }: OnePageEstimateP
       setResult(outcome);
       if (outcome.status === 'saved') {
         setSentTo(read('firstName'));
+        setShowNext(true);
         submissionKey.current = null;
         requestAnimationFrame(() => topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
       }
@@ -1328,6 +1332,13 @@ export default function OnePageEstimate({ tabs, availability }: OnePageEstimateP
           {clearPricePromise.text}
         </p>
       </aside>
+
+      <WhatsNext
+        open={showNext}
+        firstName={sentTo}
+        day={day ? longDay(day) : ''}
+        onClose={() => setShowNext(false)}
+      />
 
       <LeaveOffer
         armed={!done && !pending}

@@ -1880,3 +1880,56 @@ form input:is([type='text'], [type='email'], [type='tel']):user-valid:not(:place
     animation-duration: 2.4s;
   }
 }
+
+/* Footer links: a gold dot pops in beside the link on hover or keyboard
+   focus, and the text turns gold. Set in Footer.tsx with .footer-link. */
+.footer-link {
+  position: relative;
+  transition:
+    color 200ms ease,
+    padding-left 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.footer-link::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #efb52b;
+  transform: translateY(-50%) scale(0);
+  transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.footer-link:hover,
+.footer-link:focus-visible,
+.footer-link[aria-current='page'] {
+  padding-left: 16px;
+  color: #efb52b;
+}
+
+.footer-link:hover::before,
+.footer-link:focus-visible::before,
+.footer-link[aria-current='page']::before {
+  transform: translateY(-50%) scale(1);
+}
+
+/* In a row of links, keep the words still and put the dot just before them. */
+.footer-link-still:hover,
+.footer-link-still:focus-visible,
+.footer-link-still[aria-current='page'] {
+  padding-left: 0;
+}
+
+.footer-link-still::before {
+  left: -13px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .footer-link,
+  .footer-link::before {
+    transition: none;
+  }
+}
