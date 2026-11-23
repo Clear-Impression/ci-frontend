@@ -55,14 +55,14 @@ export default async function Footer() {
               aria-hidden='true'
               width={375}
               height={375}
-              sizes='(min-width: 640px) 176px, 144px'
-              className='h-36 w-36 rounded-2xl sm:h-44 sm:w-44'
+              sizes='(min-width: 640px) 128px, 112px'
+              className='h-28 w-28 rounded-2xl sm:h-32 sm:w-32'
             />
             <span className='sr-only'>{company.name} home</span>
           </Link>
         </div>
         <div>
-          <h2 className='text-base font-semibold'>Our services</h2>
+          <h2 className='text-base font-semibold text-[#72c587]'>Our services</h2>
           <ul className='mt-3 space-y-1 text-sm leading-6 text-white/80'>
             {/* 0, 1 are "how the windows are cleaned" thus 2 thru 6 have more relavant links */}
             {servicePages.slice(2, 6).map((service) => (
@@ -75,7 +75,7 @@ export default async function Footer() {
           </ul>
         </div>
         <div>
-          <h2 className='text-base font-semibold'>Service areas</h2>
+          <h2 className='text-base font-semibold text-[#72c587]'>Service areas</h2>
           {/* Two columns instead of one long list. The rows grow as cities are added. */}
           <ul
             className='mt-3 grid auto-cols-max grid-flow-col gap-x-10 gap-y-1 text-sm leading-6 text-white/80'
@@ -91,7 +91,7 @@ export default async function Footer() {
         </div>
         {/* Phone and email links open the visitor's calling or email app. */}
         <div>
-          <h2 className='text-base font-semibold'>Get in touch</h2>
+          <h2 className='text-base font-semibold text-[#72c587]'>Get in touch</h2>
           <address className='mt-3 space-y-1 text-sm leading-6 not-italic text-white/80'>
             <p>
               <a
