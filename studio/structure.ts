@@ -63,6 +63,21 @@ export const structure: StructureResolver = (S) => {
         .apiVersion('2026-10-19')
         .defaultOrdering([{field: 'displayOrder', direction: 'asc'}, {field: 'name', direction: 'asc'}])),
     ])),
+    // Jobs show newest first, the same order as on the website.
+    S.listItem().id('gallery').title('Gallery').child(S.list().title('Gallery').items([
+      header('gallery'),
+      S.listItem().id('gallery-jobs').title('Jobs').schemaType('galleryJob').child(S.documentTypeList('galleryJob')
+        .id('gallery-jobs')
+        .title('Jobs')
+        .apiVersion('2026-10-19')
+        .defaultOrdering([{field: 'date', direction: 'desc'}])),
+      S.listItem().id('before-after').title('Before and after').schemaType('beforeAfter').child(S.documentTypeList('beforeAfter')
+        .id('before-after')
+        .title('Before and after')
+        .apiVersion('2026-10-19')
+        .defaultOrdering([{field: 'displayOrder', direction: 'asc'}])),
+    ])),
+    ...['home', 'about', 'reviews', 'feedback', 'quote', 'terms'].map((pageId) =>
     S.listItem().id('careers').title('Careers').child(S.list().title('Careers').items([
       header('careers'),
       S.listItem().id('job-openings').title('Job openings').schemaType('jobOpening')

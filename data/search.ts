@@ -27,6 +27,10 @@ const pageDetails: Record<string, { description: string; keywords: string[] }> =
     description: 'What customers say about us on Google.',
     keywords: ['ratings', 'testimonials', 'google', 'stars', 'reviews'],
   },
+  '/gallery': {
+    description: 'Before-and-after photos and recent jobs from around the Valley.',
+    keywords: ['photos', 'pictures', 'before and after', 'our work', 'examples', 'portfolio', 'videos', 'jobs'],
+  },
   '/faq': {
     description: 'Answers to common questions.',
     keywords: ['questions', 'help', 'faq', 'frequently asked'],

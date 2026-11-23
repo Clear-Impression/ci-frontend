@@ -13,6 +13,7 @@ const publicPaths = [
   '/estimate',
   '/faq',
   '/feedback',
+  '/gallery',
   '/locations',
   '/quote',
   '/reviews',

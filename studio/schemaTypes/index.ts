@@ -6,8 +6,9 @@ import {locationsPage} from './locationsPage'
 import {photoOrVideo} from './photoOrVideo'
 import {blog} from './blog'
 import {instantPriceTypes} from './instantPrices'
+import {galleryJob} from './galleryJob'
+import {beforeAfter} from './beforeAfter'
 import {jobOpening} from './jobOpening'
 import {seasonalOffers} from './seasonalOffers'
 import {about} from './about'
-
 export const schemaTypes = [faq, service, pageHeader, city, locationsPage, photoOrVideo, blog, seasonalOffers, jobOpening, about, ...instantPriceTypes]

@@ -108,6 +108,35 @@ export const LOCATIONS_QUERY = defineQuery(`{
   }
 }`)
 
+// Gallery jobs newest first, and the before-and-after pairs in their set order.
+// Hidden jobs, and jobs whose city is hidden, are left out.
+export const GALLERY_QUERY = defineQuery(`{
+  "jobs": *[
+    _type == "galleryJob" &&
+    coalesce(published, true) == true &&
+    coalesce(city->published, true) == true
+  ] | order(date desc, _createdAt desc) {
+    _id,
+    title,
+    caption,
+    jobType,
+    size,
+    "city": city->name,
+    "service": service->{title, "slug": slug.current},
+    "media": media[] ${PHOTO_OR_VIDEO}
+  },
+  "pairs": *[
+    _type == "beforeAfter" &&
+    coalesce(published, true) == true
+  ] | order(displayOrder asc) {
+    title,
+    caption,
+    alt,
+    "before": before{"url": asset->url, "hotspot": hotspot{x, y}},
+    "after": after{"url": asset->url, "hotspot": hotspot{x, y}}
+  }
+}`)
+
 export const SERVICES_QUERY = defineQuery(`
   *[
     _type == "service" &&

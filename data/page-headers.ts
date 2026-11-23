@@ -34,6 +34,11 @@ export const pageHeaders: Record<string, PageHeaderSettings> = {
     title: locationsPageContent.title,
     subtitle: locationsPageContent.description,
   },
+  gallery: {
+    label: 'Gallery',
+    title: 'Our work, up close.',
+    subtitle: 'Drag the handle to compare the glass before we start and after we pack up. Then pick a city to see jobs near you.',
+  },
   reviews: {
     label: 'Reviews',
     title: 'Customer Reviews',

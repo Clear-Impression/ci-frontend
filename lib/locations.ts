@@ -11,7 +11,7 @@ import {
 import { client } from '@/sanity/client';
 import { LOCATIONS_QUERY } from '@/sanity/queries';
 
-type MediaDocument = {
+export type MediaDocument = {
   alt?: string | null;
   photo?: { url?: string; width?: number; height?: number } | null;
   hotspot?: { x?: number; y?: number } | null;
@@ -69,7 +69,8 @@ function text(value: string | null | undefined, backup: string) {
   return value?.trim() ? value : backup;
 }
 
-function toMedia(media: MediaDocument | undefined): LocationMedia | null {
+// Shared with the Gallery, which uses the same photo-or-video field.
+export function toMedia(media: MediaDocument | undefined): LocationMedia | null {
   const { photo, hotspot, video } = media ?? {};
   const usablePhoto = photo?.url && photo.width && photo.height
     ? {
