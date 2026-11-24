@@ -84,16 +84,20 @@ export type HomeServiceCard = {
   imageAlt: string;
   // Which part of the photo stays in view in the tall card, e.g. '70% center'.
   imagePosition?: string;
+  // Shows a green "Our most popular service" tab on top of the card.
+  popular?: boolean;
   // True to show this photo on the homepage card even when the service has
   // its own photo in Sanity.
   preferThisImage?: boolean;
 };
 
-// The "What we clean" section: four tall photo cards for our main services.
+// "Our services": four flip cards for our main services. The front is the
+// photo and name; the back has the details over the same photo, blurred.
 export const homeServices = {
-  eyebrow: 'What we clean',
+  eyebrow: 'Our services',
   titleLines: ['Homes. Storefronts.', 'Solar. Gutters.'],
-  lead: 'Our four most-booked services, for homes and businesses across Mesa and the Phoenix metro. Screens, tracks, hard water stains and more are on the services page.',
+  lead: 'Our four most-booked services, for homes and businesses across Mesa and the Phoenix metro.',
+  popularLabel: 'Our most popular service',
   cards: [
     {
       slug: 'residential-window-washing',
@@ -102,9 +106,10 @@ export const homeServices = {
         'Hand-detailed glass inside, pure water outside. Fingerprints, dog smudges and monsoon splatter, gone.',
       points: ['Drop cloths & shoe covers', 'Water-fed pole outside', 'Dries spot-free'],
       cta: 'See window cleaning',
-      image: '/images/home/residential-card.jpg',
+      image: '/images/home/services-residential.jpg',
       imageAlt: 'A window cleaner washing a large front window of a home with a water-fed pole.',
       imagePosition: '70% center',
+      popular: true,
       preferThisImage: true,
     },
     {
@@ -114,9 +119,9 @@ export const homeServices = {
         'Storefronts, restaurants and low-rise offices kept sharp, with minimal disruption to your staff and customers.',
       points: ['Retail & restaurants', 'Weekly, bi-weekly or monthly', 'No lifts or ladders upstairs'],
       cta: 'See commercial glass',
-      image: '/images/home/office-glass-wall.jpg',
-      imageAlt: 'A tall wall of spotless glass in a bright office building, looking out over the city.',
-      imagePosition: '35% center',
+      image: '/images/home/services-commercial.jpg',
+      imageAlt: 'A squeegee on a long pole cleaning a tall office window that reflects the sky.',
+      imagePosition: '50% center',
       preferThisImage: true,
     },
     {
@@ -126,9 +131,10 @@ export const homeServices = {
         'Desert dust blocks the sun your panels need. We rinse it off without anything that can etch the coating.',
       points: ['100% pure, deionized water', 'Soft, scratch-free brushes', 'No tap water or harsh soap'],
       cta: 'See solar cleaning',
-      image: '/images/home/solar-card.jpg',
+      image: '/images/home/services-solar.jpg',
       imageAlt: 'Workers cleaning rows of solar panels with long brushes and a hose.',
       imagePosition: '55% center',
+      preferThisImage: true,
     },
     {
       slug: 'gutter-roof-care',
@@ -137,9 +143,10 @@ export const homeServices = {
         'Clogged gutters overflow in a monsoon. We clear them by hand, then flush every downspout so water flows away.',
       points: ['Debris scooped & bagged', 'Downspouts flushed', 'Loose brackets flagged'],
       cta: 'See gutter care',
-      image: '/images/home/roof-card.jpg',
+      image: '/images/home/services-gutters.jpg',
       imageAlt: 'A worker on a tiled roof spraying away built-up grime.',
       imagePosition: '72% center',
+      preferThisImage: true,
     },
   ] as readonly HomeServiceCard[],
 };
