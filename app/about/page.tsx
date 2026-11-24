@@ -74,6 +74,59 @@ export default async function AboutPage() {
         </div>
       </section>
 
+      {/* Highlight the company promise and the values behind it. */}
+      <section
+        id='promise'
+        className='bg-[#f7f4fb]'>
+        <div className='mx-auto max-w-7xl px-6 py-16 sm:px-8 sm:py-20'>
+          <Reveal>
+            <h2 className='blur-in text-2xl font-semibold text-[#200b38]'>
+              {about.promise.heading}
+            </h2>
+            {/* The quote darkens word by word as it scrolls up the screen. */}
+            <blockquote className='ink-quote mt-6 border-l-4 border-[#efb52b] pl-6 text-2xl font-medium text-[#200b38] sm:text-3xl'>
+              <Words
+                text={`“${about.promise.tagline}”`}
+                className='ink-word'
+              />
+            </blockquote>
+            <div className='mt-8 max-w-3xl space-y-4'>
+              {about.promise.paragraphs.map((paragraph, index) => (
+                <p
+                  key={paragraph}
+                  style={{ '--i': index + 2 } as React.CSSProperties}
+                  className='blur-in leading-relaxed text-gray-700'>
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+          </Reveal>
+          {/* The value cards are dealt onto the table, then tilt toward the cursor. */}
+          <Reveal as='div' className='mt-12'>
+            <ul className='tilt-stage grid gap-6 grid-cols-[repeat(auto-fit,minmax(min(16rem,100%),1fr))]'>
+              {about.values.map((value, index) => (
+                <TiltCard
+                  key={value.title}
+                  style={{ '--i': index } as React.CSSProperties}
+                  className='deal-card rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200'>
+                  <span className='icon-pop grid size-12 place-items-center rounded-lg bg-[#efb52b]/15'>
+                    <ServiceIcon
+                      slug={value.icon}
+                      draw='none'
+                      className='size-7 text-[#200b38]'
+                    />
+                  </span>
+                  <h3 className='mt-5 text-lg font-semibold text-[#200b38]'>
+                    {value.title}
+                  </h3>
+                  <p className='mt-2 text-gray-700'>{value.description}</p>
+                </TiltCard>
+              ))}
+            </ul>
+          </Reveal>
+        </div>
+      </section>
+
       {/* The owner's photo on one side, the story on the other. */}
       <section
         id='story'
@@ -138,59 +191,6 @@ export default async function AboutPage() {
                 ))}
               </article>
             ))}
-          </Reveal>
-        </div>
-      </section>
-
-      {/* Highlight the company promise and the values behind it. */}
-      <section
-        id='promise'
-        className='bg-[#f7f4fb]'>
-        <div className='mx-auto max-w-7xl px-6 py-16 sm:px-8 sm:py-20'>
-          <Reveal>
-            <h2 className='blur-in text-2xl font-semibold text-[#200b38]'>
-              {about.promise.heading}
-            </h2>
-            {/* The quote darkens word by word as it scrolls up the screen. */}
-            <blockquote className='ink-quote mt-6 border-l-4 border-[#efb52b] pl-6 text-2xl font-medium text-[#200b38] sm:text-3xl'>
-              <Words
-                text={`“${about.promise.tagline}”`}
-                className='ink-word'
-              />
-            </blockquote>
-            <div className='mt-8 max-w-3xl space-y-4'>
-              {about.promise.paragraphs.map((paragraph, index) => (
-                <p
-                  key={paragraph}
-                  style={{ '--i': index + 2 } as React.CSSProperties}
-                  className='blur-in leading-relaxed text-gray-700'>
-                  {paragraph}
-                </p>
-              ))}
-            </div>
-          </Reveal>
-          {/* The value cards are dealt onto the table, then tilt toward the cursor. */}
-          <Reveal as='div' className='mt-12'>
-            <ul className='tilt-stage grid gap-6 grid-cols-[repeat(auto-fit,minmax(min(16rem,100%),1fr))]'>
-              {about.values.map((value, index) => (
-                <TiltCard
-                  key={value.title}
-                  style={{ '--i': index } as React.CSSProperties}
-                  className='deal-card rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200'>
-                  <span className='icon-pop grid size-12 place-items-center rounded-lg bg-[#efb52b]/15'>
-                    <ServiceIcon
-                      slug={value.icon}
-                      draw='none'
-                      className='size-7 text-[#200b38]'
-                    />
-                  </span>
-                  <h3 className='mt-5 text-lg font-semibold text-[#200b38]'>
-                    {value.title}
-                  </h3>
-                  <p className='mt-2 text-gray-700'>{value.description}</p>
-                </TiltCard>
-              ))}
-            </ul>
           </Reveal>
         </div>
       </section>
