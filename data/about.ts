@@ -13,14 +13,14 @@ export const aboutIntro = {
 export const aboutOwner = {
   name: 'Niels',
   role: 'Founder. Washing windows in the Valley since 2018.',
-  photo: '' as string,
+  photo: '/images/home/niels-image.jpg',
 } as const;
 
 export const aboutStory = [
   {
     heading: 'How it started',
     paragraphs: [
-      'It started in 2018, when our founder, Niels, began washing windows while juggling college classes.',
+      'It started in 2018, when Clear Impression founder, Niels, began washing windows while juggling college classes.',
       'What began as a way to help neighbors soon became a passion for transforming homes and delivering a level of service that was hard to find anywhere else.',
     ],
   },
