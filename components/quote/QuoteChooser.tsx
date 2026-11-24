@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { manrope } from '@/app/fonts';
 import { company } from '@/data/company';
 import { openQuoteChooserEvent } from './QuoteButton';
 import styles from './QuoteChooser.module.css';
@@ -64,7 +65,7 @@ export default function QuoteChooser() {
       onClick={(event) => {
         if (event.target === event.currentTarget) close();
       }}
-      className={styles.dialog}>
+      className={`${styles.dialog} ${manrope.variable}`}>
       <div
         className={styles.card}
         data-stage={stage}>
@@ -112,26 +113,32 @@ export default function QuoteChooser() {
               style={{ '--n': 0 } as React.CSSProperties}>
               <span className={styles.badgeGold}>About 2 minutes</span>
               <span className={styles.optionTitle}>Instant estimate</span>
+              {/* A little window getting squeegeed clean as the pane count goes up. */}
               <span
                 aria-hidden='true'
                 className={styles.demo}>
                 <span className={styles.demoRow}>
-                  <span>Home size</span>
+                  <span>Window panes</span>
                   <span className={styles.demoSize}>
-                    <span>1,400 sq ft</span>
-                    <span>2,000 sq ft</span>
-                    <span>2,600 sq ft</span>
+                    <span>16</span>
+                    <span>24</span>
+                    <span>32</span>
                   </span>
                 </span>
-                <span className={styles.demoTrack}>
-                  <span className={styles.demoFill} />
+                <span className={styles.window}>
+                  {Array.from({ length: 16 }, (_, pane) => (
+                    <i
+                      key={pane}
+                      data-col={pane % 8}
+                    />
+                  ))}
                 </span>
                 <span className={styles.demoPrice}>
                   <span>Your estimate</span>
                   <span className={styles.demoTicker}>
-                    <span>$180</span>
+                    <span>$149</span>
                     <span>$215</span>
-                    <span>$245</span>
+                    <span>$290</span>
                   </span>
                 </span>
               </span>
@@ -153,12 +160,17 @@ export default function QuoteChooser() {
               style={{ '--n': 1 } as React.CSSProperties}>
               <span className={styles.badgeViolet}>Exact price</span>
               <span className={styles.optionTitle}>Detailed quote</span>
+              {/* A short chat: a real person answers. */}
               <span
                 aria-hidden='true'
-                className={`${styles.demo} ${styles.demoLight}`}>
-                <span className={styles.check}>Tell us about your property</span>
-                <span className={styles.check}>Our team reviews it</span>
-                <span className={styles.check}>You get an exact price</span>
+                className={`${styles.demo} ${styles.demoLight} ${styles.chat}`}>
+                <span className={`${styles.msg} ${styles.msgMe}`}>Two-story home with skylights, can you quote it?</span>
+                <span className={styles.msg}>Yes! Send a photo of the skylights and we’ll price it today.</span>
+                <span className={styles.typing}>
+                  <i />
+                  <i />
+                  <i />
+                </span>
               </span>
               <span className={styles.points}>
                 <span>Best for big or unusual jobs</span>
@@ -171,7 +183,7 @@ export default function QuoteChooser() {
             </Link>
           </div>
 
-          {/* Talk to a person instead. */}
+          {/* Talk to a person instead: tapping anywhere on the bar starts a call. */}
           <a
             href={company.phoneHref}
             className={styles.live}>
@@ -185,6 +197,11 @@ export default function QuoteChooser() {
             <span className={styles.liveText}>
               <span className={styles.liveTitle}>Stuck? Speak to a live person</span>
               <span className={styles.liveSub}>Call or text {company.phone}</span>
+            </span>
+            <span
+              aria-hidden='true'
+              className={styles.liveCall}>
+              Call now
             </span>
           </a>
         </div>

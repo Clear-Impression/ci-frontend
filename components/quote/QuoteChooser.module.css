@@ -1,4 +1,4 @@
-/* The quote chooser popup. */
+/* The quote chooser popup: plum with green accents, set in Manrope. */
 
 .dialog {
   margin: auto;
@@ -29,10 +29,11 @@
   overflow: auto;
   border-radius: 2rem;
   background:
-    radial-gradient(60% 50% at 100% 0%, rgb(239 181 43 / 0.14), transparent 70%),
+    radial-gradient(60% 50% at 100% 0%, rgb(85 171 104 / 0.12), transparent 70%),
     radial-gradient(60% 50% at 0% 100%, rgb(108 63 184 / 0.1), transparent 70%),
-    #fbf8f3;
+    linear-gradient(160deg, #fbf8ff, #f2ecfa);
   color: #200b38;
+  font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
   box-shadow: 0 50px 100px -40px rgb(20 6 36 / 0.7);
   animation: pop-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -249,7 +250,7 @@
 }
 
 .optionDark {
-  background: #200b38;
+  background: radial-gradient(120% 90% at 100% 0%, #3a1b62, #200b38);
   color: #fff;
   box-shadow: 0 30px 50px -30px rgb(32 11 56 / 0.8);
 }
@@ -323,13 +324,13 @@
 }
 
 .badgeGold {
-  background: #efb52b;
-  color: #200b38;
+  background: #55ab68;
+  color: #fff;
 }
 
 .badgeViolet {
-  background: rgb(108 63 184 / 0.1);
-  color: #6c3fb8;
+  background: #e3f3e7;
+  color: #23683a;
 }
 
 .optionTitle {
@@ -364,38 +365,6 @@
 }
 
 
-.demoTrack {
-  position: relative;
-  height: 6px;
-  border-radius: 9999px;
-  background: rgb(255 255 255 / 0.15);
-  overflow: hidden;
-}
-
-.demoFill {
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 30%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, #9b6ce0, #efb52b);
-  animation: slide 3.6s ease-in-out infinite;
-}
-
-@keyframes slide {
-  0%,
-  10% {
-    width: 30%;
-  }
-  40%,
-  60% {
-    width: 55%;
-  }
-  85%,
-  100% {
-    width: 78%;
-  }
-}
-
 .demoTicker,
 .demoSize {
   position: relative;
@@ -403,7 +372,7 @@
   overflow: hidden;
   font-size: 1.15rem;
   font-weight: 700;
-  color: #efb52b;
+  color: #a6e3b4;
 }
 
 .demoSize {
@@ -443,50 +412,6 @@
   }
 }
 
-.check {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  color: rgb(32 11 56 / 0.75);
-}
-
-.check::before {
-  content: '✓';
-  display: grid;
-  place-items: center;
-  width: 1.25rem;
-  height: 1.25rem;
-  flex-shrink: 0;
-  border-radius: 9999px;
-  background: #6c3fb8;
-  color: #fff;
-  font-size: 0.7rem;
-  font-weight: 700;
-  transform: scale(0);
-  animation: tick-in 3.6s ease infinite;
-}
-
-.check:nth-child(2)::before {
-  animation-delay: 0.5s;
-}
-
-.check:nth-child(3)::before {
-  animation-delay: 1s;
-}
-
-@keyframes tick-in {
-  0% {
-    transform: scale(0);
-  }
-  12%,
-  85% {
-    transform: scale(1);
-  }
-  100% {
-    transform: scale(0);
-  }
-}
-
 .points {
   margin-top: 1rem;
   display: grid;
@@ -499,11 +424,11 @@
 .points > span::before {
   content: '•';
   margin-right: 0.5rem;
-  color: #efb52b;
+  color: #72c587;
 }
 
 .optionLight .points > span::before {
-  color: #6c3fb8;
+  color: #55ab68;
 }
 
 .ctaGold,
@@ -519,8 +444,8 @@
 }
 
 .ctaGold {
-  background: #efb52b;
-  color: #200b38;
+  background: #55ab68;
+  color: #fff;
 }
 
 .ctaDark {
@@ -529,7 +454,7 @@
 }
 
 .optionDark:hover .ctaGold {
-  background: #f6c95b;
+  background: #4b9d5e;
 }
 
 .optionLight:hover .ctaDark {
@@ -548,13 +473,13 @@
   gap: 1rem;
   border-radius: 1.5rem;
   padding: 1rem 1.25rem;
-  background: #fbefcd;
+  background: #e8f5eb;
   box-shadow: 0 16px 30px -20px rgb(32 11 56 / 0.5);
   transition: background-color 0.2s ease;
 }
 
 .live:hover {
-  background: #f8e4ad;
+  background: #dcefe1;
 }
 
 .live:focus-visible {
@@ -563,14 +488,68 @@
 }
 
 .liveIcon {
+  position: relative;
   display: grid;
   place-items: center;
   width: 3rem;
   height: 3rem;
   flex-shrink: 0;
   border-radius: 9999px;
+  background: #55ab68;
+  color: #fff;
+}
+
+/* A gold ring keeps pulsing out from the phone, like it's ringing. */
+.liveIcon::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid #55ab68;
+  border-radius: inherit;
+  animation: ring 1.8s ease-out infinite;
+}
+
+@keyframes ring {
+  from {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+
+.live:hover .liveIcon svg {
+  animation: wiggle 0.6s ease-in-out;
+}
+
+@keyframes wiggle {
+  25% {
+    transform: rotate(-14deg);
+  }
+  50% {
+    transform: rotate(12deg);
+  }
+  75% {
+    transform: rotate(-6deg);
+  }
+}
+
+.liveCall {
+  margin-left: auto;
+  flex-shrink: 0;
+  padding: 0.55rem 1.1rem;
+  border-radius: 9999px;
   background: #200b38;
-  color: #efb52b;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  transition: transform 0.2s ease;
+}
+
+.live:hover .liveCall {
+  transform: translateX(3px);
 }
 
 .liveIcon svg {
@@ -580,6 +559,7 @@
 
 .liveText {
   display: grid;
+  min-width: 0;
 }
 
 .liveTitle {
@@ -588,22 +568,208 @@
 }
 
 .liveSub {
-  color: rgb(32 11 56 / 0.65);
+  color: #4d6356;
+}
+
+/* The instant estimate's little window: panes appear as the count goes up,
+   and a squeegee keeps wiping them clean. */
+.window {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 3px;
+  height: 3.6rem;
+  padding: 3px;
+  overflow: hidden;
+  border-radius: 0.6rem;
+  background: rgb(255 255 255 / 0.14);
+}
+
+.window i {
+  border-radius: 3px;
+  background: linear-gradient(160deg, #d5ecf8, #9fd0ea);
+}
+
+/* Columns 5 and 6 arrive with 24 panes, 7 and 8 with 32. */
+.window i[data-col='4'],
+.window i[data-col='5'] {
+  animation: pane-24 3.6s ease-in-out infinite;
+}
+
+.window i[data-col='6'],
+.window i[data-col='7'] {
+  animation: pane-32 3.6s ease-in-out infinite;
+}
+
+@keyframes pane-24 {
+  0%,
+  30% {
+    opacity: 0.12;
+  }
+  40%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes pane-32 {
+  0%,
+  75% {
+    opacity: 0.12;
+  }
+  85%,
+  100% {
+    opacity: 1;
+  }
+}
+
+/* The dirt, wiped away left to right by a bright squeegee edge. */
+.window::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, transparent 0, rgb(255 255 255 / 0.9) 1.5%, transparent 3%),
+    rgb(118 128 104 / 0.6);
+  animation: squeegee 3.6s ease-in-out infinite;
+}
+
+@keyframes squeegee {
+  0% {
+    clip-path: inset(0 0 0 0);
+  }
+  55%,
+  90% {
+    clip-path: inset(0 0 0 100%);
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* The detailed quote's chat. */
+.chat {
+  gap: 0.45rem;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px rgb(32 11 56 / 0.06);
+}
+
+.msg {
+  justify-self: start;
+  max-width: 88%;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.9rem 0.9rem 0.9rem 0.25rem;
+  background: #dff2e4;
+  color: #12351f;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  animation: msg-in 6s ease infinite both;
+}
+
+.msgMe {
+  justify-self: end;
+  border-radius: 0.9rem 0.9rem 0.25rem 0.9rem;
+  background: #200b38;
+  color: #fff;
+  animation-name: msg-me;
+}
+
+@keyframes msg-me {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  6%,
+  92% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes msg-in {
+  0%,
+  30% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  36%,
+  92% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.typing {
+  display: inline-flex;
+  justify-self: start;
+  gap: 4px;
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.9rem;
+  background: #dff2e4;
+}
+
+.typing i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #55ab68;
+  animation: dot 1.2s ease-in-out infinite;
+}
+
+.typing i:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.typing i:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes dot {
+  0%,
+  60%,
+  100% {
+    opacity: 0.4;
+    transform: none;
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-4px);
+  }
+}
+
+@media (max-width: 480px) {
+  .liveCall {
+    display: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .dialog::backdrop,
   .card,
   .fogText,
-  .demoFill,
+  .window i,
+  .window::after,
+  .msg,
+  .typing i,
+  .liveIcon::after,
   .demoTicker > span,
-  .demoSize > span,
-  .check::before {
+  .demoSize > span {
     animation: none;
   }
 
-  .check::before {
-    transform: none;
+  .window::after {
+    display: none;
+  }
+
+  .msg,
+  .window i {
+    opacity: 1;
   }
 
   .title,
