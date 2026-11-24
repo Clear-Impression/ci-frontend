@@ -1,159 +1,217 @@
-/* The "On this page" menu (pg- classes): grouped sections on dark purple
-   frosted glass, running nearly the full height of the screen under the
-   header. Wide screens only; phones have the header menu. */
+/* The "On this page" menu (pg- classes): a see-through deep purple folder on
+   the left of the screen with a tab on its right edge. Closed, a thin edge of
+   the folder and the tab stay in view. Its parts are folded under numbered
+   headings and unstack on hover. Wide screens only; phones have the header menu. */
 
-.pg-wrap {
+.pg {
+  --pg-glass: rgb(32 11 56 / 0.36);
+  --pg-edge: rgb(255 255 255 / 0.22);
+  --pg-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  position: fixed;
+  top: var(--pg-top, 30vh);
+  left: 16px;
+  z-index: 42;
   display: none;
+  width: 272px;
+  color: #fff;
+  font-family: var(--font-manrope), var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  filter: drop-shadow(0 24px 40px rgb(32 11 56 / 0.28));
+  transition: transform 0.55s var(--pg-ease);
 }
 
 @media (width >= 64rem) {
-  .pg-wrap {
+  .pg {
     display: block;
   }
 }
 
-/* The three-line button that pulls the menu out. */
-.pg-toggle {
-  position: fixed;
-  top: calc(var(--pg-top, 0px) + 12px);
-  left: 16px;
-  z-index: 41;
-  display: grid;
-  width: 44px;
-  height: 44px;
-  place-content: center;
-  gap: 4px;
-  border: 1px solid rgb(255 255 255 / 0.16);
-  border-radius: 14px;
-  background: rgb(32 11 56 / 0.86);
-  box-shadow: 0 14px 30px -18px rgb(0 0 0 / 0.6);
-  cursor: pointer;
-  -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
-  transition:
-    opacity 0.3s ease,
-    transform 0.3s ease;
+/* Closed: slide off to the left, leaving a 10px edge and the tab. */
+.pg:not([data-open]) {
+  transform: translateX(calc(-100% - 6px));
 }
 
-.pg-toggle span {
-  display: block;
-  width: 16px;
-  height: 1.5px;
-  border-radius: 2px;
-  background: #fff;
-  transition: transform 0.3s ease;
-}
-
-.pg-toggle[data-open] {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.pg-toggle:focus-visible {
-  outline: 2px solid #efb52b;
-  outline-offset: 3px;
-}
-
-/* The menu itself. */
-.pg {
-  position: fixed;
-  top: calc(var(--pg-top, 0px) + 12px);
-  left: 16px;
-  z-index: 42;
+.pg-body {
   display: flex;
-  width: 260px;
-  max-height: calc(100vh - var(--pg-top, 0px) - 28px);
   flex-direction: column;
-  gap: 14px;
-  padding: 20px 14px 14px;
-  border: 1px solid rgb(255 255 255 / 0.14);
-  border-radius: 24px;
-  background: rgb(32 11 56 / 0.86);
-  box-shadow: 0 30px 60px -30px rgb(0 0 0 / 0.6);
-  color: #fff;
-  font-family: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
-  -webkit-backdrop-filter: blur(18px) saturate(1.3);
-  backdrop-filter: blur(18px) saturate(1.3);
-  transition:
-    opacity 0.4s ease,
-    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-    visibility 0s;
+  gap: 18px;
+  padding: 22px 14px 16px;
+  border: 1px solid var(--pg-edge);
+  border-radius: 22px 0 22px 22px;
+  background: var(--pg-glass);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
 }
 
-.pg:not([data-shown]) {
-  opacity: 0;
-  transform: translateX(-24px);
-  visibility: hidden;
-  pointer-events: none;
-  transition:
-    opacity 0.3s ease,
-    transform 0.4s ease,
-    visibility 0s linear 0.4s;
+.pg-label {
+  margin: 0;
+  padding: 0 12px;
+  color: #a6e3b4;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
 }
 
 .pg-groups {
   display: flex;
-  min-height: 0;
   flex-direction: column;
-  gap: 18px;
-  overflow-y: auto;
-  scrollbar-width: none;
+  gap: 8px;
 }
 
-.pg-group ol {
+.pg-group {
+  border-radius: 14px;
+  transition: background-color 0.25s ease;
+}
+
+/* "1. Get to know us" */
+.pg-title {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 14px 12px;
+  border: 0;
+  border-radius: 14px;
+  background: none;
+  color: #fff;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  text-align: left;
+  text-shadow: 0 1px 8px rgb(32 11 56 / 0.6);
+  cursor: pointer;
+}
+
+.pg-title b {
+  color: #efb52b;
+}
+
+/* The gold dot on the part you're in. */
+.pg-group[data-here] .pg-title > span::after {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin: 0 0 2px 8px;
+  border-radius: 50%;
+  background: #efb52b;
+  vertical-align: middle;
+}
+
+.pg-title::after {
+  content: '›';
+  color: rgb(255 255 255 / 0.7);
+  font-size: 17px;
+  line-height: 1;
+  transition: transform 0.3s ease;
+}
+
+.pg-title:focus-visible {
+  outline: 2px solid #efb52b;
+  outline-offset: -2px;
+}
+
+/* The folded sections. */
+.pg-items {
   display: grid;
-  gap: 2px;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.4s var(--pg-ease);
+}
+
+.pg-items ul {
+  display: grid;
+  min-height: 0;
+  gap: 1px;
   margin: 0;
   padding: 0;
+  overflow: hidden;
   list-style: none;
+  transition: padding-bottom 0.4s ease;
 }
 
-.pg-title {
-  margin: 0 0 6px;
-  padding: 0 10px;
-  color: #8fd19e;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+.pg-items li {
+  opacity: 0;
+  transform: translateY(calc(var(--k, 0) * -100%)) scale(0.94);
+  transform-origin: top left;
+  transition:
+    opacity 0.25s ease,
+    transform 0.45s var(--pg-ease);
 }
 
-.pg a {
+/* Hover, keyboard focus or a click unstacks a part. */
+.pg-group:is(:hover, :focus-within, [data-expanded]) {
+  background: rgb(255 255 255 / 0.07);
+}
+
+.pg-group:is(:hover, :focus-within, [data-expanded]) .pg-title::after {
+  transform: rotate(90deg);
+}
+
+.pg-group:is(:hover, :focus-within, [data-expanded]) .pg-items {
+  grid-template-rows: 1fr;
+}
+
+.pg-group:is(:hover, :focus-within, [data-expanded]) .pg-items ul {
+  padding-bottom: 8px;
+}
+
+.pg-group:is(:hover, :focus-within, [data-expanded]) .pg-items li {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(0.05s + var(--k, 0) * 60ms);
+}
+
+.pg-items a {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 9px 10px;
+  padding: 7px 10px 7px 14px;
   border-radius: 10px;
-  color: rgb(255 255 255 / 0.78);
-  font-size: 14.5px;
+  color: rgb(255 255 255 / 0.94);
+  font-size: 14px;
+  font-weight: 500;
   text-decoration: none;
-  transition:
-    background-color 0.2s ease,
-    color 0.2s ease;
+  text-shadow: 0 1px 8px rgb(32 11 56 / 0.6);
+  transition: background-color 0.2s ease;
 }
 
-.pg a:hover {
-  background: rgb(255 255 255 / 0.08);
-  color: #fff;
+.pg-items a > span:first-child::before {
+  content: '';
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin: 0 10px 2px 0;
+  border-radius: 50%;
+  background: #8fd19e;
+  vertical-align: middle;
 }
 
-.pg a[aria-current] {
+.pg-items a:hover {
   background: rgb(255 255 255 / 0.12);
-  color: #fff;
-  font-weight: 600;
 }
 
-.pg a small {
-  color: #8fd19e;
+.pg-items a[aria-current] {
+  background: rgb(255 255 255 / 0.16);
+  font-weight: 700;
+}
+
+.pg-items a[aria-current] > span:first-child::before {
+  background: #efb52b;
+}
+
+.pg-items a small {
+  color: #a6e3b4;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   white-space: nowrap;
 }
 
-.pg a:focus-visible {
+.pg-items a:focus-visible {
   outline: 2px solid #efb52b;
-  outline-offset: 1px;
+  outline-offset: -2px;
 }
 
 .pg-quote {
@@ -167,7 +225,7 @@
   color: #fff;
   font-family: inherit;
   font-size: 14.5px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
@@ -181,11 +239,83 @@
   outline-offset: 3px;
 }
 
+/* Cascade: when it opens, the headings and button drop in one after another;
+   when it closes, the words fade first and the empty glass edge stays. */
+.pg-label,
+.pg-title,
+.pg-quote {
+  transition:
+    opacity 0.35s ease,
+    transform 0.45s var(--pg-ease),
+    background-color 0.2s ease;
+  transition-delay: calc(0.22s + var(--i, 0) * 70ms);
+}
+
+.pg-quote {
+  --i: 4;
+}
+
+.pg:not([data-open]) :is(.pg-label, .pg-title, .pg-quote) {
+  opacity: 0;
+  transform: translateX(-14px);
+  transition-delay: 0s;
+}
+
+/* The tab on the folder's right edge. */
+.pg-tab {
+  position: absolute;
+  top: var(--pg-tab-top, 50%);
+  right: -40px;
+  display: grid;
+  width: 40px;
+  justify-items: center;
+  gap: 10px;
+  padding: 16px 0;
+  border: 1px solid var(--pg-edge);
+  border-left: 0;
+  border-radius: 0 14px 14px 0;
+  background: var(--pg-glass);
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  transform: translateY(-50%);
+  transition:
+    width 0.25s ease,
+    right 0.25s ease;
+}
+
+.pg-tab:hover {
+  right: -46px;
+  width: 46px;
+}
+
+.pg-tab:focus-visible {
+  outline: 2px solid #efb52b;
+  outline-offset: 2px;
+}
+
+.pg-tab-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #efb52b;
+}
+
+.pg-tab-label {
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .pg,
-  .pg:not([data-shown]),
-  .pg-toggle {
-    transform: none;
-    transition: none;
+  .pg *,
+  .pg *::after {
+    transition: none !important;
   }
 }

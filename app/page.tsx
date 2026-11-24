@@ -46,15 +46,13 @@ const organizationStructuredData = {
   telephone: company.phoneHref.replace(/^tel:/, ''),
 };
 
-// The sections listed in the "On this page" guide, top to bottom. Each id wraps one section below.
-// The "On this page" menu, in three short groups.
+// The "On this page" menu, in three numbered groups. Each id wraps one section below.
 const guideGroups = [
   {
     title: 'Get to know us',
     items: [
-      { id: 'top', label: 'Welcome' },
       { id: 'why-us', label: 'Our Promise' },
-      { id: 'services', label: 'Services' },
+      { id: 'services', label: 'Our Services' },
       { id: 'at-work', label: 'See Us at Work' },
       { id: 'service-area', label: 'Where We Work' },
     ],
