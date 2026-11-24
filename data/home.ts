@@ -58,7 +58,7 @@ export const pureWater = {
     {
       label: 'RO Membrane',
       detail: 'Reverse osmosis strips out 98% of the minerals and impurities that cause spots.',
-      image: '/images/home/commercial-glass-card.jpg',
+      image: '/images/home/water-fed-pole-step-2.png',
       imageAlt: 'A window cleaner washing tall storefront glass with a water-fed pole.',
     },
     {
