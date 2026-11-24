@@ -1095,6 +1095,88 @@ a.hx-rating:hover strong {
   font-size: clamp(54px, min(9.6vw, 12vh), 148px);
 }
 
+/* ---------- Hero headline: typed out in Manrope ---------- */
+
+.hx .hx-hero-copy .hx-h1.hx-typed,
+.hx .hx-hero:has(.hx-pstrip) .hx-hero-copy .hx-h1.hx-typed {
+  max-width: none;
+  font-family: var(--font-manrope), var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(42px, min(5.8vw, 9vh), 96px);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+}
+
+.hx-typed-line {
+  display: block;
+}
+
+.hx-typed-line + .hx-typed-line {
+  margin-top: 0.12em;
+}
+
+/* The last line is gold, like Niels's graphic. */
+.hx-typed-label {
+  color: var(--hx-gold);
+}
+
+/* Each letter appears at its own time, with a gold cursor beside it for a moment. */
+.hx-typed-ch {
+  opacity: 0;
+  animation:
+    hx-type-in 1ms linear var(--at) forwards,
+    hx-type-caret 55ms steps(1) var(--at);
+}
+
+@keyframes hx-type-in {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes hx-type-caret {
+  0% {
+    box-shadow: 0.05em 0 0 var(--hx-gold);
+  }
+  100% {
+    box-shadow: none;
+  }
+}
+
+/* When the typing is done, a cursor keeps blinking at the end. */
+.hx-typed-caret {
+  display: inline-block;
+  width: 0.06em;
+  height: 0.8em;
+  margin-left: 0.06em;
+  vertical-align: -0.04em;
+  background: var(--hx-gold);
+  opacity: 0;
+  animation: hx-caret-blink 1.1s steps(1) var(--at) infinite;
+}
+
+@keyframes hx-caret-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hx-typed-ch {
+    opacity: 1;
+    animation: none;
+  }
+
+  .hx-typed-caret {
+    display: none;
+  }
+}
+
 /* ---------- Service area ---------- */
 
 .hx-location-grid {

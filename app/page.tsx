@@ -1,4 +1,3 @@
-import { getPageHeader } from '@/lib/page-headers';
 import { createPageMetadata } from '@/lib/seo';
 import './home-redesign.css';
 import { jakarta } from './fonts';
@@ -75,7 +74,6 @@ const guideGroups = [
 ] satisfies GuideGroup[];
 
 export default async function Home() {
-  const header = await getPageHeader('home');
   const { cities } = await getLocations();
   const { popup } = await getSeasonalOffers();
   return (
@@ -97,8 +95,6 @@ export default async function Home() {
       <div id='top'>
         <HomeHero
           {...homeHero}
-          titleLines={header.title.split('\n')}
-          subtitle={header.subtitle || homeHero.subtitle}
           rating={googleRating.score}
           reviewCount={googleRating.count}>
           {/* The Clear Impression Promise, along the bottom of the hero. */}

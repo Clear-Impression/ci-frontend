@@ -1,23 +1,47 @@
 import HeroBackdropVideo from '@/components/home/HeroBackdropVideo';
 import HxIcon from '@/components/home/HxIcon';
 import QuoteButton from '@/components/quote/QuoteButton';
+import { manrope } from '@/app/fonts';
 import { googleReviewsUrl } from '@/data/reviews';
 
 type HomeHeroProps = {
-  eyebrow: string;
   titleLines: readonly string[];
-  subtitle?: string;
   rating: number;
   reviewCount: number;
   // The stats strip, shown along the bottom of the hero over the video.
   children?: React.ReactNode;
 };
 
-// The homepage hero: a full-width drone video under a purple shade, a big
-// white headline, then a line with the intro, rating and buttons. The stats
-// strip sits along the bottom, over the same video.
-export default function HomeHero({ eyebrow, titleLines, subtitle, rating, reviewCount, children }: HomeHeroProps) {
+// Each letter waits this long after the one before it, so the headline
+// types itself out.
+const TYPE_MS = 55;
+// A short pause before the next line starts typing.
+const LINE_PAUSE_MS = 300;
+
+// The time each letter of each line appears, in milliseconds.
+function typeSchedule(lines: readonly string[]) {
+  let clock = 400;
+  const result = lines.map((line) => {
+    const letters = Array.from(line).map((letter, index) => ({ letter, at: clock + index * TYPE_MS }));
+    const start = clock;
+    clock += letters.length * TYPE_MS + LINE_PAUSE_MS;
+    return { line, letters, start };
+  });
+  return { lines: result, doneAt: clock };
+}
+
+// The homepage hero: a full-width drone video under a purple shade, the
+// headline typing itself out in Manrope ("ZERO cut corners. ONE CLEAR
+// IMPRESSION.", with the last line in gold), then a line with the
+// rating and buttons. The promise strip sits along the bottom, over
+// the same video.
+export default function HomeHero({ titleLines, rating, reviewCount, children }: HomeHeroProps) {
   const lastLine = titleLines.length - 1;
+
+  // When each letter appears. Worked out up front, so the typing is pure CSS
+  // and the page needs no script for it.
+  const typed = typeSchedule(titleLines);
+  const doneAt = typed.doneAt;
 
   return (
     <section
@@ -35,27 +59,40 @@ export default function HomeHero({ eyebrow, titleLines, subtitle, rating, review
 
       <div className='hx-container hx-hero-grid'>
         <div className='hx-hero-copy'>
-          <p className='hx-eyebrow hx-reveal'>{eyebrow}</p>
           <h1
             id='home-heading'
-            className='hx-h1'>
-            {titleLines.map((line, index) => (
-              <span
-                key={line}
-                className='line-mask'>
+            className={`hx-h1 hx-typed ${manrope.variable}`}>
+            {/* Screen readers and search engines get the whole line at once. */}
+            <span className='sr-only'>{titleLines.join(' ')}</span>
+            <span aria-hidden='true'>
+              {typed.lines.map(({ line, letters, start }, index) => (
                 <span
-                  className='line-rise'
-                  style={{ '--i': index } as React.CSSProperties}>
-                  {index === lastLine && lastLine > 0 ? <em>{line}</em> : line}
-                </span>{' '}
-              </span>
-            ))}
+                  key={line}
+                  className='hx-typed-line'>
+                  <span
+                    className={index === lastLine && lastLine > 0 ? 'hx-typed-label' : undefined}
+                    style={{ '--start': `${start}ms` } as React.CSSProperties}>
+                    {letters.map(({ letter, at }, position) => (
+                      <span
+                        key={position}
+                        className='hx-typed-ch'
+                        style={{ '--at': `${at}ms` } as React.CSSProperties}>
+                        {letter}
+                      </span>
+                    ))}
+                    {index === lastLine && (
+                      <span
+                        className='hx-typed-caret'
+                        style={{ '--at': `${doneAt}ms` } as React.CSSProperties}
+                      />
+                    )}
+                  </span>
+                </span>
+              ))}
+            </span>
           </h1>
           <div className='hx-hero-bottom'>
             <div>
-              {subtitle && (
-                <p className='hx-hero-sub'>{subtitle}</p>
-              )}
               {/* The rating opens our Google Business listing in a new tab. */}
               <a
                 href={googleReviewsUrl}

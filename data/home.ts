@@ -4,11 +4,8 @@ const quoteHref = company.quoteFormUrl;
 
 // Keep the homepage copy separate so it can move to a CMS later.
 export const homeHero = {
-  eyebrow: 'Window cleaning in the Phoenix metro area',
-  titleLines: ['Clear Impression.', 'Always.'],
-  // Shown under the headline when the homepage header in Sanity has no subtitle.
-  subtitle:
-    'Spot-free windows, solar panels and storefront glass for homes and businesses across the Valley. Pure water outside, careful hands inside.',
+  // Niels's line. The last line is gold.
+  titleLines: ['ZERO cut corners.', 'ONE CLEAR IMPRESSION.'],
   quoteHref,
 };
 
