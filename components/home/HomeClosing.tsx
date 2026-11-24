@@ -105,21 +105,6 @@ export default function HomeClosing({ heading, text, stepsLabel, steps, image, i
             <HxIcon name='phone' /> {company.phone}
           </a>
         </div>
-
-        {/* What happens after someone asks for a quote. */}
-        <div className='hx-next hx-reveal'>
-          <strong>{stepsLabel.toUpperCase()}</strong>
-          <ol className='contents'>
-            {steps.map((step, index) => (
-              <li
-                key={step.title}
-                title={step.text}>
-                <b aria-hidden='true'>{index + 1}</b>
-                {step.title}
-              </li>
-            ))}
-          </ol>
-        </div>
       </div>
     </section>
   );
