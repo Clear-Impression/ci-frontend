@@ -6,6 +6,7 @@ import HomeHero from '@/components/home/HomeHero';
 import HomePromiseStrip from '@/components/home/HomePromiseStrip';
 import HomePureWater from '@/components/home/HomePureWater';
 import HomeServices from '@/components/home/HomeServices';
+import HomeAtWork from '@/components/home/HomeAtWork';
 import HomeReviews from '@/components/home/HomeReviews';
 import HomeServiceArea from '@/components/home/HomeServiceArea';
 import HomeClosing from '@/components/home/HomeClosing';
@@ -21,6 +22,7 @@ import {
   homeClosing,
   homeHero,
   homeServices,
+  homeAtWork,
   homeSteps,
   pureWater,
 } from '@/data/home';
@@ -53,6 +55,7 @@ const guideGroups = [
       { id: 'top', label: 'Welcome' },
       { id: 'why-us', label: 'Our Promise' },
       { id: 'services', label: 'Services' },
+      { id: 'at-work', label: 'See Us at Work' },
       { id: 'service-area', label: 'Where We Work' },
     ],
   },
@@ -109,6 +112,10 @@ export default async function Home() {
       {/* Our services, right under the promise. */}
       <div id='services'>
         <HomeServices {...homeServices} />
+      </div>
+      {/* A short clip of Niels at work, in a phone. */}
+      <div id='at-work'>
+        <HomeAtWork {...homeAtWork} />
       </div>
       {/* Then find your city. */}
       <div id='service-area'>

@@ -198,3 +198,28 @@ export const homeClosing = {
     'https://images.unsplash.com/photo-1706403222567-06fe8d8dc93e?auto=format&fit=crop&w=2000&q=80',
   imageAlt: 'The Phoenix valley and mountains at golden hour',
 };
+
+// "See us at work": a short clip of Niels cleaning a storefront, played in a
+// phone. Each part of the clip gets a caption; `from` is when (in seconds) that
+// part starts, and `step` is which of the steps on the right it shows.
+export const homeAtWork = {
+  eyebrow: 'See us at work',
+  titleLines: ['A storefront,', 'top to bottom.'],
+  lead: 'Real footage from a real job in the Valley: pure water, a squeegee and a careful eye, from the top of the glass down to the last edge.',
+  steps: ['Set up and spray', 'Scrub high glass from the ground', 'Squeegee, no streaks', 'Detail every edge'],
+  video: {
+    mp4: '/videos/niels-at-work.mp4',
+    webm: '/videos/niels-at-work.webm',
+    poster: '/videos/niels-at-work-poster.jpg',
+    label:
+      'Niels cleaning a storefront window: spraying, scrubbing high glass with a pole, squeegeeing from a step ladder and detailing the bottom edges.',
+    length: 19.5,
+  },
+  parts: [
+    { from: 0, caption: ['Storefront', 'day.'], step: 0 },
+    { from: 2.7, caption: ['Top to', 'bottom.'], step: 1 },
+    { from: 7.4, caption: ['No', 'streaks.'], step: 2 },
+    { from: 11.43, caption: ['Every', 'edge.'], step: 2 },
+    { from: 15.47, caption: ['Zero cut', 'corners.'], step: 3 },
+  ] as readonly { from: number; caption: readonly [string, string]; step: number }[],
+};

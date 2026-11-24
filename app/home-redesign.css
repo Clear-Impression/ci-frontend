@@ -1302,6 +1302,10 @@ a.hx-rating:hover strong {
   background: currentColor;
 }
 
+.hx .hx-sv .hx-sv-title {
+  font-family: var(--font-manrope), var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+}
+
 .hx-sv-title {
   margin: 16px 0 0;
   font-size: clamp(38px, 5vw, 64px);
@@ -1643,6 +1647,344 @@ a.hx-rating:hover strong {
   .hx-sv-card:focus-within .hx-sv-back {
     opacity: 1;
     pointer-events: auto;
+  }
+}
+
+/* ---------- See us at work: a phone playing a clip, words beside it ---------- */
+
+.hx .hx-aw {
+  padding: 96px 0 104px;
+  background: #f4f1f7;
+  color: var(--hx-purple);
+  font-family: var(--font-manrope), var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* "SEE US AT WORK", centred over both columns. */
+.hx-aw-eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin: 0 0 48px;
+  color: #2f7a45;
+  font-size: clamp(16px, 1.6vw, 20px);
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.hx-aw-eyebrow::before,
+.hx-aw-eyebrow::after {
+  content: '';
+  width: 44px;
+  height: 3px;
+  border-radius: 3px;
+  background: currentColor;
+}
+
+.hx-aw-grid {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 72px;
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+/* The phone: straight, with a black frame. */
+.hx-aw-phone {
+  width: min(330px, 78vw);
+  aspect-ratio: 9 / 19;
+  padding: 12px;
+  border-radius: 52px;
+  background: #0b0b0d;
+  box-shadow:
+    0 0 0 1.5px #2a2a2e,
+    inset 0 0 0 2px #1c1c20,
+    0 40px 70px -30px rgb(32 11 56 / 0.45);
+}
+
+.hx-aw-screen {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 42px;
+  background: #000;
+}
+
+.hx-aw-screen video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hx-aw-screen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, rgb(32 11 56 / 0.55), transparent 32%, transparent 70%, rgb(32 11 56 / 0.6));
+  pointer-events: none;
+}
+
+.hx-aw-island {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  z-index: 3;
+  width: 92px;
+  height: 26px;
+  border-radius: 20px;
+  background: #0b0b0d;
+  transform: translateX(-50%);
+}
+
+.hx-aw-caption {
+  position: absolute;
+  top: 15%;
+  right: 8%;
+  left: 8%;
+  z-index: 2;
+  margin: 0;
+  color: #fff;
+  font-size: clamp(26px, 2.6vw, 34px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  text-align: center;
+  text-shadow: 0 2px 14px rgb(0 0 0 / 0.5);
+  text-transform: uppercase;
+}
+
+.hx-aw-caption span {
+  display: inline-block;
+  animation: hx-aw-pop 500ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.hx-aw-caption em {
+  color: var(--hx-gold);
+  font-style: italic;
+}
+
+@keyframes hx-aw-pop {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.9);
+  }
+}
+
+.hx-aw-bars {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  left: 16px;
+  z-index: 2;
+  display: flex;
+  gap: 4px;
+}
+
+.hx-aw-bars i {
+  flex: 1;
+  height: 3px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: rgb(255 255 255 / 0.3);
+}
+
+.hx-aw-bars u {
+  display: block;
+  height: 100%;
+  background: #fff;
+  transform-origin: left;
+}
+
+.hx-aw-toggle {
+  position: absolute;
+  right: 16px;
+  bottom: 30px;
+  z-index: 2;
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(0 0 0 / 0.45);
+  color: #fff;
+  cursor: pointer;
+}
+
+.hx-aw-toggle svg {
+  width: 16px;
+  height: 16px;
+}
+
+.hx-aw-toggle:focus-visible {
+  outline: 2px solid var(--hx-gold);
+  outline-offset: 2px;
+}
+
+.hx .hx-aw .hx-aw-title,
+.hx .hx-sv .hx-sv-back h3 {
+  font-family: var(--font-manrope), var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+}
+
+.hx-aw-title {
+  margin: 0;
+  font-size: clamp(36px, 4.6vw, 60px);
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 1.04;
+}
+
+.hx-aw-title span {
+  display: block;
+}
+
+.hx-aw-title em {
+  color: #b07a00;
+  font-style: normal;
+}
+
+.hx-aw-lead {
+  max-width: 46ch;
+  margin: 18px 0 0;
+  color: #4f4560;
+  font-size: 16.5px;
+  line-height: 1.6;
+}
+
+.hx-aw-steps {
+  display: grid;
+  gap: 10px;
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hx-aw-steps li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #8a8196;
+  font-size: 15px;
+  font-weight: 600;
+  transition: color 300ms ease;
+}
+
+.hx-aw-steps i {
+  display: grid;
+  width: 26px;
+  height: 26px;
+  flex: none;
+  place-items: center;
+  border: 1.5px solid #cfc5dc;
+  border-radius: 50%;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 800;
+  transition:
+    background-color 300ms ease,
+    border-color 300ms ease;
+}
+
+.hx-aw-steps li[data-on] {
+  color: var(--hx-purple);
+}
+
+.hx-aw-steps li[data-on] i {
+  border-color: var(--hx-gold);
+  background: var(--hx-gold);
+}
+
+.hx-aw-ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.hx-aw-quote,
+.hx-aw-more {
+  display: inline-flex;
+  min-height: 52px;
+  align-items: center;
+  padding: 0 26px;
+  border-radius: 999px;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 250ms ease,
+    border-color 250ms ease;
+}
+
+.hx-aw-quote {
+  border: 0;
+  background: #55ab68;
+  color: #fff;
+}
+
+.hx-aw-quote:hover {
+  background: #4b9d5e;
+}
+
+.hx-aw-more {
+  border: 1.5px solid rgb(32 11 56 / 0.35);
+  color: var(--hx-purple);
+}
+
+.hx-aw-more:hover {
+  border-color: var(--hx-purple);
+}
+
+.hx-aw-quote:focus-visible,
+.hx-aw-more:focus-visible {
+  outline: 2px solid var(--hx-gold);
+  outline-offset: 3px;
+}
+
+@media (max-width: 860px) {
+  .hx-aw-grid {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 40px;
+    text-align: center;
+  }
+
+  .hx-aw-lead {
+    margin-inline: auto;
+  }
+
+  .hx-aw-steps {
+    justify-items: center;
+  }
+
+  .hx-aw-ctas {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 520px) {
+  .hx .hx-aw {
+    padding: 64px 0 76px;
+  }
+
+  .hx-aw-eyebrow {
+    gap: 12px;
+  }
+
+  .hx-aw-eyebrow::before,
+  .hx-aw-eyebrow::after {
+    width: 28px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hx-aw-caption span {
+    animation: none;
   }
 }
 
