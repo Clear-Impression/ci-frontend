@@ -328,7 +328,7 @@
   background:
     radial-gradient(700px circle at 80% 40%, rgb(108 63 184 / 0.12), transparent 65%),
     radial-gradient(500px circle at 0% 100%, rgb(85 171 104 / 0.1), transparent 60%),
-    linear-gradient(118deg, #fffdf9 0%, #faf7fc 55%, #f1eaf7 100%);
+    linear-gradient(118deg, #faf8f4 0%, #faf7fc 55%, #f1eaf7 100%);
 }
 
 .googleG {
@@ -411,7 +411,7 @@
 }
 .heroGhost:hover {
   border-color: #efb52b;
-  background: #fffaf0;
+  background: #faf8f4;
   transform: translateY(-2px);
 }
 .heroGhost:hover > span:first-child {

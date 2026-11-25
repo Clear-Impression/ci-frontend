@@ -17,8 +17,9 @@
   --hx-green-pale: #eaf6ed;
   --hx-ink: #241d29;
   --hx-muted: #6e6871;
-  --hx-paper: #fffcf7;
-  --hx-sand: #f5f0e8;
+  /* The one beige used across the site. */
+  --hx-paper: #faf8f4;
+  --hx-sand: #faf8f4;
   --hx-sky: #e8f3f5;
   --hx-line: #e5ded5;
   --hx-lavender: #f5f1f8;
@@ -396,7 +397,7 @@ a.hx-rating:hover strong {
 .hx-hero {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(118deg, #fffdf9 0%, #faf7fc 54%, #eee7f4 100%);
+  background: linear-gradient(118deg, #faf8f4 0%, #faf7fc 54%, #eee7f4 100%);
 }
 
 /* The drone video fills the hero behind the words. */
@@ -1268,7 +1269,7 @@ a.hx-rating:hover strong {
 
 .hx .hx-sv {
   padding: 88px 0 104px;
-  background: linear-gradient(170deg, #fffdf7, #fff8e8);
+  background: var(--hx-paper);
   color: var(--hx-purple);
   font-family: var(--font-manrope), var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
 }
@@ -2001,7 +2002,33 @@ a.hx-rating:hover strong {
 /* ---------- Before / after ---------- */
 
 .hx-results {
-  background: #faf8f4;
+  background: var(--hx-paper);
+}
+
+/* Heading, eyebrow and intro centred, one above the other. */
+.hx .hx-results .hx-eyebrow {
+  justify-content: center;
+}
+
+.hx .hx-results .hx-eyebrow::after {
+  content: '';
+  width: 28px;
+  height: 2px;
+  flex: none;
+  background: var(--hx-green-line);
+}
+
+.hx .hx-results .hx-heading-row {
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  text-align: center;
+}
+
+.hx .hx-results .hx-heading-row > p {
+  max-width: 52ch;
+  padding-bottom: 0;
+  text-wrap: balance;
 }
 
 .hx-compare-grid {
