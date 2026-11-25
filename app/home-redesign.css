@@ -2026,7 +2026,8 @@ a.hx-rating:hover strong {
 .hx-compare-frame {
   position: relative;
   overflow: hidden;
-  height: 400px;
+  max-width: 100%;
+  aspect-ratio: 4 / 5;
   border-radius: var(--hx-radius);
   background: var(--hx-lavender-2);
   box-shadow: 0 14px 40px rgb(32 11 56 / 0.1);
@@ -2076,8 +2077,9 @@ a.hx-rating:hover strong {
   z-index: 3;
   inset-block: 0;
   left: var(--pos);
-  width: 2px;
+  width: 3px;
   background: #fff;
+  box-shadow: 0 0 12px rgb(0 0 0 / 0.35);
   pointer-events: none;
   transform: translateX(-50%);
 }
@@ -2088,13 +2090,13 @@ a.hx-rating:hover strong {
   top: 50%;
   left: var(--pos);
   display: grid;
-  width: 44px;
-  height: 44px;
+  width: 54px;
+  height: 54px;
   place-items: center;
   border-radius: 50%;
-  background: #fff;
-  color: var(--hx-purple);
-  box-shadow: 0 4px 20px rgb(0 0 0 / 0.25);
+  background: #2a1048;
+  color: #fff;
+  box-shadow: 0 10px 24px -8px rgb(0 0 0 / 0.5);
   pointer-events: none;
   transform: translate(-50%, -50%);
   transition:
@@ -2104,8 +2106,71 @@ a.hx-rating:hover strong {
 
 .hx-compare-frame:hover .hx-compare-handle,
 .hx-compare-frame[data-dragging] .hx-compare-handle {
-  background: var(--hx-gold);
-  transform: translate(-50%, -50%) scale(1.12);
+  transform: translate(-50%, -50%) scale(1.08);
+}
+
+/* Until someone moves the divider, a ring pulses around the handle. */
+.hx-compare-frame:not([data-touched]) .hx-compare-handle::before {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  animation: hx-compare-pulse 1.6s ease-out infinite;
+}
+
+@keyframes hx-compare-pulse {
+  from {
+    opacity: 0.9;
+    transform: scale(0.85);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+}
+
+/* A soft shine sweeping across the clean side, every few seconds. */
+.hx-compare-shine {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 35%,
+    rgb(255 255 255 / 0.35) 48%,
+    rgb(255 255 255 / 0.05) 55%,
+    transparent 62%
+  );
+  background-size: 260% 100%;
+  clip-path: inset(0 0 0 var(--pos));
+  pointer-events: none;
+  animation: hx-compare-shine 3.6s ease-in-out infinite;
+}
+
+@keyframes hx-compare-shine {
+  0%,
+  40% {
+    background-position: 120% 0;
+  }
+
+  100% {
+    background-position: -60% 0;
+  }
+}
+
+/* Manrope for this section's headings. */
+.hx .hx-results .hx-h2,
+.hx .hx-results .hx-compare-card h3 {
+  font-family: var(--font-manrope), var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hx-compare-shine,
+  .hx-compare-frame .hx-compare-handle::before {
+    animation: none;
+  }
 }
 
 .hx-compare-frame:has(input:focus-visible) .hx-compare-handle {
@@ -3604,10 +3669,6 @@ a.hx-rating:hover strong {
   .hx-promise-grid,
   .hx-review-grid {
     grid-template-columns: 1fr;
-  }
-
-  .hx-compare-frame {
-    height: 380px;
   }
 
   .hx-tech-image {
