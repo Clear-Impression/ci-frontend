@@ -153,7 +153,7 @@ export default function HomeBeforeAfter({ eyebrow, title, intro, pairs }: HomeBe
       aria-labelledby='results-heading'
       className={`hx-section hx-results ${manrope.variable}`}>
       <div className='hx-container'>
-        <p className='hx-eyebrow hx-reveal'>{eyebrow}</p>
+        <p className='hx-eyebrow-center hx-reveal'>{eyebrow}</p>
         <div className='hx-heading-row'>
           <h2
             id='results-heading'

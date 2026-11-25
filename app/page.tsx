@@ -1,6 +1,6 @@
 import { createPageMetadata } from '@/lib/seo';
 import './home-redesign.css';
-import { jakarta } from './fonts';
+import { jakarta, manrope } from './fonts';
 import HomeMotion from '@/components/home/HomeMotion';
 import HomeHero from '@/components/home/HomeHero';
 import HomePromiseStrip from '@/components/home/HomePromiseStrip';
@@ -78,7 +78,7 @@ export default async function Home() {
   const { cities } = await getLocations();
   const { popup } = await getSeasonalOffers();
   return (
-    <main className={`hx ${jakarta.variable} flex-1`}>
+    <main className={`hx ${jakarta.variable} ${manrope.variable} flex-1`}>
       <script
         type='application/ld+json'
         dangerouslySetInnerHTML={{

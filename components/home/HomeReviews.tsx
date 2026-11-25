@@ -34,9 +34,9 @@ export default function HomeReviews({ reviews, score, count }: HomeReviewsProps)
       aria-labelledby='home-reviews-heading'
       className='hx-section hx-reviews'>
       <div className='hx-container'>
+        <p className='hx-eyebrow-center hx-reveal'>From our customers</p>
         <div className='hx-reviews-head'>
           <div>
-            <p className='hx-eyebrow hx-reveal'>From our customers</p>
             <h2
               id='home-reviews-heading'
               className='hx-h2'>

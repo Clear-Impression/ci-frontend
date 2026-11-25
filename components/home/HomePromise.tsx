@@ -18,9 +18,11 @@ export default function HomePromise({ eyebrow, title, intro, items }: HomePromis
     <section
       aria-labelledby='promise-heading'
       className={`hx-section hx-promise hx-on-dark ${manrope.variable}`}>
+      <div className='hx-container'>
+        <p className='hx-eyebrow-center hx-eyebrow-center-dark hx-reveal'>{eyebrow}</p>
+      </div>
       <div className='hx-container hx-slip-grid'>
         <div>
-          <p className='hx-eyebrow hx-eyebrow-light hx-reveal'>{eyebrow}</p>
           <h2
             id='promise-heading'
             className='hx-h2'>

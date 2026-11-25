@@ -74,6 +74,49 @@
   background: var(--hx-green-line);
 }
 
+/* Big centred section labels ("See the difference", "From our customers"),
+   the same size as "Our services" and "See us at work". */
+.hx-eyebrow-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin: 0 0 40px;
+  color: #2f7a45;
+  font-family: var(--font-manrope), var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(16px, 1.6vw, 20px);
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.hx-eyebrow-center::before,
+.hx-eyebrow-center::after {
+  content: '';
+  width: 44px;
+  height: 3px;
+  flex: none;
+  border-radius: 3px;
+  background: currentColor;
+}
+
+/* On the dark purple sections, a light green that stays readable. */
+.hx-eyebrow-center-dark {
+  color: #8fd19e;
+}
+
+@media (max-width: 600px) {
+  .hx-eyebrow-center {
+    gap: 12px;
+  }
+
+  .hx-eyebrow-center::before,
+  .hx-eyebrow-center::after {
+    width: 28px;
+  }
+}
+
 .hx-eyebrow-light {
   color: #fff;
 }
@@ -2002,18 +2045,6 @@ a.hx-rating:hover strong {
 }
 
 /* Heading, eyebrow and intro centred, one above the other. */
-.hx .hx-results .hx-eyebrow {
-  justify-content: center;
-}
-
-.hx .hx-results .hx-eyebrow::after {
-  content: '';
-  width: 28px;
-  height: 2px;
-  flex: none;
-  background: var(--hx-green-line);
-}
-
 .hx .hx-results .hx-heading-row {
   flex-direction: column;
   align-items: center;
