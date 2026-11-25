@@ -1,13 +1,13 @@
 import { createPageMetadata } from '@/lib/seo';
 import './home-redesign.css';
-import { jakarta } from './fonts';
+import { jakarta, manrope } from './fonts';
 import HomeMotion from '@/components/home/HomeMotion';
 import HomeHero from '@/components/home/HomeHero';
 import HomePromiseStrip from '@/components/home/HomePromiseStrip';
 import HomePureWater from '@/components/home/HomePureWater';
 import HomeServices from '@/components/home/HomeServices';
+import HomeAtWork from '@/components/home/HomeAtWork';
 import HomeReviews from '@/components/home/HomeReviews';
-import HomeServiceArea from '@/components/home/HomeServiceArea';
 import HomeClosing from '@/components/home/HomeClosing';
 import HomeBeforeAfter from '@/components/home/HomeBeforeAfter';
 import { beforeAfter } from '@/data/beforeAfter';
@@ -17,15 +17,14 @@ import { company } from '@/data/company';
 import { promise } from '@/data/promise';
 import PageGuide, { type GuideGroup } from '@/components/layout/PageGuide';
 import {
-  homeAreas,
   homeClosing,
   homeHero,
   homeServices,
+  homeAtWork,
   homeSteps,
   pureWater,
 } from '@/data/home';
 import { googleRating, homeReviews } from '@/data/reviews';
-import { getLocations, withCityCount } from '@/lib/locations';
 import { getSeasonalOffers } from '@/lib/seasonal-offers';
 
 export const metadata = createPageMetadata({
@@ -44,16 +43,14 @@ const organizationStructuredData = {
   telephone: company.phoneHref.replace(/^tel:/, ''),
 };
 
-// The sections listed in the "On this page" guide, top to bottom. Each id wraps one section below.
-// The "On this page" menu, in three short groups.
+// The "On this page" menu, in three numbered groups. Each id wraps one section below.
 const guideGroups = [
   {
     title: 'Get to know us',
     items: [
-      { id: 'top', label: 'Welcome' },
       { id: 'why-us', label: 'Our Promise' },
-      { id: 'services', label: 'Services' },
-      { id: 'service-area', label: 'Where We Work' },
+      { id: 'services', label: 'Our Services' },
+      { id: 'at-work', label: 'See Us at Work' },
     ],
   },
   {
@@ -74,10 +71,9 @@ const guideGroups = [
 ] satisfies GuideGroup[];
 
 export default async function Home() {
-  const { cities } = await getLocations();
   const { popup } = await getSeasonalOffers();
   return (
-    <main className={`hx ${jakarta.variable} flex-1`}>
+    <main className={`hx ${jakarta.variable} ${manrope.variable} flex-1`}>
       <script
         type='application/ld+json'
         dangerouslySetInnerHTML={{
@@ -110,14 +106,9 @@ export default async function Home() {
       <div id='services'>
         <HomeServices {...homeServices} />
       </div>
-      {/* Then find your city. */}
-      <div id='service-area'>
-        <HomeServiceArea
-          {...homeAreas}
-          lead={withCityCount(homeAreas.lead, cities.length)}
-          cities={cities.map(({ name, coordinates }) => ({ name, coordinates }))}
-          cityPages={cities}
-        />
+      {/* A short clip of Niels at work, in a phone. */}
+      <div id='at-work'>
+        <HomeAtWork {...homeAtWork} />
       </div>
       <div id='results'>
         <HomeBeforeAfter {...beforeAfter} />

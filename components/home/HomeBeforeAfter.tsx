@@ -1,7 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useRef, useState, type CSSProperties } from 'react';
+import { manrope } from '@/app/fonts';
 import type { BeforeAfterPair } from '@/data/beforeAfter';
 
 type HomeBeforeAfterProps = {
@@ -12,52 +13,15 @@ type HomeBeforeAfterProps = {
 };
 
 const clamp = (value: number) => Math.min(100, Math.max(0, value));
-const easeInOut = (t: number) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
 
-// One photo with a draggable divider: "before" on the left, "after" on the right.
-function Slider({ pair, index }: { pair: BeforeAfterPair; index: number }) {
+// One photo with a divider: "before" on the left, "after" on the right.
+// With a mouse the divider follows the pointer; on touch screens you drag it.
+// Until someone moves it, a ring pulses around the handle.
+function Slider({ pair }: { pair: BeforeAfterPair }) {
   const frameRef = useRef<HTMLDivElement>(null);
-  const touched = useRef(false);
   const [position, setPosition] = useState(50);
   const [dragging, setDragging] = useState(false);
-
-  // The first time it scrolls into view, the handle sweeps across once to
-  // show that it can be dragged. Skipped for reduced motion or once touched.
-  useEffect(() => {
-    const frame = frameRef.current;
-    if (!frame || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    let raf = 0;
-    let timer = 0;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) return;
-        observer.disconnect();
-        timer = window.setTimeout(() => {
-          const stops = [50, 94, 6, 50];
-          const start = performance.now();
-          const duration = 2200;
-          const step = (now: number) => {
-            if (touched.current) return;
-            // The first frame's timestamp can land just before `start`, so clamp at 0.
-            const t = Math.min(1, Math.max(0, (now - start) / duration));
-            const leg = Math.min(stops.length - 2, Math.floor(t * (stops.length - 1)));
-            const local = t * (stops.length - 1) - leg;
-            setPosition(stops[leg] + (stops[leg + 1] - stops[leg]) * easeInOut(local));
-            if (t < 1) raf = requestAnimationFrame(step);
-          };
-          raf = requestAnimationFrame(step);
-        }, 350 + index * 280);
-      },
-      { threshold: 0.6 },
-    );
-    observer.observe(frame);
-    return () => {
-      observer.disconnect();
-      window.clearTimeout(timer);
-      cancelAnimationFrame(raf);
-    };
-  }, [index]);
+  const [touched, setTouched] = useState(false);
 
   function moveTo(clientX: number) {
     const box = frameRef.current?.getBoundingClientRect();
@@ -66,14 +30,20 @@ function Slider({ pair, index }: { pair: BeforeAfterPair; index: number }) {
   }
 
   function onPointerDown(event: React.PointerEvent<HTMLDivElement>) {
-    touched.current = true;
+    setTouched(true);
+    moveTo(event.clientX);
+    if (event.pointerType === 'mouse') return;
     setDragging(true);
     event.currentTarget.setPointerCapture(event.pointerId);
-    moveTo(event.clientX);
   }
 
   function onPointerMove(event: React.PointerEvent<HTMLDivElement>) {
-    if (dragging) moveTo(event.clientX);
+    if (event.pointerType === 'mouse') {
+      setTouched(true);
+      moveTo(event.clientX);
+    } else if (dragging) {
+      moveTo(event.clientX);
+    }
   }
 
   function stopDragging() {
@@ -88,6 +58,7 @@ function Slider({ pair, index }: { pair: BeforeAfterPair; index: number }) {
       onPointerUp={stopDragging}
       onPointerCancel={stopDragging}
       data-dragging={dragging || undefined}
+      data-touched={touched || undefined}
       className='hx-compare-frame'
       style={{ '--pos': `${position}%` } as CSSProperties}>
       {/* After: the full photo underneath. */}
@@ -95,9 +66,15 @@ function Slider({ pair, index }: { pair: BeforeAfterPair; index: number }) {
         src={pair.after}
         alt={`${pair.alt}, after cleaning`}
         fill
-        sizes='(min-width: 1100px) 380px, (min-width: 760px) 50vw, 100vw'
+        sizes='(min-width: 1100px) 420px, (min-width: 760px) 50vw, 100vw'
         draggable={false}
         style={{ objectPosition: pair.focus }}
+      />
+
+      {/* A soft shine that sweeps across the clean side. */}
+      <span
+        aria-hidden='true'
+        className='hx-compare-shine'
       />
 
       {/* Before: the same frame on top, cut off at the handle. */}
@@ -106,7 +83,7 @@ function Slider({ pair, index }: { pair: BeforeAfterPair; index: number }) {
           src={pair.before}
           alt={`${pair.alt}, before cleaning`}
           fill
-          sizes='(min-width: 1100px) 380px, (min-width: 760px) 50vw, 100vw'
+          sizes='(min-width: 1100px) 420px, (min-width: 760px) 50vw, 100vw'
           draggable={false}
           className={pair.simulated ? 'ba-dull' : ''}
           style={{ objectPosition: pair.focus }}
@@ -158,7 +135,7 @@ function Slider({ pair, index }: { pair: BeforeAfterPair; index: number }) {
         step={1}
         value={Math.round(position)}
         onChange={(event) => {
-          touched.current = true;
+          setTouched(true);
           setPosition(Number(event.target.value));
         }}
         aria-label={`Compare before and after: ${pair.title.replace(/\.$/, '')}`}
@@ -174,9 +151,9 @@ export default function HomeBeforeAfter({ eyebrow, title, intro, pairs }: HomeBe
   return (
     <section
       aria-labelledby='results-heading'
-      className='hx-section hx-results'>
+      className={`hx-section hx-results ${manrope.variable}`}>
       <div className='hx-container'>
-        <p className='hx-eyebrow hx-reveal'>{eyebrow}</p>
+        <p className='hx-eyebrow-center hx-reveal'>{eyebrow}</p>
         <div className='hx-heading-row'>
           <h2
             id='results-heading'
@@ -204,10 +181,7 @@ export default function HomeBeforeAfter({ eyebrow, title, intro, pairs }: HomeBe
               key={pair.title}
               className='hx-compare-card hx-reveal'
               style={{ '--d': `${index * 90}ms` } as CSSProperties}>
-              <Slider
-                pair={pair}
-                index={index}
-              />
+              <Slider pair={pair} />
               <h3>{pair.title}</h3>
               <p>{pair.caption}</p>
             </li>

@@ -3,7 +3,7 @@
   padding-block-start: clamp(1.125rem, 3vw, 1.5rem);
   border: 1px solid #e7e0d2;
   border-radius: 2rem;
-  background: #fbf7ef;
+  background: #faf8f4;
   box-shadow: 0 30px 56px -45px rgb(32 11 56 / 0.42);
   font-family: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
 }

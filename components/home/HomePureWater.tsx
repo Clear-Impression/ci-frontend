@@ -102,6 +102,9 @@ export default function HomePureWater({
     <section
       aria-labelledby='pure-water-heading'
       className='hx-section hx-tech'>
+      <div className='hx-container'>
+        <p className='hx-eyebrow-center hx-reveal'>{eyebrow}</p>
+      </div>
       <div className='hx-container hx-tech-grid'>
         <figure className='hx-tech-image hx-reveal'>
           {/* One photo per stage. The photo for the lit stage fades in. */}
@@ -132,7 +135,6 @@ export default function HomePureWater({
         </figure>
 
         <div className='hx-tech-copy'>
-          <p className='hx-eyebrow hx-reveal'>{eyebrow}</p>
           <h2
             id='pure-water-heading'
             className='hx-h2'>
