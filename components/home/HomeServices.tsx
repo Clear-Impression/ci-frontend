@@ -83,6 +83,7 @@ export default async function HomeServices({ eyebrow, titleLines, lead, popularL
                       src={item.photo.src}
                       alt=''
                       fill
+                      quality={60}
                       sizes='(min-width: 1180px) 270px, (min-width: 900px) 25vw, (min-width: 480px) 50vw, 100vw'
                       style={{ objectPosition: item.photo.position }}
                       className='hx-sv-photo'
@@ -100,6 +101,7 @@ export default async function HomeServices({ eyebrow, titleLines, lead, popularL
                       src={item.photo.src}
                       alt={item.photo.alt}
                       fill
+                      quality={60}
                       sizes='(min-width: 1180px) 270px, (min-width: 900px) 25vw, (min-width: 480px) 50vw, 100vw'
                       style={{ objectPosition: item.photo.position }}
                       className='hx-sv-photo hx-sv-photo-blur'

@@ -14,6 +14,13 @@ type HomeAtWorkProps = {
   parts: readonly { from: number; caption: readonly [string, string]; step: number }[];
 };
 
+function setVideoSource(element: HTMLVideoElement, sources: HomeAtWorkProps['video']) {
+  if (element.currentSrc || element.getAttribute('src')) return;
+  const supportsWebm = element.canPlayType('video/webm; codecs="vp9"') !== '';
+  element.src = supportsWebm ? sources.webm : sources.mp4;
+  element.load();
+}
+
 // "See us at work": a straight black phone on the left playing a short clip of
 // Niels at work, with story-style bars and a caption for each part; the words
 // and steps on the right light up with the clip. The clip only starts once the
@@ -32,28 +39,34 @@ export default function HomeAtWork({ eyebrow, titleLines, lead, steps, video, pa
   });
   const current = parts[part];
 
-  // Play while on screen (unless paused by hand or reduced motion is on).
+  // Desktops load one supported format once the phone is in view. Phones keep
+  // the poster and download nothing until the visitor explicitly taps play.
   useEffect(() => {
     const element = videoRef.current;
     if (!element) return;
     const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const desktop = window.matchMedia('(min-width: 48rem)');
     if (still) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !userPaused) element.play().catch(() => {});
+        if (entry.isIntersecting && desktop.matches && !userPaused) {
+          setVideoSource(element, video);
+          element.play().catch(() => {});
+        }
         else element.pause();
       },
       { threshold: 0.35 },
     );
     observer.observe(element);
     return () => observer.disconnect();
-  }, [userPaused]);
+  }, [userPaused, video]);
 
   function toggle() {
     const element = videoRef.current;
     if (!element) return;
     if (element.paused) {
       setUserPaused(false);
+      setVideoSource(element, video);
       element.play().catch(() => {});
     } else {
       setUserPaused(true);
@@ -80,21 +93,13 @@ export default function HomeAtWork({ eyebrow, titleLines, lead, steps, video, pa
                 muted
                 loop
                 playsInline
-                preload='metadata'
+                preload='none'
                 poster={video.poster}
                 aria-label={video.label}
                 onTimeUpdate={(event) => setTime(event.currentTarget.currentTime)}
                 onPlay={() => setPlaying(true)}
-                onPause={() => setPlaying(false)}>
-                <source
-                  src={video.webm}
-                  type='video/webm'
-                />
-                <source
-                  src={video.mp4}
-                  type='video/mp4'
-                />
-              </video>
+                onPause={() => setPlaying(false)}
+              />
               <p
                 aria-hidden='true'
                 key={part}

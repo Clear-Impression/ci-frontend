@@ -1,6 +1,6 @@
 import { createPageMetadata } from '@/lib/seo';
 import './home-redesign.css';
-import { jakarta, manrope } from './fonts';
+import { manrope } from './fonts';
 import HomeMotion from '@/components/home/HomeMotion';
 import HomeHero from '@/components/home/HomeHero';
 import HomePromiseStrip from '@/components/home/HomePromiseStrip';
@@ -23,6 +23,7 @@ import {
   homeAtWork,
   homeSteps,
   pureWater,
+  serviceCities,
 } from '@/data/home';
 import { googleRating, homeReviews } from '@/data/reviews';
 import { getSeasonalOffers } from '@/lib/seasonal-offers';
@@ -34,13 +35,35 @@ export const metadata = createPageMetadata({
     'Residential and commercial window cleaning across the Phoenix metro area. Explore our services and request a free quote from Clear Impression.',
 });
 
-const organizationStructuredData = {
+const localBusinessStructuredData = {
   '@context': 'https://schema.org',
-  '@type': 'Organization',
+  '@type': ['LocalBusiness', 'HomeAndConstructionBusiness'],
+  '@id': new URL('/#business', company.website).href,
   name: company.name,
+  description: company.description,
   url: company.website,
   logo: new URL(company.logo, company.website).href,
+  image: new URL('/images/social/link-preview.jpg', company.website).href,
   telephone: company.phoneHref.replace(/^tel:/, ''),
+  email: company.email,
+  areaServed: serviceCities.map((city) => ({
+    '@type': 'City',
+    name: `${city.name}, Arizona`,
+  })),
+  sameAs: [company.googleHref, company.instagramHref, company.facebookHref, company.bbbHref],
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Cleaning services',
+    itemListElement: [
+      'Residential window cleaning',
+      'Commercial window cleaning',
+      'Solar panel cleaning',
+      'Gutter cleaning',
+    ].map((name) => ({
+      '@type': 'Offer',
+      itemOffered: { '@type': 'Service', name },
+    })),
+  },
 };
 
 // The "On this page" menu, in three numbered groups. Each id wraps one section below.
@@ -73,11 +96,11 @@ const guideGroups = [
 export default async function Home() {
   const { popup } = await getSeasonalOffers();
   return (
-    <main className={`hx ${jakarta.variable} ${manrope.variable} flex-1`}>
+    <main className={`hx ${manrope.variable} flex-1`}>
       <script
         type='application/ld+json'
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(organizationStructuredData).replace(/</g, '\\u003c'),
+          __html: JSON.stringify(localBusinessStructuredData).replace(/</g, '\\u003c'),
         }}
       />
       <HomeMotion />

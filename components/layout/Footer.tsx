@@ -50,13 +50,12 @@ export default async function Footer() {
             href='/'
             className={imageLinkStyle}>
             <Image
-              src={company.logo}
+              src='/logos/logo-horizontal-window.png'
               alt='Clear Impression Window Cleaning'
-              aria-hidden='true'
-              width={375}
-              height={375}
-              sizes='(min-width: 640px) 128px, 112px'
-              className='h-28 w-28 rounded-2xl sm:h-32 sm:w-32'
+              width={647}
+              height={256}
+              sizes='(min-width: 640px) 224px, 192px'
+              className='h-auto w-48 sm:w-56'
             />
             <span className='sr-only'>{company.name} home</span>
           </Link>

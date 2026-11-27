@@ -14,7 +14,7 @@
   display: none;
   width: 272px;
   color: #fff;
-  font-family: var(--font-manrope), var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-manrope), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   filter: drop-shadow(0 24px 40px rgb(32 11 56 / 0.28));
   transition: transform 0.55s var(--pg-ease);
 }

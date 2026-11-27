@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -16,9 +16,21 @@ const geistSans = Geist({
 // Resolve relative canonical and social image URLs against the production domain.
 export const metadata: Metadata = {
   metadataBase: new URL(company.website),
+  applicationName: company.name,
   title: company.name,
   description:
     "Residential and commercial window cleaning in the Phoenix metro area.",
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+  themeColor: '#200b38',
 };
 
 // Display site title on search engine as "Clear Impression" and not clearimpressionservices.com

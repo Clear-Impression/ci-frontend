@@ -19,6 +19,11 @@ const clamp = (value: number) => Math.min(100, Math.max(0, value));
 // Until someone moves it, a ring pulses around the handle.
 function Slider({ pair }: { pair: BeforeAfterPair }) {
   const frameRef = useRef<HTMLDivElement>(null);
+  const gestureRef = useRef<{
+    startX: number;
+    startY: number;
+    horizontal: boolean;
+  } | null>(null);
   const [position, setPosition] = useState(50);
   const [dragging, setDragging] = useState(false);
   const [touched, setTouched] = useState(false);
@@ -30,23 +35,53 @@ function Slider({ pair }: { pair: BeforeAfterPair }) {
   }
 
   function onPointerDown(event: React.PointerEvent<HTMLDivElement>) {
-    setTouched(true);
-    moveTo(event.clientX);
-    if (event.pointerType === 'mouse') return;
-    setDragging(true);
-    event.currentTarget.setPointerCapture(event.pointerId);
+    if (event.pointerType === 'mouse') {
+      setTouched(true);
+      moveTo(event.clientX);
+      return;
+    }
+    gestureRef.current = {
+      startX: event.clientX,
+      startY: event.clientY,
+      horizontal: false,
+    };
   }
 
   function onPointerMove(event: React.PointerEvent<HTMLDivElement>) {
     if (event.pointerType === 'mouse') {
       setTouched(true);
       moveTo(event.clientX);
-    } else if (dragging) {
-      moveTo(event.clientX);
+      return;
     }
+
+    const gesture = gestureRef.current;
+    if (!gesture) return;
+    const deltaX = event.clientX - gesture.startX;
+    const deltaY = event.clientY - gesture.startY;
+    if (!gesture.horizontal) {
+      if (Math.max(Math.abs(deltaX), Math.abs(deltaY)) < 8) return;
+      // Let a vertical swipe scroll the page without changing the comparison.
+      if (Math.abs(deltaY) > Math.abs(deltaX)) {
+        gestureRef.current = null;
+        return;
+      }
+      gesture.horizontal = true;
+      setTouched(true);
+      setDragging(true);
+      event.currentTarget.setPointerCapture(event.pointerId);
+    }
+    moveTo(event.clientX);
   }
 
-  function stopDragging() {
+  function stopDragging(event: React.PointerEvent<HTMLDivElement>) {
+    const gesture = gestureRef.current;
+    // A deliberate tap still moves the divider; a browser-cancelled vertical
+    // scroll does not reach this branch.
+    if (gesture && !gesture.horizontal && event.type === 'pointerup') {
+      setTouched(true);
+      moveTo(event.clientX);
+    }
+    gestureRef.current = null;
     setDragging(false);
   }
 

@@ -6,6 +6,7 @@ import { googleReviewsUrl } from '@/data/reviews';
 
 type HomeHeroProps = {
   titleLines: readonly string[];
+  lead: string;
   rating: number;
   reviewCount: number;
   // The stats strip, shown along the bottom of the hero over the video.
@@ -35,7 +36,7 @@ function typeSchedule(lines: readonly string[]) {
 // IMPRESSION.", with the last line in gold), then a line with the
 // rating and buttons. The promise strip sits along the bottom, over
 // the same video.
-export default function HomeHero({ titleLines, rating, reviewCount, children }: HomeHeroProps) {
+export default function HomeHero({ titleLines, lead, rating, reviewCount, children }: HomeHeroProps) {
   const lastLine = titleLines.length - 1;
 
   // When each letter appears. Worked out up front, so the typing is pure CSS
@@ -65,32 +66,56 @@ export default function HomeHero({ titleLines, rating, reviewCount, children }: 
             {/* Screen readers and search engines get the whole line at once. */}
             <span className='sr-only'>{titleLines.join(' ')}</span>
             <span aria-hidden='true'>
-              {typed.lines.map(({ line, letters, start }, index) => (
-                <span
-                  key={line}
-                  className='hx-typed-line'>
+              <span className='hx-mobile-title'>
+                {titleLines.map((line, index) => {
+                  const words = line.split(' ');
+                  const wrapLastWord = index === lastLine && words.length > 1;
+                  return (
+                    <span
+                      key={line}
+                      className={index === lastLine && lastLine > 0 ? 'hx-typed-label' : undefined}>
+                      {wrapLastWord ? (
+                        <>
+                          {words.slice(0, -1).join(' ')}
+                          <br />
+                          {words.at(-1)}
+                        </>
+                      ) : (
+                        line
+                      )}
+                    </span>
+                  );
+                })}
+              </span>
+              <span className='hx-animated-title'>
+                {typed.lines.map(({ line, letters, start }, index) => (
                   <span
-                    className={index === lastLine && lastLine > 0 ? 'hx-typed-label' : undefined}
-                    style={{ '--start': `${start}ms` } as React.CSSProperties}>
-                    {letters.map(({ letter, at }, position) => (
-                      <span
-                        key={position}
-                        className='hx-typed-ch'
-                        style={{ '--at': `${at}ms` } as React.CSSProperties}>
-                        {letter}
-                      </span>
-                    ))}
-                    {index === lastLine && (
-                      <span
-                        className='hx-typed-caret'
-                        style={{ '--at': `${doneAt}ms` } as React.CSSProperties}
-                      />
-                    )}
+                    key={line}
+                    className='hx-typed-line'>
+                    <span
+                      className={index === lastLine && lastLine > 0 ? 'hx-typed-label' : undefined}
+                      style={{ '--start': `${start}ms` } as React.CSSProperties}>
+                      {letters.map(({ letter, at }, position) => (
+                        <span
+                          key={position}
+                          className='hx-typed-ch'
+                          style={{ '--at': `${at}ms` } as React.CSSProperties}>
+                          {letter}
+                        </span>
+                      ))}
+                      {index === lastLine && (
+                        <span
+                          className='hx-typed-caret'
+                          style={{ '--at': `${doneAt}ms` } as React.CSSProperties}
+                        />
+                      )}
+                    </span>
                   </span>
-                </span>
-              ))}
+                ))}
+              </span>
             </span>
           </h1>
+          <p className='hx-hero-service-line'>{lead}</p>
           <div className='hx-hero-bottom'>
             <div>
               {/* The rating opens our Google Business listing in a new tab. */}
