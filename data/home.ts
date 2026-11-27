@@ -6,6 +6,7 @@ const quoteHref = company.quoteFormUrl;
 export const homeHero = {
   // Niels's line. The last line is gold.
   titleLines: ['ZERO cut corners.', 'ONE CLEAR IMPRESSION.'],
+  lead: 'Residential and commercial window cleaning across Mesa and the Phoenix metro.',
   quoteHref,
 };
 
@@ -208,9 +209,9 @@ export const homeAtWork = {
   lead: 'Real footage from a real job in the Valley: pure water, a squeegee and a careful eye, from the top of the glass down to the last edge.',
   steps: ['Set up and spray', 'Scrub high glass from the ground', 'Squeegee, no streaks', 'Detail every edge'],
   video: {
-    mp4: '/videos/niels-at-work.mp4',
-    webm: '/videos/niels-at-work.webm',
-    poster: '/videos/niels-at-work-poster.jpg',
+    mp4: '/videos/niels-at-work-optimized.mp4',
+    webm: '/videos/niels-at-work-optimized.webm',
+    poster: '/videos/niels-at-work-poster.webp',
     label:
       'Niels cleaning a storefront window: spraying, scrubbing high glass with a pole, squeegeeing from a step ladder and detailing the bottom edges.',
     length: 19.5,

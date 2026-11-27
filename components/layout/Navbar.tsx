@@ -57,13 +57,14 @@ export default async function Navbar() {
       {/* Keep the service area and phone number easy to find. The header runs a bit
           wider than the page so big screens don't leave a wide gap on each side. */}
       <div className='header-strip border-b border-white/15'>
-        <div className='mx-auto flex max-w-[96rem] flex-wrap items-center justify-between gap-x-6 gap-y-2 px-6 py-2.5 text-xs sm:px-8 sm:text-sm xl:py-1.5'>
+        <div className='mx-auto flex max-w-[96rem] flex-wrap items-center justify-between gap-x-3 gap-y-2 px-4 py-2.5 text-xs max-sm:grid max-sm:grid-cols-[1fr_auto] sm:gap-x-6 sm:px-8 sm:text-sm xl:py-1.5'>
           <span className='flex items-center gap-2 text-white/80'>
             <span
               aria-hidden='true'
               className='size-2 rounded-full bg-[#72c587]'
             />
-            Serving the Phoenix metro area
+            <span className='sm:hidden'>Phoenix metro</span>
+            <span className='hidden sm:inline'>Serving the Phoenix metro area</span>
           </span>
           {/* Or they scroll inside this strip: between the service area and the call
               button on wide screens, and on their own line under them on smaller ones. */}
@@ -84,13 +85,14 @@ export default async function Navbar() {
           {/* Smaller screens get a simpler version. */}
           <a
             href={company.phoneHref}
-            className='flex min-h-9 items-center gap-2 rounded-full bg-[#72c587]/12 py-1 pl-1 pr-3.5 font-semibold text-white ring-1 ring-[#72c587]/50 hover:bg-[#72c587]/22 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#efb52b] sm:text-base xl:hidden'>
+            className='flex min-h-11 w-fit items-center gap-2 justify-self-end rounded-full bg-[#72c587]/12 py-1 pl-1 pr-3.5 font-semibold text-white ring-1 ring-[#72c587]/50 hover:bg-[#72c587]/22 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#efb52b] sm:text-base xl:hidden'>
             <PhoneIcon className='size-7 p-1.5' />
-            Call or text {company.phone}
+            <span className='sm:hidden'>{company.phone}</span>
+            <span className='hidden sm:inline'>Call or text {company.phone}</span>
           </a>
         </div>
       </div>
-      <div className='header-row relative mx-auto flex max-w-[96rem] items-center justify-between gap-6 px-6 py-3 sm:px-8'>
+      <div className='header-row relative mx-auto flex max-w-[96rem] items-center justify-between gap-2 px-4 py-3 sm:gap-6 sm:px-8'>
         {/* The company logo takes visitors back to the homepage. */}
         <Link
           href='/'
@@ -102,9 +104,11 @@ export default async function Navbar() {
             aria-hidden='true'
             width={647}
             height={256}
-            priority
+            loading='eager'
+            fetchPriority='high'
+            quality={60}
             sizes='(min-width: 640px) 203px, 162px'
-            className='header-logo h-16 w-auto sm:h-20'
+            className='header-logo h-14 w-auto sm:h-20'
           />
           <span className='sr-only'>{company.name} home</span>
         </Link>

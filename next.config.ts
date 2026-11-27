@@ -41,6 +41,7 @@ const nextConfig: NextConfig = {
   },
   // Photos uploaded in Sanity Studio are served from Sanity's image CDN.
   images: {
+    qualities: [60, 65, 75],
     remotePatterns: [
       { protocol: "https", hostname: "cdn.sanity.io", pathname: "/images/**" },
       // Free Unsplash photos (unsplash.com/license) used on the homepage.

@@ -427,7 +427,7 @@ export default function SiteSearch({ children }: SiteSearchProps) {
       data-closing={closing ? '' : undefined}
       data-closed={justClosed ? '' : undefined}
       data-from={open ? from : undefined}
-      className='site-search flex items-center gap-x-5 gap-y-2.5 max-lg:-mr-3 max-lg:ml-auto lg:flex-1 lg:flex-wrap lg:justify-center xl:gap-x-6'
+      className='site-search flex shrink-0 items-center gap-x-5 gap-y-2.5 lg:flex-1 lg:flex-wrap lg:justify-center xl:gap-x-6'
       onKeyDown={(event) => {
         if (event.key === 'Escape' && open) {
           event.preventDefault();

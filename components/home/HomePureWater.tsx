@@ -148,7 +148,7 @@ export default function HomePureWater({
           <div
             key={activeTab}
             className='hx-method-panel'>
-            <p className='hx-lead hx-reveal'>{activeLead}</p>
+            <p className='hx-lead'>{activeLead}</p>
 
             <div
               className='hx-method-tabs'
@@ -193,48 +193,50 @@ export default function HomePureWater({
             </div>
 
             {/* The three filter stages light up in turn. Pick one to stop on it. */}
-            <ol
+            <div
               id={activeTab === 'traditional' ? 'traditional-tools-panel' : 'water-fed-pole-panel'}
               role='tabpanel'
               aria-labelledby={
                 activeTab === 'traditional'
                   ? 'traditional-tools-tab'
                   : 'water-fed-pole-tab'
-              }
-              className='hx-steps'
-              onPointerEnter={() => setHovered(true)}
-              onPointerLeave={() => setHovered(false)}
-              onFocus={() => setFocused(true)}
-              onBlur={(event) => {
-                // Moving between stage buttons keeps keyboard focus inside.
-                if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false);
-              }}>
-              {activeSteps.map((step, index) => (
-                <li key={step.label}>
-                  <button
-                    type='button'
-                    aria-pressed={index === active}
-                    data-done={index < active || undefined}
-                    onClick={() => {
-                      setActive(index);
-                      // Keep a chosen stage lit while the visitor reads it.
-                      setSelected(true);
-                    }}
-                    className='hx-step'>
-                    <b>{String(index + 1).padStart(2, '0')}</b>
-                    <span className='hx-step-icon'>
-                      <HxIcon name={stepIcons[index % stepIcons.length]} />
-                    </span>
-                    <span>
-                      <span className='hx-step-title'>{step.label}</span>
-                      <span className='hx-step-detail'>{step.detail}</span>
-                    </span>
-                  </button>
-                </li>
-              ))}
-            </ol>
+              }>
+              <ol
+                className='hx-steps'
+                onPointerEnter={() => setHovered(true)}
+                onPointerLeave={() => setHovered(false)}
+                onFocus={() => setFocused(true)}
+                onBlur={(event) => {
+                  // Moving between stage buttons keeps keyboard focus inside.
+                  if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false);
+                }}>
+                {activeSteps.map((step, index) => (
+                  <li key={step.label}>
+                    <button
+                      type='button'
+                      aria-pressed={index === active}
+                      data-done={index < active || undefined}
+                      onClick={() => {
+                        setActive(index);
+                        // Keep a chosen stage lit while the visitor reads it.
+                        setSelected(true);
+                      }}
+                      className='hx-step'>
+                      <b>{String(index + 1).padStart(2, '0')}</b>
+                      <span className='hx-step-icon'>
+                        <HxIcon name={stepIcons[index % stepIcons.length]} />
+                      </span>
+                      <span>
+                        <span className='hx-step-title'>{step.label}</span>
+                        <span className='hx-step-detail'>{step.detail}</span>
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ol>
+            </div>
 
-            <div className='hx-spotfree hx-reveal'>
+            <div className='hx-spotfree'>
               <HxIcon name='check' />
               <p>{activeResult}</p>
             </div>

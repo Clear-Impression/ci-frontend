@@ -27,16 +27,17 @@
   --hx-shadow-soft: 0 18px 50px rgb(32 11 56 / 0.09);
   --hx-radius: 14px;
 
-  font-family: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   color: var(--hx-ink);
   background: var(--hx-paper);
+  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
 }
 
 .hx h1,
 .hx h2,
 .hx h3 {
-  font-family: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   letter-spacing: -0.03em;
 }
 
@@ -50,6 +51,8 @@
   isolation: isolate;
   padding: 112px 0;
   overflow: hidden;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
 }
 
 /* ---------- Type ---------- */
@@ -83,7 +86,7 @@
   gap: 16px;
   margin: 0 0 40px;
   color: #2f7a45;
-  font-family: var(--font-manrope), var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-manrope), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   font-size: clamp(16px, 1.6vw, 20px);
   font-weight: 800;
   letter-spacing: 0.22em;
@@ -448,10 +451,10 @@ a.hx-rating:hover strong {
   isolation: isolate;
 }
 
+.hx-hero-backdrop-poster,
 .hx-hero-backdrop-video {
   position: absolute;
   inset: 0;
-  z-index: -2;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -462,6 +465,14 @@ a.hx-rating:hover strong {
   transform-origin: 35% 0;
   /* The video file itself is color-balanced and sharpened, so no filter here
      (a browser filter on top would blur it slightly and shift the colors). */
+}
+
+.hx-hero-backdrop-poster {
+  z-index: -3;
+}
+
+.hx-hero-backdrop-video {
+  z-index: -2;
 }
 
 /* ---------- Dark video hero ----------
@@ -542,6 +553,16 @@ a.hx-rating:hover strong {
   color: var(--hx-gold);
   font-weight: 400;
   letter-spacing: -0.04em;
+}
+
+.hx-hero-service-line {
+  max-width: 54ch;
+  margin: 22px 0 0;
+  color: rgb(255 255 255 / 0.86);
+  font-size: clamp(15px, 1.4vw, 18px);
+  font-weight: 600;
+  line-height: 1.55;
+  text-wrap: balance;
 }
 
 /* The line under the headline: intro and rating on the left, buttons on the
@@ -1144,7 +1165,7 @@ a.hx-rating:hover strong {
 .hx .hx-hero-copy .hx-h1.hx-typed,
 .hx .hx-hero:has(.hx-pstrip) .hx-hero-copy .hx-h1.hx-typed {
   max-width: none;
-  font-family: var(--font-manrope), var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-manrope), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   font-size: clamp(42px, min(5.8vw, 9vh), 96px);
   font-weight: 500;
   line-height: 1.08;
@@ -1153,6 +1174,10 @@ a.hx-rating:hover strong {
 
 .hx-typed-line {
   display: block;
+}
+
+.hx-mobile-title {
+  display: none;
 }
 
 .hx-typed-line + .hx-typed-line {
@@ -1217,6 +1242,56 @@ a.hx-rating:hover strong {
   }
 
   .hx-typed-caret {
+    display: none;
+  }
+}
+
+/* Slow mobile devices get the complete message on first paint. The desktop
+   typing moment remains, but phones do not wait for dozens of delayed spans. */
+@media (max-width: 760px) {
+  .hx .hx-hero-copy .hx-h1.hx-typed,
+  .hx .hx-hero:has(.hx-pstrip) .hx-hero-copy .hx-h1.hx-typed {
+    font-size: clamp(34px, 10vw, 42px);
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+  }
+
+  .hx-animated-title {
+    display: none;
+  }
+
+  .hx-mobile-title {
+    display: block;
+  }
+
+  .hx-mobile-title > span {
+    display: block;
+    text-wrap: balance;
+  }
+
+  .hx-mobile-title > span + span {
+    margin-top: 0.12em;
+  }
+
+  .hx-hero .hx-button-row > * {
+    width: 100%;
+    flex: 1 1 100%;
+  }
+
+  .hx-hero .hx-btn {
+    min-height: 64px;
+  }
+
+  .hx-typed-ch,
+  .hx-reveal {
+    opacity: 1;
+    animation: none;
+    transform: none;
+    transition: none;
+  }
+
+  .hx-typed-caret,
+  .hx-section::before {
     display: none;
   }
 }
@@ -1314,7 +1389,7 @@ a.hx-rating:hover strong {
   padding: 88px 0 104px;
   background: var(--hx-paper);
   color: var(--hx-purple);
-  font-family: var(--font-manrope), var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-manrope), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
 .hx-sv-head {
@@ -1347,7 +1422,7 @@ a.hx-rating:hover strong {
 }
 
 .hx .hx-sv .hx-sv-title {
-  font-family: var(--font-manrope), var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-manrope), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
 .hx-sv-title {
@@ -1700,7 +1775,7 @@ a.hx-rating:hover strong {
   padding: 96px 0 104px;
   background: #f4f1f7;
   color: var(--hx-purple);
-  font-family: var(--font-manrope), var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-manrope), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
 /* "SEE US AT WORK", centred over both columns. */
@@ -1871,7 +1946,7 @@ a.hx-rating:hover strong {
 
 .hx .hx-aw .hx-aw-title,
 .hx .hx-sv .hx-sv-back h3 {
-  font-family: var(--font-manrope), var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-manrope), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
 .hx-aw-title {
@@ -2217,7 +2292,7 @@ a.hx-rating:hover strong {
 /* Manrope for this section's headings. */
 .hx .hx-results .hx-h2,
 .hx .hx-results .hx-compare-card h3 {
-  font-family: var(--font-manrope), var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-manrope), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2554,7 +2629,7 @@ a.hx-rating:hover strong {
 .hx .hx-promise .hx-slip-intro,
 .hx .hx-slip,
 .hx .hx-slip :is(h3, p, b, small, span) {
-  font-family: var(--font-manrope), var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-manrope), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
 .hx-slip-intro {
@@ -3256,22 +3331,11 @@ a.hx-rating:hover strong {
   outline-offset: 1px;
 }
 
-/* The section you're reading: a thin green bar, green icon, pale green row. */
+/* The section you're reading: a green icon and pale green row. */
 .hx-sidenav a[aria-current] {
   background: rgb(234 246 237 / 0.85);
   color: var(--hx-purple);
   font-weight: 600;
-}
-
-.hx-sidenav a[aria-current]::before {
-  content: '';
-  position: absolute;
-  top: 9px;
-  bottom: 9px;
-  left: 0;
-  width: 3px;
-  border-radius: 3px;
-  background: #55ab68;
 }
 
 .hx-sidenav a[aria-current] svg,
